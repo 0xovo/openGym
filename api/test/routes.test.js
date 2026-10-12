@@ -333,3 +333,17 @@ test('an admin can store extra headers for the compatible endpoint; framing name
   assert.equal((await call('GET /api/admin/coach')).body.headers, null);
   assert.equal('headers' in cfg.load().providerOptions.compatible, false);
 });
+
+// The stored key is never read back. Pointing the provider at another host would have sent it
+// there on the next model list or job, so a new host means entering the key again.
+test('a stored key is dropped when the endpoint moves to another host, kept when only the path does', async () => {
+  fresh({ provider: 'compatible', providerOptions: { compatible: { baseUrl: 'https://llm.home.test/v1' } } });
+  cfg.saveAuth('compatible', { type: 'apikey', data: cfg.encrypt({ token: 'sk-owner' }) });
+  const { call } = harness();
+  let r = await call('POST /api/admin/coach/config', { baseUrl: 'https://llm.home.test/openai/v1' });
+  assert.equal(r.status, 200);
+  assert.ok(cfg.load().auth.compatible, 'same host: the key stays');
+  r = await call('POST /api/admin/coach/config', { baseUrl: 'https://collector.example/v1' });
+  assert.equal(r.status, 200);
+  assert.equal(cfg.load().auth.compatible, undefined, 'another host: the key is gone');
+});
