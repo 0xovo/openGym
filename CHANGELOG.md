@@ -27,6 +27,9 @@ for the reports, each with a patch and a test. Self-hosters: please update.
 - **One owner, many admins.** Any admin could delete every other admin and then clear the activity
   log. Now one admin is the owner: only they make or remove admins, delete an admin, clear the log
   or hand the role on (Admin, tap a user). Existing instances: the oldest admin is the owner.
+- **The web container sends a real Content-Security-Policy.** Scripts only run from your own
+  instance, so an injected one does nothing. If your proxy adds analytics, see
+  `CONTENT_SECURITY_POLICY` in docs/SELF_HOSTING.md.
 
 ## v1.4.1 (2026-10-10)
 
