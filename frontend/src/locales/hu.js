@@ -2258,5 +2258,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Te vagy itt az egyetlen admin, és más profilok még használják ezt a szervert. Előbb tegyél meg valaki mást adminnak.',
   'Couldn’t delete the account. Nothing was removed.': 'Nem sikerült törölni a fiókot. Semmi sem lett eltávolítva.',
   'Your account is gone. Thanks for every rep.': 'A fiókod eltűnt. Köszönjük az összes ismétlést.',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Ez az app nem tud jelszókulccsal megerősíteni. Töröld a fiókod az openGymben a böngészőből, vagy előbb adj meg ott egy jelszót.',
+  'Confirm it’s you to delete your openGym account': 'Erősítsd meg, hogy te vagy, az openGym-fiókod törléséhez',
+  'Not confirmed on this phone. Nothing was deleted.': 'Ezen a telefonon nem lett megerősítve. Semmi sem törlődött.',
+  'This phone has no screen lock, so the name you typed is the only check.': 'Ezen a telefonon nincs képernyőzár, így a beírt név az egyetlen ellenőrzés.',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'A telefonod ellenőrzi, hogy te vagy-e (arc, ujjlenyomat vagy kód), aztán törlődik a fiók.',
 }

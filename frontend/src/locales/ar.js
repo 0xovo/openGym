@@ -2310,5 +2310,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'أنت المسؤول الوحيد هنا، وملفات أخرى ما زالت تستخدم هذا الخادم. اجعل شخصًا آخر مسؤولًا أولًا.',
   'Couldn’t delete the account. Nothing was removed.': 'تعذّر حذف الحساب. لم يُحذف أي شيء.',
   'Your account is gone. Thanks for every rep.': 'حسابك لم يعد موجودًا. شكرًا على كل تكرار.',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'لا يستطيع هذا التطبيق التأكيد بمفتاح مرور. احذف حسابك من openGym في المتصفح، أو أضف كلمة مرور هناك أولًا.',
+  'Confirm it’s you to delete your openGym account': 'أكّد أنك أنت لحذف حساب openGym',
+  'Not confirmed on this phone. Nothing was deleted.': 'لم يتم التأكيد على هذا الهاتف. لم يُحذف أي شيء.',
+  'This phone has no screen lock, so the name you typed is the only check.': 'لا يوجد قفل شاشة على هذا الهاتف، لذا فالاسم الذي كتبته هو التحقق الوحيد.',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'سيتحقق هاتفك من أنك أنت (الوجه أو البصمة أو رمز المرور)، ثم يُحذف الحساب.',
 }

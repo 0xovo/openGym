@@ -2334,5 +2334,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'আপনি এখানে একমাত্র অ্যাডমিন, আর অন্য প্রোফাইলগুলো এখনও এই সার্ভার ব্যবহার করছে। আগে অন্য কাউকে অ্যাডমিন করুন।',
   'Couldn’t delete the account. Nothing was removed.': 'অ্যাকাউন্ট মোছা যায়নি। কিছুই সরানো হয়নি।',
   'Your account is gone. Thanks for every rep.': 'আপনার অ্যাকাউন্ট মুছে গেছে। প্রতিটি রেপের জন্য ধন্যবাদ।',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'এই অ্যাপ পাসকি দিয়ে নিশ্চিত করতে পারে না। ব্রাউজারে openGym থেকে আপনার অ্যাকাউন্ট মুছুন, অথবা আগে সেখানে একটি পাসওয়ার্ড যোগ করুন।',
+  'Confirm it’s you to delete your openGym account': 'আপনার openGym অ্যাকাউন্ট মুছতে নিশ্চিত করুন যে এটি আপনি',
+  'Not confirmed on this phone. Nothing was deleted.': 'এই ফোনে নিশ্চিত হয়নি। কিছুই মোছা হয়নি।',
+  'This phone has no screen lock, so the name you typed is the only check.': 'এই ফোনে কোনো স্ক্রিন লক নেই, তাই আপনার লেখা নামটিই একমাত্র যাচাই।',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'আপনার ফোন যাচাই করবে এটি আপনি কি না (মুখ, আঙুলের ছাপ বা পাসকোড), তারপর অ্যাকাউন্ট মুছে যাবে।',
 }

@@ -5,14 +5,17 @@
 // export first (the very one Data & backup has, handed in by Settings) and asks for the
 // account's name typed back; then the owner's proof, the same step the other changes to a way in
 // ask (ProveOwner): a passkey, or the current password where it counts. The proof carries the
-// delete. Shown only while signed in to or paired with a server: a phone in local-only mode has
-// no account, and "Reset everything" is how it wipes its data.
+// delete. The phone app holds no passkey for the server, so there a profile without a password is
+// proved by the pairing (the server's rule), after the phone's own screen lock says it is its
+// owner (DeviceConfirm). Shown only while signed in to or paired with a server: a phone in
+// local-only mode has no account, and "Reset everything" is how it wipes its data.
 import { useEffect, useRef, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
 import { api } from '../lib/api.js'
 import { MOBILE } from '../lib/mobile.js'
+import { deviceLock, confirmDeviceOwner } from '../lib/device-auth.js'
 import { passwordError, ProveOwner } from './PasswordAuth.jsx'
 import { Row, Button } from './ui.jsx'
 
@@ -55,7 +58,7 @@ export function DeleteAccountSheet({ close, exportBackup, exportBackupZip, hasMe
     done?.()
   }
   // The phone app cannot hold a passkey for your server (its own origin is not the server's), so
-  // there only the password can say it is you.
+  // there the password says it is you, or, with none, the pairing and the phone's own lock.
   const passkey = !MOBILE && (proofs?.passkeys?.length || 0) > 0
   const password = !!proofs?.password
   return <>
@@ -80,11 +83,39 @@ export function DeleteAccountSheet({ close, exportBackup, exportBackupZip, hasMe
     </> : <>
       <div className="dim small" style={{ marginBottom: 14 }}>{t('First confirm that it is you.')}</div>
       {!proofs ? (err ? <div className="small" role="alert" style={errStyle}>{err}</div> : <div className="dim small">{t('Loading…')}</div>)
-        : MOBILE && !password ? <div className="dim small">{t('This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.')}</div>
+        : MOBILE && !password ? <DeviceConfirm onConfirmed={() => remove({})} />
         : <ProveOwner passkey={passkey} password={password} explain={deleteAccountError} danger submitText={t('Delete forever')} onProof={remove} />}
       <div style={{ height: 8 }} />
       <Button type="button" variant="ghost" className="dim" onClick={() => setStep('name')}>{t('Back')}</Button>
     </>}
+  </>
+}
+
+/* A paired phone, for a profile without a password: the phone's screen lock (Face ID, Touch ID,
+   a fingerprint or the passcode) is asked, and only once it says yes does the delete go out.
+   Backed out or failed, nothing is sent and the sheet stays. A phone with no screen lock at all
+   has nothing to ask: the typed name is the only check, and the sheet says so. */
+function DeviceConfirm({ onConfirmed }) {
+  const [lock, setLock] = useState(null)   // 'set' | 'none' | 'unknown'
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState(null)
+  useEffect(() => { deviceLock().then(setLock) }, [])
+  const go = async () => {
+    if (busy) return
+    setBusy(true); setErr(null)
+    try {
+      const r = await confirmDeviceOwner(t('Confirm it’s you to delete your openGym account'))
+      if (r !== 'ok' && r !== 'none') { setErr(t('Not confirmed on this phone. Nothing was deleted.')); return }
+      await onConfirmed()
+    } catch (e) { setErr(deleteAccountError(e)) }
+    finally { setBusy(false) }
+  }
+  return <>
+    <div className="dim small" style={{ marginBottom: 14 }}>{lock === 'none'
+      ? t('This phone has no screen lock, so the name you typed is the only check.')
+      : t('Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.')}</div>
+    <button type="button" className="btn danger" disabled={busy || !lock} onClick={go}>{t('Delete forever')}</button>
+    {err && <div className="small" role="alert" style={errStyle}>{err}</div>}
   </>
 }
 

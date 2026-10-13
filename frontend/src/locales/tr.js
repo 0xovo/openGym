@@ -2255,5 +2255,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Buradaki tek yönetici sensin ve başka profiller bu sunucuyu hâlâ kullanıyor. Önce başka birini yönetici yap.',
   'Couldn’t delete the account. Nothing was removed.': 'Hesap silinemedi. Hiçbir şey kaldırılmadı.',
   'Your account is gone. Thanks for every rep.': 'Hesabın silindi. Her tekrar için teşekkürler.',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Bu uygulama geçiş anahtarıyla onaylayamaz. Hesabını tarayıcıda openGym’den sil ya da önce orada bir parola ekle.',
+  'Confirm it’s you to delete your openGym account': 'openGym hesabını silmek için sen olduğunu onayla',
+  'Not confirmed on this phone. Nothing was deleted.': 'Bu telefonda onaylanmadı. Hiçbir şey silinmedi.',
+  'This phone has no screen lock, so the name you typed is the only check.': 'Bu telefonda ekran kilidi yok, bu yüzden yazdığın ad tek kontrol.',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Telefonun sen olduğunu kontrol eder (yüz, parmak izi ya da kod), sonra hesap silinir.',
 }

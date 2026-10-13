@@ -2255,5 +2255,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'आप यहाँ के अकेले एडमिन हैं, और दूसरी प्रोफ़ाइलें अभी भी यह सर्वर इस्तेमाल करती हैं। पहले किसी और को एडमिन बनाएँ।',
   'Couldn’t delete the account. Nothing was removed.': 'खाता हटाया नहीं जा सका। कुछ भी नहीं हटाया गया।',
   'Your account is gone. Thanks for every rep.': 'आपका खाता हट गया। हर रेप के लिए धन्यवाद।',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'यह ऐप पासकी से पुष्टि नहीं कर सकता। ब्राउज़र में openGym से अपना खाता हटाएँ, या पहले वहाँ एक पासवर्ड जोड़ें।',
+  'Confirm it’s you to delete your openGym account': 'अपना openGym खाता हटाने के लिए पुष्टि करें कि यह आप हैं',
+  'Not confirmed on this phone. Nothing was deleted.': 'इस फ़ोन पर पुष्टि नहीं हुई। कुछ भी नहीं हटाया गया।',
+  'This phone has no screen lock, so the name you typed is the only check.': 'इस फ़ोन पर कोई स्क्रीन लॉक नहीं है, इसलिए आपका लिखा नाम ही एकमात्र जाँच है।',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'आपका फ़ोन जाँचेगा कि यह आप हैं (चेहरा, फ़िंगरप्रिंट या पासकोड), फिर खाता हट जाएगा।',
 }

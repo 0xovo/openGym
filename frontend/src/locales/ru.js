@@ -2259,5 +2259,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Вы здесь единственный администратор, а другие профили ещё пользуются этим сервером. Сначала назначьте администратором кого-то другого.',
   'Couldn’t delete the account. Nothing was removed.': 'Не удалось удалить аккаунт. Ничего не удалено.',
   'Your account is gone. Thanks for every rep.': 'Ваш аккаунт удалён. Спасибо за каждое повторение.',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Это приложение не может подтвердить ключом доступа. Удалите аккаунт в openGym через браузер или сначала задайте там пароль.',
+  'Confirm it’s you to delete your openGym account': 'Подтвердите, что это вы, чтобы удалить аккаунт openGym',
+  'Not confirmed on this phone. Nothing was deleted.': 'Не подтверждено на этом телефоне. Ничего не удалено.',
+  'This phone has no screen lock, so the name you typed is the only check.': 'На этом телефоне нет блокировки экрана, поэтому введённое имя будет единственной проверкой.',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Телефон проверит, что это вы (лицо, отпечаток или код), а затем аккаунт будет удалён.',
 }

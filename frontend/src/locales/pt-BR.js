@@ -1415,7 +1415,10 @@ export const PT_BR_OVERRIDES = {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Você é o único administrador aqui e outros perfis ainda usam este servidor. Torne outra pessoa administradora primeiro.',
   'Couldn’t delete the account. Nothing was removed.': 'Não foi possível excluir a conta. Nada foi removido.',
   'Your account is gone. Thanks for every rep.': 'Sua conta não existe mais. Obrigado por cada repetição.',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Este aplicativo não consegue confirmar com uma chave de acesso. Exclua sua conta no openGym pelo navegador, ou adicione uma senha lá primeiro.',
+  'Confirm it’s you to delete your openGym account': 'Confirme que é você para excluir sua conta do openGym',
+  'Not confirmed on this phone. Nothing was deleted.': 'Não foi confirmado neste celular. Nada foi excluído.',
+  'This phone has no screen lock, so the name you typed is the only check.': 'Este celular não tem bloqueio de tela, então o nome que você digitou é a única verificação.',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Seu celular confirma que é você (rosto, digital ou senha) e depois a conta é excluída.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

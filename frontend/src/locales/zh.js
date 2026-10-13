@@ -2255,5 +2255,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': '你是这里唯一的管理员，而且还有其他档案在使用此服务器。请先让其他人成为管理员。',
   'Couldn’t delete the account. Nothing was removed.': '无法删除账号。没有删除任何内容。',
   'Your account is gone. Thanks for every rep.': '你的账号已删除。感谢每一次训练。',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': '此应用无法用通行密钥确认。请在浏览器中的 openGym 删除账号，或先在那里设置密码。',
+  'Confirm it’s you to delete your openGym account': '确认是你本人，以删除你的 openGym 账号',
+  'Not confirmed on this phone. Nothing was deleted.': '未在此手机上确认。没有删除任何内容。',
+  'This phone has no screen lock, so the name you typed is the only check.': '此手机没有屏幕锁，所以你输入的名称是唯一的验证。',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': '手机会先确认是你本人（面容、指纹或密码），然后删除账号。',
 }

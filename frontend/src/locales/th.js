@@ -2266,5 +2266,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'คุณเป็นผู้ดูแลระบบคนเดียวที่นี่ และยังมีโปรไฟล์อื่นใช้เซิร์ฟเวอร์นี้อยู่ ตั้งคนอื่นเป็นผู้ดูแลระบบก่อน',
   'Couldn’t delete the account. Nothing was removed.': 'ลบบัญชีไม่สำเร็จ ไม่มีอะไรถูกลบ',
   'Your account is gone. Thanks for every rep.': 'บัญชีของคุณถูกลบแล้ว ขอบคุณสำหรับทุกเรป',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'แอปนี้ยืนยันด้วยพาสคีย์ไม่ได้ ลบบัญชีจาก openGym ในเบราว์เซอร์ หรือเพิ่มรหัสผ่านที่นั่นก่อน',
+  'Confirm it’s you to delete your openGym account': 'ยืนยันว่าเป็นคุณเพื่อลบบัญชี openGym',
+  'Not confirmed on this phone. Nothing was deleted.': 'ยืนยันบนโทรศัพท์นี้ไม่สำเร็จ ไม่มีอะไรถูกลบ',
+  'This phone has no screen lock, so the name you typed is the only check.': 'โทรศัพท์นี้ไม่มีการล็อกหน้าจอ ชื่อที่คุณพิมพ์จึงเป็นการตรวจสอบเดียว',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'โทรศัพท์จะตรวจสอบว่าเป็นคุณ (ใบหน้า ลายนิ้วมือ หรือรหัสผ่าน) แล้วจึงลบบัญชี',
 }

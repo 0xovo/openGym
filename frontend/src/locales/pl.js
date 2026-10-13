@@ -2255,5 +2255,8 @@ export default {
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Jesteś tu jedynym administratorem, a inne profile wciąż korzystają z tego serwera. Najpierw zrób administratorem kogoś innego.',
   'Couldn’t delete the account. Nothing was removed.': 'Nie udało się usunąć konta. Nic nie zostało usunięte.',
   'Your account is gone. Thanks for every rep.': 'Twojego konta już nie ma. Dzięki za każde powtórzenie.',
-  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Ta aplikacja nie może potwierdzić kluczem dostępu. Usuń konto w openGym w przeglądarce albo najpierw ustaw tam hasło.',
+  'Confirm it’s you to delete your openGym account': 'Potwierdź, że to Ty, aby usunąć konto openGym',
+  'Not confirmed on this phone. Nothing was deleted.': 'Nie potwierdzono na tym telefonie. Nic nie zostało usunięte.',
+  'This phone has no screen lock, so the name you typed is the only check.': 'Ten telefon nie ma blokady ekranu, więc wpisana nazwa to jedyne sprawdzenie.',
+  'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Telefon sprawdzi, czy to Ty (twarz, odcisk palca lub kod), a potem konto zostanie usunięte.',
 }

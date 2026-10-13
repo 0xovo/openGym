@@ -8,8 +8,9 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
 /* "Delete my account" on screen: the backup export is offered first, nothing goes on until the
    account's name is typed back, then the owner's proof (ProveOwner, the same step the other
-   changes to a way in ask) carries the delete. The server's refusals are said in the UI
-   language. The store and the API are stand-ins; what the sheet sends and says is the point. */
+   changes to a way in ask) carries the delete; on the phone, for a profile with no password, the
+   phone's own screen lock comes first and the pairing carries it. The server's refusals are said
+   in the UI language. The store and the API are stand-ins; what the sheet sends and says is the point. */
 const mocks = vi.hoisted(() => {
   const state = { sheets: [], MOBILE: false, webauthn: true, proofs: { passkeys: [{ id: 'k1' }], password: true } }
   state.toast = vi.fn()
@@ -17,6 +18,9 @@ const mocks = vi.hoisted(() => {
   state.passkeyAssertion = vi.fn(async () => ({ cid: 'c1', credential: { id: 'k1' } }))
   state.api = vi.fn(async path => { if (path === '/api/account/passkeys') return state.proofs; return {} })
   state.snapshot = () => ({ user: { id: 'u1', name: 'Mallory' }, deleteAccount: state.deleteAccount })
+  state.lock = 'set'
+  state.deviceLock = vi.fn(async () => state.lock)
+  state.confirmDeviceOwner = vi.fn(async () => 'ok')
   return state
 })
 vi.mock('../store/useStore.js', () => {
@@ -38,6 +42,10 @@ vi.mock('../lib/api.js', () => ({
 }))
 vi.mock('../lib/mobile.js', () => ({ get MOBILE() { return mocks.MOBILE } }))
 vi.mock('../sheets.jsx', () => ({ askAddDeviceData: vi.fn() }))
+vi.mock('../lib/device-auth.js', () => ({
+  deviceLock: (...a) => mocks.deviceLock(...a),
+  confirmDeviceOwner: (...a) => mocks.confirmDeviceOwner(...a),
+}))
 
 const fail = (status, data) => Object.assign(new Error(data?.error || 'HTTP ' + status), { status, data })
 
@@ -79,6 +87,10 @@ beforeEach(() => {
   mocks.webauthn = true
   mocks.proofs = { passkeys: [{ id: 'k1' }], password: true }
   mocks.api.mockClear()
+  mocks.lock = 'set'
+  mocks.deviceLock.mockClear()
+  mocks.confirmDeviceOwner.mockReset()
+  mocks.confirmDeviceOwner.mockImplementation(async () => 'ok')
   mocks.passkeyAssertion.mockClear()
   mocks.sheets.length = 0
   mocks.toast.mockClear()
@@ -166,13 +178,58 @@ describe('DeleteAccountSheet', () => {
     expect(password(host)).toBeTruthy()
   })
 
-  it('a phone with no password to prove it says where to do it instead', async () => {
+  it('a phone with no password: its own lock is asked, then the pairing carries the delete', async () => {
     mocks.MOBILE = true
     mocks.proofs = { passkeys: [{ id: 'k1' }], password: false }
+    const { p, host } = sheet()
+    await toProof(host)
+    expect(host.textContent).toContain('Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.')
+    expect(password(host)).toBeNull()
+    await act(async () => { button(host, 'Delete forever').click() })
+    await settle()
+    expect(mocks.confirmDeviceOwner).toHaveBeenCalledWith('Confirm it’s you to delete your openGym account')
+    expect(mocks.deleteAccount).toHaveBeenCalledWith('Mallory', {})
+    expect(mocks.confirmDeviceOwner.mock.invocationCallOrder[0]).toBeLessThan(mocks.deleteAccount.mock.invocationCallOrder[0])
+    expect(p.done).toHaveBeenCalled()
+  })
+
+  it('backed out of the phone’s lock, or failed: nothing is sent and the sheet stays', async () => {
+    mocks.MOBILE = true
+    mocks.proofs = { passkeys: [], password: false }
+    const { p, host } = sheet()
+    await toProof(host)
+    for (const answer of ['cancelled', 'failed']) {
+      mocks.confirmDeviceOwner.mockResolvedValueOnce(answer)
+      await act(async () => { button(host, 'Delete forever').click() })
+      await settle()
+      expect(alertText(host)).toBe('Not confirmed on this phone. Nothing was deleted.')
+    }
+    expect(mocks.deleteAccount).not.toHaveBeenCalled()
+    expect(p.close).not.toHaveBeenCalled()
+  })
+
+  it('a phone with no screen lock says the typed name is the only check, and goes ahead', async () => {
+    mocks.MOBILE = true
+    mocks.lock = 'none'
+    mocks.proofs = { passkeys: [], password: false }
+    mocks.confirmDeviceOwner.mockResolvedValue('none')
     const { host } = sheet()
     await toProof(host)
-    expect(host.textContent).toContain('This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.')
-    expect(password(host)).toBeNull()
+    expect(host.textContent).toContain('This phone has no screen lock, so the name you typed is the only check.')
+    await act(async () => { button(host, 'Delete forever').click() })
+    await settle()
+    expect(mocks.deleteAccount).toHaveBeenCalledWith('Mallory', {})
+  })
+
+  it('the web build never asks the phone’s lock', async () => {
+    mocks.proofs = { passkeys: [], password: true }
+    const { host } = sheet()
+    await toProof(host)
+    type(password(host), 'correct horse battery staple')
+    await submit(host)
+    expect(mocks.deleteAccount).toHaveBeenCalled()
+    expect(mocks.deviceLock).not.toHaveBeenCalled()
+    expect(mocks.confirmDeviceOwner).not.toHaveBeenCalled()
   })
 })
 
