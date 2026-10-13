@@ -42,6 +42,9 @@ jobs:
       # The phone build, copied into ios/App/App/public; cap sync runs pod install.
       - run: npm run build:mobile
         working-directory: frontend
+      # The asset pack downloader extension, until the project with it is committed (does nothing then).
+      - run: ruby ios/ci/add-asset-downloader.rb
+        working-directory: frontend
       - name: Build for the simulator
         working-directory: frontend/ios/App
         run: |
@@ -103,6 +106,8 @@ jobs:
         working-directory: frontend
       - run: npm run build:mobile && rm -rf ios/App/App/public/exercise-media
         working-directory: frontend
+      - run: ruby ios/ci/add-asset-downloader.rb
+        working-directory: frontend
       - run: ruby ios/ci/add-ui-tests.rb
         working-directory: frontend
       - name: Run the UI tests
@@ -151,6 +156,8 @@ jobs:
       - run: npm ci
         working-directory: frontend
       - run: npm run build:mobile
+        working-directory: frontend
+      - run: ruby ios/ci/add-asset-downloader.rb
         working-directory: frontend
       - name: Archive, unsigned
         working-directory: frontend/ios/App
