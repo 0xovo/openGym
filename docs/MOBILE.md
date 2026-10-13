@@ -218,6 +218,60 @@ Worth checking on a real device after changes here: turning it on shows Health C
 permission screen; a finished workout appears in Health Connect within a few seconds; deleting it
 in openGym removes it there; turning it off with "remove" leaves no openGym record behind.
 
+### Animation quality and the animation packs (store apps)
+
+Settings → Workout → **Animation quality**, in the store apps only (the web and a self-hosted
+server show nothing new): **Auto** (360 px on a phone, 720 px on a tablet), **Still only** (no
+animation, just the still), **Built in** (the files inside the app), or 240, 360, 480, 720 or
+1080 px. Plus **Download over Wi-Fi only** (on by default) and, per pack on the device, its size
+and **Delete**.
+
+- **Licence first.** The animations are licensed from Gym visual. The repository, the web build
+  and every self-hosted server only ever have the 180 px files. Anything larger reaches people
+  only inside the official store apps: built into the package, or as an **Apple-hosted asset pack**
+  (Background Assets, iOS 26) that Apple delivers, later a Play asset pack. Never from a server of
+  ours, never at a URL anyone can fetch. No tool here opens a media file; packs are planned from
+  file names alone.
+- **The packs.** One per quality and figure: `anim-<px>-male`, `anim-<px>-female` for 240, 360,
+  480, 720 and 1080, all on demand. A figure's pack holds every drawing that figure shows: per
+  catalogue exercise its drawing for that figure, or its own when it is drawn once (those are in
+  both packs). Inside a pack a drawing sits at `<packId>/<drawing id>.webp`, so the male and the
+  female pack of a quality (which share every drawing made once), or two qualities, never claim
+  the same path in the one tree Background Assets reads all packs as.
+  `node scripts/media/make-pack-manifests.mjs <out>` writes, per pack, the ids and the manifest
+  `xcrun ba-package` takes (`fileSource` `<px>/<id>.webp`, relative to a source root with one
+  folder per quality), plus a summary. `--layout clip` writes `clip/<id>.webp` instead.
+- **What shows** (`src/lib/anim-quality.js`, `clipSources`): the chosen quality's pack for the
+  figure shown if it is installed, else the next smaller installed pack of that figure, else the
+  built-in file, then the still. Never a blank, and never the other figure's drawing. Custom
+  exercises keep their own media (`components/CustomMedia.jsx`) and never go through any of this.
+- **Downloads.** Choosing a quality whose pack is not there starts its download for the figure
+  shown, and the built-in animations show meanwhile; switching the figure (Look & Home → Exercise
+  drawings) fetches the other figure's pack of that quality. Auto does the same, over Wi-Fi.
+- **This device only.** The choice is kept in the WebView's localStorage (`gym_anim_v1`), never in
+  the synced profile: packs are downloaded per device, and a phone and an iPad want different
+  sizes. Switching quality or figure never writes the profile; `src/lib/anim-data-safety.test.js`
+  holds that, and that every exercise a profile refers to keeps a picture at every quality.
+- **iOS:** `AnimationPacksPlugin.swift` (`AssetPackManager`: status, download with progress,
+  remove, the folder of a pack's files). Before iOS 26 it answers "unavailable" and the setting
+  offers only Still only and Built in. Apple-hosted packs need the downloader extension
+  `ios/App/AnimationPacksDownloader` (a `StoreDownloaderExtension`), added and embedded by
+  `ios/ci/add-asset-downloader.rb` (run once and commit the project; CI runs it until then), the
+  Info.plist keys `BAAppGroupID`, `BAHasManagedAssetPacks`, `BAUsesAppleHosting`, and the App
+  Group `group.ch.opengym.app` on the app and the extension. `scripts/ios/finish-ipa.sh` signs the
+  extension with its own profile (`EXT_PROFILE`).
+- **Android:** the same interface answers "unavailable" until Play Asset Delivery comes; the
+  sideloaded APK only ever has its built-in animations.
+
+App Store Connect, once: the App Group `group.ch.opengym.app`; the bundle id
+`ch.opengym.app.AnimationPacksDownloader` (an app extension); the App Groups capability on
+`ch.opengym.app` and on the extension, both with that group; an App Store provisioning profile
+for each; then the ten packs uploaded as Apple-hosted background assets for the app.
+
+Worth checking on a device: picking 720 px starts a download that shows its progress; the
+animation sharpens once it is done; Delete frees the space and the animation falls back; on
+cellular with Wi-Fi only on, it waits; Still only shows stills everywhere a workout shows media.
+
 ## Prerequisites
 
 - Node 20+

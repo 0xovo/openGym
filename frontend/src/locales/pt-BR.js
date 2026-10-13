@@ -1452,6 +1452,17 @@ export const PT_BR_OVERRIDES = {
   'Training reminders, only if you switch them on': 'Lembretes de treino, só se você ativar',
   'You can change it anytime in your phone’s settings.': 'Você pode mudar isso quando quiser nas configurações do celular.',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'O openGym pode te dar um toque no ombro quando um descanso acaba, mesmo com o celular bloqueado no bolso.',
+  // --- animation quality (store apps) ---
+  'A good size for this screen.': 'Um bom tamanho para esta tela.',
+  'Download failed. Tap to try again.': 'O download falhou. Toque para tentar de novo.',
+  'Download over Wi-Fi only': 'Baixar só pelo Wi-Fi',
+  'Downloaded · {0}': 'Baixadas · {0}',
+  'Downloading… {0}%': 'Baixando… {0}%',
+  'No animation, just the picture. Easy on battery.': 'Sem animação, só a imagem. Economiza bateria.',
+  'Not downloaded': 'Não baixadas',
+  'Sharper animations aren’t available on this device yet. The built-in ones work everywhere.': 'As animações mais nítidas ainda não estão disponíveis neste dispositivo. As incluídas funcionam em qualquer lugar.',
+  'Sharper animations download once per figure. Until they’re here you see the built-in ones, so nothing ever goes blank.': 'As animações mais nítidas são baixadas uma vez por figura. Até lá você vê as incluídas, então nada fica em branco.',
+  'Waiting for Wi-Fi': 'Esperando o Wi-Fi',
   // --- background check before the nudge ---
   'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Registrou um treino em outro dispositivo? Antes do aviso, o celular confirma com o seu servidor, sempre que deixar o aplicativo rodar em segundo plano. Abrir o aplicativo sempre deixa tudo em dia.',
 }
