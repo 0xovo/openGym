@@ -1,8 +1,10 @@
 /* The account's own delete (App Store rule 5.1.1(v)): a signed-in profile removes itself with
    the same clean-up the admin's delete runs (removeAccount in server.js), typing its name back
-   to confirm, and the last admin cannot leave an instance others still use. Real server.js in a
-   child, same harness as server-admin-delete.test.js. */
-import { test } from 'node:test';
+   and proving it is the owner the way the other changes to a way in do (proveOwner): here with
+   the current password, the passkey half is in server-passkeys.test.js. The last admin cannot
+   leave an instance others still use. Real server.js in a child, same harness as
+   server-admin-delete.test.js. */
+import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -10,6 +12,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { hashPassword } from '../password.js';
 import { boundPort } from './helpers.mjs';
 
 const API = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -18,15 +21,22 @@ const mintSession = uid => {
   const payload = `${uid}:${Date.now() + 86400000}:0`;
   return payload + '.' + crypto.createHmac('sha256', SECRET).update(payload).digest('base64url');
 };
+const GOOD = 'correct horse battery staple';
+let pwHash;
+before(async () => { pwHash ??= await hashPassword(GOOD); });
 const ADMIN = 'u_adm_1', ADMIN2 = 'u_adm_2', USER = 'u_usr_1';
 const as = uid => ({ Cookie: `gymsid=${mintSession(uid)}`, 'Content-Type': 'application/json', Origin: 'http://localhost:8080' });
-async function startServer(t, { users: which = ['admin', 'user'] } = {}) {
+async function startServer(t, { users: which = ['admin', 'user'], env = {} } = {}) {
+  pwHash ??= await hashPassword(GOOD);
+  const pw = { h: pwHash, set: new Date().toISOString() };
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gym-selfdel-'));
   fs.writeFileSync(path.join(dataDir, 'secret'), SECRET, { mode: 0o600 });
   const all = {
-    admin: { id: ADMIN, name: 'Adminna', created: new Date().toISOString(), admin: true },
-    admin2: { id: ADMIN2, name: 'Second', created: new Date().toISOString(), admin: true },
-    user: { id: USER, name: 'Mallory', created: new Date().toISOString(), invitedBy: 'CODE1' },
+    admin: { id: ADMIN, name: 'Adminna', created: new Date().toISOString(), admin: true, pw },
+    admin2: { id: ADMIN2, name: 'Second', created: new Date().toISOString(), admin: true, pw },
+    user: { id: USER, name: 'Mallory', created: new Date().toISOString(), invitedBy: 'CODE1', pw },
+    // Passkey-only: no password that could prove anything.
+    nopw: { id: 'u_nopw', name: 'Keyonly', created: new Date().toISOString() },
   };
   fs.writeFileSync(path.join(dataDir, 'db.json'), JSON.stringify({
     users: which.map(k => all[k]),
@@ -37,7 +47,7 @@ async function startServer(t, { users: which = ['admin', 'user'] } = {}) {
   for (const uid of [USER, ADMIN]) fs.writeFileSync(path.join(dataDir, `state-${uid}.json`), JSON.stringify({ unit: 'kg', workouts: [], _rev: 3 }));
   const child = spawn(process.execPath, ['server.js'], {
     cwd: API, stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, PORT: '0', DATA_DIR: dataDir, ORIGIN: 'http://localhost:8080', RP_ID: 'localhost' },
+    env: { ...process.env, PORT: '0', DATA_DIR: dataDir, ORIGIN: 'http://localhost:8080', RP_ID: 'localhost', PASSWORD_LOGIN: '1', AUDIT_LOG: '1', ...env },
   });
   const h = { api: '', log: '', dataDir };
   child.stdout.on('data', d => h.log += d);
@@ -57,7 +67,7 @@ async function startServer(t, { users: which = ['admin', 'user'] } = {}) {
 
 test('removes the account and everything attached to it, and ends the session', async t => {
   const h = await startServer(t);
-  const res = await h.del(USER, { name: 'Mallory' });
+  const res = await h.del(USER, { name: 'Mallory', current: GOOD });
   assert.equal(res.status, 200);
   assert.deepEqual(res.body, { ok: true });
   assert.match(res.cookie, /gymsid=;.*Max-Age=0/, 'the session cookie is cleared');
@@ -81,14 +91,15 @@ test('removes the account and everything attached to it, and ends the session', 
 
 test('needs the account name typed back', async t => {
   const h = await startServer(t);
-  for (const body of [{}, { name: '' }, { name: 'mallory' }, { name: 'Adminna' }, { name: 42 }]) {
+  // Checked before the proof: a wrong name costs no password check, even with the right one.
+  for (const body of [{}, { name: '' }, { name: 'mallory', current: GOOD }, { name: 'Adminna', current: GOOD }, { name: 42 }]) {
     const res = await h.del(USER, body);
     assert.equal(res.status, 400, JSON.stringify(body));
     assert.equal(res.body.code, 'confirm-name');
   }
   assert.equal(h.db().users.length, 2, 'nothing was removed');
   // Spaces around it are a keyboard's, not a different name.
-  assert.equal((await h.del(USER, { name: ' Mallory ' })).status, 200);
+  assert.equal((await h.del(USER, { name: ' Mallory ', current: GOOD })).status, 200);
 });
 
 test('needs a session, and a request from another origin is refused', async t => {
@@ -100,9 +111,10 @@ test('needs a session, and a request from another origin is refused', async t =>
   assert.equal(h.db().users.length, 2);
 });
 
-test('the last admin cannot leave while other profiles remain', async t => {
+test('the last admin cannot leave while other profiles remain, proof or not', async t => {
   const h = await startServer(t);
-  const res = await h.del(ADMIN, { name: 'Adminna' });
+  assert.equal((await h.del(ADMIN, { name: 'Adminna' })).body.code, 'last-admin', 'refused before any proof is asked');
+  const res = await h.del(ADMIN, { name: 'Adminna', current: GOOD });
   assert.equal(res.status, 409);
   assert.equal(res.body.code, 'last-admin');
   assert.equal(h.db().users.length, 2, 'nothing was removed');
@@ -110,13 +122,13 @@ test('the last admin cannot leave while other profiles remain', async t => {
 
 test('an admin can leave while another admin remains', async t => {
   const h = await startServer(t, { users: ['admin', 'admin2', 'user'] });
-  assert.equal((await h.del(ADMIN, { name: 'Adminna' })).status, 200);
+  assert.equal((await h.del(ADMIN, { name: 'Adminna', current: GOOD })).status, 200);
   assert.deepEqual(h.db().users.map(u => u.id).sort(), [ADMIN2, USER].sort());
 });
 
 test('the only profile on the instance can delete itself, admin or not', async t => {
   const h = await startServer(t, { users: ['admin'] });
-  assert.equal((await h.del(ADMIN, { name: 'Adminna' })).status, 200);
+  assert.equal((await h.del(ADMIN, { name: 'Adminna', current: GOOD })).status, 200);
   assert.deepEqual(h.db().users, []);
   assert.equal(fs.existsSync(path.join(h.dataDir, `state-${ADMIN}.json`)), false);
 });
@@ -125,8 +137,39 @@ test('a paired phone deletes with its Bearer token', async t => {
   const h = await startServer(t);
   const r = await fetch(`${h.api}/api/account/delete`, {
     method: 'POST', headers: { Authorization: `Bearer ${mintSession(USER)}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: 'Mallory' })
+    body: JSON.stringify({ name: 'Mallory', current: GOOD })
   });
   assert.equal(r.status, 200);
   assert.deepEqual(h.db().users.map(u => u.id), [ADMIN]);
+});
+
+test('needs proof that the owner is here: missing or wrong, nothing is removed', async t => {
+  const h = await startServer(t, { users: ['admin', 'user', 'nopw'] });
+  const none = await h.del(USER, { name: 'Mallory' });
+  assert.equal(none.status, 403);
+  assert.equal(none.body.code, 'current-required');
+  const wrong = await h.del(USER, { name: 'Mallory', current: 'not the password at all' });
+  assert.equal(wrong.status, 403);
+  assert.equal(wrong.body.code, 'current-wrong');
+  // No password, so only a passkey can say it is them; an assertion that does not verify is no proof.
+  const keyOnly = await h.del('u_nopw', { name: 'Keyonly', current: GOOD });
+  assert.equal(keyOnly.status, 403);
+  assert.equal(keyOnly.body.code, 'passkey-required');
+  const bogus = await h.del('u_nopw', { name: 'Keyonly', cid: 'nope', credential: { id: 'x', response: {} } });
+  assert.equal(bogus.status, 403);
+  assert.equal(bogus.body.code, 'passkey');
+
+  assert.equal(h.db().users.length, 3, 'nothing was removed');
+  assert.equal(fs.existsSync(path.join(h.dataDir, `state-${USER}.json`)), true);
+  const fails = h.audit().filter(r => r.ev === 'auth.proof.fail');
+  assert.ok(fails.length >= 2 && fails.every(r => r.act === 'account-delete'), 'logged as a refused proof for the delete');
+  assert.ok(!h.audit().some(r => r.ev === 'auth.account.delete'));
+});
+
+test('with password sign-in off, a password proves nothing', async t => {
+  const h = await startServer(t, { env: { PASSWORD_LOGIN: '' } });
+  const res = await h.del(USER, { name: 'Mallory', current: GOOD });
+  assert.equal(res.status, 403);
+  assert.equal(res.body.code, 'passkey-required');
+  assert.equal(h.db().users.length, 2);
 });

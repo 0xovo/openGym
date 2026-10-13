@@ -576,20 +576,27 @@ paths:
         subscriptions, their live presence, their training history file, their
         uploaded photos and videos (`DATA_DIR/uploads/<uid>/`) and any Coach credential
         stored for them. Not reversible. The body carries the account's name, typed back
-        by its owner, so a request carrying only the session does nothing. The last
-        admin is refused while any other profile remains (the instance would be left
-        with nobody to run it); the only profile on an instance may delete itself.
-        Clears the caller's cookie; every other session and Bearer token of the account
-        stops working with it. Audited as `auth.account.delete`, with the name.
+        by its owner, and the same proof as setting a password (see OwnerProof): a
+        passkey assertion made for this request, or the current password while
+        `PASSWORD_LOGIN` is on. The name and the last-admin rule are checked before the
+        proof is asked. The last admin is refused while any other profile remains (the
+        instance would be left with nobody to run it); the only profile on an instance
+        may delete itself. Clears the caller's cookie; every other session and Bearer
+        token of the account stops working with it. Audited as `auth.account.delete`,
+        with the name and the proof it was made with; a refused proof as
+        `auth.proof.fail` with `act: account-delete`.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required: [name]
-              properties:
-                name: { type: string, description: 'The account name, exactly (surrounding spaces are ignored).' }
+              allOf:
+                - $ref: '#/components/schemas/OwnerProof'
+                - type: object
+                  required: [name]
+                  properties:
+                    name: { type: string, description: 'The account name, exactly (surrounding spaces are ignored).' }
+            example: { name: "Ada", current: "correct horse battery staple" }
       responses:
         '200':
           description: The account and everything of theirs is gone.
@@ -607,12 +614,14 @@ paths:
               schema: { $ref: '#/components/schemas/Error' }
               example: { error: "type the account name to confirm", code: "confirm-name" }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/ProofRefused' }
         '409':
           description: '`last-admin`: the only admin, with other profiles still on the instance.'
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
               example: { error: "the last admin cannot leave while other profiles remain", code: "last-admin" }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
 
   /api/pair/create:
     post:
