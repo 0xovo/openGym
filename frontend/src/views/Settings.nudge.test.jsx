@@ -11,10 +11,10 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true
 // switch, and once it is on, a tone. Both the self-hosted card (web push) and the mobile card
 // (native notifications) carry it, and only while the reminder itself is on.
 const mocks = vi.hoisted(() => {
-  const state = { S: null, MOBILE: false }
+  const state = { S: null, MOBILE: false, user: { id: 'u1', name: 'One' } }
   state.snapshot = () => ({
     S: state.S,
-    user: { id: 'u1', name: 'One' },
+    user: state.user,
     update: mut => {
       const next = structuredClone(state.S)
       mut(next)
@@ -64,6 +64,7 @@ let host, root
 beforeEach(() => {
   sheet = null
   mocks.MOBILE = false
+  mocks.user = { id: 'u1', name: 'One' }
   mocks.S = {
     unit: 'kg', restSec: 90, restPauseSec: 15, sound: false, effort: 'none',
     gifSize: 'full', workouts: [], routines: [], exWeights: {},
@@ -132,5 +133,28 @@ describe.each([['self-hosted (web push)', false], ['mobile (native)', true]])('S
     mocks.S.reminder = { on: false, time: '08:00', nudge: true }
     await mount()
     expect(nudgeRow()).toBeFalsy()
+  })
+})
+
+// A paired phone checks with the server before the nudge (lib/nudge-check.js): the footer says
+// so, and that the phone decides when. A phone kept local has no server to ask.
+describe('Settings — the background check before the nudge (mobile)', () => {
+  const NOTE = 'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background.'
+  beforeEach(() => { mocks.MOBILE = true })
+
+  it('is said on a paired phone with the nudge on', async () => {
+    mocks.S.reminder = { on: true, time: '08:00', nudge: true }
+    await mount()
+    expect(host.textContent).toContain(NOTE)
+  })
+
+  it('is not said with the nudge off, or on a phone kept local', async () => {
+    mocks.S.reminder = { on: true, time: '08:00', nudge: false }
+    await mount()
+    expect(host.textContent).not.toContain(NOTE)
+    mocks.S.reminder = { on: true, time: '08:00', nudge: true }
+    mocks.user = null
+    await mount()
+    expect(host.textContent).not.toContain(NOTE)
   })
 })

@@ -1861,6 +1861,7 @@ export default {
   'Guilt trip': 'تأنيب الضمير',
   'Drill sergeant': 'رقيب التدريب',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'تنبيه واحد مساء يوم مخطط لم يُسجَّل فيه شيء، بين 20:00 و21:30. بعد 3 أيام فائتة متتالية يصمت حتى تمرينك التالي.',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'سجّلت تمرينًا على جهاز آخر؟ قبل التنبيه يتحقق الهاتف من خادمك، متى سمح للتطبيق بالعمل في الخلفية. فتح التطبيق يحدّث كل شيء دائمًا.',
   'Everything okay?': 'هل كل شيء على ما يرام؟',
   '{0} is still waiting. What’s up?': '{0} ما زال ينتظرك. ما الأمر؟',
   'No {0} today? Even a short session tomorrow counts.': 'لا {0} اليوم؟ حتى جلسة قصيرة غدًا تُحسب.',

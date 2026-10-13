@@ -1817,6 +1817,7 @@ export default {
   'Guilt trip': 'ทำให้รู้สึกผิด',
   'Drill sergeant': 'ครูฝึกทหาร',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'สะกิดหนึ่งครั้งในตอนเย็นของวันที่วางแผนไว้แต่ยังไม่มีการบันทึก ระหว่าง 20:00 ถึง 21:30 หลังพลาดติดกัน 3 วันจะเงียบไปจนกว่าคุณจะออกกำลังกายครั้งถัดไป',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'บันทึกการออกกำลังกายบนอุปกรณ์อื่นแล้วใช่ไหม ก่อนส่งการสะกิด โทรศัพท์จะเช็กกับเซิร์ฟเวอร์ของคุณ เมื่อใดที่ระบบยอมให้แอปทำงานเบื้องหลัง เปิดแอปเมื่อไหร่ก็อัปเดตครบทุกครั้ง',
   'Everything okay?': 'ทุกอย่างโอเคไหม?',
   '{0} is still waiting. What’s up?': '{0} ยังรอคุณอยู่นะ เป็นอะไรหรือเปล่า?',
   'No {0} today? Even a short session tomorrow counts.': 'วันนี้ไม่มี {0} เหรอ? พรุ่งนี้แค่เล่นสั้นๆ ก็นับแล้ว',

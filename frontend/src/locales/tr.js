@@ -1809,6 +1809,7 @@ export default {
   'Guilt trip': 'Vicdan azabı',
   'Drill sergeant': 'Eğitim çavuşu',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'Kayıt girilmemiş planlı bir günün akşamında, 20:00 ile 21:30 arasında tek bir dürtme. Üst üste 3 kaçırılan günden sonra bir sonraki antrenmanına kadar sessiz kalır.',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Başka bir cihazda antrenman mı kaydettin? Dürtme gelmeden önce telefon, uygulamanın arka planda çalışmasına izin verdiği sürece sunucuna sorar. Uygulamayı açınca her şey zaten güncellenir.',
   'Everything okay?': 'Her şey yolunda mı?',
   '{0} is still waiting. What’s up?': '{0} hâlâ seni bekliyor. Ne oldu?',
   'No {0} today? Even a short session tomorrow counts.': 'Bugün {0} yok mu? Yarın kısa bir seans bile sayılır.',

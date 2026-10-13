@@ -1813,6 +1813,7 @@ export default {
   'Guilt trip': 'Давить на совесть',
   'Drill sergeant': 'Сержант-инструктор',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'Одно напоминание вечером запланированного дня без записанной тренировки, с 20:00 до 21:30. После 3 пропущенных дней подряд оно замолкает до вашей следующей тренировки.',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Записали тренировку на другом устройстве? Перед напоминанием телефон сверяется с вашим сервером, если разрешает приложению работать в фоне. При открытии приложения всё обновляется в любом случае.',
   'Everything okay?': 'Всё в порядке?',
   '{0} is still waiting. What’s up?': 'Тренировка «{0}» всё ещё ждёт. Что случилось?',
   'No {0} today? Even a short session tomorrow counts.': 'Сегодня без тренировки «{0}»? Завтра засчитается даже короткая.',

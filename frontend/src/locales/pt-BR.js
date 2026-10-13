@@ -1444,6 +1444,8 @@ export const PT_BR_OVERRIDES = {
   'Not confirmed on this phone. Nothing was deleted.': 'Não foi confirmado neste celular. Nada foi excluído.',
   'This phone has no screen lock, so the name you typed is the only check.': 'Este celular não tem bloqueio de tela, então o nome que você digitou é a única verificação.',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Seu celular confirma que é você (rosto, digital ou senha) e depois a conta é excluída.',
+  // --- background check before the nudge ---
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Registrou um treino em outro dispositivo? Antes do aviso, o celular confirma com o seu servidor, sempre que deixar o aplicativo rodar em segundo plano. Abrir o aplicativo sempre deixa tudo em dia.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
