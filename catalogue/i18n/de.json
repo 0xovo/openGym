@@ -46,7 +46,16 @@
     ]
   },
   "1005": {
-    "name": "Stehender Crunch mit Band"
+    "name": "Stehender Crunch mit Band",
+    "description": "Bei diesem Crunch im Stehen beugst du deinen Oberkörper gegen den Widerstand eines Bands nach vorn. Das trainiert deine Bauchmuskeln.",
+    "instructions": [
+        "Befestige das Band auf Hüfthöhe an einem stabilen Punkt.",
+        "Stell dich schulterbreit mit dem Rücken zur Befestigung hin.",
+        "Halte das Band mit beiden Händen vor deiner Brust. Lass die Ellbogen angewinkelt und nah am Körper.",
+        "Spann den Bauch an und roll deinen Oberkörper langsam nach vorn in Richtung Knie ein.",
+        "Halte die Beugung kurz und richte dich dann kontrolliert wieder auf.",
+        "Wiederhole die Bewegung so oft wie geplant."
+    ]
   },
   "1006": {
     "name": "Rudern für hintere Schulter mit Band"
