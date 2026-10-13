@@ -94,13 +94,11 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         #if canImport(BackgroundAssets)
         if #available(iOS 26.0, *) {
             Task {
-                let manager = AssetPackManager.shared
-                guard await manager.assetPackIsAvailableLocally(withID: id),
-                      AnimationPacksPlugin.readable(id, probe) else {
+                guard AnimationPacksPlugin.readable(id, probe) else {
                     call.resolve(["state": "none"])
                     return
                 }
-                call.resolve(["state": "ready", "bytes": Int(await AnimationPacksPlugin.localBytes(id)), "base": AnimationPacksPlugin.base(id)])
+                call.resolve(["state": "ready", "bytes": await AnimationPacksPlugin.localBytes(id), "base": AnimationPacksPlugin.base(id)])
             }
             return
         }
@@ -146,9 +144,8 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         if #available(iOS 26.0, *) {
             Task {
                 let manager = AssetPackManager.shared
-                out["local"] = await manager.assetPackIsAvailableLocally(withID: id)
+                out["readable"] = AnimationPacksPlugin.readable(id, probe)
                 out["status"] = AnimationPacksPlugin.describe(await manager.localStatus(ofAssetPackWithID: id))
-                if let v = try? await manager.localVersion(ofAssetPackWithID: id) { out["version"] = v }
                 do {
                     let data = try manager.contents(at: FilePath("\(id)/\(probe).webp"), searchingInAssetPackWithID: id, options: .mappedIfSafe)
                     out["probeBytes"] = data.count
@@ -161,12 +158,16 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
                     let folder = url.deletingLastPathComponent()
                     out["folderFiles"] = (try? FileManager.default.contentsOfDirectory(atPath: folder.path).count) ?? -1
                 }
-                do {
-                    out["localSize"] = Int(try await manager.localSize(ofAssetPackWithID: id, calculationMethod: .allocated))
-                } catch {
-                    out["localSizeError"] = String(describing: error)
+                if let dir = try? manager.url(for: FilePath(id)) {
+                    out["packUrl"] = dir.path
+                    let (files, bytes) = AnimationPacksPlugin.walk(dir)
+                    out["packFiles"] = files
+                    out["packBytes"] = bytes
                 }
-                if let pack = try? await manager.assetPack(withID: id) { out["downloadSize"] = pack.downloadSize }
+                if let pack = try? await manager.assetPack(withID: id) {
+                    out["downloadSize"] = pack.downloadSize
+                    out["version"] = pack.version
+                }
                 call.resolve(out)
             }
             return
@@ -199,6 +200,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
                     let pack = try await manager.assetPack(withID: id)
                     // ensureLocalAvailability(of:requireLatestVersion:) only from iOS 26.4.
                     try await manager.ensureLocalAvailability(of: pack)
+                    UserDefaults.standard.removeObject(forKey: AnimationPacksPlugin.bytesKey(id))
                     call.resolve()
                 } catch is CancellationError {
                     call.reject("cancelled", "cancelled")
@@ -220,6 +222,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
             Task {
                 do {
                     try await AssetPackManager.shared.remove(assetPackWithID: id)
+                    UserDefaults.standard.removeObject(forKey: AnimationPacksPlugin.bytesKey(id))
                     call.resolve()
                 } catch {
                     call.reject(error.localizedDescription, "failed")
@@ -244,22 +247,37 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         return false
     }
 
-    /// The pack's size on disk, from Background Assets, kept per pack and version (the count walks
-    /// every one of its thousands of files).
+    /// The pack's size on disk: its files counted once through the merged directory url(for:)
+    /// gives for the pack's own folder (all of a pack's files sit under its id), then kept until
+    /// the pack is downloaded again or removed.
     @available(iOS 26.0, *)
-    private static func localBytes(_ id: String) async -> Int64 {
+    private static func localBytes(_ id: String) async -> Int {
+        let key = bytesKey(id)
+        let kept = UserDefaults.standard.integer(forKey: key)
+        if kept > 0 { return kept }
         #if canImport(BackgroundAssets)
-        let manager = AssetPackManager.shared
-        let version = (try? await manager.localVersion(ofAssetPackWithID: id)) ?? -1
-        let key = "animPackBytes.\(id).\(version)"
-        let kept = UserDefaults.standard.object(forKey: key) as? Int64
-        if let kept = kept, kept > 0 { return kept }
-        let bytes = (try? await manager.localSize(ofAssetPackWithID: id, calculationMethod: .allocated)) ?? 0
+        guard let dir = try? AssetPackManager.shared.url(for: FilePath(id)) else { return 0 }
+        let bytes = walk(dir).1
         if bytes > 0 { UserDefaults.standard.set(bytes, forKey: key) }
         return bytes
         #else
         return 0
         #endif
+    }
+
+    static func bytesKey(_ id: String) -> String { "animPackBytes.\(id)" }
+
+    /// Files and bytes under a folder.
+    static func walk(_ dir: URL) -> (Int, Int) {
+        let keys: [URLResourceKey] = [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey]
+        guard let e = FileManager.default.enumerator(at: dir, includingPropertiesForKeys: keys) else { return (0, 0) }
+        var files = 0, bytes = 0
+        for case let f as URL in e {
+            guard let v = try? f.resourceValues(forKeys: Set(keys)), v.isRegularFile == true else { continue }
+            files += 1
+            bytes += v.totalFileAllocatedSize ?? v.fileAllocatedSize ?? 0
+        }
+        return (files, bytes)
     }
 
     @available(iOS 26.0, *)
