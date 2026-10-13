@@ -1472,6 +1472,9 @@ export const PT_BR_OVERRIDES = {
   'Your backups': 'Seus substitutos',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Aqui não há peso para acrescentar: sobe em repetições e depois em séries.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Em Cartões e Foco, Anterior e Próximo pulam os exercícios concluídos.',
+  'Skip completed exercises': 'Pular exercícios concluídos',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

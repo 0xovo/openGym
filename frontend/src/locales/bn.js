@@ -2412,4 +2412,7 @@ export default {
   'Your backups': 'আপনার বিকল্প',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'এখানে ওজন যোগ করার কিছু নেই: আগে রেপ বাড়বে, তারপর সেট।',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'কার্ড ও ফোকাসে আগের/পরের বোতাম শেষ হওয়া ব্যায়াম টপকে যায়।',
+  'Skip completed exercises': 'শেষ হওয়া ব্যায়াম বাদ দিন',
 }

@@ -2353,4 +2353,7 @@ export default {
   'Your backups': 'Deine Ausweichübungen',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Hier kommt kein Gewicht dazu: Es geht über Wiederholungen nach oben, dann über Sätze.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'In Karten und Fokus springen Zurück und Weiter über fertige Übungen.',
+  'Skip completed exercises': 'Erledigte Übungen überspringen',
 }

@@ -494,6 +494,13 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           <Switch aria-label={t('Collapse completed exercises')} checked={!!S.collapseCompleted}
             onChange={v => update(s => { s.collapseCompleted = v; if (s.active) delete s.active.collapseCompleted })} />
         </Row>
+        {/* Its counterpart for Cards and Focus (#523): Prev, Next and the swipe jump over an
+            exercise whose every set is done. */}
+        <Row icon="skipForward" iconTint="var(--teal)" title={t('Skip completed exercises')}
+          subtitle={t('In Cards and Focus, Prev and Next hop over a finished exercise.')}>
+          <Switch aria-label={t('Skip completed exercises')} checked={S.skipCompleted === true}
+            onChange={v => update(s => { if (v) s.skipCompleted = true; else delete s.skipCompleted })} />
+        </Row>
       </Section>
       <Section title={t('Before and during')}>
         {/* The quick weigh-in that opens on Start (sheets.jsx startFlow, issue #137); off skips

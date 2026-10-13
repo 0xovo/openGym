@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor } from './supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex } from './supersetFlow.js'
 
 const entry = done => ({ sets: done.map(value => ({ done: value })) })
 
@@ -213,3 +213,27 @@ describe('restSecFor with a pyramid set’s own rest', () => {
     expect(restSecFor(entries, [0, 1], 120, { idx: 1, sec: 200 })).toBe(200)
   })
 })
+
+describe('stepUnitIndex (#523 skip completed exercises)', () => {
+  const ex = (...done) => ({ sets: done.map(d => ({ done: d })) })
+  const entries = [ex(true), ex(true, true), ex(false), ex(true), ex(false, true)]
+  const units = [[0], [1], [2], [3], [4]]
+  it('without the setting, the neighbour, -1 past either end', () => {
+    expect(stepUnitIndex(entries, units, 0, 1)).toBe(1)
+    expect(stepUnitIndex(entries, units, 0, -1)).toBe(-1)
+    expect(stepUnitIndex(entries, units, 4, 1)).toBe(-1)
+  })
+  it('with it, over finished exercises both ways', () => {
+    expect(stepUnitIndex(entries, units, 0, 1, true)).toBe(2)
+    expect(stepUnitIndex(entries, units, 2, 1, true)).toBe(4)
+    expect(stepUnitIndex(entries, units, 4, -1, true)).toBe(2)
+  })
+  it('everything that way finished: the neighbour after all', () => {
+    expect(stepUnitIndex(entries, units, 2, -1, true)).toBe(1)
+  })
+  it('a superset counts as finished only when every member is', () => {
+    const e2 = [ex(true), ex(true), ex(false), ex(false)]
+    expect(stepUnitIndex(e2, [[0], [1, 2], [3]], 0, 1, true)).toBe(1)
+  })
+})
+

@@ -2333,4 +2333,7 @@ export default {
   'Your backups': '你的备选动作',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': '这里不用加重量：先加次数，再加组数。',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': '在卡片和专注布局中，上一个/下一个会跳过已完成的动作。',
+  'Skip completed exercises': '跳过已完成的动作',
 }

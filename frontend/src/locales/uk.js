@@ -2330,4 +2330,7 @@ export default {
   'Your backups': 'Ваші заміни',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Тут нічого додавати у вазі: ростуть повторення, потім підходи.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'У Картках і Фокусі «Назад» і «Далі» перестрибують готові вправи.',
+  'Skip completed exercises': 'Пропускати виконані вправи',
 }

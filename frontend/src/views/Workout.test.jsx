@@ -2880,6 +2880,18 @@ describe('workout controls: the more menu and the set menu', () => {
     expect(mocks.exerciseHistorySheet).toHaveBeenCalledWith('plain-row')
   })
 
+  // #523: "Skip completed exercises" makes Next hop over a finished exercise in Cards.
+  it('with skip completed on, Next hops over a finished exercise; off, it steps to it', async () => {
+    const three = () => [exercise('plain-bench', [false]), exercise('plain-row', [true, true]), exercise('plain-curl', [false])]
+    await mount(three(), 0, { skipCompleted: true })
+    await pressNext()
+    expect(mocks.S.active.cur).toBe(2)
+    await unmount()
+    await mount(three(), 0)
+    await pressNext()
+    expect(mocks.S.active.cur).toBe(1)
+  })
+
   it('opens a per-set menu from the set number with drop, burst and remove', async () => {
     await mount([exercise('plain-bench', [false, false])])
     await act(async () => { container.querySelector('button[aria-label="Set 2"]').dispatchEvent(new dom.Event('click', { bubbles: true })) })

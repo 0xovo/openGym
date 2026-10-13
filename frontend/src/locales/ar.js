@@ -2388,4 +2388,7 @@ export default {
   'Your backups': 'بدائلك',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'لا وزن يُضاف هنا: يزيد التمرين بالتكرارات ثم بالمجموعات.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'في البطاقات والتركيز، يتخطى «السابق» و«التالي» التمرين المنتهي.',
+  'Skip completed exercises': 'تخطّي التمارين المكتملة',
 }

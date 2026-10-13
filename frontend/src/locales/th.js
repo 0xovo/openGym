@@ -2344,4 +2344,7 @@ export default {
   'Your backups': 'ท่าสำรองของคุณ',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'ท่านี้ไม่ต้องเพิ่มน้ำหนัก: เพิ่มจำนวนครั้งก่อน แล้วค่อยเพิ่มเซ็ต',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'ในโหมดการ์ดและโฟกัส ปุ่มก่อนหน้า/ถัดไปจะข้ามท่าที่ทำเสร็จแล้ว',
+  'Skip completed exercises': 'ข้ามท่าที่ทำเสร็จแล้ว',
 }

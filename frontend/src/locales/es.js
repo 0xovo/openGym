@@ -2333,4 +2333,7 @@ export default {
   'Your backups': 'Tus sustitutos',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Aquí no hay peso que sumar: sube en repeticiones y luego en series.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'En Tarjetas y Enfoque, Anterior y Siguiente saltan los ejercicios terminados.',
+  'Skip completed exercises': 'Saltar ejercicios completados',
 }

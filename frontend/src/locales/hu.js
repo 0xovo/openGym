@@ -2336,4 +2336,7 @@ export default {
   'Your backups': 'A helyettesítőid',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Itt nincs mit súlyban hozzáadni: előbb az ismétlések nőnek, aztán a sorozatok.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Kártyák és Fókusz nézetben az Előző és a Következő átugorja a kész gyakorlatot.',
+  'Skip completed exercises': 'Kész gyakorlatok átugrása',
 }

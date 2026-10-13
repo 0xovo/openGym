@@ -2333,4 +2333,7 @@ export default {
   'Your backups': 'Yedeklerin',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Burada eklenecek ağırlık yok: önce tekrar, sonra set artar.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Kartlar ve Odak düzeninde Geri ve İleri, bitmiş egzersizlerin üstünden atlar.',
+  'Skip completed exercises': 'Tamamlanan egzersizleri atla',
 }

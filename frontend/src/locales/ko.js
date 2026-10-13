@@ -2333,4 +2333,7 @@ export default {
   'Your backups': '내 대체 운동',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': '여기엔 더할 무게가 없어요. 반복 수를 늘리고, 그다음 세트를 늘려요.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': '카드와 포커스에서 이전/다음이 끝난 운동을 건너뛰어요.',
+  'Skip completed exercises': '끝난 운동 건너뛰기',
 }

@@ -5,6 +5,20 @@ import { isWarmupRow } from './workout-model.js'
 
 const hasWork = (entries, idx) => !!entries[idx]?.sets?.some(set => !set.done)
 
+/**
+ * The unit Prev (`dir` -1) or Next (+1) lands on from unit `from` in Cards and Focus, or -1 at
+ * either end. With "Skip completed exercises" (#523, `skipDone`) it jumps over units whose every
+ * set is done; when everything that way is done it takes the next one after all, so the buttons
+ * and the swipe still step through a finished session.
+ */
+export function stepUnitIndex(entries, units, from, dir, skipDone = false) {
+  const n = from + dir
+  if (!Array.isArray(units) || n < 0 || n >= units.length) return -1
+  if (!skipDone) return n
+  for (let i = n; i >= 0 && i < units.length; i += dir) if ((units[i] || []).some(idx => hasWork(entries, idx))) return i
+  return n
+}
+
 // Return the first unfinished navigation unit after the current one, wrapping once so a user
 // who completed units out of order is never offered workout completion while earlier work remains.
 export function nextUnfinishedUnit(entries, units, fromIdx) {
