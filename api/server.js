@@ -2247,6 +2247,29 @@ const routes = {
     json(res, 200, { rev: doc?._rev || 0, ...(doc?._wid ? { wid: doc._wid } : {}) });
   },
 
+  // The phone app's background check before a missed-day nudge or a workout-day reminder it
+  // scheduled on itself (frontend lib/nudge-check.js, the native NudgeCheck plugin): whether the
+  // day was trained or excused somewhere else since the phone last synced. A few bytes instead of
+  // the whole document, which can be megabytes, because iOS gives a background refresh some
+  // seconds and the phone pays for every byte of it: `done` (a workout dated that day, or a day
+  // note), `nudge` (whether the server's copy of the nudge rule, api/nudge.js, would still nudge
+  // that day; a plan changed on another device moves it too) and the revision. Nothing of the
+  // workouts themselves.
+  'GET /api/nudge-check': async (req, res) => {
+    const user = readSession(req);
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    const date = new URL(req.url, 'http://x').searchParams.get('date') || '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date + 'T00:00:00Z'))) {
+      return json(res, 400, { error: 'date must be YYYY-MM-DD', code: 'date-invalid' });
+    }
+    const doc = readStateCached(user.id) || {};
+    const workouts = Array.isArray(doc.workouts) ? doc.workouts : [];
+    const done = workouts.some(w => w && w.d === date) || excusedOn(doc, date);
+    let nudge = false;
+    try { nudge = !done && !!nudgeFor(doc, date); } catch { nudge = true; }   // unreadable: keep what the phone planned
+    json(res, 200, { date, done, nudge, rev: doc._rev || 0 });
+  },
+
   'PUT /api/data': async (req, res) => {
     const user = readSession(req);
     if (!user) return json(res, 401, { error: 'not signed in' });

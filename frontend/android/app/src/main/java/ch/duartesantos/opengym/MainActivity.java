@@ -29,6 +29,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(BarIconsPlugin.class);
         registerPlugin(DeviceAuthPlugin.class);
         registerPlugin(AnimationPacksPlugin.class);
+        registerPlugin(NudgeCheckPlugin.class);
         super.onCreate(savedInstanceState);
         passSystemBarsToPage();
     }

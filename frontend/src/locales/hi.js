@@ -1809,6 +1809,7 @@ export default {
   'Guilt trip': 'भावुक ताना',
   'Drill sergeant': 'ड्रिल सार्जेंट',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'प्लान किए गए दिन, जब कुछ दर्ज न हो, शाम 20:00 से 21:30 के बीच एक संदेश। लगातार 3 दिन छूटने के बाद यह आपके अगले वर्कआउट तक चुप रहता है।',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'किसी दूसरे डिवाइस पर वर्कआउट दर्ज किया? संदेश भेजने से पहले फ़ोन आपके सर्वर से जाँच करता है, जब भी वह ऐप को बैकग्राउंड में चलने देता है। ऐप खोलते ही सब हमेशा अपडेट हो जाता है।',
   'Everything okay?': 'सब ठीक है?',
   '{0} is still waiting. What’s up?': '{0} अब भी इंतज़ार कर रहा है। क्या हुआ?',
   'No {0} today? Even a short session tomorrow counts.': 'आज {0} नहीं हुआ? कल एक छोटा सेशन भी गिना जाएगा।',

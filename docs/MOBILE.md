@@ -405,7 +405,19 @@ membership, the distribution certificate and profile as protected file variables
   alarms (Android 14 no longer grants it at install). The opt-in missed-workout nudge is
   scheduled the same way, beside the reminder: one notification on the evening (20:00–21:30) of
   each upcoming planned day, at most 3 past the last workout, rescheduled whenever a workout is
-  logged. The rest countdown does not depend on
+  logged. A workout logged on another device (the web, a second phone) reaches these only when
+  the app syncs, so a paired phone also runs a **background check** before them
+  (`lib/nudge-check.js`, the native `NudgeCheck` plugin): it asks the server
+  `GET /api/nudge-check?date=…` (a few bytes: was the day trained or excused, would the server
+  still nudge it) and takes back that day's reminder and nudge when the answer says so. Offline,
+  an error or no answer leaves everything as it was, and the app resyncs in full whenever it is
+  opened. On Android a `JobScheduler` job runs in the half hour before the notification, with a
+  network if there is one. On iOS it is a `BGAppRefreshTask` asked for an hour before, and
+  **iOS decides when it actually runs**: it learns from how often the app is opened, holds back
+  in Low Power Mode, and never runs it after the app was swiped away from the app switcher or
+  with Background App Refresh off, so there the check is a good chance, not a promise. The
+  pairing token it needs is kept in the Keychain (iOS) or encrypted with a Keystore key (Android).
+  The rest countdown does not depend on
   it: a foreground service (`specialUse`) keeps the countdown in the notification and holds a
   wake lock until the end, so the end of a rest sounds on time with the screen locked; the
   rest-over alarm is only its fallback.

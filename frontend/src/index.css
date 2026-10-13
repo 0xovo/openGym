@@ -1731,12 +1731,12 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 /* With an action (Undo): the message, then the button at the end, and the toast takes taps. */
-#toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:4px 6px 4px 18px;text-align:start}
+#toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:4px 6px 4px 6px;text-align:start}
 #toast.has-action .toast-msg{flex:1;min-width:0;padding:7px 0}
 #toast .toast-act{flex:none;display:inline-flex;align-items:center;gap:5px;color:var(--acc);font-weight:700;padding:8px 12px;border-radius:14px;min-height:36px}
 #toast .toast-act:active{background:color-mix(in srgb,var(--label) 10%,transparent)}
 #toast .toast-act .icn{font-size:16px}
-#toast .toast-x{flex:none;display:grid;place-items:center;width:36px;height:36px;margin-left:-4px;border-radius:50%;color:var(--label-2)}
+#toast .toast-x{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--label-2)}
 #toast .toast-x:active{background:color-mix(in srgb,var(--label) 10%,transparent)}
 #toast .toast-x .icn{font-size:15px}
 body.no-tabbar #toast{bottom:calc(24px + var(--sab))}
@@ -2145,3 +2145,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 [dir="rtl"] *{letter-spacing:0}
 .exfix-link{display:inline-flex;align-items:center;gap:5px;margin:14px 0 4px;color:var(--label-3);text-decoration:none}
 .list .similar-label{margin:16px 2px 6px;grid-column:1/-1}
+
+/* The edge swipe back (lib/edge-swipe-back.js): the page follows the finger over a dimmed
+   backdrop that stands in for the page underneath. */
+.edge-back-shade{position:fixed;inset:0;background:#000;opacity:.35;pointer-events:none;z-index:0}
+#app.edge-back-page{position:relative;z-index:1;background:var(--bg);box-shadow:0 0 28px rgba(0,0,0,.28);will-change:transform}

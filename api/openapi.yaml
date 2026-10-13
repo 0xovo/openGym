@@ -1640,6 +1640,45 @@ paths:
                   wid: { type: string, description: 'The write id (`_wid`) of the stored document; absent before its first write.' }
         '401': { $ref: '#/components/responses/Unauthorized' }
 
+  /api/nudge-check:
+    get:
+      tags: [data]
+      operationId: nudgeCheck
+      summary: Whether a day was trained or excused (the phone's background check)
+      description: |
+        Asked by the phone app in the background before a missed-day nudge or a workout-day
+        reminder it scheduled on itself fires, so a day trained on another device is not
+        nudged. A few bytes instead of the whole document: `done` is true when a workout is
+        dated that day or the day carries a note; `nudge` is whether the server's copy of the
+        nudge rule would still nudge that day (false once it is done, or when the plan has no
+        session for it); `rev` is the profile's revision. Nothing of the workouts themselves.
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema: { type: string, format: date }
+          description: The day, YYYY-MM-DD, in the phone's own calendar.
+      responses:
+        '200':
+          description: How that day stands.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date: { type: string, format: date }
+                  done: { type: boolean }
+                  nudge: { type: boolean }
+                  rev: { type: integer }
+              example: { date: "2026-09-14", done: true, nudge: false, rev: 7 }
+        '400':
+          description: '`date-invalid`: not a YYYY-MM-DD date.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: "date must be YYYY-MM-DD", code: "date-invalid" }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
   /api/media/{hash}:
     parameters:
       - name: hash

@@ -1850,6 +1850,7 @@ export default {
   'Guilt trip': 'অপরাধবোধ জাগানো',
   'Drill sergeant': 'ড্রিল সার্জেন্ট',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'পরিকল্পিত দিনে কিছু লগ না হলে সন্ধ্যায় 20:00 থেকে 21:30-এর মধ্যে একবার মনে করানো হয়। টানা 3 দিন বাদ গেলে আপনার পরের ওয়ার্কআউট পর্যন্ত চুপ থাকে।',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'অন্য ডিভাইসে ওয়ার্কআউট লিখেছেন? মনে করানোর আগে ফোন আপনার সার্ভারে যাচাই করে, যখনই সে অ্যাপকে ব্যাকগ্রাউন্ডে চলতে দেয়। অ্যাপ খুললে সবসময় সব আপডেট হয়ে যায়।',
   'Everything okay?': 'সব ঠিক আছে তো?',
   '{0} is still waiting. What’s up?': '{0} এখনও অপেক্ষা করছে। কী হলো?',
   'No {0} today? Even a short session tomorrow counts.': 'আজ {0} হলো না? কাল ছোট একটা সেশনও কাজে দেবে।',

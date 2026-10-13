@@ -195,12 +195,15 @@ export async function syncReminder(S, interactive = false) {
       ...Array.from({ length: NUDGE_WINDOW_DAYS }, (_, d) => ({ id: NUDGE_ID_BASE + d })),
     ] }).catch(() => {})
     const r = S.reminder
-    if (!r?.on) return true
+    // The background check (lib/nudge-check.js) follows what is scheduled: nothing, nothing to check.
+    const check = notifications => import('./nudge-check.js').then(m => m.armNudgeCheck(S, notifications)).catch(() => {})
+    if (!r?.on) { await check([]); return true }
     let perm = await LocalNotifications.checkPermissions()
     if (perm.display !== 'granted' && interactive) perm = await LocalNotifications.requestPermissions()
-    if (perm.display !== 'granted') return false
+    if (perm.display !== 'granted') { await check([]); return false }
     const notifications = [...buildReminderNotifications(S), ...buildNudgeNotifications(S)]
     if (notifications.length) await LocalNotifications.schedule({ notifications })
+    await check(notifications)
     return true
   } catch (e) { return false }
 }

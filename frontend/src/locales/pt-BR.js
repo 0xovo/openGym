@@ -1462,6 +1462,8 @@ export const PT_BR_OVERRIDES = {
   'Sharper animations aren’t available on this device yet. The built-in ones work everywhere.': 'As animações mais nítidas ainda não estão disponíveis neste dispositivo. As incluídas funcionam em qualquer lugar.',
   'Sharper animations download once per figure. Until they’re here you see the built-in ones, so nothing ever goes blank.': 'As animações mais nítidas são baixadas uma vez por figura. Até lá você vê as incluídas, então nada fica em branco.',
   'Waiting for Wi-Fi': 'Esperando o Wi-Fi',
+  // --- background check before the nudge ---
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Registrou um treino em outro dispositivo? Antes do aviso, o celular confirma com o seu servidor, sempre que deixar o aplicativo rodar em segundo plano. Abrir o aplicativo sempre deixa tudo em dia.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
