@@ -58,7 +58,15 @@
     ]
   },
   "1006": {
-    "name": "Rudern für hintere Schulter mit Band"
+    "name": "Rudern für hintere Schulter mit Band",
+    "description": "Bei dieser Ruderübung ziehst du das Band mit weit ausgestellten Ellbogen zu dir. Das stärkt deine hinteren Schultern und den oberen Rücken.",
+    "instructions": [
+        "Befestige das Band auf Brusthöhe und halte die Enden mit ausgestreckten Armen fest.",
+        "Geh ein paar Schritte zurück, bis das Band unter Spannung steht.",
+        "Zieh deine Hände zur Brust und halte die Ellbogen dabei hoch und weit außen.",
+        "Zieh die Schulterblätter bewusst zusammen.",
+        "Führ die Arme langsam wieder nach vorn, ohne die Schultern einrollen zu lassen."
+    ]
   },
   "1007": {
     "name": "Stehender gedrehter Crunch mit Band"
