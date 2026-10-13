@@ -110,8 +110,8 @@ export function buildSnapshot(S, { timer = null, ready = null } = {}) {
 
 /**
  * The running workout's animations for the watch, from what this phone itself shows for each
- * exercise: the smallest downloaded animation pack of the figure (240 px, `file`: a path in that
- * pack's folder) when there is one, else the app's built-in clip (`path` inside the app package:
+ * exercise: the smallest downloaded animation pack of the figure (240 px, `packId` + `drawing`, read
+ * through Background Assets on the phone) when there is one, else the app's built-in clip (`path` inside the app package:
  * the 180 px animated WebP of the store build, an MP4 loop in other builds). The native side makes
  * each into a small GIF and sends it as a file; the watch deletes them when the workout ends.
  * Nothing is ever fetched from anywhere.
@@ -121,15 +121,16 @@ export function clipsFor (S, packs = animPacks().packs || {}) {
   const A = S && S.active
   if (!A || !Array.isArray(A.entries)) return []
   const figure = figureOf(S)
-  const pack = packs[packId(WATCH_PACK_PX, figure)]
-  const packDir = pack && pack.state === 'ready' && typeof pack.dir === 'string' && pack.dir ? pack.dir.replace(/\/$/, '') : null
+  const pid = packId(WATCH_PACK_PX, figure)
+  const pack = packs[pid] && packs[pid].state === 'ready' ? pid : null
   const out = [], seen = new Set()
   for (const e of A.entries) {
     const ex = e && EXIDX[e.id]
     if (!ex || seen.has(e.id) || !ex.gif) continue
     seen.add(e.id)
     const drawing = packDrawingId(ex, figure)
-    if (packDir && drawing && /^[A-Za-z0-9_-]+$/.test(drawing)) { out.push({ exId: e.id, file: `${packDir}/${drawing}.webp` }); continue }
+    // a pack's files are read through Background Assets on the phone, never by a path
+    if (pack && drawing && /^[A-Za-z0-9_-]+$/.test(drawing)) { out.push({ exId: e.id, packId: pack, drawing }); continue }
     const path = gifSrc(ex, figure)
     if (!/\.(webp|mp4|gif)$/i.test(path) || /^[a-z]+:|^\//i.test(path) || path.includes('..')) continue
     out.push({ exId: e.id, path })

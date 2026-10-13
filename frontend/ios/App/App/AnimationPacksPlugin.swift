@@ -41,6 +41,18 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "diagnose", returnType: CAPPluginReturnPromise),
     ]
 
+    /// One file of a downloaded pack, its bytes memory-mapped (the Apple Watch's clips,
+    /// WatchBridgePlugin), or nil: not downloaded, no such drawing, or before iOS 26.
+    static func packData(_ id: String, _ drawing: String) -> Data? {
+        guard matches(packPattern, id), drawing.range(of: "^[A-Za-z0-9_-]+$", options: .regularExpression) != nil else { return nil }
+        #if canImport(BackgroundAssets)
+        if #available(iOS 26.0, *) {
+            return try? AssetPackManager.shared.contents(at: FilePath("\(id)/\(drawing).webp"), searchingInAssetPackWithID: id, options: .mappedIfSafe)
+        }
+        #endif
+        return nil
+    }
+
     /// Only the ids the app knows: a pack id from the page goes nowhere else.
     static let packPattern = try! NSRegularExpression(pattern: "^anim-(240|360|480|720|1080)-(male|female)$")
     private static let probePattern = try! NSRegularExpression(pattern: "^[0-9]{4,5}$")

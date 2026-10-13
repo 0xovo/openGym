@@ -38,6 +38,16 @@ enum ClipCodec {
     /// Frames and delays of an animated (or still) image file, each scaled to `maxPixels` at most.
     static func decode(_ url: URL, maxPixels: Int? = nil) -> Frames? {
         guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
+        return decode(src, maxPixels: maxPixels)
+    }
+
+    /// The same from bytes in memory (a file of a downloaded animation pack, read by the phone).
+    static func decode(data: Data, maxPixels: Int? = nil) -> Frames? {
+        guard let src = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
+        return decode(src, maxPixels: maxPixels)
+    }
+
+    private static func decode(_ src: CGImageSource, maxPixels: Int?) -> Frames? {
         let count = CGImageSourceGetCount(src)
         guard count > 0 else { return nil }
         var images: [CGImage] = []
@@ -68,7 +78,15 @@ enum ClipCodec {
 
     /// The phone's conversion: an animated WebP or GIF into a small looping GIF.
     static func makeGif(from source: URL, to out: URL, maxPixels: Int = 160) -> Bool {
-        guard let frames = decode(source, maxPixels: maxPixels) else { return false }
+        write(decode(source, maxPixels: maxPixels), to: out)
+    }
+
+    static func makeGif(data: Data, to out: URL, maxPixels: Int = 160) -> Bool {
+        write(decode(data: data, maxPixels: maxPixels), to: out)
+    }
+
+    private static func write(_ frames: Frames?, to out: URL) -> Bool {
+        guard let frames = frames else { return false }
         if writeGif(frames, to: out) { return true }
         try? FileManager.default.removeItem(at: out)
         return false

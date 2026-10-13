@@ -28,6 +28,14 @@ final class ClipCodecTests: XCTestCase {
         XCTAssertEqual(back.duration, source.duration, accuracy: 0.1)
     }
 
+    func testFromBytesInMemoryAsAPackFileIsRead() throws {
+        let data = try Data(contentsOf: try fixture())
+        let out = FileManager.default.temporaryDirectory.appendingPathComponent("clip-\(UUID().uuidString).gif")
+        defer { try? FileManager.default.removeItem(at: out) }
+        XCTAssertTrue(ClipCodec.makeGif(data: data, to: out))
+        XCTAssertGreaterThan(try XCTUnwrap(ClipCodec.decode(out)).images.count, 5)
+    }
+
     func testSomethingThatIsNotAnImageGivesNothing() throws {
         let junk = FileManager.default.temporaryDirectory.appendingPathComponent("junk-\(UUID().uuidString).webp")
         try Data("not an image".utf8).write(to: junk)

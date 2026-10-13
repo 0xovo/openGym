@@ -130,9 +130,7 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
             if self.clipsSent.count > 4 { self.clipsSent = self.clipsSent.filter { $0.key == wid } }
             for clip in clips {
                 guard let exId = clip["exId"] as? String, !sent.contains(exId),
-                      let source = WatchBridgePlugin.clipSource(clip),
-                      FileManager.default.isReadableFile(atPath: source.path),
-                      let gif = WatchBridgePlugin.gif(for: source, named: exId) else { continue }
+                      let gif = WatchBridgePlugin.gifFor(clip, named: exId) else { continue }
                 s.transferFile(gif, metadata: ["exId": exId, "wid": wid])
                 sent.insert(exId)
             }
@@ -140,17 +138,23 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         }
     }
 
-    /// The clip's file: a pack file (an absolute .webp path the AnimationPacks plugin gave the page)
-    /// or a file in the app package (public/<path>). Anything else is refused.
-    static func clipSource(_ clip: [String: Any]) -> URL? {
-        let ok = { (p: String) in !p.contains("..") && ["webp", "gif", "mp4"].contains((p as NSString).pathExtension.lowercased()) }
-        if let file = clip["file"] as? String, file.hasPrefix("/"), ok(file), file.lowercased().hasSuffix(".webp") {
-            return URL(fileURLWithPath: file)
+    /// The clip as a small GIF: a file of a downloaded animation pack (`packId` + `drawing`, read
+    /// through Background Assets, never by path) or a file in the app package (`path` under
+    /// public/). Anything else is refused.
+    static func gifFor(_ clip: [String: Any], named exId: String) -> URL? {
+        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("watch-clips")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        if let pack = clip["packId"] as? String, let drawing = clip["drawing"] as? String {
+            let out = dir.appendingPathComponent("\(pack)-\(drawing).gif")
+            if FileManager.default.fileExists(atPath: out.path) { return out }
+            guard let data = AnimationPacksPlugin.packData(pack, drawing) else { return nil }
+            return ClipCodec.makeGif(data: data, to: out, maxPixels: 160) ? out : nil
         }
-        if let path = clip["path"] as? String, !path.hasPrefix("/"), ok(path) {
-            return Bundle.main.bundleURL.appendingPathComponent("public").appendingPathComponent(path)
-        }
-        return nil
+        guard let path = clip["path"] as? String, !path.hasPrefix("/"), !path.contains(".."),
+              ["webp", "gif", "mp4"].contains((path as NSString).pathExtension.lowercased()) else { return nil }
+        let source = Bundle.main.bundleURL.appendingPathComponent("public").appendingPathComponent(path)
+        guard FileManager.default.isReadableFile(atPath: source.path) else { return nil }
+        return gif(for: source, named: exId)
     }
 
     /// A small looping GIF of a clip (160 px), cached by exercise: an animated WebP or GIF frame by
