@@ -68,7 +68,8 @@ public class MainActivity extends BridgeActivity {
             barTopPx = bars.top;
             barBottomPx = bars.bottom;
             float density = v.getResources().getDisplayMetrics().density;
-            float kb = coveredByKeyboard(v, insets.getInsets(WindowInsetsCompat.Type.ime()).bottom) / density;
+            // The keyboard still only from Android 15 on: older versions resize the window themselves.
+            float kb = Build.VERSION.SDK_INT < 35 ? 0 : coveredByKeyboard(v, insets.getInsets(WindowInsetsCompat.Type.ime()).bottom) / density;
             boolean kbChanged = kb != keyboard;
             keyboard = kb;
             applyBars(web);
