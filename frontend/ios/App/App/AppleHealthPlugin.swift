@@ -50,7 +50,7 @@ public class AppleHealthPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve(["status": "available", "granted": granted])
     }
 
-    @objc func requestPermissions(_ call: CAPPluginCall) {
+    @objc override public func requestPermissions(_ call: CAPPluginCall) {
         guard HKHealthStore.isHealthDataAvailable() else { call.resolve(["granted": false]); return }
         store.requestAuthorization(toShare: shareTypes, read: readTypes) { _, _ in
             call.resolve(["granted": self.granted])

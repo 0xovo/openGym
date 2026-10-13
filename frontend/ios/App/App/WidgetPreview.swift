@@ -15,7 +15,10 @@ enum WidgetPreview {
     static func runIfAsked() {
         guard ProcessInfo.processInfo.arguments.contains(argument) else { return }
         if #available(iOS 17.0, *) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { render() }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                render()
+            }
         }
     }
 
