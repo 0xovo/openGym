@@ -78,14 +78,17 @@ final class OpenGymUITests: XCTestCase {
         tap(app.buttons["Choose a different workout"], "Choose a different workout")
         tap(app.staticTexts["Full Body A"], "Full Body A")
         shot("2-workout")
-        tap(app.switches["Set 1 done"], "Set 1 done")
+        let tick = app.switches["Set 1 done"]
+        tap(tick, "Set 1 done")
         // The first rest asks for notifications; on a slow simulator the question can take a while.
         let countdown = button(startingWith: "1:")
         let allow = springboard.alerts.buttons["Allow"]
         var counting = false
-        for _ in 0..<40 {
+        for i in 0..<40 {
             if allow.exists { allow.tap() }
             if countdown.exists { counting = true; break }
+            // A tap that did not tick (something moved under it): once more, never on a ticked set.
+            if i == 4, (tick.value as? String) == "0" { tick.tap() }
             sleep(1)
         }
         if allow.waitForExistence(timeout: 2) { allow.tap() }
@@ -145,7 +148,22 @@ final class OpenGymUITests: XCTestCase {
         }
         tap(finish, "Finish")
         tap(button(startingWith: "Finish and save"), "Finish and save")
-        tap(app.buttons["Nice!"], "Nice! (the summary)", timeout: 20)
+        // The summary is a centred card taller than the screen: its button is at the foot of the
+        // card's own scroll, below what shows (CI 10-13: the tap landed under the card).
+        let nice = app.buttons["Nice!"]
+        XCTAssertTrue(nice.waitForExistence(timeout: 20), "Nice! (the summary) did not show up")
+        let window = app.windows.firstMatch
+        let bottom = window.frame.maxY - 80
+        for _ in 0..<6 where nice.frame.maxY > bottom {
+            // A drag in the middle of the card, upwards: scrolls the card, never dismisses it.
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)))
+            sleep(1)
+        }
+        shot("6-summary")
+        nice.tap()
+        for _ in 0..<5 where nice.exists { sleep(1) }
+        if nice.exists { nice.tap() }
         shot("6-finished")
 
         tap(button(startingWith: "Settings"), "Settings")

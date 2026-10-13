@@ -1019,11 +1019,22 @@ function ActiveWorkout() {
   // The one-time swipe hint (v1.3.11): the first time the screen shows an unticked set with swiping
   // on, that row nudges toward delete and toward copy, with a chip under it saying so. Seen once
   // per person (S.hints, synced), not per device. In Cards only the exercise on screen qualifies.
+  // It waits for a quiet moment: the nudge moves the row, and a tick tapped while it moves lands
+  // where the circle was a moment ago, so the tap is lost (iOS UI test, CI 10-13: the first set
+  // ticked a second after the workout opened never ticked). HINT_QUIET_MS without a touch first.
   const hintSeen = !!(S.hints && S.hints.swipeSets)
   const hintTm = useRef(null)
   useEffect(() => {
     if (!wc.swipeSets || hintSeen || !A.entries.length) return
-    const tm = setTimeout(() => {
+    const startedAt = Date.now()
+    let tm = null
+    const quietIn = () => Math.max(HINT_DELAY_MS - (Date.now() - startedAt), lastTouchAt + HINT_QUIET_MS - Date.now())
+    const later = () => {
+      const wait = quietIn()
+      if (wait > 0) { tm = setTimeout(later, wait); return }
+      show()
+    }
+    const show = () => {
       const A2 = useStore.getState().S.active
       if (!A2 || useStore.getState().S.hints?.swipeSets) return
       const c = Math.min(Math.max(A2.cur || 0, 0), A2.entries.length - 1)
@@ -1040,7 +1051,8 @@ function ActiveWorkout() {
       setUI({ swipeHint: { ...at, id } })
       clearTimeout(hintTm.current)
       hintTm.current = setTimeout(() => { if (useUI.getState().swipeHint?.id === id) setUI({ swipeHint: null }) }, 6000)
-    }, 600)
+    }
+    later()
     return () => clearTimeout(tm)
   }, [wc.swipeSets, hintSeen, A.entries.length, cur, listMode])
   useEffect(() => () => { clearTimeout(hintTm.current); setUI({ swipeHint: null, setFlash: null }) }, [])
@@ -2082,6 +2094,14 @@ function ActiveWorkout() {
     <div className="workout-end-spacer" />
   </WorkoutScrollAnchor>
 }
+
+// The swipe hint's quiet moment (see the hint in the screen below): the last touch anywhere.
+export const HINT_DELAY_MS = 600
+export const HINT_QUIET_MS = 2500
+let lastTouchAt = 0
+if (typeof document !== 'undefined') document.addEventListener('pointerdown', () => { lastTouchAt = Date.now() }, true)
+// Test seam: a fresh launch, nobody has touched anything yet.
+export function _resetHintQuiet() { lastTouchAt = 0 }
 
 export default function Workout() {
   const active = useStore(s => s.S.active)
