@@ -51,12 +51,19 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         return (id, probe)
     }
 
-    /// Apple-hosted packs: iOS 26 and an app that declares them.
-    private var supported: Bool {
-        guard Bundle.main.object(forInfoDictionaryKey: "BAUsesAppleHosting") as? Bool == true else { return false }
-        if #available(iOS 26.0, *) { return true }
-        return false
-    }
+    /// Apple-hosted packs: iOS 26, an app that declares them, its App Group and the downloader
+    /// extension. Background Assets stops the app outright (a "programmer error") when the group
+    /// or the extension is missing, as in an unsigned simulator build, so without them the packs
+    /// are simply not offered and nothing touches AssetPackManager.
+    private static let supported: Bool = {
+        guard #available(iOS 26.0, *) else { return false }
+        let info = Bundle.main.infoDictionary ?? [:]
+        guard info["BAUsesAppleHosting"] as? Bool == true, let group = info["BAAppGroupID"] as? String else { return false }
+        guard FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group) != nil else { return false }
+        let ext = Bundle.main.bundleURL.appendingPathComponent("Extensions/AnimationPacksDownloader.appex")
+        return FileManager.default.fileExists(atPath: ext.path)
+    }()
+    private var supported: Bool { AnimationPacksPlugin.supported }
 
     @objc func available(_ call: CAPPluginCall) {
         call.resolve(["available": supported])
