@@ -2415,4 +2415,6 @@ export default {
   // --- #523 skip completed ---
   'In Cards and Focus, Prev and Next hop over a finished exercise.': 'কার্ড ও ফোকাসে আগের/পরের বোতাম শেষ হওয়া ব্যায়াম টপকে যায়।',
   'Skip completed exercises': 'শেষ হওয়া ব্যায়াম বাদ দিন',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'এই অ্যাপ পাসকি দিয়ে নিশ্চিত করতে পারে না। এই প্রোফাইলে সাইন ইন করা ব্রাউজারে কোডটি বানান, অথবা আগে সেখানে একটি পাসওয়ার্ড যোগ করুন।',
 }

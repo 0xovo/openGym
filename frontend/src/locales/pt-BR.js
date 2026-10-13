@@ -1475,6 +1475,8 @@ export const PT_BR_OVERRIDES = {
   // --- #523 skip completed ---
   'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Em Cartões e Foco, Anterior e Próximo pulam os exercícios concluídos.',
   'Skip completed exercises': 'Pular exercícios concluídos',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Este aplicativo não consegue confirmar com uma chave de acesso. Crie o código em um navegador conectado a este perfil, ou adicione uma senha lá primeiro.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

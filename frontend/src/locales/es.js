@@ -2336,4 +2336,6 @@ export default {
   // --- #523 skip completed ---
   'In Cards and Focus, Prev and Next hop over a finished exercise.': 'En Tarjetas y Enfoque, Anterior y Siguiente saltan los ejercicios terminados.',
   'Skip completed exercises': 'Saltar ejercicios completados',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Esta app no puede confirmar con una passkey. Crea el código en un navegador con este perfil abierto, o añade allí una contraseña primero.',
 }

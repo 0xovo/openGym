@@ -2340,4 +2340,6 @@ export default {
   // --- #523 skip completed ---
   'In Cards and Focus, Prev and Next hop over a finished exercise.': 'В Карточках и Фокусе «Назад» и «Далее» перескакивают готовые упражнения.',
   'Skip completed exercises': 'Пропускать выполненные упражнения',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Это приложение не может подтвердить ключом доступа. Создайте код в браузере, где вы вошли в этот профиль, или сначала задайте там пароль.',
 }

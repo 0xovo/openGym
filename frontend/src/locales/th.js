@@ -2347,4 +2347,6 @@ export default {
   // --- #523 skip completed ---
   'In Cards and Focus, Prev and Next hop over a finished exercise.': 'ในโหมดการ์ดและโฟกัส ปุ่มก่อนหน้า/ถัดไปจะข้ามท่าที่ทำเสร็จแล้ว',
   'Skip completed exercises': 'ข้ามท่าที่ทำเสร็จแล้ว',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'แอปนี้ยืนยันด้วยพาสคีย์ไม่ได้ สร้างรหัสในเบราว์เซอร์ที่ลงชื่อเข้าใช้โปรไฟล์นี้ หรือเพิ่มรหัสผ่านที่นั่นก่อน',
 }

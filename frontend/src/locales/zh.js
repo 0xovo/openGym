@@ -2336,4 +2336,6 @@ export default {
   // --- #523 skip completed ---
   'In Cards and Focus, Prev and Next hop over a finished exercise.': '在卡片和专注布局中，上一个/下一个会跳过已完成的动作。',
   'Skip completed exercises': '跳过已完成的动作',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': '此应用无法用通行密钥确认。请在已登录此档案的浏览器中生成代码，或先在那里设置密码。',
 }

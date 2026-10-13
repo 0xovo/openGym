@@ -2336,4 +2336,6 @@ export default {
   // --- #523 skip completed ---
   'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Kartlar ve Odak düzeninde Geri ve İleri, bitmiş egzersizlerin üstünden atlar.',
   'Skip completed exercises': 'Tamamlanan egzersizleri atla',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Bu uygulama geçiş anahtarıyla onaylayamaz. Kodu bu profille oturum açmış bir tarayıcıda oluştur ya da önce orada bir parola ekle.',
 }
