@@ -2247,10 +2247,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Спершу копію? Експортуйте резервну копію. Її можна імпортувати в openGym будь-коли.',
   'Type {0} to confirm.': 'Введіть {0} для підтвердження.',
   'Account name': 'Назва акаунта',
-  'Deleting…': 'Видалення…',
   'Delete forever': 'Видалити назавжди',
   'That is not your account name.': 'Це не назва вашого акаунта.',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Ви тут єдиний адміністратор, а інші профілі ще користуються цим сервером. Спершу призначте адміністратором когось іншого.',
   'Couldn’t delete the account. Nothing was removed.': 'Не вдалося видалити акаунт. Нічого не видалено.',
   'Your account is gone. Thanks for every rep.': 'Ваш акаунт видалено. Дякуємо за кожне повторення.',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Цей застосунок не може підтвердити ключем доступу. Видаліть акаунт в openGym через браузер або спершу задайте там пароль.',
 }

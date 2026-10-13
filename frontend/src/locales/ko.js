@@ -2250,10 +2250,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': '먼저 사본을 받아 둘까요? 백업을 내보내세요. 언제든 openGym으로 다시 가져올 수 있어요.',
   'Type {0} to confirm.': '확인하려면 {0}을(를) 입력하세요.',
   'Account name': '계정 이름',
-  'Deleting…': '삭제 중…',
   'Delete forever': '영구 삭제',
   'That is not your account name.': '계정 이름이 맞지 않아요.',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': '이 서버의 유일한 관리자인데 다른 프로필이 아직 사용 중이에요. 먼저 다른 사람을 관리자로 지정하세요.',
   'Couldn’t delete the account. Nothing was removed.': '계정을 삭제하지 못했어요. 아무것도 지워지지 않았어요.',
   'Your account is gone. Thanks for every rep.': '계정이 삭제됐어요. 모든 반복에 감사해요.',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': '이 앱에서는 패스키로 확인할 수 없어요. 브라우저의 openGym에서 계정을 삭제하거나, 먼저 그곳에서 비밀번호를 추가하세요.',
 }

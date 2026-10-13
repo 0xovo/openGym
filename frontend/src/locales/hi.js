@@ -2250,10 +2250,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'पहले एक कॉपी चाहिए? बैकअप निर्यात करें। आप उसे कभी भी openGym में आयात कर सकते हैं।',
   'Type {0} to confirm.': 'पुष्टि के लिए {0} लिखें।',
   'Account name': 'खाते का नाम',
-  'Deleting…': 'हटाया जा रहा है…',
   'Delete forever': 'हमेशा के लिए हटाएँ',
   'That is not your account name.': 'यह आपके खाते का नाम नहीं है।',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'आप यहाँ के अकेले एडमिन हैं, और दूसरी प्रोफ़ाइलें अभी भी यह सर्वर इस्तेमाल करती हैं। पहले किसी और को एडमिन बनाएँ।',
   'Couldn’t delete the account. Nothing was removed.': 'खाता हटाया नहीं जा सका। कुछ भी नहीं हटाया गया।',
   'Your account is gone. Thanks for every rep.': 'आपका खाता हट गया। हर रेप के लिए धन्यवाद।',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'यह ऐप पासकी से पुष्टि नहीं कर सकता। ब्राउज़र में openGym से अपना खाता हटाएँ, या पहले वहाँ एक पासवर्ड जोड़ें।',
 }

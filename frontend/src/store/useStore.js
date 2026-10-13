@@ -1824,14 +1824,15 @@ export const useStore = create((set, get) => {
     },
 
     // Settings → "Delete my account": the server removes the profile and everything of it
-    // (POST /api/account/delete, `name` typed back to confirm), then this device ends where a
-    // sign-out leaves it, and a phone goes back to local-only as a disconnect does. Nothing is
-    // kept aside: there is no account left for kept changes or a running workout to come back to.
-    // The request is not swallowed: refused (the name, the last admin) or not answered, nothing
-    // here changes and the caller says why.
-    async deleteAccount(name) {
+    // (POST /api/account/delete, `name` typed back to confirm, `proof` the owner's: a passkey
+    // assertion or the current password, from ProveOwner in components/PasswordAuth.jsx), then
+    // this device ends where a sign-out leaves it, and a phone goes back to local-only as a
+    // disconnect does. Nothing is kept aside: there is no account left for kept changes or a
+    // running workout to come back to. The request is not swallowed: refused (the name, the
+    // proof, the last admin) or not answered, nothing here changes and the caller says why.
+    async deleteAccount(name, proof = {}) {
       const uid = get().user?.id
-      await api('/api/account/delete', { method: 'POST', body: JSON.stringify({ name }) })
+      await api('/api/account/delete', { method: 'POST', body: JSON.stringify({ name, ...proof }) })
       await stopTimers()
       const all = await readStashes()
       const key = stashKey(serverBase(), uid)

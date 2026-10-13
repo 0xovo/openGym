@@ -2329,10 +2329,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'আগে একটা কপি চান? একটি ব্যাকআপ এক্সপোর্ট করুন। যেকোনো সময় openGym-এ ইমপোর্ট করতে পারবেন।',
   'Type {0} to confirm.': 'নিশ্চিত করতে {0} লিখুন।',
   'Account name': 'অ্যাকাউন্টের নাম',
-  'Deleting…': 'মোছা হচ্ছে…',
   'Delete forever': 'চিরতরে মুছুন',
   'That is not your account name.': 'এটি আপনার অ্যাকাউন্টের নাম নয়।',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'আপনি এখানে একমাত্র অ্যাডমিন, আর অন্য প্রোফাইলগুলো এখনও এই সার্ভার ব্যবহার করছে। আগে অন্য কাউকে অ্যাডমিন করুন।',
   'Couldn’t delete the account. Nothing was removed.': 'অ্যাকাউন্ট মোছা যায়নি। কিছুই সরানো হয়নি।',
   'Your account is gone. Thanks for every rep.': 'আপনার অ্যাকাউন্ট মুছে গেছে। প্রতিটি রেপের জন্য ধন্যবাদ।',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'এই অ্যাপ পাসকি দিয়ে নিশ্চিত করতে পারে না। ব্রাউজারে openGym থেকে আপনার অ্যাকাউন্ট মুছুন, অথবা আগে সেখানে একটি পাসওয়ার্ড যোগ করুন।',
 }

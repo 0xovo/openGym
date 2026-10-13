@@ -39,11 +39,11 @@ afterEach(() => {
 })
 
 describe('deleteAccount', () => {
-  it('asks the server with the typed name, then signs this device out and keeps nothing of the account', async () => {
+  it('asks the server with the typed name and the owner’s proof, then signs this device out and keeps nothing of the account', async () => {
     api.mockResolvedValue({ ok: true })
-    await useStore.getState().deleteAccount('One')
+    await useStore.getState().deleteAccount('One', { current: 'correct horse battery staple' })
 
-    expect(api).toHaveBeenCalledWith('/api/account/delete', { method: 'POST', body: JSON.stringify({ name: 'One' }) })
+    expect(api).toHaveBeenCalledWith('/api/account/delete', { method: 'POST', body: JSON.stringify({ name: 'One', current: 'correct horse battery staple' }) })
     const st = useStore.getState()
     expect(st.user).toBeNull()
     expect(st.S.workouts).toEqual([])

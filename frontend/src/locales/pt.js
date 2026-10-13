@@ -2250,10 +2250,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Queres uma cópia primeiro? Exporta uma cópia de segurança. Podes importá-la no openGym quando quiseres.',
   'Type {0} to confirm.': 'Escreve {0} para confirmar.',
   'Account name': 'Nome da conta',
-  'Deleting…': 'A eliminar…',
   'Delete forever': 'Eliminar para sempre',
   'That is not your account name.': 'Esse não é o nome da tua conta.',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'És o único administrador aqui e outros perfis ainda usam este servidor. Torna outra pessoa administradora primeiro.',
   'Couldn’t delete the account. Nothing was removed.': 'Não foi possível eliminar a conta. Nada foi removido.',
   'Your account is gone. Thanks for every rep.': 'A tua conta já não existe. Obrigado por cada repetição.',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Esta app não consegue confirmar com uma passkey. Elimina a tua conta no openGym pelo navegador, ou adiciona lá uma palavra-passe primeiro.',
 }

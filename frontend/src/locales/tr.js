@@ -2250,10 +2250,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Önce bir kopya mı? Bir yedek dışa aktar. İstediğin zaman openGym’e geri aktarabilirsin.',
   'Type {0} to confirm.': 'Onaylamak için {0} yaz.',
   'Account name': 'Hesap adı',
-  'Deleting…': 'Siliniyor…',
   'Delete forever': 'Kalıcı olarak sil',
   'That is not your account name.': 'Bu senin hesap adın değil.',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Buradaki tek yönetici sensin ve başka profiller bu sunucuyu hâlâ kullanıyor. Önce başka birini yönetici yap.',
   'Couldn’t delete the account. Nothing was removed.': 'Hesap silinemedi. Hiçbir şey kaldırılmadı.',
   'Your account is gone. Thanks for every rep.': 'Hesabın silindi. Her tekrar için teşekkürler.',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Bu uygulama geçiş anahtarıyla onaylayamaz. Hesabını tarayıcıda openGym’den sil ya da önce orada bir parola ekle.',
 }

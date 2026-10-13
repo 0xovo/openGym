@@ -1410,12 +1410,12 @@ export const PT_BR_OVERRIDES = {
   'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'Seu perfil, treinos, peso corporal, fotos e vídeos são apagados deste servidor para sempre. Não tem volta, nem seu administrador consegue recuperá-los.',
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Quer uma cópia antes? Exporte um backup. Você pode importá-lo no openGym quando quiser.',
   'Type {0} to confirm.': 'Digite {0} para confirmar.',
-  'Deleting…': 'Excluindo…',
   'Delete forever': 'Excluir para sempre',
   'That is not your account name.': 'Esse não é o nome da sua conta.',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Você é o único administrador aqui e outros perfis ainda usam este servidor. Torne outra pessoa administradora primeiro.',
   'Couldn’t delete the account. Nothing was removed.': 'Não foi possível excluir a conta. Nada foi removido.',
   'Your account is gone. Thanks for every rep.': 'Sua conta não existe mais. Obrigado por cada repetição.',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Este aplicativo não consegue confirmar com uma chave de acesso. Exclua sua conta no openGym pelo navegador, ou adicione uma senha lá primeiro.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

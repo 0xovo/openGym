@@ -2253,10 +2253,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Előbb egy másolat? Exportálj egy biztonsági mentést. Bármikor visszaimportálhatod az openGymbe.',
   'Type {0} to confirm.': 'A megerősítéshez írd be: {0}',
   'Account name': 'Fiók neve',
-  'Deleting…': 'Törlés…',
   'Delete forever': 'Végleges törlés',
   'That is not your account name.': 'Ez nem a fiókod neve.',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Te vagy itt az egyetlen admin, és más profilok még használják ezt a szervert. Előbb tegyél meg valaki mást adminnak.',
   'Couldn’t delete the account. Nothing was removed.': 'Nem sikerült törölni a fiókot. Semmi sem lett eltávolítva.',
   'Your account is gone. Thanks for every rep.': 'A fiókod eltűnt. Köszönjük az összes ismétlést.',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'Ez az app nem tud jelszókulccsal megerősíteni. Töröld a fiókod az openGymben a böngészőből, vagy előbb adj meg ott egy jelszót.',
 }

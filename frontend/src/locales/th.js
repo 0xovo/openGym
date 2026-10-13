@@ -2261,10 +2261,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'อยากเก็บสำเนาไว้ก่อนไหม ส่งออกข้อมูลสำรองได้เลย แล้วนำเข้า openGym ได้ทุกเมื่อ',
   'Type {0} to confirm.': 'พิมพ์ {0} เพื่อยืนยัน',
   'Account name': 'ชื่อบัญชี',
-  'Deleting…': 'กำลังลบ…',
   'Delete forever': 'ลบถาวร',
   'That is not your account name.': 'นี่ไม่ใช่ชื่อบัญชีของคุณ',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'คุณเป็นผู้ดูแลระบบคนเดียวที่นี่ และยังมีโปรไฟล์อื่นใช้เซิร์ฟเวอร์นี้อยู่ ตั้งคนอื่นเป็นผู้ดูแลระบบก่อน',
   'Couldn’t delete the account. Nothing was removed.': 'ลบบัญชีไม่สำเร็จ ไม่มีอะไรถูกลบ',
   'Your account is gone. Thanks for every rep.': 'บัญชีของคุณถูกลบแล้ว ขอบคุณสำหรับทุกเรป',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'แอปนี้ยืนยันด้วยพาสคีย์ไม่ได้ ลบบัญชีจาก openGym ในเบราว์เซอร์ หรือเพิ่มรหัสผ่านที่นั่นก่อน',
 }

@@ -2305,10 +2305,10 @@ export default {
   'Want a copy first? Export a backup. You can import it into openGym anytime.': 'تريد نسخة أولًا؟ صدّر نسخة احتياطية. يمكنك استيرادها إلى openGym في أي وقت.',
   'Type {0} to confirm.': 'اكتب {0} للتأكيد.',
   'Account name': 'اسم الحساب',
-  'Deleting…': 'جارٍ الحذف…',
   'Delete forever': 'حذف نهائي',
   'That is not your account name.': 'هذا ليس اسم حسابك.',
   'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'أنت المسؤول الوحيد هنا، وملفات أخرى ما زالت تستخدم هذا الخادم. اجعل شخصًا آخر مسؤولًا أولًا.',
   'Couldn’t delete the account. Nothing was removed.': 'تعذّر حذف الحساب. لم يُحذف أي شيء.',
   'Your account is gone. Thanks for every rep.': 'حسابك لم يعد موجودًا. شكرًا على كل تكرار.',
+  'This app can’t confirm with a passkey. Delete your account from openGym in your browser, or add a password there first.': 'لا يستطيع هذا التطبيق التأكيد بمفتاح مرور. احذف حسابك من openGym في المتصفح، أو أضف كلمة مرور هناك أولًا.',
 }
