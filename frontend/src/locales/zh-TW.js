@@ -1799,6 +1799,7 @@ export default {
   'Guilt trip': '情感勒索',
   'Drill sergeant': '魔鬼教官',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': '在排定訓練的日子沒有紀錄時，於晚上 20:00 到 21:30 之間提醒一次。連續錯過 3 天後會保持安靜，直到你下次訓練。',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': '在其他裝置上記錄了訓練？在送出提醒之前，只要手機允許 App 在背景執行，它就會先向你的伺服器確認。開啟 App 時總會同步到最新。',
   'Everything okay?': '一切還好嗎？',
   '{0} is still waiting. What’s up?': '{0} 還在等你。怎麼了？',
   'No {0} today? Even a short session tomorrow counts.': '今天沒練 {0}？明天就算練一下下也算數。',

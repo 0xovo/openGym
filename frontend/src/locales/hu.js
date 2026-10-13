@@ -1809,6 +1809,7 @@ export default {
   'Guilt trip': 'Lelkiismeret-furdalás',
   'Drill sergeant': 'Kiképző őrmester',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'Egy bökés egy tervezett nap estéjén, ha nincs rögzítve semmi, 20:00 és 21:30 között. 3 egymás után kihagyott nap után elhallgat a következő edzésedig.',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Másik eszközön edzettél? A bökés előtt a telefon rákérdez a szerveredre, ha engedi az appnak, hogy a háttérben fusson. Az app megnyitásakor minden mindig frissül.',
   'Everything okay?': 'Minden rendben?',
   '{0} is still waiting. What’s up?': 'A(z) {0} még mindig vár. Mi a helyzet?',
   'No {0} today? Even a short session tomorrow counts.': 'Ma nem volt {0}? Holnap egy rövid edzés is számít.',

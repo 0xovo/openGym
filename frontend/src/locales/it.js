@@ -1809,6 +1809,7 @@ export default {
   'Guilt trip': 'Senso di colpa',
   'Drill sergeant': 'Sergente istruttore',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': 'Un avviso la sera di un giorno pianificato senza niente registrato, tra le 20:00 e le 21:30. Dopo 3 giorni saltati di fila tace fino al tuo prossimo allenamento.',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Allenamento registrato su un altro dispositivo? Prima dell’avviso il telefono chiede al tuo server, quando lascia girare l’app in background. Aprire l’app aggiorna sempre tutto.',
   'Everything okay?': 'Tutto bene?',
   '{0} is still waiting. What’s up?': '{0} ti sta ancora aspettando. Che succede?',
   'No {0} today? Even a short session tomorrow counts.': 'Niente {0} oggi? Anche una sessione breve domani conta.',

@@ -1809,6 +1809,7 @@ export default {
   'Guilt trip': '죄책감 자극',
   'Drill sergeant': '훈련 교관',
   'One nudge in the evening of a planned day with nothing logged, between 20:00 and 21:30. After 3 missed days in a row it goes quiet until your next workout.': '계획된 날에 기록이 없으면 저녁 20:00~21:30 사이에 한 번 알려 드립니다. 3일 연속으로 건너뛰면 다음 운동까지 조용히 있습니다.',
+  'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': '다른 기기에서 운동을 기록했나요? 휴대폰이 앱을 백그라운드에서 실행하게 해 주면, 알림을 보내기 전에 서버에 확인해요. 앱을 열면 언제나 최신 상태가 돼요.',
   'Everything okay?': '괜찮으세요?',
   '{0} is still waiting. What’s up?': '{0}이(가) 아직 기다리고 있어요. 무슨 일 있어요?',
   'No {0} today? Even a short session tomorrow counts.': '오늘은 {0} 안 했나요? 내일은 짧게라도 하면 돼요.',
