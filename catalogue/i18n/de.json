@@ -12,6 +12,14 @@
   },
   "1002": {
     "name": "Liegendes gerades Beinheben mit Band"
+    "description": "Bei dieser Übung liegt man auf dem Rücken und hebt das gestreckte Bein an, während man ein Band in den Händen hält. Dabei werden die Bauchmuskeln und die Hüftbeuger trainiert.",
+    "instructions": [
+      "Leg dich flach auf den Rücken, die Beine gestreckt und die Füße zusammen.",
+      "Lege das Band um das Fußgelenk und halte die beiden Enden mit den Händen fest.",
+      "Spanne deine Bauchmuskeln an und hebe beide Beine vom Boden ab, bis sie senkrecht dazu stehen.",
+      "Halte oben kurz inne und senke deine Beine dann langsam wieder in die Ausgangsposition.",
+      "Du kannst das so oft wiederholen, wie du möchtest."
+    ]
   },
   "1003": {
     "name": "Rudern in der Kniebeuge mit Band"
