@@ -16,5 +16,6 @@
 "No workout running" = "Тренировка не идёт";
 "Start one on your iPhone and it shows up here." = "Начните её на iPhone, и она появится здесь.";
 "All sets done" = "Все подходы сделаны";
+"measuring" = "измеряю …";
 "Next: %@, set %lld" = "Далее: %@, подход %lld";
 "%@, set %lld" = "%@, подход %lld";

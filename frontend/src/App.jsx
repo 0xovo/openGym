@@ -9,7 +9,8 @@ import { setLang, useLang, baseLang } from './lib/i18n.js'
 import { effectiveLang } from './lib/default-lang.js'
 import { setPlayOnSilent, setVibrate, setAlarmBuzzer, setNativeBuzzer } from './lib/sound.js'
 import { buzzAsAlarm } from './lib/rest-alert.js'
-import { setNav, notePath, keyBefore } from './lib/nav.js'
+import { setNav, notePath, keyBefore, navToWorkout } from './lib/nav.js'
+import { workoutVolume } from './lib/history.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
@@ -338,7 +339,11 @@ export default function App() {
     // and start time, and no weigh-in question (the lifter is at the watch, not here).
     const unbind = bindWatchAppActions({
       start: (ids, opts) => beginWorkout(ids, null, opts),
-      patchSet: (where, fields) => useStore.getState().update(s => { patchSetIn(s, where, fields, stampWorkout) }),
+      patchSet: (where, fields, opts = {}) => useStore.getState().update(s => {
+        patchSetIn(s, where, fields, stampWorkout, { ...opts, recount: w => { w.vol = workoutVolume(w) } })
+      }),
+      // Ticks from the watch are the workout screen's to apply: it opens, and drains the queue.
+      openWorkout: () => { if (!String(window.location.hash || '').startsWith('#/workout')) navToWorkout() },
     })
     return () => { gone = true; stop?.(); unbind() }
   }, [])

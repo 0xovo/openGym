@@ -16,5 +16,6 @@
 "No workout running" = "ไม่มีการฝึกที่กำลังทำอยู่";
 "Start one on your iPhone and it shows up here." = "เริ่มบน iPhone แล้วจะแสดงที่นี่";
 "All sets done" = "ครบทุกเซ็ตแล้ว";
+"measuring" = "กำลังวัด …";
 "Next: %@, set %lld" = "ถัดไป: %@ เซ็ต %lld";
 "%@, set %lld" = "%@ เซ็ต %lld";

@@ -52,6 +52,10 @@ struct RootView: View {
                 ExercisePager()
             }
         }
+        // The complication's Start: today's workout, when none runs yet.
+        .onOpenURL { url in
+            if url.host == "start", store.workout == nil, let today = store.ready?.today { store.start(today) }
+        }
         .onChange(of: store.widgetState) { state in
             guard !store.isDemo else { return }
             state.write()
@@ -66,18 +70,25 @@ struct RoundButton: View {
     let systemImage: String
     let label: Text
     var size: CGFloat = 76
+    /// The label under the button, said in words (on by default: "Done" under the check).
+    var caption = true
     let action: () -> Void
+    @Environment(\.isLuminanceReduced) private var dimmed
 
     var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: size * 0.42, weight: .bold))
-                .foregroundStyle(Color.black)
-                .frame(width: size, height: size)
-                .background(Circle().fill(Theme.accent))
+        VStack(spacing: 3) {
+            Button(action: action) {
+                Image(systemName: systemImage)
+                    .font(.system(size: size * 0.42, weight: .bold))
+                    .foregroundStyle(dimmed ? Theme.accent : Color.black)
+                    .frame(width: size, height: size)
+                    .background(Circle().fill(dimmed ? Color.clear : Theme.accent))
+                    .overlay(Circle().stroke(Theme.accent, lineWidth: dimmed ? 2 : 0))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(label)
+            if caption { label.font(.caption2.weight(.semibold)).foregroundStyle(.secondary).lineLimit(1) }
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(label)
     }
 }
 
@@ -104,8 +115,16 @@ struct EdgeButton: View {
 
 struct IdleView: View {
     @EnvironmentObject var store: SessionStore
+    @State private var debug = false
 
     var body: some View {
+        content
+            // Hidden: a long press shows what arrived from the phone (animations, sync, heart rate).
+            .onLongPressGesture(minimumDuration: 2) { debug = true }
+            .sheet(isPresented: $debug) { DebugView() }
+    }
+
+    @ViewBuilder private var content: some View {
         if let ready = store.ready, ready.today != nil || !ready.others.isEmpty {
             ScrollView {
                 VStack(spacing: 10) {
@@ -116,7 +135,6 @@ struct IdleView: View {
                             .minimumScaleFactor(0.7)
                             .multilineTextAlignment(.center)
                         RoundButton(systemImage: "play.fill", label: Text("Start workout")) { store.start(today) }
-                        Text("Start workout").font(.footnote).foregroundStyle(.secondary)
                     }
                     if !ready.others.isEmpty {
                         VStack(spacing: 4) {
@@ -180,8 +198,9 @@ enum CrownTarget { case reps, weight }
 struct ExercisePage: View {
     @EnvironmentObject var store: SessionStore
     let index: Int
-    @State private var target: CrownTarget = SessionStore.demoScreen == "weight" ? .weight : .reps
+    @State private var target: CrownTarget = .reps
     @FocusState private var crownFocus: Bool
+    @ScaledMetric(relativeTo: .title) private var doneSize: CGFloat = 58
 
     var body: some View {
         if let w = store.workout, w.entries.indices.contains(index) {
@@ -212,7 +231,7 @@ struct ExercisePage: View {
                                               by: target == .weight ? store.weightStep : 1, sensitivity: .low,
                                               isContinuous: false, isHapticFeedbackEnabled: true)
                     Spacer(minLength: 2)
-                    RoundButton(systemImage: "checkmark", label: Text("Done"), size: 62) { store.completeSet() }
+                    RoundButton(systemImage: "checkmark", label: Text("Done"), size: doneSize) { store.completeSet() }
                         .disabled(!current)
                     Spacer(minLength: 4)
                     SetDots(entry: entry, current: si) { store.pick(set: $0, in: index) }
@@ -226,7 +245,10 @@ struct ExercisePage: View {
                 }
             }
             .padding(.horizontal, 4)
-            .onAppear { if current { crownFocus = true } }
+            .onAppear {
+                if SessionStore.demoScreen == "weight" || store.crownStartsOnWeight { target = .weight }
+                if current { crownFocus = true }
+            }
             .onChange(of: store.entryIndex) { ei in if ei == index { crownFocus = true } }
         }
     }
@@ -245,6 +267,7 @@ struct ExercisePage: View {
 /// Weight × reps in big rounded numerals. The one the crown turns carries the crown symbol under
 /// it; a tap on the other hands the crown to that one.
 struct NumbersView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 32
     let weight: Double
     let reps: Double
     let unit: String
@@ -267,7 +290,7 @@ struct NumbersView: View {
     private func value(_ text: String, suffix: String?, active: Bool, tap: @escaping () -> Void) -> some View {
         VStack(spacing: 0) {
             HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(verbatim: text).font(.system(size: 32, weight: .semibold, design: .rounded).monospacedDigit())
+                Text(verbatim: text).font(.system(size: size, weight: .semibold, design: .rounded).monospacedDigit())
                 if let s = suffix { Text(verbatim: s).font(.system(size: 12, weight: .medium, design: .rounded)).foregroundStyle(.secondary) }
             }
             Image(systemName: "digitalcrown.arrow.clockwise.fill")
@@ -318,7 +341,6 @@ struct FinishPage: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
             RoundButton(systemImage: "flag.checkered", label: Text("Finish workout")) { confirming = true }
-            Text("Finish workout").font(.footnote).foregroundStyle(.secondary)
         }
         .padding(.horizontal, 6)
         .confirmationDialog("Finish workout?", isPresented: $confirming) {
@@ -333,6 +355,8 @@ struct FinishPage: View {
 struct RestView: View {
     @EnvironmentObject var store: SessionStore
     let end: Date
+    @Environment(\.isLuminanceReduced) private var dimmed
+    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 42
 
     var body: some View {
         // The ring and the countdown in it take the space above the two corner buttons, so nothing
@@ -351,13 +375,14 @@ struct RestView: View {
                     }
                 }
                 VStack(spacing: 1) {
+                    Text("Rest").font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
                     Text(timerInterval: Date()...end, countsDown: true)
-                        .font(.system(size: 44, weight: .semibold, design: .rounded).monospacedDigit())
+                        .font(.system(size: countdownSize, weight: .semibold, design: .rounded).monospacedDigit())
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                         .multilineTextAlignment(.center)
                     if let e = store.entry, let si = store.setIndex {
-                        Text(verbatim: "\(e.name) · \(si + 1)")
+                        Text("Next: \(e.name), set \(si + 1)")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
@@ -368,11 +393,13 @@ struct RestView: View {
             }
             .aspectRatio(1, contentMode: .fit)
             .padding(.horizontal, 6)
+            // Always On: the countdown stays, the buttons go (nothing to tap with the wrist down).
             HStack {
                 EdgeButton(systemImage: "goforward.15", label: Text("+15s")) { store.addRest(15) }
                 Spacer()
                 EdgeButton(systemImage: "forward.end.fill", label: Text("Skip")) { store.skipRest() }
             }
+            .opacity(dimmed ? 0 : 1)
         }
         .ignoresSafeArea(edges: .bottom)
     }
@@ -409,6 +436,12 @@ struct HeartRateBadge: View {
                 Text(verbatim: "\(Int(hr.rounded()))").font(.caption2.monospacedDigit())
             }
             .foregroundStyle(.red)
+        } else if health.measuring {
+            HStack(spacing: 2) {
+                Image(systemName: "heart").font(.system(size: 9))
+                Text("measuring").font(.caption2)
+            }
+            .foregroundStyle(.secondary)
         }
     }
 }
@@ -430,5 +463,27 @@ struct HealthToggle: View {
         .tint(Theme.accent)
         .font(.footnote)
         .frame(minHeight: Theme.tap)
+    }
+}
+
+/* ---------- hidden: what arrived from the phone ---------- */
+
+struct DebugView: View {
+    @EnvironmentObject var store: SessionStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(verbatim: "workout: \(store.workout?.id ?? "none")").font(.caption2)
+                Text(verbatim: "pending ticks: \(store.state.pending.count)").font(.caption2)
+                Text(verbatim: "started here: \(store.state.startedHere ?? "-")").font(.caption2)
+                Text(verbatim: "clips: \(store.clips.count)").font(.caption2)
+                Text(verbatim: "health: \(store.health.enabled ? "on" : "off"), \(store.health.running ? "running" : "idle")").font(.caption2)
+                Divider()
+                ForEach(Array(store.clipLog.reversed().enumerated()), id: \.offset) { pair in
+                    Text(verbatim: pair.element).font(.system(size: 10)).foregroundStyle(.secondary)
+                }
+            }
+        }
     }
 }

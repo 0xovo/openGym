@@ -69,3 +69,11 @@ describe('a set ticked on the watch', () => {
     expect(S.workouts.at(-1).entries[0].sets[0]).toMatchObject({ w: 60, r: 8, done: true, at })
   })
 })
+
+describe('the same set on both sides', () => {
+  it('a tick from the watch older than the phone\'s own keeps the phone\'s numbers, and its heart rate lands', () => {
+    act(() => { useStore.getState().update(s => { Object.assign(s.active.entries[0].sets[0], { w: 70, r: 5, done: true, at: 5000 }) }) })
+    act(() => { applyEvents([{ id: 'old', type: 'setDone', wid: 'w-watch', exId: '0025', entryIdx: 0, setIdx: 0, w: 60, r: 8, at: 4000, hr: { avg: 120, max: 130 } }], () => useStore.getState()) })
+    expect(useStore.getState().S.active.entries[0].sets[0]).toMatchObject({ w: 70, r: 5, done: true, at: 5000, hr: { avg: 120, max: 130 } })
+  })
+})

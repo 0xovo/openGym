@@ -1,0 +1,21 @@
+/* openGym on the Apple Watch, tr. Written by ios/ci/watch-strings.mjs: change that, not this. */
+
+"Today" = "Bugün";
+"Start workout" = "Antrenmana başla";
+"Done" = "Bitti";
+"Warm-up" = "Isınma";
+"Reps" = "Tekrar";
+"Rest" = "Dinlenme";
+"Skip" = "Atla";
+"Finish workout" = "Antrenmanı bitir";
+"Finish workout?" = "Antrenman bitirilsin mi?";
+"Finish and save" = "Bitir ve kaydet";
+"Cancel" = "İptal";
+"Rest’s over. Next set!" = "Dinlenme bitti. Sıradaki set!";
+"Last time: %@" = "Geçen sefer: %@";
+"No workout running" = "Devam eden antrenman yok";
+"Start one on your iPhone and it shows up here." = "iPhone’unda bir tane başlat, burada görünür.";
+"All sets done" = "Tüm setler tamam";
+"measuring" = "ölçülüyor …";
+"Next: %@, set %lld" = "Sıradaki: %@, set %lld";
+"%@, set %lld" = "%@, set %lld";

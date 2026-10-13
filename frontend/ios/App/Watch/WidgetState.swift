@@ -15,6 +15,11 @@ struct WidgetState: Codable, Equatable {
     var title: String
     var detail: String
     var restEndsAt: Date?
+    /// Work sets done and in all, today's session (the complications' ring).
+    var done: Int = 0
+    var total: Int = 0
+    /// "2/4": the set up next, of its exercise's work sets.
+    var setLabel: String = ""
     var updatedAt: Date = .distantPast
 
     static let idle = WidgetState(mode: "idle", title: "openGym", detail: "", restEndsAt: nil)
@@ -23,6 +28,7 @@ struct WidgetState: Codable, Equatable {
 
     static func == (a: WidgetState, b: WidgetState) -> Bool {
         a.mode == b.mode && a.title == b.title && a.detail == b.detail && a.restEndsAt == b.restEndsAt
+            && a.done == b.done && a.total == b.total && a.setLabel == b.setLabel
     }
 
     /// The state as written, unless it is about a session long gone (the app stopped without

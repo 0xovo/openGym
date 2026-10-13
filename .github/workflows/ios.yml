@@ -48,6 +48,12 @@ jobs:
       # The Apple Watch app (ios/App/Watch), added to the project for the run and embedded in App.app.
       - run: ruby ios/ci/add-watch-app.rb
         working-directory: frontend
+      # The watch's session logic and the animation codec, tested on the Mac (no simulator).
+      - name: WatchCore tests
+        working-directory: frontend/ios/App/WatchCore
+        run: |
+          set -o pipefail
+          swift test 2>&1 | tail -60
       - name: Build for the simulator
         working-directory: frontend/ios/App
         run: |
@@ -103,9 +109,18 @@ jobs:
             xcrun simctl boot "$UDID" || true
             xcrun simctl bootstatus "$UDID" -b
             xcrun simctl install "$UDID" "$APP"
+            # A synthetic clip (a square moving, made with ffmpeg for the tests; no exercise media)
+            # in the app's own container, to show the animation path renders.
+            DATA=$(xcrun simctl get_app_container "$UDID" ch.opengym.app.watchkitapp data 2>/dev/null || true)
+            CLIP=""
+            if [ -n "$DATA" ]; then mkdir -p "$DATA/tmp" && cp ../WatchCore/Tests/WatchCoreTests/Fixtures/synthetic-square.webp "$DATA/tmp/clip.webp" && CLIP="$DATA/tmp/clip.webp"; fi
             for screen in idle empty set weight rest finish; do
               xcrun simctl terminate "$UDID" ch.opengym.app.watchkitapp 2>/dev/null || true
-              xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen"
+              if [ "$screen" = set ] && [ -n "$CLIP" ]; then
+                xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen" -OpenGymWatchDemoClip "$CLIP"
+              else
+                xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen"
+              fi
               sleep 6
               xcrun simctl io "$UDID" screenshot "build/watch/$size-$screen.png"
             done

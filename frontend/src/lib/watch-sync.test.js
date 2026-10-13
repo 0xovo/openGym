@@ -193,3 +193,44 @@ describe('the workout\'s animations for the watch', () => {
     expect(clipsFor(state(), { 'anim-240-male': { state: 'downloading', dir: '/x' } })[0].path).toBeDefined()
   })
 })
+
+describe('the sync cases on the phone', () => {
+  it('a tick that waits for the workout screen opens it, and stays queued until it is there', () => {
+    const S = state()
+    const openWorkout = vi.fn()
+    bindWatchAppActions({ start: vi.fn(), patchSet: vi.fn(), openWorkout })
+    expect(applyEvents([{ id: 'q1', type: 'setDone', wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1, w: 60, r: 8, at: 5 }], () => ({ S }))).toEqual([])
+    expect(openWorkout).toHaveBeenCalledTimes(1)
+  })
+
+  it('a tick for a workout the phone already saved goes into that saved workout', () => {
+    const S = { active: null, workouts: [{ id: 'w-old', entries: [{ id: '0025', sets: [{ w: 60, r: 8, done: false }] }] }] }
+    const patchSet = vi.fn()
+    bindWatchAppActions({ start: vi.fn(), patchSet })
+    expect(applyEvents([{ id: 'late', type: 'setDone', wid: 'w-old', exId: '0025', entryIdx: 0, setIdx: 0, w: 62.5, r: 7, at: 900, hr: { avg: 120, max: 140 } }], () => ({ S }))).toEqual(['late'])
+    expect(patchSet).toHaveBeenCalledWith({ wid: 'w-old', exId: '0025', entryIdx: 0, setIdx: 0 }, { done: true, w: 62.5, r: 7, at: 900, hr: { avg: 120, max: 140 } }, { ifNewer: 900 })
+  })
+
+  it('the snapshot carries when each set was ticked, for the later-tick-wins rule on the watch', () => {
+    const S = state()
+    S.active.entries[0].sets[0].at = 1234
+    expect(buildSnapshot(S).active.entries[0].sets[0].at).toBe(1234)
+    expect('at' in buildSnapshot(S).active.entries[0].sets[1]).toBe(false)
+  })
+})
+
+describe('patching a saved workout', () => {
+  it('the later change wins; the watch\'s heart rate lands either way; the volume is counted again', async () => {
+    const { patchSetIn } = await import('./watch-sync.js')
+    const s = { active: null, workouts: [{ id: 'w', vol: 0, entries: [{ id: '0025', sets: [{ w: 60, r: 8, done: true, at: 2000 }] }] }] }
+    const stamp = vi.fn(), recount = vi.fn(w => { w.vol = 1 })
+    // the phone's edit (at 2000) is later than the watch's tick (at 1000): numbers stay, hr lands
+    expect(patchSetIn(s, { wid: 'w', exId: '0025', entryIdx: 0, setIdx: 0 }, { done: true, w: 50, r: 5, at: 1000, hr: { avg: 110, max: 120 } }, stamp, { ifNewer: 1000, recount })).toBe(true)
+    expect(s.workouts[0].entries[0].sets[0]).toEqual({ w: 60, r: 8, done: true, at: 2000, hr: { avg: 110, max: 120 } })
+    // a later tick wins
+    patchSetIn(s, { wid: 'w', exId: '0025', entryIdx: 0, setIdx: 0 }, { done: true, w: 65, r: 6, at: 3000 }, stamp, { ifNewer: 3000, recount })
+    expect(s.workouts[0].entries[0].sets[0]).toMatchObject({ w: 65, r: 6, at: 3000 })
+    expect(recount).toHaveBeenCalledTimes(2)
+    expect(s.workouts[0].vol).toBe(1)
+  })
+})

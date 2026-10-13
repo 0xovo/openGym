@@ -30,6 +30,11 @@ watch = proj.new_target(:application, NAME, :watchos, '10.0')
 group = proj.main_group.new_group(DIR, DIR)
 sources = Dir.children(File.join(dir, DIR)).select { |f| f.end_with?('.swift') }.sort
 watch.add_file_references(sources.map { |f| group.new_file(f) })
+# WatchCore (the session logic and the animation codec, tested with `swift test`), compiled in.
+CORE = 'WatchCore/Sources/WatchCore'
+cgroup = proj.main_group.new_group('WatchCore', CORE)
+core = Dir.children(File.join(dir, CORE)).select { |f| f.end_with?('.swift') }.sort.map { |f| cgroup.new_file(f) }
+watch.add_file_references(core)
 group.new_file('Info.plist')
 # The icon, from the iPhone app's (Watch/Assets.xcassets/AppIcon), and the strings in every language.
 watch.add_resources([group.new_file('Assets.xcassets')])
@@ -81,6 +86,11 @@ wsources = Dir.children(File.join(dir, WIDGET_DIR)).select { |f| f.end_with?('.s
 shared = group.files.find { |f| f.path == 'WidgetState.swift' }
 widget.add_file_references(wsources + [shared].compact)
 wgroup.new_file('Info.plist')
+Dir.children(File.join(dir, WIDGET_DIR)).select { |f| f.end_with?('.lproj') }.sort.each do |lproj|
+  ref = wgroup.new_file(lproj)
+  ref.last_known_file_type = 'folder'
+  widget.add_resources([ref])
+end
 wgroup.new_file("#{WIDGET}.entitlements")
 widget.add_system_framework('WidgetKit')
 widget.add_system_framework('SwiftUI')

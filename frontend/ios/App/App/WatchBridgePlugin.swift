@@ -190,36 +190,10 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         return out
     }
 
+    /// An animated WebP or GIF, frame by frame with its delays (WatchCore ClipCodec, the same code
+    /// CI tests on a synthetic clip).
     private static func gifFromImage(_ source: URL, to out: URL) -> URL? {
-        guard let src = CGImageSourceCreateWithURL(source as CFURL, nil) else { return nil }
-        let count = CGImageSourceGetCount(src)
-        guard count > 0,
-              let dest = CGImageDestinationCreateWithURL(out as CFURL, UTType.gif.identifier as CFString, count, nil) else { return nil }
-        CGImageDestinationSetProperties(dest, [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: 0]] as CFDictionary)
-        let thumb = [
-            kCGImageSourceCreateThumbnailFromImageAlways as String: true,
-            kCGImageSourceThumbnailMaxPixelSize as String: 160,
-            kCGImageSourceCreateThumbnailWithTransform as String: true,
-        ] as CFDictionary
-        var added = 0
-        for i in 0..<count {
-            guard let img = CGImageSourceCreateThumbnailAtIndex(src, i, thumb) else { continue }
-            let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [String: Any]
-            let webp = props?[kCGImagePropertyWebPDictionary as String] as? [String: Any]
-            let gifp = props?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
-            let delay = (webp?[kCGImagePropertyWebPUnclampedDelayTime as String] as? Double)
-                ?? (webp?[kCGImagePropertyWebPDelayTime as String] as? Double)
-                ?? (gifp?[kCGImagePropertyGIFUnclampedDelayTime as String] as? Double)
-                ?? (gifp?[kCGImagePropertyGIFDelayTime as String] as? Double) ?? 0.1
-            let frame = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: delay > 0.01 ? delay : 0.1]] as CFDictionary
-            CGImageDestinationAddImage(dest, img, frame)
-            added += 1
-        }
-        guard added > 0, CGImageDestinationFinalize(dest) else {
-            try? FileManager.default.removeItem(at: out)
-            return nil
-        }
-        return out
+        ClipCodec.makeGif(from: source, to: out, maxPixels: 160) ? out : nil
     }
 
     /* ---------- the watch's side ---------- */

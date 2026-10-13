@@ -16,5 +16,6 @@
 "No workout running" = "진행 중인 운동이 없어요";
 "Start one on your iPhone and it shows up here." = "iPhone에서 시작하면 여기에 나타나요.";
 "All sets done" = "모든 세트 완료";
+"measuring" = "측정 중 …";
 "Next: %@, set %lld" = "다음: %@, %lld세트";
 "%@, set %lld" = "%@, %lld세트";

@@ -16,5 +16,6 @@
 "No workout running" = "没有进行中的训练";
 "Start one on your iPhone and it shows up here." = "在 iPhone 上开始，它就会出现在这里。";
 "All sets done" = "所有组已完成";
+"measuring" = "测量中 …";
 "Next: %@, set %lld" = "下一个：%@，第 %lld 组";
 "%@, set %lld" = "%@，第 %lld 组";

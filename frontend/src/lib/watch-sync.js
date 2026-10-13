@@ -55,6 +55,8 @@ function watchEntry (e, H) {
     last,
     sets: (e.sets || []).map(s => ({
       w: num(s.w), r: num(s.r), sec: num(s.sec), done: !!s.done, warmup: !!isWarmupRow(s),
+      // when it was ticked: of two ticks of the same set (phone and watch), the later wins
+      ...(num(s.at) ? { at: num(s.at) } : {}),
     })),
   }
 }
@@ -157,6 +159,11 @@ function entryIndexOf (A, ev) {
  *   setDone { wid, exId, entryIdx, setIdx, w, r, at }   the workout screen's own tick
  *   finish  { wid, at }              the workout screen's own Finish and save
  *   setHr   { wid, exId, entryIdx, setIdx, hr?, restHr? }   heart rate on a set (lib/heart-rate.js)
+ *
+ * A tick for a workout already saved (finished on the phone while the watch was away) is written
+ * into that saved workout, stamped so the next sync keeps it. A tick while the workout screen is
+ * not open opens it (appHandlers.openWorkout), and the queue drains once it is there. Of two
+ * changes of the same set, the later one (`at`) wins.
  */
 export function applyEvents (events, getState) {
   if (!Array.isArray(events)) return []
@@ -165,16 +172,29 @@ export function applyEvents (events, getState) {
   for (const ev of events) {
     if (!ev || typeof ev.id !== 'string') continue
     if (applied.includes(ev.id)) { done.push(ev.id); continue }
-    const A = getState()?.S?.active
+    const S = getState()?.S
+    const A = S?.active
     const ours = A && Array.isArray(A.entries) && (!ev.wid || ev.wid === A.id)
+    // A workout finished on the phone while the watch was away: its later ticks still count.
+    const saved = !ours && ev.wid && Array.isArray(S?.workouts) ? S.workouts.find(w => w && w.id === ev.wid) : null
     if (ev.type === 'start') {
       if (!A) {
         if (!appHandlers) break
         appHandlers.start(Array.isArray(ev.routineIds) ? ev.routineIds : [], { id: ev.wid || null, start: num(ev.at) })
       }
       // A workout already running on the phone is kept; one with the watch's id is this one.
+    } else if (ev.type === 'setDone' && saved) {
+      if (!appHandlers) break
+      const fields = { done: true, ...(num(ev.w) != null ? { w: num(ev.w) } : {}), ...(num(ev.r) != null ? { r: num(ev.r) } : {}), ...(num(ev.at) ? { at: num(ev.at) } : {}) }
+      const hr = sanitizeHr(ev.hr)
+      if (hr) fields.hr = hr
+      appHandlers.patchSet({ wid: ev.wid, exId: ev.exId, entryIdx: ev.entryIdx, setIdx: ev.setIdx }, fields, { ifNewer: num(ev.at) })
     } else if (ev.type === 'setDone' && ours) {
-      if (!handlers) break
+      if (!handlers) {
+        // The tick is the workout screen's to apply: open it, and the queue drains when it binds.
+        if (appHandlers?.openWorkout) appHandlers.openWorkout()
+        break
+      }
       const idx = entryIndexOf(A, ev)
       const set = idx >= 0 ? A.entries[idx].sets?.[ev.setIdx] : null
       if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at), hr: sanitizeHr(ev.hr) })
@@ -190,7 +210,10 @@ export function applyEvents (events, getState) {
         appHandlers.patchSet({ wid: ev.wid, exId: ev.exId, entryIdx: ev.entryIdx, setIdx: ev.setIdx }, fields)
       }
     } else if (ev.type === 'finish' && ours) {
-      if (!handlers) break
+      if (!handlers) {
+        if (appHandlers?.openWorkout) appHandlers.openWorkout()
+        break
+      }
       handlers.finish()
     }
     // Applied, or meaningless now (another workout, a set that is gone): either way it is done.
@@ -314,7 +337,7 @@ export function _resetWatchSync () { handlers = null; appHandlers = null; plugin
  * (lib/sync-merge.js: of two copies of a workout the one edited last wins). Only these optional
  * fields are ever added; nothing is removed or renamed.
  */
-export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp) {
+export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp, { ifNewer = null, recount = null } = {}) {
   const find = w => {
     if (!w || !Array.isArray(w.entries)) return null
     const i = w.entries[entryIdx] && w.entries[entryIdx].id === exId ? entryIdx : w.entries.findIndex(e => e && e.id === exId)
@@ -328,7 +351,17 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp) {
   const w = (s.workouts || []).find(x => x && x.id === wid)
   const set = find(w)
   if (!set) return false
-  Object.assign(set, fields)
+  // Two changes of the same set: the later one wins (a tick from the watch older than an edit
+  // made on the phone since keeps the phone's numbers; its heart rate still lands).
+  let f = fields
+  if (ifNewer != null && set.done && Number(set.at) > ifNewer) {
+    f = {}
+    if (fields.hr) f.hr = fields.hr
+    if (fields.restHr) f.restHr = fields.restHr
+    if (!Object.keys(f).length) return false
+  }
+  Object.assign(set, f)
+  if (recount) recount(w)
   if (stamp) stamp(w)
   return true
 }

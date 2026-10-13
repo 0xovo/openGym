@@ -1,0 +1,21 @@
+/* openGym on the Apple Watch, bn. Written by ios/ci/watch-strings.mjs: change that, not this. */
+
+"Today" = "আজ";
+"Start workout" = "ওয়ার্কআউট শুরু করুন";
+"Done" = "সম্পন্ন";
+"Warm-up" = "ওয়ার্ম-আপ";
+"Reps" = "রেপ";
+"Rest" = "বিশ্রাম";
+"Skip" = "এড়িয়ে যান";
+"Finish workout" = "ওয়ার্কআউট শেষ করুন";
+"Finish workout?" = "ওয়ার্কআউট শেষ করবেন?";
+"Finish and save" = "শেষ করে সেভ করুন";
+"Cancel" = "বাতিল";
+"Rest’s over. Next set!" = "বিশ্রাম শেষ। পরের সেট!";
+"Last time: %@" = "গতবার: %@";
+"No workout running" = "কোনো ওয়ার্কআউট চলছে না";
+"Start one on your iPhone and it shows up here." = "iPhone-এ একটি শুরু করুন, এখানে দেখা যাবে।";
+"All sets done" = "সব সেট শেষ";
+"measuring" = "মাপা হচ্ছে …";
+"Next: %@, set %lld" = "এরপর: %@, সেট %lld";
+"%@, set %lld" = "%@, সেট %lld";

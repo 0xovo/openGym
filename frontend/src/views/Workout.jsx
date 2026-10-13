@@ -1788,8 +1788,14 @@ function ActiveWorkout({ onActionChange }) {
   useEffect(() => bindWatchActions({
     setDone: (idx, i, { w, r, at, hr }) => {
       if (useStore.getState().S.active?.editingWorkoutId) return   // a saved workout being edited is not the session
+      const now = useStore.getState().S.active?.entries?.[idx]?.sets?.[i]
+      // The same set ticked here after the watch did: the later tick wins, the heart rate still lands.
+      if (now?.done && at && Number(now.at) > at) {
+        if (hr) mutEntry(idx, en => { if (en.sets[i]) en.sets[i].hr = hr })
+        return
+      }
       mutEntry(idx, en => { const set = en.sets[i]; if (!set) return; if (w != null) set.w = w; if (r != null) set.r = r })
-      if (!useStore.getState().S.active?.entries?.[idx]?.sets?.[i]?.done) toggleRef.current(idx, i)
+      if (!now?.done) toggleRef.current(idx, i)
       if (at || hr) mutEntry(idx, en => { const set = en.sets[i]; if (!set?.done) return; if (at) set.at = at; if (hr) set.hr = hr })
     },
     finish: () => { if (!useStore.getState().S.active?.editingWorkoutId) finishWorkoutNow() },

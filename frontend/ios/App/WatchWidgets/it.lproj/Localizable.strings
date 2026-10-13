@@ -1,0 +1,21 @@
+/* openGym on the Apple Watch, it. Written by ios/ci/watch-strings.mjs: change that, not this. */
+
+"Today" = "Oggi";
+"Start workout" = "Inizia allenamento";
+"Done" = "Fatto";
+"Warm-up" = "Riscaldamento";
+"Reps" = "Rip.";
+"Rest" = "Riposo";
+"Skip" = "Salta";
+"Finish workout" = "Termina allenamento";
+"Finish workout?" = "Terminare l’allenamento?";
+"Finish and save" = "Termina e salva";
+"Cancel" = "Annulla";
+"Rest’s over. Next set!" = "Riposo finito. Prossima serie!";
+"Last time: %@" = "L'ultima volta: %@";
+"No workout running" = "Nessun allenamento in corso";
+"Start one on your iPhone and it shows up here." = "Avviane uno sull’iPhone e comparirà qui.";
+"All sets done" = "Tutte le serie fatte";
+"measuring" = "misuro …";
+"Next: %@, set %lld" = "Poi: %@, serie %lld";
+"%@, set %lld" = "%@, serie %lld";

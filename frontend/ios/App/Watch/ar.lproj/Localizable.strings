@@ -16,5 +16,6 @@
 "No workout running" = "لا يوجد تمرين جارٍ";
 "Start one on your iPhone and it shows up here." = "ابدأ تمرينًا على iPhone وسيظهر هنا.";
 "All sets done" = "اكتملت كل المجموعات";
+"measuring" = "جارٍ القياس …";
 "Next: %@, set %lld" = "التالي: %@، المجموعة %lld";
 "%@, set %lld" = "%@، المجموعة %lld";

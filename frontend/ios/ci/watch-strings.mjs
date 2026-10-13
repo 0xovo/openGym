@@ -11,6 +11,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const out = join(root, 'ios', 'App', 'Watch')
+const widgets = join(root, 'ios', 'App', 'WatchWidgets')
 
 // app pack → watch .lproj
 const LANGS = {
@@ -61,6 +62,11 @@ const OWN = {
     'pt-PT': 'Todas as séries feitas', 'pt-BR': 'Todas as séries feitas', pl: 'Wszystkie serie zrobione', hu: 'Minden sorozat kész',
     tr: 'Tüm setler tamam', ru: 'Все подходы сделаны', uk: 'Усі підходи зроблено', ar: 'اكتملت كل المجموعات',
     hi: 'सारे सेट पूरे', bn: 'সব সেট শেষ', th: 'ครบทุกเซ็ตแล้ว', ko: '모든 세트 완료', 'zh-Hans': '所有组已完成', 'zh-Hant': '所有組已完成',
+  },
+  'measuring': {
+    de: 'misst …', fr: 'mesure …', es: 'midiendo …', it: 'misuro …', 'pt-PT': 'a medir …', 'pt-BR': 'medindo …', pl: 'mierzę …',
+    hu: 'mérés …', tr: 'ölçülüyor …', ru: 'измеряю …', uk: 'вимірюю …', ar: 'جارٍ القياس …', hi: 'माप रहा है …', bn: 'মাপা হচ্ছে …',
+    th: 'กำลังวัด …', ko: '측정 중 …', 'zh-Hans': '测量中 …', 'zh-Hant': '測量中 …',
   },
   'Next: %@, set %lld': {
     de: 'Als Nächstes: %@, Satz %lld', fr: 'Ensuite : %@, série %lld', es: 'Siguiente: %@, serie %lld', it: 'Poi: %@, serie %lld',
@@ -117,6 +123,9 @@ for (const [pack, lproj] of Object.entries(LANGS)) {
   for (const [k, tr] of Object.entries(OWN)) put(k, tr[lproj])
   mkdirSync(join(out, `${lproj}.lproj`), { recursive: true })
   writeFileSync(join(out, `${lproj}.lproj`, 'Localizable.strings'), lines.join('\n') + '\n')
+  // The widget says a few of the same words (Rest, Start workout).
+  mkdirSync(join(widgets, `${lproj}.lproj`), { recursive: true })
+  writeFileSync(join(widgets, `${lproj}.lproj`, 'Localizable.strings'), lines.join('\n') + '\n')
   const plist = [`/* openGym on the Apple Watch, ${lproj}: Info.plist. Written by ios/ci/watch-strings.mjs. */`, '']
   for (const [k, tr] of Object.entries(PLIST)) {
     if (!tr[lproj] || /—/.test(tr[lproj])) { console.error(`${lproj}: ${k} missing or with an em dash`); problems++; continue }

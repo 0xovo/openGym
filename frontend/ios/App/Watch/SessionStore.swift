@@ -1,20 +1,19 @@
 import Foundation
-import ImageIO
 import UIKit
 import UserNotifications
 import WatchConnectivity
 import WatchKit
 
 /*
- * The watch's side of a workout. The phone sends a snapshot of the running session (frontend
- * lib/watch-sync.js through ios/App/App/WatchBridgePlugin.swift); from then on the watch runs it
- * by itself, because the phone's page sleeps once the phone is locked in a pocket. A set ticked
- * here goes back as an event with transferUserInfo, which iOS delivers even when the phone app is
- * not running, and the phone applies it through its own workout screen.
+ * The watch's side of a workout, around WatchCore's SessionCore (the session as plain data and
+ * every change to it as a pure, tested function; its header lists the sync cases). This class
+ * only feeds it what arrives (snapshots from the phone, taps), saves the result after every change
+ * so a relaunch mid-workout loses nothing, and sends the events it returns with transferUserInfo,
+ * which the system queues and delivers even when the phone app is not running.
  *
  * Exercise animations: never part of the watch app. The phone sends the running workout's own,
- * as small GIF files (WatchBridgePlugin.sendClips); they are kept here only while that workout runs
- * and deleted when it ends. Without them the page shows the exercise by name.
+ * as small GIF files (WatchBridgePlugin.sendClips); they are kept only while that workout runs and
+ * deleted when it ends. Without them the page shows the exercise by name.
  */
 
 /// One animation, as frames to cycle through.
@@ -23,87 +22,26 @@ struct ClipFrames {
     let duration: Double
 }
 
-struct Snapshot: Codable {
-    let v: Int
-    let unit: String?
-    let restSec: Double?
-    let active: ActiveWorkout?
-    let ready: Ready?
-}
-
-/// What the watch can start by itself: today's planned session and a few other routines.
-struct Ready: Codable, Equatable {
-    let today: ReadySession?
-    let others: [ReadySession]
-}
-
-struct ReadySession: Codable, Equatable {
-    let routineIds: [String]
-    let name: String
-    let entries: [Entry]
-}
-
-struct ActiveWorkout: Codable, Equatable {
-    let id: String?
-    let name: String
-    let unit: String
-    let cur: Int
-    let restSec: Double
-    let rest: RestInfo?
-    var entries: [Entry]
-}
-
-struct RestInfo: Codable, Equatable {
-    let endsAt: Double
-}
-
-struct Entry: Codable, Equatable {
-    let id: String
-    let name: String
-    let mode: String
-    let restSec: Double?
-    let last: String?
-    var sets: [SetRow]
-}
-
-struct SetRow: Codable, Equatable {
-    var w: Double?
-    var r: Double?
-    let sec: Double?
-    var done: Bool
-    let warmup: Bool
-}
-
 final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserNotificationCenterDelegate {
-    /// The session as the watch has it, kept across a relaunch of the watch app.
-    @Published private(set) var workout: ActiveWorkout? {
-        didSet {
-            guard !isDemo else { return }
-            let d = UserDefaults.standard
-            if let w = workout, let data = try? JSONEncoder().encode(w) { d.set(data, forKey: SessionStore.localKey) } else { d.removeObject(forKey: SessionStore.localKey) }
-        }
+    /// Everything the watch knows about the session, saved after every change.
+    @Published private(set) var state = SessionState() {
+        didSet { if !isDemo, state != oldValue { save() } }
     }
-    @Published private(set) var ready: Ready?
+
+    var workout: ActiveWorkout? { state.workout }
+    var ready: Ready? { state.ready }
+    var entryIndex: Int { state.entryIndex }
+    var unit: String { workout?.unit ?? state.unit }
+    var weightStep: Double { unit == "lb" ? 5 : 2.5 }
+    var restHaptics: Bool { state.settings.restHaptics ?? true }
+    var crownStartsOnWeight: Bool { state.settings.crown == "weight" }
+
     /// Apple Health: the workout session, its heart rate, and the switch (WorkoutManager).
     let health = WorkoutManager()
     /// The running workout's animations, by exercise id, from the phone.
     @Published private(set) var clips: [String: ClipFrames] = [:]
-    private static var clipDir: URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("clips")
-    }
-    /// When the set now up began: the end of the rest before it, or the start of the session.
-    private var setStartedAt = Date()
-    /// The rest running after a set, for that rest's heart rate once it is over.
-    private var restAfter: (exId: String, entryIdx: Int, setIdx: Int, wid: String, from: Date)?
-    private var unitDefault = "kg"
-    private var restDefault: Double = 90
-    /// A session started here that the phone has not reported back yet.
-    private var startedHere: String? {
-        didSet { if !isDemo { UserDefaults.standard.set(startedHere, forKey: SessionStore.startedKey) } }
-    }
-    private static let localKey = "localWorkout"
-    private static let startedKey = "startedHere"
-    @Published var entryIndex = 0
+    /// What happened to the animations, newest last (the hidden debug screen).
+    @Published private(set) var clipLog: [String] = []
     @Published var weight: Double = 0
     @Published var reps: Double = 0
     @Published private(set) var restEndsAt: Date?
@@ -111,17 +49,25 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     /// A set picked by hand in an exercise (entry index → set index); otherwise the first not done.
     @Published private var picked: [Int: Int] = [:]
 
-    /// Sets ticked here that the phone has not confirmed yet ("exerciseId#setIndex"): a snapshot
-    /// sent before the phone applied them must not untick them.
-    private var pending = Set<String>()
+    /// When the set now up began: the end of the rest before it, or the start of the session.
+    private var setStartedAt = Date()
+    /// The rest running after a set, for that rest's heart rate once it is over.
+    private var restAfter: (exId: String, entryIdx: Int, setIdx: Int, wid: String, from: Date)?
     private var restTimer: Timer?
-    private static let savedKey = "snapshot"
+    private static let stateKey = "sessionState"
     private static let restNotificationId = "opengym.rest"
+    private static var clipDir: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("clips")
+    }
+
     static let demoArgument = "-OpenGymWatchDemo"
     /// CI screenshots: "-OpenGymWatchScreen rest" opens the demo on that screen.
-    static var demoScreen: String? {
+    static var demoScreen: String? { argument("-OpenGymWatchScreen") }
+    /// CI: a synthetic clip (not exercise media) shown on the demo's first exercise.
+    static var demoClip: String? { argument("-OpenGymWatchDemoClip") }
+    private static func argument(_ name: String) -> String? {
         let a = ProcessInfo.processInfo.arguments
-        guard let i = a.firstIndex(of: "-OpenGymWatchScreen"), i + 1 < a.count else { return nil }
+        guard let i = a.firstIndex(of: name), i + 1 < a.count else { return nil }
         return a[i + 1]
     }
     var isDemo: Bool { ProcessInfo.processInfo.arguments.contains(SessionStore.demoArgument) }
@@ -129,29 +75,14 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     override init() {
         super.init()
         if isDemo {
-            if SessionStore.demoScreen != "empty" {
-                apply(json: SessionStore.demoScreen == "idle" ? SessionStore.demoReadyJSON : SessionStore.demoJSON)
-            }
-            if SessionStore.demoScreen == "finish" {
-                DispatchQueue.main.async { self.entryIndex = self.workout?.entries.count ?? 0 }
-            }
-            if SessionStore.demoScreen == "weight" {
-                DispatchQueue.main.async { self.loadTargets() }
-            }
-            if SessionStore.demoScreen == "rest" {
-                DispatchQueue.main.async { self.startRest(until: Date().addingTimeInterval(83), notify: false) }
-            }
-        } else {
-            let d = UserDefaults.standard
-            if let data = d.data(forKey: SessionStore.localKey), let w = try? JSONDecoder().decode(ActiveWorkout.self, from: data) {
-                workout = w
-                startedHere = d.string(forKey: SessionStore.startedKey)
-                loadTargets()
-            }
-            if let saved = d.string(forKey: SessionStore.savedKey) { apply(json: saved) }
+            startDemo()
+        } else if let data = UserDefaults.standard.data(forKey: SessionStore.stateKey),
+                  let saved = try? JSONDecoder().decode(SessionState.self, from: data) {
+            // Relaunched (mid-workout or not): the session as it was, then the latest from the phone.
+            state = saved
+            loadTargets()
+            if saved.workout != nil { health.start() }
         }
-        // The rest's end as a notification, also when the app is not in front (not in the demo:
-        // the permission question would cover the screenshot).
         let center = UNUserNotificationCenter.current()
         center.delegate = self
         if !isDemo { center.requestAuthorization(options: [.alert, .sound]) { _, _ in } }
@@ -161,6 +92,10 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         }
     }
 
+    private func save() {
+        if let data = try? JSONEncoder().encode(state) { UserDefaults.standard.set(data, forKey: SessionStore.stateKey) }
+    }
+
     /* ---------- what the views read ---------- */
 
     var entry: Entry? {
@@ -168,48 +103,45 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         return w.entries[entryIndex]
     }
 
-    /// The set to do next in the current exercise (the one picked, or the first not done), or nil
-    /// when they are all done.
     var setIndex: Int? { setIndex(in: entryIndex) }
+    func setIndex(in ei: Int) -> Int? { SessionCore.setIndex(state, entry: ei, picked: picked[ei]) }
 
-    func setIndex(in ei: Int) -> Int? {
-        guard let w = workout, w.entries.indices.contains(ei) else { return nil }
-        let sets = w.entries[ei].sets
-        if let p = picked[ei], sets.indices.contains(p), !sets[p].done { return p }
-        return sets.firstIndex(where: { !$0.done })
-    }
+    var progress: (done: Int, total: Int) { SessionCore.progress(state) }
 
     func pick(set si: Int, in ei: Int) {
         picked[ei] = si
         if ei == entryIndex { loadTargets() }
     }
 
-    /// Paging to another exercise (Digital Crown or a vertical swipe).
+    /// Paging to another exercise (a vertical swipe).
     func show(entry ei: Int) {
-        guard ei != entryIndex else { return }
-        entryIndex = ei
+        guard ei != state.entryIndex else { return }
+        state.entryIndex = ei
         loadTargets()
     }
-
-    var unit: String { workout?.unit ?? "kg" }
 
     /// What the complications and the Smart Stack widget show (WidgetState).
     var widgetState: WidgetState {
         if let w = workout {
+            let p = progress
             if let end = restEndsAt, end > Date() {
-                return WidgetState(mode: "rest", title: entry?.name ?? w.name, detail: "", restEndsAt: end)
+                return WidgetState(mode: "rest", title: entry?.name ?? w.name, detail: "", restEndsAt: end, done: p.done, total: p.total)
             }
             if let e = entry, let si = setIndex {
                 let s = e.sets[si]
                 let numbers = "\(formatNumber(s.w ?? 0)) \(w.unit) × \(formatNumber(s.r ?? 0))"
-                return WidgetState(mode: "set", title: e.name, detail: numbers, restEndsAt: nil)
+                let work = e.sets.filter { !$0.warmup }.count
+                return WidgetState(mode: "set", title: e.name, detail: numbers, restEndsAt: nil, done: p.done, total: p.total,
+                                   setLabel: "\(min(si + 1, max(1, work)))/\(max(1, work))")
             }
-            return WidgetState(mode: "set", title: w.name, detail: "", restEndsAt: nil)
+            return WidgetState(mode: "set", title: w.name, detail: "", restEndsAt: nil, done: p.done, total: p.total)
         }
-        if let today = ready?.today { return WidgetState(mode: "today", title: today.name, detail: "", restEndsAt: nil) }
+        if let today = ready?.today {
+            let total = today.entries.flatMap { $0.sets }.filter { !$0.warmup }.count
+            return WidgetState(mode: "today", title: today.name, detail: "", restEndsAt: nil, done: 0, total: total)
+        }
         return .idle
     }
-    var weightStep: Double { unit == "lb" ? 5 : 2.5 }
 
     /* ---------- snapshots from the phone ---------- */
 
@@ -217,39 +149,25 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         guard let data = json.data(using: .utf8),
               let snap = try? JSONDecoder().decode(Snapshot.self, from: data) else { return }
         DispatchQueue.main.async {
-            self.ready = snap.ready
-            if let u = snap.unit { self.unitDefault = u }
-            if let r = snap.restSec, r > 0 { self.restDefault = r }
-            UserDefaults.standard.set(json, forKey: SessionStore.savedKey)
-            guard var next = snap.active else {
-                // A session started here that the phone has not heard of yet stays.
-                if self.workout != nil && self.workout?.id == self.startedHere { return }
-                if self.workout != nil { self.health.end(save: true) }
+            let before = self.state
+            let next = SessionCore.applySnapshot(before, snap)
+            self.state = next
+            if before.workout != nil && next.workout == nil {
+                // Ended on the phone: the session here ends too.
+                self.health.end(save: true)
                 self.dropClips()
-                self.workout = nil
-                self.pending.removeAll()
                 self.skipRest()
-                return
-            }
-            if next.id == self.startedHere { self.startedHere = nil }
-            let sameWorkout = next.id != nil && next.id == self.workout?.id
-            // Ticks made here and not yet on the phone stay ticked.
-            for (ei, e) in next.entries.enumerated() {
-                for (si, s) in e.sets.enumerated() {
-                    let key = "\(e.id)#\(si)"
-                    if s.done { self.pending.remove(key) } else if self.pending.contains(key) { next.entries[ei].sets[si].done = true }
-                }
-            }
-            self.workout = next
-            if !sameWorkout {
-                self.entryIndex = next.cur
+            } else if next.workout != nil && next.workout?.id != before.workout?.id {
+                // A workout this watch picks up (the app opened mid-workout, or the phone started one).
                 self.setStartedAt = Date()
-                if !self.isDemo { self.health.start() }
+                self.picked = [:]
+                self.health.start()
             }
-            if let rest = next.rest {
-                self.startRest(until: Date(timeIntervalSince1970: rest.endsAt / 1000), notify: true)
+            if let rest = snap.active?.rest, next.workout?.id == snap.active?.id {
+                let end = Date(timeIntervalSince1970: rest.endsAt / 1000)
+                if end != self.restEndsAt { self.startRest(until: end, notify: true) }
             }
-            self.entryIndex = min(max(0, self.entryIndex), next.entries.count)   // the last page is Finish
+            self.health.syncSetting(next.settings.health)
             self.loadTargets()
         }
     }
@@ -265,92 +183,58 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     /* ---------- what the lifter does here ---------- */
 
     func completeSet() {
-        guard var w = workout, let e = entry, let si = setIndex else { return }
+        guard let w = workout, let e = entry, let si = setIndex else { return }
         let ei = entryIndex
         let now = Date()
         let setFrom = setStartedAt
         closeRest(at: now)
-        w.entries[ei].sets[si].done = true
-        w.entries[ei].sets[si].w = weight
-        w.entries[ei].sets[si].r = reps
-        pending.insert("\(e.id)#\(si)")
-        workout = w
-        var event: [String: Any] = [
-            "id": UUID().uuidString,
-            "type": "setDone",
-            "wid": w.id ?? "",
-            "exId": e.id,
-            "entryIdx": ei,
-            "setIdx": si,
-            "w": weight,
-            "r": reps,
-            "at": now.timeIntervalSince1970 * 1000,
-        ]
-        if let hr = health.stats(from: setFrom, to: now) { event["hr"] = hr }
-        send(event: event)
+        let hr = health.stats(from: setFrom, to: now)
+        let (next, event) = SessionCore.tick(state, entry: ei, set: si, w: weight, r: reps, at: now.timeIntervalSince1970 * 1000,
+                                             id: UUID().uuidString, hr: hr)
+        state = next
+        if let event = event { send(event: event) }
         setStartedAt = now
         WKInterfaceDevice.current().play(.success)
-        let rest = e.restSec ?? w.restSec
         picked[ei] = nil
+        let rest = e.restSec ?? w.restSec
         if rest > 0 {
             startRest(until: now.addingTimeInterval(rest), notify: true)
-            // after startRest, which closes any rest before it
             restAfter = (e.id, ei, si, w.id ?? "", now)
         }
         // On to the next exercise once this one is done.
-        if setIndex == nil, let next = w.entries.indices.first(where: { $0 > ei && w.entries[$0].sets.contains(where: { !$0.done }) }) {
-            entryIndex = next
+        if setIndex == nil, let w2 = workout,
+           let nextEi = w2.entries.indices.first(where: { $0 > ei && w2.entries[$0].sets.contains(where: { !$0.done }) }) {
+            state.entryIndex = nextEi
         }
         loadTargets()
     }
 
-    /// Starts a ready session here, the phone asleep or not: the watch's id and start time go to
-    /// the phone, which starts the same session with them when it next runs.
+    /// Starts a ready session here, the phone asleep or not.
     func start(_ session: ReadySession) {
-        let id = "watch-" + UUID().uuidString
         let now = Date()
-        startedHere = id
-        workout = ActiveWorkout(id: id, name: session.name, unit: unitDefault, cur: 0, restSec: restDefault, rest: nil, entries: session.entries)
-        entryIndex = 0
+        let (next, event) = SessionCore.start(state, session, wid: "watch-" + UUID().uuidString,
+                                              at: now.timeIntervalSince1970 * 1000, id: UUID().uuidString)
+        state = next
         picked = [:]
-        pending.removeAll()
-        loadTargets()
         setStartedAt = now
         restAfter = nil
+        loadTargets()
         health.start()
-        send(event: [
-            "id": UUID().uuidString,
-            "type": "start",
-            "routineIds": session.routineIds,
-            "wid": id,
-            "at": now.timeIntervalSince1970 * 1000,
-        ])
+        send(event: event)
         WKInterfaceDevice.current().play(.start)
     }
 
     /// Finishes the session: the phone saves it with its own Finish and save.
     func finish() {
-        guard let w = workout else { return }
         closeRest(at: Date())
+        let (next, event) = SessionCore.finish(state, at: Date().timeIntervalSince1970 * 1000, id: UUID().uuidString)
+        guard let ev = event else { return }
         health.end(save: true)
-        send(event: [
-            "id": UUID().uuidString,
-            "type": "finish",
-            "wid": w.id ?? "",
-            "at": Date().timeIntervalSince1970 * 1000,
-        ])
         skipRest()
         dropClips()
-        workout = nil
-        startedHere = nil
-        pending.removeAll()
+        state = next
+        send(event: ev)
         WKInterfaceDevice.current().play(.stop)
-    }
-
-    func move(by step: Int) {
-        guard let w = workout, !w.entries.isEmpty else { return }
-        entryIndex = min(max(0, entryIndex + step), w.entries.count - 1)
-        loadTargets()
     }
 
     func skipRest() {
@@ -379,20 +263,20 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         restEndsAt = end
         restStartedAt = Date()
         restTimer = Timer.scheduledTimer(withTimeInterval: end.timeIntervalSinceNow, repeats: false) { [weak self] _ in
-            SessionStore.restOverHaptics()
+            if self?.restHaptics ?? true { SessionStore.restOverHaptics() }
             DispatchQueue.main.async {
                 self?.closeRest(at: Date())
                 self?.restEndsAt = nil
                 self?.restStartedAt = nil
             }
         }
-        guard notify else { return }
+        guard notify, !isDemo else { return }
         let content = UNMutableNotificationContent()
         content.title = String(localized: "Rest’s over. Next set!")
         if let e = entry, let si = setIndex {
             content.body = String(localized: "\(e.name), set \(si + 1)")
         }
-        content.sound = .default
+        content.sound = restHaptics ? .default : nil
         content.interruptionLevel = .timeSensitive
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, end.timeIntervalSinceNow), repeats: false)
         center.add(UNNotificationRequest(identifier: SessionStore.restNotificationId, content: content, trigger: trigger))
@@ -406,13 +290,8 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         setStartedAt = end
         guard let hr = health.stats(from: r.from, to: end) else { return }
         send(event: [
-            "id": UUID().uuidString,
-            "type": "setHr",
-            "wid": r.wid,
-            "exId": r.exId,
-            "entryIdx": r.entryIdx,
-            "setIdx": r.setIdx,
-            "restHr": hr,
+            "id": UUID().uuidString, "type": "setHr", "wid": r.wid, "exId": r.exId,
+            "entryIdx": r.entryIdx, "setIdx": r.setIdx, "restHr": hr,
         ])
     }
 
@@ -424,60 +303,54 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { device.play(.notification) }
     }
 
-    /* ---------- notifications with the app in front ---------- */
-
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound])
     }
 
     private func send(event: [String: Any]) {
-        guard WCSession.isSupported(),
+        guard !isDemo, WCSession.isSupported(),
               let data = try? JSONSerialization.data(withJSONObject: event),
               let json = String(data: data, encoding: .utf8) else { return }
-        // Queued by the system and delivered even when the phone app is not running.
+        // Queued by the system and delivered, in order, even when the phone app is not running.
         WCSession.default.transferUserInfo(["event": json])
     }
 
     /* ---------- the animations ---------- */
 
+    private func log(_ line: String) {
+        let stamp = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+        DispatchQueue.main.async { self.clipLog = Array((self.clipLog + ["\(stamp) \(line)"]).suffix(30)) }
+    }
+
     /// The workout is over: its animations go, from memory and from the disk.
     func dropClips() {
         clips = [:]
         try? FileManager.default.removeItem(at: SessionStore.clipDir)
+        log("clips deleted")
     }
 
-    static func decode(_ url: URL) -> ClipFrames? {
-        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
-        let count = CGImageSourceGetCount(src)
-        guard count > 0 else { return nil }
-        var images: [UIImage] = []
-        var total = 0.0
-        for i in 0..<count {
-            guard let cg = CGImageSourceCreateImageAtIndex(src, i, nil) else { continue }
-            images.append(UIImage(cgImage: cg))
-            let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [String: Any]
-            let gif = props?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
-            let delay = (gif?[kCGImagePropertyGIFUnclampedDelayTime as String] as? Double) ?? (gif?[kCGImagePropertyGIFDelayTime as String] as? Double) ?? 0.1
-            total += delay > 0.01 ? delay : 0.1
-        }
-        return images.isEmpty ? nil : ClipFrames(images: images, duration: total)
+    static func frames(of url: URL) -> ClipFrames? {
+        guard let f = ClipCodec.decode(url) else { return nil }
+        return ClipFrames(images: f.images.map { UIImage(cgImage: $0) }, duration: f.duration)
     }
 
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
         // The file is gone once this returns: moved into the cache now.
-        guard let exId = file.metadata?["exId"] as? String else { return }
+        guard let exId = file.metadata?["exId"] as? String else { log("file without an exercise"); return }
         let dir = SessionStore.clipDir
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let dest = dir.appendingPathComponent(exId.replacingOccurrences(of: "/", with: "_") + ".gif")
         try? FileManager.default.removeItem(at: dest)
-        guard (try? FileManager.default.moveItem(at: file.fileURL, to: dest)) != nil,
-              let frames = SessionStore.decode(dest) else { return }
+        guard (try? FileManager.default.moveItem(at: file.fileURL, to: dest)) != nil else { log("\(exId): could not keep the file"); return }
+        guard let frames = SessionStore.frames(of: dest) else { log("\(exId): could not decode"); return }
         let wid = file.metadata?["wid"] as? String
+        log("\(exId): \(frames.images.count) frames, \(String(format: "%.1f", frames.duration)) s")
         DispatchQueue.main.async {
             // Only for the workout running here; a late file of an earlier one is dropped.
             guard self.workout != nil, wid == nil || wid == self.workout?.id else {
                 try? FileManager.default.removeItem(at: dest)
+                self.log("\(exId): not for this workout, dropped")
                 return
             }
             self.clips[exId] = frames
@@ -487,6 +360,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     /* ---------- WCSessionDelegate ---------- */
 
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        // The phone's latest snapshot: also what a watch app opened mid-workout picks the session up from.
         if let json = session.receivedApplicationContext["snapshot"] as? String { apply(json: json) }
     }
 
@@ -498,7 +372,21 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         if let json = message["snapshot"] as? String { apply(json: json) }
     }
 
-    /* ---------- the demo the CI screenshot shows ---------- */
+    /* ---------- the demo the CI screenshots show (text only; a synthetic clip at most) ---------- */
+
+    private func startDemo() {
+        let screen = SessionStore.demoScreen
+        if screen != "empty" { apply(json: screen == "idle" ? SessionStore.demoReadyJSON : SessionStore.demoJSON) }
+        DispatchQueue.main.async {
+            if screen == "finish" { self.state.entryIndex = self.workout?.entries.count ?? 0 }
+            if screen == "rest" { self.startRest(until: Date().addingTimeInterval(83), notify: false) }
+            if let path = SessionStore.demoClip, let frames = SessionStore.frames(of: URL(fileURLWithPath: path)) {
+                self.clips["0025"] = frames
+                self.log("demo clip: \(frames.images.count) frames")
+            }
+            self.loadTargets()
+        }
+    }
 
     static let demoReadyJSON = """
     {"v":1,"unit":"kg","restSec":90,"active":null,"ready":{"today":{"routineIds":["r1"],"name":"Push day","entries":[
@@ -509,7 +397,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     static let demoJSON = """
     {"v":1,"unit":"kg","restSec":90,"ready":null,"active":{"id":"demo","name":"Push day","unit":"kg","cur":0,"restSec":90,"rest":null,"entries":[
     {"id":"0025","name":"Bench Press","mode":"reps","restSec":120,"last":"60 kg × 8, 60 kg × 8, 60 kg × 7","sets":[
-    {"w":60,"r":8,"sec":null,"done":true,"warmup":false},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false}]},
+    {"w":60,"r":8,"sec":null,"done":true,"warmup":false,"at":1},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false}]},
     {"id":"0426","name":"Overhead Press","mode":"reps","restSec":null,"last":null,"sets":[
     {"w":40,"r":8,"sec":null,"done":false,"warmup":false},{"w":40,"r":8,"sec":null,"done":false,"warmup":false}]}]}}
     """

@@ -16,5 +16,6 @@
 "No workout running" = "कोई वर्कआउट नहीं चल रहा";
 "Start one on your iPhone and it shows up here." = "iPhone पर एक शुरू करें, यह यहाँ दिखेगा।";
 "All sets done" = "सारे सेट पूरे";
+"measuring" = "माप रहा है …";
 "Next: %@, set %lld" = "अगला: %@, सेट %lld";
 "%@, set %lld" = "%@, सेट %lld";
