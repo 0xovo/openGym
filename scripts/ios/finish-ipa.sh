@@ -9,7 +9,7 @@
 # certificate. No Mac needed: rcodesign signs on Linux.
 #
 # Usage:
-#   scripts/ios/finish-ipa.sh <App-unsigned.ipa> <dist.p12> <p12-password-file> <profile.mobileprovision> [out.ipa]
+#   [WATCH_PROFILE=<watch.mobileprovision>] scripts/ios/finish-ipa.sh <App-unsigned.ipa> <dist.p12> <p12-password-file> <profile.mobileprovision> [out.ipa]
 #
 # Before: the phone build with the app's animations, from the same commit as the IPA:
 #   cd frontend && VITE_CLIP_EXT=webp APP_MEDIA_DIR=/mnt/backup-hdd/opengym-media/build-appwebp npm run build:mobile
@@ -63,8 +63,28 @@ plistlib.dump(e, open(sys.argv[2], 'wb'))
 print('profile:', p['Name'], '| team', p['TeamIdentifier'][0], '| expires', p['ExpirationDate'])
 PY
 
+# The Apple Watch app (App.app/Watch/OpenGymWatch.app) is signed with its own App Store profile,
+# given as WATCH_PROFILE: its bundle id and its entitlements (HealthKit) come from that profile.
+WATCH_SIGN=()
+WATCH="$APP/Watch/OpenGymWatch.app"
+if [ -d "$WATCH" ]; then
+  [ -n "${WATCH_PROFILE:-}" ] || { echo "the IPA carries the watch app: set WATCH_PROFILE to its App Store profile" >&2; exit 1; }
+  cp "$WATCH_PROFILE" "$WATCH/embedded.mobileprovision"
+  openssl smime -inform der -verify -noverify -in "$WATCH_PROFILE" -out "$WORK/watch-profile.plist" 2>/dev/null
+  python3 - "$WORK/watch-profile.plist" "$WORK/watch-entitlements.plist" <<'PY'
+import plistlib, sys
+p = plistlib.load(open(sys.argv[1], 'rb'))
+e = dict(p['Entitlements'])
+e['get-task-allow'] = False
+assert e['application-identifier'].endswith('.ch.opengym.app.watchkitapp'), e['application-identifier']
+plistlib.dump(e, open(sys.argv[2], 'wb'))
+print('watch profile:', p['Name'], '| expires', p['ExpirationDate'])
+PY
+  WATCH_SIGN=(--entitlements-xml-file "Watch/OpenGymWatch.app/OpenGymWatch:$WORK/watch-entitlements.plist")
+fi
+
 "$RCODESIGN" sign --p12-file "$P12" --p12-password-file "$P12PASS" \
-  --entitlements-xml-file "App:$WORK/entitlements.plist" "$APP"
+  --entitlements-xml-file "App:$WORK/entitlements.plist" "${WATCH_SIGN[@]}" "$APP"
 
 (cd "$WORK/ipa" && rm -f "$OUT" && python3 -m zipfile -c "$OUT" Payload)
 echo "signed: $OUT ($(du -h "$OUT" | cut -f1), $CLIPS animations)"
