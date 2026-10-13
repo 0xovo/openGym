@@ -2331,4 +2331,6 @@ export default {
   'Remove “{0}”': '“{0}” kaldır',
   'That’s plenty of backups.': 'Bu kadar yedek yeter.',
   'Your backups': 'Yedeklerin',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Burada eklenecek ağırlık yok: önce tekrar, sonra set artar.',
 }

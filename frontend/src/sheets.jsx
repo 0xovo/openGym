@@ -1559,8 +1559,11 @@ export const equipmentProfileSheet = profile => ui().openSheet(close => <Equipme
 const progressionStepOf = (c, mode, ex, unit) =>
   c.inc >= 0 ? c.inc : (mode === 'time' ? 5 : defaultIncrement(ex.id, unit))
 // Back-off sets step down by the same Step, so a plan using them needs one even with no rule.
-const progressionStepIsValid = (step, policy, backoff = false) =>
-  (policy === 'off' && !backoff) || (Number.isFinite(step) && step > 0)
+// Bodyweight reps with nothing added (#583) have no load to step: they climb in reps, then sets
+// (lib/progression.js climbsReps), so no step is asked for there.
+const progressionStepIsValid = (step, policy, backoff = false, weightless = false) =>
+  weightless || (policy === 'off' && !backoff) || (Number.isFinite(step) && step > 0)
+const weightlessOf = (c, mode, bw) => mode === 'reps' && bw && !(Number(c.weight) > 0)
 // Back-off sets (lib/backoff.js) are offered where there is a load to step down: rep work on a
 // loaded exercise, not a pyramid (it owns each set), not a rest-pause (one work set), not an
 // assistance machine (less load is harder there).
@@ -1584,7 +1587,8 @@ function ProgressionFields({ ex, mode, c, setC, routine, unit, perSide, bw }) {
   const inc = progressionStepOf(c, mode, ex, unit)
   const canBackoff = backoffOffered(c, mode, ex, bw)
   const backoff = canBackoff && c.backoff === true
-  const invalid = !progressionStepIsValid(inc, active, backoff)
+  const weightless = weightlessOf(c, mode, bw)
+  const invalid = !progressionStepIsValid(inc, active, backoff, weightless)
   // "26 → 24 → 22 kg": what the sets will open at, from the weight and step typed above.
   const preview = backoff && c.weight > 0 && inc > 0
     ? backoffWeights(c.weight, Math.max(1, Math.round(c.sets) || 1), inc).map(fmtNum).join(' → ') + ' ' + unit
@@ -1618,10 +1622,11 @@ function ProgressionFields({ ex, mode, c, setC, routine, unit, perSide, bw }) {
     <div className="small dim" style={{ marginBottom: active === 'off' ? 18 : 10 }}>{t(POLICY_DESC[active])}</div>
     {/* Double progression on a weighted exercise fills this row with four steppers; `cfgrow-4`
         lets it wrap into two pairs on phones, where four abreast left the inputs a few px wide. */}
-    {(active !== 'off' || backoff) && <div className={'row cfgrow' + ((active === 'double' && epleyEligible) || active === 'triple' ? ' cfgrow-4' : '')} style={{ marginBottom: 18 }}>
-      <Stepper label={mode === 'time' ? t('Step (seconds)') : t('Step ({0})', unit)} value={inc}
+    {weightless && active !== 'off' && <div className="small dim" style={{ marginBottom: 12 }}>{t('Nothing to add in weight here: it goes up in reps, then sets.')}</div>}
+    {(active !== 'off' || backoff) && (!weightless || climbsRange(active) || active === 'triple') && <div className={'row cfgrow' + ((active === 'double' && epleyEligible) || active === 'triple' ? ' cfgrow-4' : '')} style={{ marginBottom: 18 }}>
+      {!weightless && <Stepper label={mode === 'time' ? t('Step (seconds)') : t('Step ({0})', unit)} value={inc}
         step={mode === 'time' ? 5 : 1.25} decimal={mode !== 'time'} invalid={invalid} className={invalid ? 'invalid' : ''}
-        onChange={v => setC(x => ({ ...x, inc: v }))} />
+        onChange={v => setC(x => ({ ...x, inc: v }))} />}
       {climbsRange(active) && <>
         {/* The draft stays as typed: normalising on every keystroke turned "12" into 92 (the
             "1" was pulled above the lower bound first). Save and the engine normalise anyway. */}
@@ -1717,7 +1722,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   const pyramid = mode === 'reps' && isPyramid({ ...c, mode })
   const setPyramidAt = (i, v) => setC(x => ({ ...x, pyramid: x.pyramid.map((p, j) => (j === i ? v : p)) }))
   const progressionPolicy =policyFor({ ...c, id: ex.id }, routine, mode)
-  const progressionStepInvalid = !progressionStepIsValid(progressionStepOf(c, mode, ex, st.unit), progressionPolicy, c.backoff === true && backoffOffered(c, mode, ex, bw))
+  const progressionStepInvalid = !progressionStepIsValid(progressionStepOf(c, mode, ex, st.unit), progressionPolicy, c.backoff === true && backoffOffered(c, mode, ex, bw), weightlessOf(c, mode, bw))
   const activePolicy = policyFor({ ...c, id: ex.id }, routine, mode)
   // Both climb a range: the flat Reps stepper gives way to "Reps from" / "Reps up to".
   const ranged = mode === 'reps' && climbsRange(activePolicy)

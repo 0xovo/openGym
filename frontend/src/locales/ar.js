@@ -2386,4 +2386,6 @@ export default {
   'Remove “{0}”': 'إزالة «{0}»',
   'That’s plenty of backups.': 'هذا عدد كافٍ من البدائل.',
   'Your backups': 'بدائلك',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'لا وزن يُضاف هنا: يزيد التمرين بالتكرارات ثم بالمجموعات.',
 }

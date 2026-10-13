@@ -2331,4 +2331,6 @@ export default {
   'Remove “{0}”': '“{0}” हटाएँ',
   'That’s plenty of backups.': 'इतने विकल्प काफ़ी हैं।',
   'Your backups': 'आपके विकल्प',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'यहाँ वज़न जोड़ने की ज़रूरत नहीं: पहले रेप्स बढ़ेंगे, फिर सेट।',
 }

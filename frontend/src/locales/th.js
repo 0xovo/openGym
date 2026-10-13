@@ -2342,4 +2342,6 @@ export default {
   'Remove “{0}”': 'เอา “{0}” ออก',
   'That’s plenty of backups.': 'ท่าสำรองเท่านี้ก็พอแล้ว',
   'Your backups': 'ท่าสำรองของคุณ',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'ท่านี้ไม่ต้องเพิ่มน้ำหนัก: เพิ่มจำนวนครั้งก่อน แล้วค่อยเพิ่มเซ็ต',
 }

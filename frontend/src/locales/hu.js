@@ -2334,4 +2334,6 @@ export default {
   'Remove “{0}”': '„{0}” eltávolítása',
   'That’s plenty of backups.': 'Ennyi helyettesítő bőven elég.',
   'Your backups': 'A helyettesítőid',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Itt nincs mit súlyban hozzáadni: előbb az ismétlések nőnek, aztán a sorozatok.',
 }

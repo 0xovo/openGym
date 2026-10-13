@@ -2335,4 +2335,6 @@ export default {
   'Remove “{0}”': 'Убрать «{0}»',
   'That’s plenty of backups.': 'Замен уже достаточно.',
   'Your backups': 'Ваши замены',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Здесь нечего добавлять в весе: растут повторения, потом подходы.',
 }
