@@ -1465,6 +1465,18 @@ export const PT_BR_OVERRIDES = {
   'Waiting for Wi-Fi': 'Esperando o Wi-Fi',
   // --- background check before the nudge ---
   'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Registrou um treino em outro dispositivo? Antes do aviso, o celular confirma com o seu servidor, sempre que deixar o aplicativo rodar em segundo plano. Abrir o aplicativo sempre deixa tudo em dia.',
+  'Write to Apple Health': 'Salvar no Apple Saúde',
+  'Workouts and weigh-ins go to Apple Health when you finish or change them.': 'Os treinos e as pesagens vão para o Apple Saúde quando você os termina ou altera.',
+  'Writing to Apple Health': 'Salvando no Apple Saúde',
+  'Could not write to Apple Health': 'Não foi possível salvar no Apple Saúde',
+  'Stop writing to Apple Health?': 'Parar de salvar no Apple Saúde?',
+  'What openGym already wrote can stay in Apple Health as your data, or be removed from it.': 'O que o openGym já salvou pode ficar no Apple Saúde como seus dados, ou ser removido.',
+  'Your workouts in Apple Health': 'Seus treinos no Apple Saúde',
+  'openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.': 'O openGym pode salvar cada treino e cada pesagem no Apple Saúde, e seu Apple Watch pode mostrar sua frequência cardíaca enquanto você treina.',
+  'Heart rate per set on your Apple Watch': 'Frequência cardíaca por série no seu Apple Watch',
+  'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
+  'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
+  'Workout running': 'Treino em andamento',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

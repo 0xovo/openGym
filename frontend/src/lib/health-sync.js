@@ -6,8 +6,13 @@
 // data directory, never in S, so it does not sync to a server, ride in a backup, or switch on a
 // second phone. Off until the user turns it on; nothing is asked of Health Connect before that.
 //
-// The web build never gets here (MOBILE is a build-time flag), and iOS answers 'unsupported'.
-import { MOBILE, isAndroid, readJsonFile, writeJsonFile } from './mobile.js'
+// The iPhone app does the same with Apple Health (AppleHealthPlugin.swift): the same calls, the
+// same records, the same file. There it also asks to read the heart rate and the body weight, for
+// the Apple Watch app (its workout session shows the heart rate per set), and tells the watch
+// whether it is on (setEnabled: the App Group's "healthEnabled", which the watch link passes on).
+//
+// The web build never gets here (MOBILE is a build-time flag).
+import { MOBILE, nativePlatform, readJsonFile, writeJsonFile } from './mobile.js'
 import { healthRecords, planSync, writtenIds } from './health-connect.js'
 import { exerciseNameFor } from './i18n-core.js'
 import { EXIDX } from './exercises.js'
@@ -20,10 +25,17 @@ const OFF = { on: false, written: {}, at: 0, error: null }
 // promise resolved with the bare proxy never settles.
 let pluginP = null
 const plugin = () => pluginP || (pluginP = (async () => {
-  if (!(await isAndroid())) return null
+  const platform = await nativePlatform()
+  if (!platform) return null
   const { registerPlugin } = await import('@capacitor/core')
-  return { HC: registerPlugin('HealthConnect') }
+  return { HC: registerPlugin(platform === 'ios' ? 'AppleHealth' : 'HealthConnect'), platform }
 })().catch(() => null))
+
+// iPhone: the switch as the watch reads it. Android has no watch to tell.
+async function mirrorOn(on) {
+  const p = await plugin().catch(() => null)
+  if (p?.platform === 'ios') await p.HC.setEnabled({ on: !!on }).catch(() => {})
+}
 
 // The file's content, read once and then kept here: a save while it is off (the usual case) must
 // not cost a file read, and every change to it goes through saveHealth anyway.
@@ -36,14 +48,14 @@ export async function loadHealth() {
 }
 const saveHealth = h => { cached = h; return writeJsonFile(HEALTH_FILE, h) }
 
-/** { status: 'available' | 'update' | 'missing' | 'unsupported', granted } */
+/** { status: 'available' | 'update' | 'missing' | 'unsupported', granted, platform } */
 export async function healthStatus() {
-  if (!MOBILE) return { status: 'unsupported', granted: false }
+  if (!MOBILE) return { status: 'unsupported', granted: false, platform: null }
   try {
     const p = await plugin()
-    if (!p) return { status: 'unsupported', granted: false }
-    return await p.HC.status()
-  } catch { return { status: 'unsupported', granted: false } }
+    if (!p) return { status: 'unsupported', granted: false, platform: null }
+    return { ...(await p.HC.status()), platform: p.platform }
+  } catch { return { status: 'unsupported', granted: false, platform: null } }
 }
 
 /** Health Connect's own screen for what apps wrote, or its store page where it is missing. */
@@ -137,6 +149,7 @@ export async function enableHealth(S) {
   if (!granted) return { ok: false, reason: 'denied' }
   const h = await loadHealth()
   await saveHealth({ ...h, on: true, error: null })
+  await mirrorOn(true)
   const after = await syncHealth(S)
   return { ok: !after?.error, reason: after?.error || null, health: after }
 }
@@ -159,6 +172,7 @@ export async function disableHealth({ removeWritten = false } = {}) {
   }
   const out = { ...h, on: false, error: null, written: removeWritten ? {} : h.written }
   await saveHealth(out)
+  await mirrorOn(false)
   told(out)
   return out
 }
@@ -174,5 +188,5 @@ export function initHealthSync(getState) {
   }).catch(() => {})
   // Once at launch, for a workout finished just before the app was closed. Reading the file here
   // also settles whether it is on, which the saves wait for (syncHealth).
-  setTimeout(() => loadHealth().then(() => syncHealth(getState())).catch(() => {}), 3000)
+  setTimeout(() => loadHealth().then(h => { mirrorOn(h.on); return syncHealth(getState()) }).catch(() => {}), 3000)
 }

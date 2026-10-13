@@ -798,7 +798,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
         {/* Android only: the system folder picker (#161). iOS shows Documents in Files already. */}
         {MOBILE && android && S.autoBackup && <BackupFolderRow />}
       </Section>
-      {MOBILE && android && <HealthConnectCard S={S} toast={toast} />}
+      {MOBILE && <HealthConnectCard S={S} toast={toast} android={android} />}
       <Section title={t('Bring data in')}>
         <Row icon="download" iconTint="var(--teal)" title={t('Import backup')} accessory="chevron" onClick={() => fileRef.current.click()} />
         <Row icon="download" iconTint="var(--teal)" title={t('Import from another app')}
@@ -1460,8 +1460,26 @@ function RegisterInline({ close, setUser, pushState, pullState, toast }) {
 // own store for health data, where other apps can read them. A fact about this phone, kept in
 // its own file (lib/health-sync.js) and not in S, so it never switches on anywhere else. The card
 // stays out of the way on a phone without Health Connect, and only points to installing it on
-// Android 13 and lower, where it is an app of its own.
-function HealthConnectCard({ S, toast }) {
+// Android 13 and lower, where it is an app of its own. The iPhone app's card is the same switch for
+// Apple Health, which the Apple Watch app also goes by (heart rate per set).
+const HEALTH_COPY = {
+  android: () => ({
+    section: t('Health Connect'), write: t('Write to Health Connect'), open: t('Open Health Connect'),
+    footer: t('Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.'),
+    on: t('Writing to Health Connect'), denied: t('Health Connect permission not granted'), failed: t('Could not write to Health Connect'),
+    removeFailed: t('Could not remove it from Health Connect'), stop: t('Stop writing to Health Connect?'),
+    stopSub: t('What openGym already wrote can stay in Health Connect as your data, or be removed from it.'),
+  }),
+  ios: () => ({
+    section: t('Apple Health'), write: t('Write to Apple Health'), open: t('Open Apple Health'),
+    footer: t('Workouts and weigh-ins go to Apple Health when you finish or change them.'),
+    on: t('Writing to Apple Health'), denied: t('Apple Health permission not granted'), failed: t('Could not write to Apple Health'),
+    removeFailed: t('Could not remove it from Apple Health'), stop: t('Stop writing to Apple Health?'),
+    stopSub: t('What openGym already wrote can stay in Apple Health as your data, or be removed from it.'),
+  }),
+}
+
+function HealthConnectCard({ S, toast, android }) {
   const [st, setSt] = useState(null)
   const [h, setH] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -1471,7 +1489,9 @@ function HealthConnectCard({ S, toast }) {
     const off = onHealthChange(f => { if (!gone) setH(f) })
     return () => { gone = true; off() }
   }, [])
-  if (!st || !h || st.status === 'unsupported') return null
+  const ios = st?.platform === 'ios'
+  if (!st || !h || st.status === 'unsupported' || (!android && !ios)) return null
+  const c = HEALTH_COPY[ios ? 'ios' : 'android']()
 
   if (st.status !== 'available') return (
     <Section title={t('Health Connect')}>
@@ -1489,21 +1509,21 @@ function HealthConnectCard({ S, toast }) {
       const r = await enableHealth(S)
       if (r.health) setH(r.health)
       else setH(await loadHealth())
-      if (r.ok) toast(t('Writing to Health Connect'))
-      else toast(r.reason === 'denied' ? t('Health Connect permission not granted') : t('Could not write to Health Connect'))
-    } catch { toast(t('Could not write to Health Connect')) }
+      if (r.ok) toast(c.on)
+      else toast(r.reason === 'denied' ? c.denied : c.failed)
+    } catch { toast(c.failed) }
     setBusy(false)
   }
   const turnOff = removeWritten => async () => {
     setBusy(true)
     try { setH(await disableHealth({ removeWritten })) }
-    catch { toast(t('Could not remove it from Health Connect')) }
+    catch { toast(c.removeFailed) }
     setBusy(false)
   }
   // Off can mean two things for what is already there, so it asks; closing the sheet keeps it on.
   const askOff = () => menuSheet({
-    title: t('Stop writing to Health Connect?'),
-    subtitle: t('What openGym already wrote can stay in Health Connect as your data, or be removed from it.'),
+    title: c.stop,
+    subtitle: c.stopSub,
     items: [
       { icon: 'check', label: t('Stop, keep what it wrote'), onClick: turnOff(false) },
       { icon: 'trash', label: t('Stop and remove what it wrote'), danger: true, onClick: turnOff(true) },
@@ -1511,15 +1531,15 @@ function HealthConnectCard({ S, toast }) {
   })
 
   return (
-    <Section title={t('Health Connect')}
-      footer={h.on ? t('Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.') : null}>
-      <Row icon="heart" iconTint="var(--red)" title={t('Write to Health Connect')}
+    <Section title={c.section}
+      footer={h.on ? c.footer : null}>
+      <Row icon="heart" iconTint="var(--red)" title={c.write}
         subtitle={t('Finished workouts and weigh-ins, from this phone only.')}>
         <Switch checked={!!h.on} disabled={busy} onChange={v => (v ? turnOn() : askOff())} />
       </Row>
       {h.on && h.error === 'permission' && <Row icon="warning" iconTint="var(--orange)"
         title={t('Permission withdrawn. Tap to allow again')} accessory="chevron" onClick={turnOn} />}
-      {h.on && <Row icon="list" iconTint="var(--blue)" title={t('Open Health Connect')}
+      {h.on && <Row icon="list" iconTint="var(--blue)" title={c.open}
         accessory="chevron" onClick={() => openHealthConnect().catch(() => {})} />}
     </Section>
   )
