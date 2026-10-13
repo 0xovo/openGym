@@ -1,5 +1,8 @@
+import AVFoundation
 import Capacitor
 import Foundation
+import ImageIO
+import UniformTypeIdentifiers
 import WatchConnectivity
 
 /**
@@ -24,6 +27,12 @@ import WatchConnectivity
  *   const { events } = await WatchBridge.drain()
  *   await WatchBridge.ack({ ids })
  *   WatchBridge.addListener('watchEvent', e => ...)
+ *   await WatchBridge.sendClips({ wid, clips: [{ exId, path }] })   // the workout's animations
+ *
+ * Animations: only the running workout's, only as files sent with transferFile (the watch keeps
+ * them while that workout runs and deletes them after). Each comes from the app's own clip in the
+ * app package (public/<path>, an MP4 loop), made into a small looping GIF here, because the watch
+ * shows a frame sequence and plays no MP4 inline. Nothing is fetched from anywhere.
  */
 @objc(WatchBridgePlugin)
 public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
@@ -34,6 +43,7 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         CAPPluginMethod(name: "sendSnapshot", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "drain", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "ack", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "sendClips", returnType: CAPPluginReturnPromise),
     ]
 
     private let queue = DispatchQueue(label: "ch.opengym.watch-events")
@@ -101,6 +111,67 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
             self.writeEvents(left)
             call.resolve()
         }
+    }
+
+    /// The clips already on their way for each workout, by exercise.
+    private var clipsSent: [String: Set<String>] = [:]
+    private let clipQueue = DispatchQueue(label: "ch.opengym.watch-clips", qos: .utility)
+
+    @objc func sendClips(_ call: CAPPluginCall) {
+        guard let wid = call.getString("wid"), WCSession.isSupported() else { call.resolve(["sent": 0]); return }
+        let s = WCSession.default
+        guard s.activationState == .activated, s.isPaired, s.isWatchAppInstalled else { call.resolve(["sent": 0]); return }
+        let clips = (call.getArray("clips") ?? []).compactMap { $0 as? [String: Any] }
+        call.resolve(["queued": clips.count])
+        clipQueue.async {
+            var sent = self.clipsSent[wid] ?? []
+            if self.clipsSent.count > 4 { self.clipsSent = self.clipsSent.filter { $0.key == wid } }
+            for clip in clips {
+                guard let exId = clip["exId"] as? String, let path = clip["path"] as? String,
+                      !sent.contains(exId), !path.contains(".."), !path.hasPrefix("/") else { continue }
+                let video = Bundle.main.bundleURL.appendingPathComponent("public").appendingPathComponent(path)
+                guard FileManager.default.fileExists(atPath: video.path),
+                      let gif = WatchBridgePlugin.gif(for: video, named: exId) else { continue }
+                s.transferFile(gif, metadata: ["exId": exId, "wid": wid])
+                sent.insert(exId)
+            }
+            self.clipsSent[wid] = sent
+        }
+    }
+
+    /// A small looping GIF of an MP4 clip (about 2 to 3 seconds, 160 px), cached by exercise.
+    static func gif(for video: URL, named name: String) -> URL? {
+        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("watch-clips")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let safe = name.replacingOccurrences(of: "/", with: "_")
+        let out = dir.appendingPathComponent(safe + ".gif")
+        if FileManager.default.fileExists(atPath: out.path) { return out }
+        let asset = AVURLAsset(url: video)
+        let seconds = CMTimeGetSeconds(asset.duration)
+        guard seconds.isFinite, seconds > 0 else { return nil }
+        let gen = AVAssetImageGenerator(asset: asset)
+        gen.appliesPreferredTrackTransform = true
+        gen.maximumSize = CGSize(width: 160, height: 160)
+        gen.requestedTimeToleranceBefore = .zero
+        gen.requestedTimeToleranceAfter = .zero
+        let count = max(2, min(30, Int(seconds * 10)))
+        let step = seconds / Double(count)
+        guard let dest = CGImageDestinationCreateWithURL(out as CFURL, UTType.gif.identifier as CFString, count, nil) else { return nil }
+        CGImageDestinationSetProperties(dest, [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: 0]] as CFDictionary)
+        let frameProps = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: step]] as CFDictionary
+        var added = 0
+        for i in 0..<count {
+            let t = CMTime(seconds: step * Double(i), preferredTimescale: 600)
+            if let img = try? gen.copyCGImage(at: t, actualTime: nil) {
+                CGImageDestinationAddImage(dest, img, frameProps)
+                added += 1
+            }
+        }
+        guard added > 0, CGImageDestinationFinalize(dest) else {
+            try? FileManager.default.removeItem(at: out)
+            return nil
+        }
+        return out
     }
 
     /* ---------- the watch's side ---------- */

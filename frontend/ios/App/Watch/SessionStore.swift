@@ -1,4 +1,6 @@
 import Foundation
+import ImageIO
+import UIKit
 import UserNotifications
 import WatchConnectivity
 import WatchKit
@@ -10,8 +12,16 @@ import WatchKit
  * here goes back as an event with transferUserInfo, which iOS delivers even when the phone app is
  * not running, and the phone applies it through its own workout screen.
  *
- * Text only: no exercise animations or pictures on the watch.
+ * Exercise animations: never part of the watch app. The phone sends the running workout's own,
+ * as small GIF files (WatchBridgePlugin.sendClips); they are kept here only while that workout runs
+ * and deleted when it ends. Without them the page shows the exercise by name.
  */
+
+/// One animation, as frames to cycle through.
+struct ClipFrames {
+    let images: [UIImage]
+    let duration: Double
+}
 
 struct Snapshot: Codable {
     let v: Int
@@ -76,6 +86,11 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     @Published private(set) var ready: Ready?
     /// Apple Health: the workout session, its heart rate, and the switch (WorkoutManager).
     let health = WorkoutManager()
+    /// The running workout's animations, by exercise id, from the phone.
+    @Published private(set) var clips: [String: ClipFrames] = [:]
+    private static var clipDir: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("clips")
+    }
     /// When the set now up began: the end of the rest before it, or the start of the session.
     private var setStartedAt = Date()
     /// The rest running after a set, for that rest's heart rate once it is over.
@@ -185,6 +200,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 // A session started here that the phone has not heard of yet stays.
                 if self.workout != nil && self.workout?.id == self.startedHere { return }
                 if self.workout != nil { self.health.end(save: true) }
+                self.dropClips()
                 self.workout = nil
                 self.pending.removeAll()
                 self.skipRest()
@@ -299,6 +315,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             "at": Date().timeIntervalSince1970 * 1000,
         ])
         skipRest()
+        dropClips()
         workout = nil
         startedHere = nil
         pending.removeAll()
@@ -395,6 +412,51 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
               let json = String(data: data, encoding: .utf8) else { return }
         // Queued by the system and delivered even when the phone app is not running.
         WCSession.default.transferUserInfo(["event": json])
+    }
+
+    /* ---------- the animations ---------- */
+
+    /// The workout is over: its animations go, from memory and from the disk.
+    func dropClips() {
+        clips = [:]
+        try? FileManager.default.removeItem(at: SessionStore.clipDir)
+    }
+
+    static func decode(_ url: URL) -> ClipFrames? {
+        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
+        let count = CGImageSourceGetCount(src)
+        guard count > 0 else { return nil }
+        var images: [UIImage] = []
+        var total = 0.0
+        for i in 0..<count {
+            guard let cg = CGImageSourceCreateImageAtIndex(src, i, nil) else { continue }
+            images.append(UIImage(cgImage: cg))
+            let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [String: Any]
+            let gif = props?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+            let delay = (gif?[kCGImagePropertyGIFUnclampedDelayTime as String] as? Double) ?? (gif?[kCGImagePropertyGIFDelayTime as String] as? Double) ?? 0.1
+            total += delay > 0.01 ? delay : 0.1
+        }
+        return images.isEmpty ? nil : ClipFrames(images: images, duration: total)
+    }
+
+    func session(_ session: WCSession, didReceive file: WCSessionFile) {
+        // The file is gone once this returns: moved into the cache now.
+        guard let exId = file.metadata?["exId"] as? String else { return }
+        let dir = SessionStore.clipDir
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let dest = dir.appendingPathComponent(exId.replacingOccurrences(of: "/", with: "_") + ".gif")
+        try? FileManager.default.removeItem(at: dest)
+        guard (try? FileManager.default.moveItem(at: file.fileURL, to: dest)) != nil,
+              let frames = SessionStore.decode(dest) else { return }
+        let wid = file.metadata?["wid"] as? String
+        DispatchQueue.main.async {
+            // Only for the workout running here; a late file of an earlier one is dropped.
+            guard self.workout != nil, wid == nil || wid == self.workout?.id else {
+                try? FileManager.default.removeItem(at: dest)
+                return
+            }
+            self.clips[exId] = frames
+        }
     }
 
     /* ---------- WCSessionDelegate ---------- */

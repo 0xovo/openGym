@@ -163,6 +163,9 @@ struct ExercisePage: View {
                         HeartRateBadge(health: store.health)
                     }
                 }
+                if let clip = store.clips[entry.id] {
+                    ClipView(clip: clip).frame(height: 54)
+                }
                 SetDots(entry: entry, current: si) { store.pick(set: $0, in: index) }
                 if let si = si {
                     let target = entry.sets[si]
@@ -365,5 +368,23 @@ struct HealthToggle: View {
         }
         .tint(Theme.accent)
         .font(.footnote)
+    }
+}
+
+/* ---------- an exercise's animation, sent by the phone for this workout ---------- */
+
+struct ClipView: View {
+    let clip: ClipFrames
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 12)) { ctx in
+            let t = ctx.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: max(0.1, clip.duration))
+            let i = min(clip.images.count - 1, Int(t / max(0.1, clip.duration) * Double(clip.images.count)))
+            Image(uiImage: clip.images[i])
+                .resizable()
+                .scaledToFit()
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .accessibilityHidden(true)
     }
 }

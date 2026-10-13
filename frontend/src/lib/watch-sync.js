@@ -15,7 +15,7 @@
 // The iPhone app only. Without a paired watch with the app on it, nothing is sent and nothing
 // arrives: the phone behaves exactly as before.
 import { MOBILE, nativePlatform } from './mobile.js'
-import { EXIDX } from './exercises.js'
+import { EXIDX, gifSrc, figureOf, isVideoSrc } from './exercises.js'
 import { exerciseNameFor } from './i18n.js'
 import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds } from './history.js'
 import { isWarmupRow } from './workout-model.js'
@@ -101,6 +101,27 @@ export function buildSnapshot(S, { timer = null, ready = null } = {}) {
       entries: A.entries.map(e => watchEntry(e, H)),
     },
   }
+}
+
+/**
+ * The running workout's animations for the watch: the app's own clip of each exercise in it, as a
+ * path inside the app package (the native side turns each into a small GIF and sends it as a file;
+ * the watch deletes them when the workout ends). Nothing for a clip that is not a packaged file.
+ */
+export function clipsFor (S) {
+  const A = S && S.active
+  if (!A || !Array.isArray(A.entries)) return []
+  const figure = figureOf(S)
+  const out = [], seen = new Set()
+  for (const e of A.entries) {
+    const ex = e && EXIDX[e.id]
+    if (!ex || seen.has(e.id) || !ex.gif) continue
+    const path = gifSrc(ex, figure)
+    if (!isVideoSrc(path) || /^[a-z]+:|^\//i.test(path) || path.includes('..')) continue
+    seen.add(e.id)
+    out.push({ exId: e.id, path })
+  }
+  return out
 }
 
 /* ---------- applying the watch's events ---------- */
@@ -222,7 +243,7 @@ export async function startWatchSync ({ useStore, useUI }) {
   const p = await watchPlugin()
   if (!p) return () => {}
   getStateRef = () => useStore.getState()
-  let lastSent = null, tm = null
+  let lastSent = null, lastClips = null, tm = null
   // The ready sessions only change with the plan, the log or the day: built again only then.
   let readyKey = null, ready = null
   const readyFor = S => {
@@ -240,9 +261,17 @@ export async function startWatchSync ({ useStore, useUI }) {
       if (!st || !st.paired || !st.installed) return
       const S = useStore.getState().S
       const json = JSON.stringify(buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) }))
-      if (json === lastSent) return
-      const r = await p.WatchBridge.sendSnapshot({ json })
-      if (r && r.sent) lastSent = json
+      if (json !== lastSent) {
+        const r = await p.WatchBridge.sendSnapshot({ json })
+        if (r && r.sent) lastSent = json
+      }
+      // The workout's animations, once per workout and exercise (the native side remembers).
+      const clips = clipsFor(S)
+      const key = S.active ? S.active.id + '|' + clips.map(c => c.exId).join(',') : ''
+      if (clips.length && key !== lastClips) {
+        await p.WatchBridge.sendClips({ wid: S.active.id, clips })
+        lastClips = key
+      }
     } catch { /* no watch, or not now: the next change tries again */ }
   }
   const schedule = () => { clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }

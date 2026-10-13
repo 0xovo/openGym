@@ -168,3 +168,17 @@ describe('heart rate from the watch', () => {
     expect(patchSet).toHaveBeenCalledWith({ wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1 }, { restHr: { avg: 112, max: 128 } })
   })
 })
+
+describe('the workout\'s animations for the watch', () => {
+  it('are the app\'s own packaged clips of the running workout, one per exercise, nothing else', async () => {
+    const { clipsFor } = await import('./watch-sync.js')
+    const { EXIDX } = await import('./exercises.js')
+    const S = state()
+    const clips = clipsFor(S)
+    expect(clips.map(c => c.exId)).toEqual(['0025', '0001'].filter(id => EXIDX[id]?.gif))
+    for (const c of clips) {
+      expect(c.path).toMatch(/^exercise-media\/clip\/.+\.mp4$/)
+    }
+    expect(clipsFor({ active: null })).toEqual([])
+  })
+})
