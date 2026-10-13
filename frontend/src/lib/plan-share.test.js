@@ -113,6 +113,17 @@ describe('what survives a shared plan', () => {
     expect('warmupRestSec' in roundTrip({ warmupRestSec: 0 })).toBe(false)
   })
 
+  // The warm-ups' "no timer" and the break between sides (Discord "set-specific rest timers").
+  it('carries the warm-ups\' "no timer" and the break between sides, and leaves them out when unset', () => {
+    expect(roundTrip({ warmupRestOff: true, warmupRestSec: 45 })).toMatchObject({ warmupRestOff: true })
+    expect('warmupRestSec' in roundTrip({ warmupRestOff: true, warmupRestSec: 45 })).toBe(false)
+    expect(roundTrip({ side: true, sideRestSec: 20 }).sideRestSec).toBe(20)
+    for (const e of [{}, { warmupRestOff: false }, { warmupRestOff: 'yes' }, { side: true, sideRestSec: 0 }, { sideRestSec: 20 }]) {
+      const out = roundTrip(e)
+      expect('warmupRestOff' in out || 'sideRestSec' in out, JSON.stringify(e)).toBe(false)
+    }
+  })
+
   // The absence has to survive too: writing a 0 would pin the recipient's timer to "off"
   // instead of letting the exercise keep inheriting whatever their own default is.
   it('leaves an exercise that set no rest free of the field', () => {

@@ -20,6 +20,7 @@ import { syncMedia } from './lib/media-sync.js'
 import LineChart from './components/LineChart.jsx'
 import Stepper from './components/Stepper.jsx'
 import { durationSheet } from './components/DurationWheel.jsx'
+import { cleanBackups, withBackups, MAX_BACKUPS } from './lib/routine-backups.js'
 import { SG_NAME_MAX } from './lib/superset-meta.js'
 import { REST_MAX, fmtRest } from './lib/duration.js'
 import Icon from './components/Icon.jsx'
@@ -1282,7 +1283,7 @@ function usageMap(st) {
 }
 // The swap pickers' own scope (#473): exercises sharing the swapped exercise's target muscle.
 const SAME = '≈'
-function ExercisePicker({ onPick, title, close, like, actionIcon }) {
+function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
   const st = useStore(s => s.S)
   const isSwap = !!like || title === t('Swap exercise') || title === t('Replace exercise') || title === 'Swap exercise' || title === 'Replace exercise'
   const quickIcon = actionIcon || (isSwap ? 'swap' : 'plus')
@@ -1291,6 +1292,7 @@ function ExercisePicker({ onPick, title, close, like, actionIcon }) {
     : t('Add “{0}”', exerciseNameFor(e))
   const usage = usageMap(st)
   const [q, setQ] = useState('')
+  const backupList = (Array.isArray(backups) ? backups : []).map(id => EXIDX[id]).filter(Boolean)
   // What a swap is away from: the picker opens on what trains the same muscle, if anything you
   // can use does, and "All" is one tap back to everything.
   const likeEx = like ? (EXIDX[like] || allExercises(st).find(e => e.id === like) || null) : null
@@ -1406,6 +1408,12 @@ function ExercisePicker({ onPick, title, close, like, actionIcon }) {
         <div className="thumb thumb-x"><Icon name="plusCircle" /></div>
         <div className="grow"><div className="tt">{t('Create your own exercise')}</div><div className="ss">{t('name + body part, and a photo or video if you like')}</div></div><Icon name="plus" className="chev" />
       </div>}
+      {/* The slot's planned substitutes, first, while nothing is typed: the plan already knows. */}
+      {backupList.length > 0 && !q.trim() && <>
+        <h4 className="sec">{t('Your backups')}</h4>
+        {backupList.map(pickRow)}
+        <h4 className="sec">{t('Everything else')}</h4>
+      </>}
       {f.slice(0, shown).map(pickRow)}
       {f.length === 0 && bp === '★' && <div className="empty">{t('Nothing picked yet. Add some exercises and they’ll show up here.')}</div>}
       {f.length === 0 && bp === '☆' && <div className="empty">{t('No favourites yet. Tap the star on an exercise to add one.')}</div>}
@@ -1418,7 +1426,8 @@ function ExercisePicker({ onPick, title, close, like, actionIcon }) {
 // `title` names what the pick is for when it is not an add — the routine editor's Replace (#110).
 // `like` is the exercise a swap or a replace is away from: the picker then opens on the ones that
 // train the same muscle, same equipment first (#473).
-export const exercisePicker = (onPick, { title, like, actionIcon } = {}) => ui().openSheet(close => <ExercisePicker onPick={onPick} title={title} like={like} actionIcon={actionIcon} close={close} />)
+// `backups`: the slot's planned substitutes (lib/routine-backups.js), listed first in a swap.
+export const exercisePicker = (onPick, { title, like, actionIcon, backups } = {}) => ui().openSheet(close => <ExercisePicker onPick={onPick} title={title} like={like} actionIcon={actionIcon} backups={backups} close={close} />)
 
 /** Start a safe swap for one exact active-workout occurrence. */
 export function swapActiveWorkoutExercise(index) {
@@ -1428,7 +1437,7 @@ export function swapActiveWorkoutExercise(index) {
   // The "+" on a picker row commits with the default config, exactly as it does in the add
   // flows; tapping the row still opens the config sheet first.
   // Worded for the session, not the routine: a swap changes today's workout only.
-  const picker = exercisePicker((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
+  const picker = exercisePicker((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id, backups: active.entries[index].target?.subs })
   function swapTo(ex, cfg) {
     // The picker is a chooser here, not a stack you keep adding from: one swap, then back to
     // the workout. (The add flow deliberately leaves it open.)
@@ -1551,8 +1560,11 @@ export const equipmentProfileSheet = profile => ui().openSheet(close => <Equipme
 const progressionStepOf = (c, mode, ex, unit) =>
   c.inc >= 0 ? c.inc : (mode === 'time' ? 5 : defaultIncrement(ex.id, unit))
 // Back-off sets step down by the same Step, so a plan using them needs one even with no rule.
-const progressionStepIsValid = (step, policy, backoff = false) =>
-  (policy === 'off' && !backoff) || (Number.isFinite(step) && step > 0)
+// Bodyweight reps with nothing added (#583) have no load to step: they climb in reps, then sets
+// (lib/progression.js climbsReps), so no step is asked for there.
+const progressionStepIsValid = (step, policy, backoff = false, weightless = false) =>
+  weightless || (policy === 'off' && !backoff) || (Number.isFinite(step) && step > 0)
+const weightlessOf = (c, mode, bw) => mode === 'reps' && bw && !(Number(c.weight) > 0)
 // Back-off sets (lib/backoff.js) are offered where there is a load to step down: rep work on a
 // loaded exercise, not a pyramid (it owns each set), not a rest-pause (one work set), not an
 // assistance machine (less load is harder there).
@@ -1576,7 +1588,8 @@ function ProgressionFields({ ex, mode, c, setC, routine, unit, perSide, bw }) {
   const inc = progressionStepOf(c, mode, ex, unit)
   const canBackoff = backoffOffered(c, mode, ex, bw)
   const backoff = canBackoff && c.backoff === true
-  const invalid = !progressionStepIsValid(inc, active, backoff)
+  const weightless = weightlessOf(c, mode, bw)
+  const invalid = !progressionStepIsValid(inc, active, backoff, weightless)
   // "26 → 24 → 22 kg": what the sets will open at, from the weight and step typed above.
   const preview = backoff && c.weight > 0 && inc > 0
     ? backoffWeights(c.weight, Math.max(1, Math.round(c.sets) || 1), inc).map(fmtNum).join(' → ') + ' ' + unit
@@ -1610,10 +1623,11 @@ function ProgressionFields({ ex, mode, c, setC, routine, unit, perSide, bw }) {
     <div className="small dim" style={{ marginBottom: active === 'off' ? 18 : 10 }}>{t(POLICY_DESC[active])}</div>
     {/* Double progression on a weighted exercise fills this row with four steppers; `cfgrow-4`
         lets it wrap into two pairs on phones, where four abreast left the inputs a few px wide. */}
-    {(active !== 'off' || backoff) && <div className={'row cfgrow' + ((active === 'double' && epleyEligible) || active === 'triple' ? ' cfgrow-4' : '')} style={{ marginBottom: 18 }}>
-      <Stepper label={mode === 'time' ? t('Step (seconds)') : t('Step ({0})', unit)} value={inc}
+    {weightless && active !== 'off' && <div className="small dim" style={{ marginBottom: 12 }}>{t('Nothing to add in weight here: it goes up in reps, then sets.')}</div>}
+    {(active !== 'off' || backoff) && (!weightless || climbsRange(active) || active === 'triple') && <div className={'row cfgrow' + ((active === 'double' && epleyEligible) || active === 'triple' ? ' cfgrow-4' : '')} style={{ marginBottom: 18 }}>
+      {!weightless && <Stepper label={mode === 'time' ? t('Step (seconds)') : t('Step ({0})', unit)} value={inc}
         step={mode === 'time' ? 5 : 1.25} decimal={mode !== 'time'} invalid={invalid} className={invalid ? 'invalid' : ''}
-        onChange={v => setC(x => ({ ...x, inc: v }))} />
+        onChange={v => setC(x => ({ ...x, inc: v }))} />}
       {climbsRange(active) && <>
         {/* The draft stays as typed: normalising on every keystroke turned "12" into 92 (the
             "1" was pulled above the lower bound first). Save and the engine normalise anyway. */}
@@ -1658,7 +1672,34 @@ const intensifierToSave = x => (x.type === 'dropset'
     ? { ...x, totalReps: Math.max(1, Math.round(x.totalReps) || 0), restSec: Math.max(5, Number(x.restSec) || 0) }
     : x)
 
-function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, initial, saveLabel }) {
+// The slot's planned substitutes: listed, each removable, and added from the library (the same
+// picker a swap uses, opened on the same muscle).
+function BackupsSheet({ ex, subs: initial, onChange, close }) {
+  const [subs, setSubs] = useState(() => cleanBackups(initial, ex.id, id => !!EXIDX[id]))
+  const set = next => { setSubs(next); onChange(next) }
+  const add = () => {
+    const picker = exercisePicker((pick) => {
+      picker.close()
+      set(cleanBackups([...subs, pick.id], ex.id, id => !!EXIDX[id]))
+    }, { title: t('Add a backup'), like: ex.id })
+  }
+  return <>
+    <h3>{t('Backups for {0}', exerciseNameFor(ex))}</h3>
+    <div className="muted small" style={{ marginBottom: 12 }}>{t('Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.')}</div>
+    {subs.length > 0 && <div className="sect-b" style={{ marginBottom: 12 }}>
+      {subs.map(id => EXIDX[id]).filter(Boolean).map(b => <Row key={b.id} title={exerciseNameFor(b)} subtitle={t(b.eq)}>
+        <button type="button" className="iconbtn" aria-label={t('Remove “{0}”', exerciseNameFor(b))} onClick={() => set(subs.filter(x => x !== b.id))}><Icon name="xmark" /></button>
+      </Row>)}
+    </div>}
+    {subs.length < MAX_BACKUPS
+      ? <Button icon="plus" onClick={add}>{t('Add a backup')}</Button>
+      : <div className="small dim">{t('That’s plenty of backups.')}</div>}
+    <div style={{ height: 8 }} />
+    <Button variant="ghost" className="dim" onClick={close}>{t('Done')}</Button>
+  </>
+}
+
+function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, initial, saveLabel, backupsEditable }) {
   const st = useStore(s => s.S)
   const cardio = isCardio(ex.id)
   const speedUnit = speedUnitOf(st)
@@ -1682,7 +1723,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   const pyramid = mode === 'reps' && isPyramid({ ...c, mode })
   const setPyramidAt = (i, v) => setC(x => ({ ...x, pyramid: x.pyramid.map((p, j) => (j === i ? v : p)) }))
   const progressionPolicy =policyFor({ ...c, id: ex.id }, routine, mode)
-  const progressionStepInvalid = !progressionStepIsValid(progressionStepOf(c, mode, ex, st.unit), progressionPolicy, c.backoff === true && backoffOffered(c, mode, ex, bw))
+  const progressionStepInvalid = !progressionStepIsValid(progressionStepOf(c, mode, ex, st.unit), progressionPolicy, c.backoff === true && backoffOffered(c, mode, ex, bw), weightlessOf(c, mode, bw))
   const activePolicy = policyFor({ ...c, id: ex.id }, routine, mode)
   // Both climb a range: the flat Reps stepper gives way to "Reps from" / "Reps up to".
   const ranged = mode === 'reps' && climbsRange(activePolicy)
@@ -1737,8 +1778,18 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     const withMeant = dbLoad ? { dbLoad } : {}
     // "Last set to failure": written only when on, so a plan that never asked keeps its shape.
     const withFailure = c.lastToFailure === true ? { lastToFailure: true } : {}
-    if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 8), ...withNote, ...withRest })
-    else if (mode === 'time') onSave({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withMeant, ...withFailure })
+    // The warm-ups' own rest and the break between sides (Discord "set-specific rest timers"):
+    // optional fields, written only when chosen, so a config that never touched them keeps its
+    // exact shape and rests as it always did (lib/supersetFlow.js warmupRestSecFor, sideRestFor).
+    // Planned substitutes (lib/routine-backups.js): kept whenever the slot has them, whichever
+    // sheet saves it, so an edit here never drops them; only real exercises, never itself.
+    const withSubs = withBackups(c.subs, ex.id, id => !!EXIDX[id])
+    const withSetRests = {
+      ...(c.warmupRestOff === true ? { warmupRestOff: true } : c.warmupRestSec > 0 ? { warmupRestSec: Math.round(c.warmupRestSec) } : {}),
+      ...(perSide && c.sideRestSec > 0 ? { sideRestSec: Math.round(c.sideRestSec) } : {}),
+    }
+    if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 8), ...withNote, ...withRest, ...withSubs })
+    else if (mode === 'time') onSave({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withSetRests, ...withMeant, ...withFailure, ...withSubs })
     else {
       // A unilateral target is stored even: the split has to divide, and a typed 15 would
       // otherwise plan seven reps on one side and eight on the other, every session.
@@ -1750,7 +1801,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         range = normalizeRepRange(reps, c.repsMin, stride)
         reps = range.reps
       }
-      const out = { sets, mode: 'reps', reps, weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withMeant }
+      const out = { sets, mode: 'reps', reps, weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withSetRests, ...withMeant, ...withSubs }
       // The list is the prescription; sets and reps follow it, so everything that reads the
       // flat target (a config sheet reopened with the toggle off, older builds) still makes sense.
       const list = pyramid ? normalizePyramid(c.pyramid, stride) : []
@@ -1904,6 +1955,57 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     <div className="small dim" style={{ marginBottom: 18 }}>
       {t('Rest after each set of this exercise. 0:00 means your default rest.')}
     </div>
+    {/* The warm-ups' own rest: like the work sets (no field, as always), no timer, or a time of
+        their own. The last warm-up still rests the full work rest before the first work set. */}
+    {!cardio && <>
+      <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
+        <Row icon="timer" iconTint="var(--yellow)" title={t('Rest between warm-ups')} accessory="chevron"
+          value={c.warmupRestOff === true ? t('No timer') : c.warmupRestSec > 0 ? fmtRest(c.warmupRestSec) : t('Like the work sets')}
+          onClick={() => menuSheet({
+            title: t('Rest between warm-ups'),
+            items: [
+              { icon: 'timer', label: t('Like the work sets'), on: !(c.warmupRestOff === true) && !(c.warmupRestSec > 0), onClick: () => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return rest }) },
+              { icon: 'pause', label: t('No timer'), on: c.warmupRestOff === true, onClick: () => setC(x => { const { warmupRestSec, ...rest } = x; return { ...rest, warmupRestOff: true } }) },
+              { icon: 'clock', label: t('Pick a time'), on: c.warmupRestOff !== true && c.warmupRestSec > 0, onClick: () => durationSheet({
+                title: t('Rest between warm-ups'), value: c.warmupRestSec > 0 ? c.warmupRestSec : 30, max: REST_MAX, off: t('No timer'),
+                onDone: v => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return v > 0 ? { ...rest, warmupRestSec: v } : { ...rest, warmupRestOff: true } }),
+              }) },
+            ],
+          })} />
+      </div>
+      <div className="small dim" style={{ marginBottom: 18 }}>
+        {t('Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.')}
+      </div>
+    </>}
+    {/* The break between the two sides of a per-side set. Without one: none for reps, the short
+        switch pause for a hold, as before. */}
+    {!cardio && perSide && <>
+      <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
+        <Row icon="sides" iconTint="var(--blue)" title={t('Rest between sides')} accessory="chevron"
+          value={c.sideRestSec > 0 ? fmtRest(c.sideRestSec) : mode === 'time' ? t('Default ({0})', fmtRest(10)) : t('No timer')}
+          onClick={() => durationSheet({
+            title: t('Rest between sides'), value: c.sideRestSec > 0 ? c.sideRestSec : 0, max: REST_MAX,
+            off: mode === 'time' ? t('Default ({0})', fmtRest(10)) : t('No timer'),
+            onDone: v => setC(x => { const { sideRestSec, ...rest } = x; return v > 0 ? { ...rest, sideRestSec: v } : rest }),
+          })} />
+      </div>
+      <div className="small dim" style={{ marginBottom: 18 }}>
+        {t('A breather after one side, before the other. The full rest comes once both sides are done.')}
+      </div>
+    </>}
+    {/* Planned substitutes for this slot, in the routine editor: what the swap sheet offers first
+        when the machine is taken. */}
+    {backupsEditable && <>
+      <div className="sect-b" style={{ marginBottom: 6 }}>
+        <Row icon="swap" iconTint="var(--teal)" title={t('Backups')} accessory="chevron"
+          value={(c.subs || []).length ? String((c.subs || []).filter(id => EXIDX[id]).length) : t('None')}
+          subtitle={(c.subs || []).map(id => EXIDX[id]).filter(Boolean).map(exerciseNameFor).join(', ') || undefined}
+          onClick={() => ui().openSheet(done => <BackupsSheet ex={ex} subs={c.subs || []} onChange={subs => setC(x => ({ ...x, subs }))} close={done} />)} />
+      </div>
+      <div className="small dim" style={{ marginBottom: 18 }}>
+        {t('Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.')}
+      </div>
+    </>}
     {/* ---------- bodyweight + per side (issues #31/#32/#33) ---------- */}
     {!cardio && <div className="sect-b" style={{ marginBottom: 8 }}>
       <Row icon="figureStrength" iconTint="var(--acc)" title={t('Bodyweight')}
@@ -2034,7 +2136,8 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     {onDelete && <><div style={{ height: 8 }} /><Button variant="danger" onClick={() => { close(); onDelete() }}>{t('Remove from routine')}</Button></>}
   </>
 }
-export const exConfigSheet = (ex, existing, onSave, onDelete, routine, initial, onReplace, saveLabel) => ui().openSheet(close => <ExConfig ex={ex} existing={existing} initial={initial} onSave={onSave} onDelete={onDelete} onReplace={onReplace} routine={routine} saveLabel={saveLabel} close={close} />)
+// `opts.backups`: the routine editor's sheet, where the slot's planned substitutes are picked.
+export const exConfigSheet = (ex, existing, onSave, onDelete, routine, initial, onReplace, saveLabel, opts = {}) => ui().openSheet(close => <ExConfig ex={ex} existing={existing} initial={initial} onSave={onSave} onDelete={onDelete} onReplace={onReplace} routine={routine} saveLabel={saveLabel} backupsEditable={!!opts.backups} close={close} />)
 
 /* ============================ glyph picker ============================ */
 // Grouped by what the glyph means for a training day, so picking one is a scan

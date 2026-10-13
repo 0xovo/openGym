@@ -2303,4 +2303,49 @@ export default {
   'Still only': '僅靜態圖',
   'Waiting for Wi-Fi': '等待 Wi-Fi',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': '放大輸入框',
+  'Make the box smaller': '縮小輸入框',
+  // --- progress photos: remove ---
+  'Photo removed': '已移除相片',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': '一側做完、另一側開始前，稍微喘口氣。兩側都做完後才是完整的休息。',
+  'Like the work sets': '和正式組一樣',
+  'No timer': '不計時',
+  'Pick a time': '選擇時長',
+  'Rest between sides': '兩側之間的休息',
+  'Rest between warm-ups': '熱身組之間的休息',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': '熱身組較輕，可以少休息或不休息。最後一個熱身組在第一個正式組前仍會得到完整的休息。',
+  // --- progress photos for any day (#557) ---
+  'Add photos': '新增相片',
+  'Each photo goes on the day it was taken.': '每張相片都會放到拍攝當天。',
+  'No progress photos yet. Add one for today or any day before.': '還沒有進度相片。為今天或之前的某一天新增一張吧。',
+  'The photo says it was taken on {0}. Change the day if it was another one.': '相片顯示拍攝於 {0}。如果是別的日子，改一下日期。',
+  'They all go on the day below.': '全部放到下面的日期。',
+  'Which day is this photo from?': '這張相片是哪一天的？',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': '你的伺服器只在有訓練的日子保留相片。更新後可以保留任何一天的相片。',
+  'Add {0} photo': '新增 {0} 張相片',
+  'Add {0} photos': '新增 {0} 張相片',
+  '{0} photo added': '已新增 {0} 張相片',
+  '{0} photos added': '已新增 {0} 張相片',
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} 張相片知道自己的日期，會放到那天。其餘的放到下面的日期。',
+  '{0} photos know their day and go there. The others go on the day below.': '{0} 張相片知道自己的日期，會放到那天。其餘的放到下面的日期。',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': '所有進度相片按日期排列，任何一天都行。還有前後對比滑桿。',
+  // --- routine backups ---
+  'Add a backup': '新增備選動作',
+  'Backups': '備選動作',
+  'Backups for {0}': '{0} 的備選動作',
+  'Everything else': '其他全部',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': '器材被占用了？選好你要改做的動作，訓練中替換時會先顯示這些。',
+  'Remove “{0}”': '移除「{0}」',
+  'That’s plenty of backups.': '備選動作已經夠多了。',
+  'Your backups': '你的備選動作',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': '這裡不用加重量：先加次數，再加組數。',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': '在卡片和專注版面中，上一個/下一個會跳過已完成的動作。',
+  'Skip completed exercises': '跳過已完成的動作',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': '此 App 無法以通行密鑰確認。請在已登入此個人檔案的瀏覽器中產生代碼，或先在那裡設定密碼。',
 }

@@ -245,7 +245,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   <p class="api-facts">
     <span>OpenAPI 3.1.0</span>
     <span>openGym v1.4.1</span>
-    <span>71 endpoints</span>
+    <span>73 endpoints</span>
     <span>AGPL-3.0-or-later</span>
   </p>
 
@@ -4034,6 +4034,11 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="p-name">workouts</span>
     <span class="p-type">always true</span>
     <span class="p-desc">This instance keeps the files a logged workout's <code>media</code> list names too, not only a custom exercise's. Absent on an instance from before; the app then offers photos and videos on custom exercises only.</span>
+  </div>
+  <div class="prow">
+    <span class="p-name">days</span>
+    <span class="p-type">always true</span>
+    <span class="p-desc">This instance also keeps the files of progress photos filed under a day (<code>dayPhotos</code>, a photo for a day without a workout). Absent on an instance from before; the app then only adds photos to logged workouts there.</span>
   </div>
 </div>
   </div>

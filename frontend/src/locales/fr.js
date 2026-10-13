@@ -2310,4 +2310,49 @@ export default {
   'Still only': 'Image fixe seulement',
   'Waiting for Wi-Fi': 'En attente du Wi-Fi',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'Agrandir la zone',
+  'Make the box smaller': 'Réduire la zone',
+  // --- progress photos: remove ---
+  'Photo removed': 'Photo retirée',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Une petite pause après un côté, avant l’autre. Le repos complet vient quand les deux côtés sont faits.',
+  'Like the work sets': 'Comme les séries de travail',
+  'No timer': 'Pas de minuteur',
+  'Pick a time': 'Choisir une durée',
+  'Rest between sides': 'Repos entre les côtés',
+  'Rest between warm-ups': 'Repos entre les échauffements',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'L’échauffement est léger, il peut donc se reposer moins, voire pas du tout. Le dernier garde le repos complet avant ta première série de travail.',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'Ajouter des photos',
+  'Each photo goes on the day it was taken.': 'Chaque photo va au jour où elle a été prise.',
+  'No progress photos yet. Add one for today or any day before.': 'Pas encore de photos de progression. Ajoute-en une pour aujourd’hui ou un jour d’avant.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'D’après la photo, elle a été prise le {0}. Change le jour si c’était un autre.',
+  'They all go on the day below.': 'Elles vont toutes au jour ci-dessous.',
+  'Which day is this photo from?': 'De quel jour est cette photo ?',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'Ton serveur ne garde les photos que les jours avec une séance. Une mise à jour lui permet de les garder pour n’importe quel jour.',
+  'Add {0} photo': 'Ajouter {0} photo',
+  'Add {0} photos': 'Ajouter {0} photos',
+  '{0} photo added': '{0} photo ajoutée',
+  '{0} photos added': '{0} photos ajoutées',
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} photo connaît son jour et y va. Les autres vont au jour ci-dessous.',
+  '{0} photos know their day and go there. The others go on the day below.': '{0} photos connaissent leur jour et y vont. Les autres vont au jour ci-dessous.',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Toutes tes photos de progression par date, pour n’importe quel jour. Avec un curseur avant/après.',
+  // --- routine backups ---
+  'Add a backup': 'Ajouter un remplaçant',
+  'Backups': 'Remplaçants',
+  'Backups for {0}': 'Remplaçants pour {0}',
+  'Everything else': 'Tout le reste',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Machine prise ? Choisis quoi faire à la place, et un échange en pleine séance les propose en premier.',
+  'Remove “{0}”': 'Retirer « {0} »',
+  'That’s plenty of backups.': 'Ça fait assez de remplaçants.',
+  'Your backups': 'Tes remplaçants',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Pas de poids à ajouter ici : ça monte en répétitions, puis en séries.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'En Cartes et Focus, Précédent et Suivant sautent les exercices terminés.',
+  'Skip completed exercises': 'Sauter les exercices terminés',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Cette app ne peut pas confirmer avec une passkey. Crée le code dans un navigateur connecté à ce profil, ou ajoute d’abord un mot de passe là-bas.',
 }

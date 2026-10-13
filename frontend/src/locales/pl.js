@@ -2310,4 +2310,49 @@ export default {
   'Still only': 'Tylko obrazek',
   'Waiting for Wi-Fi': 'Czeka na Wi-Fi',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'Powiększ pole',
+  'Make the box smaller': 'Zmniejsz pole',
+  // --- progress photos: remove ---
+  'Photo removed': 'Zdjęcie usunięte',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Chwila oddechu po jednej stronie, przed drugą. Pełna przerwa przychodzi, gdy obie strony są zrobione.',
+  'Like the work sets': 'Jak serie robocze',
+  'No timer': 'Bez timera',
+  'Pick a time': 'Wybierz czas',
+  'Rest between sides': 'Przerwa między stronami',
+  'Rest between warm-ups': 'Przerwa między seriami rozgrzewkowymi',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'Rozgrzewka jest lekka, więc może mieć krótszą przerwę albo żadną. Ostatnia i tak dostaje pełną przerwę przed pierwszą serią roboczą.',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'Dodaj zdjęcia',
+  'Each photo goes on the day it was taken.': 'Każde zdjęcie trafia na dzień, w którym zostało zrobione.',
+  'No progress photos yet. Add one for today or any day before.': 'Nie ma jeszcze zdjęć postępów. Dodaj jedno na dziś albo na wcześniejszy dzień.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'Według zdjęcia zrobiono je {0}. Zmień dzień, jeśli to był inny.',
+  'They all go on the day below.': 'Wszystkie trafią na dzień poniżej.',
+  'Which day is this photo from?': 'Z którego dnia jest to zdjęcie?',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'Twój serwer trzyma zdjęcia tylko w dni z treningiem. Aktualizacja pozwoli mu trzymać je na każdy dzień.',
+  'Add {0} photo': 'Dodaj {0} zdjęcie',
+  'Add {0} photos': { one: 'Dodaj {0} zdjęcie', few: 'Dodaj {0} zdjęcia', many: 'Dodaj {0} zdjęć' },
+  '{0} photo added': 'Dodano {0} zdjęcie',
+  '{0} photos added': { one: 'Dodano {0} zdjęcie', few: 'Dodano {0} zdjęcia', many: 'Dodano {0} zdjęć' },
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} zdjęcie zna swój dzień i tam trafi. Pozostałe trafią na dzień poniżej.',
+  '{0} photos know their day and go there. The others go on the day below.': { one: '{0} zdjęcie zna swój dzień i tam trafi. Pozostałe trafią na dzień poniżej.', few: '{0} zdjęcia znają swój dzień i tam trafią. Pozostałe trafią na dzień poniżej.', many: '{0} zdjęć zna swój dzień i tam trafi. Pozostałe trafią na dzień poniżej.' },
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Wszystkie zdjęcia postępów według daty, z dowolnego dnia. Do tego suwak przed/po.',
+  // --- routine backups ---
+  'Add a backup': 'Dodaj zamiennik',
+  'Backups': 'Zamienniki',
+  'Backups for {0}': 'Zamienniki dla {0}',
+  'Everything else': 'Wszystko inne',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Maszyna zajęta? Wybierz, co zrobisz zamiast niej, a zamiana w trakcie treningu pokaże je najpierw.',
+  'Remove “{0}”': 'Usuń „{0}”',
+  'That’s plenty of backups.': 'Tyle zamienników wystarczy.',
+  'Your backups': 'Twoje zamienniki',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Tu nie ma czego dokładać w ciężarze: rosną powtórzenia, potem serie.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'W Kartach i Skupieniu przyciski Wstecz i Dalej przeskakują ukończone ćwiczenia.',
+  'Skip completed exercises': 'Pomijaj ukończone ćwiczenia',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Ta aplikacja nie może potwierdzić kluczem dostępu. Utwórz kod w przeglądarce zalogowanej na ten profil albo najpierw ustaw tam hasło.',
 }
