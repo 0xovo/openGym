@@ -42,12 +42,15 @@ jobs:
       # The phone build, copied into ios/App/App/public; cap sync runs pod install.
       - run: npm run build:mobile
         working-directory: frontend
+      # The Apple Watch app (ios/App/Watch), added to the project for the run and embedded in App.app.
+      - run: ruby ios/ci/add-watch-app.rb
+        working-directory: frontend
       - name: Build for the simulator
         working-directory: frontend/ios/App
         run: |
           set -o pipefail
           xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug \
-            -sdk iphonesimulator -derivedDataPath build/dd \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
             CODE_SIGNING_ALLOWED=NO build | tee build/xcodebuild.log | grep -E "error:|warning: .*(App/|Swift)|BUILD" || true
           test -d build/dd/Build/Products/Debug-iphonesimulator/App.app
       # Starts the app and keeps what it prints: Capacitor logs every bridge call and every
@@ -74,6 +77,28 @@ jobs:
           cat build/console.log | grep -v "^\s*$" | head -200
           if grep -q "not implemented on ios" build/console.log; then echo "::error::a plugin the page uses is missing on iOS"; exit 1; fi
           grep -q "RestAlert" build/console.log || { echo "::error::the page never reached the RestAlert plugin"; exit 1; }
+      # The watch app on its own in a watch simulator, with the demo session it carries
+      # (SessionStore.demoJSON: text only, no exercise media), for a look at it.
+      - name: Show the watch app
+        continue-on-error: true
+        working-directory: frontend/ios/App
+        run: |
+          APP=build/dd/Build/Products/Debug-watchsimulator/OpenGymWatch.app
+          test -d "$APP" || { echo "::warning::no watch app was built"; exit 1; }
+          if ! xcrun simctl list runtimes | grep -q watchOS; then xcodebuild -downloadPlatform watchOS || true; fi
+          UDID=$(xcrun simctl list devices available -j | node -e '
+            const d = JSON.parse(require("fs").readFileSync(0)).devices
+            const all = Object.entries(d).filter(([k]) => k.includes("watchOS")).flatMap(([, v]) => v)
+            const w = all.filter(x => /Apple Watch/.test(x.name))
+            const pick = w.find(x => /Series (9|10|11)/.test(x.name)) || w.pop()
+            process.stdout.write(pick ? pick.udid : "")')
+          test -n "$UDID" || { echo "::warning::no watch simulator available"; exit 1; }
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "$APP"
+          xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo
+          sleep 8
+          xcrun simctl io "$UDID" screenshot build/watch-demo.png
       - uses: actions/upload-artifact@v6
         if: always()
         with:
@@ -82,6 +107,7 @@ jobs:
             frontend/ios/App/build/xcodebuild.log
             frontend/ios/App/build/console.log
             frontend/ios/App/build/first-screen.png
+            frontend/ios/App/build/watch-demo.png
           retention-days: 7
 
   # A walk through the app in the simulator (ios/App/AppUITests): a rest that ends while the app
@@ -102,6 +128,8 @@ jobs:
       - run: npm ci
         working-directory: frontend
       - run: npm run build:mobile && rm -rf ios/App/App/public/exercise-media
+        working-directory: frontend
+      - run: ruby ios/ci/add-watch-app.rb
         working-directory: frontend
       - run: ruby ios/ci/add-ui-tests.rb
         working-directory: frontend
@@ -151,6 +179,8 @@ jobs:
       - run: npm ci
         working-directory: frontend
       - run: npm run build:mobile
+        working-directory: frontend
+      - run: ruby ios/ci/add-watch-app.rb
         working-directory: frontend
       - name: Archive, unsigned
         working-directory: frontend/ios/App
