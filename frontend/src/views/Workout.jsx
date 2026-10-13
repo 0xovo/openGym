@@ -1075,7 +1075,15 @@ function ActiveWorkout() {
     const was = lastCur.current
     lastCur.current = cur
     const moved = was != null && was !== cur
-    if (!isSuperset || listMode) return
+    if (!isSuperset) return
+    // A superset is one card in every layout, so moving the marker from one member to the next
+    // does not change which `.wl-unit` is current: the list's own scroll (to `.wl-unit.cur`)
+    // stands still, and the partner's row stays below the fold. The member rows carry their refs
+    // in the list too, so the next member's row is brought into view here the same way the cards
+    // view does it — but only when the marker moved WITHIN this superset (member → member). A
+    // move that leaves the unit (the next unit after a round, revealCur) is the list's own job,
+    // and mount/pairing/layout switches are not moves at all, where the list leaves "current" put.
+    if (listMode && (!moved || !unit.includes(was))) return
     // A run the marker did not cause, with a sheet closing in the same tap, never scrolled: the
     // restore undid it. Keep that by not asking at all. Asking after the restore and then judging
     // the row would centre a first row that a tall first block (a note, "Last time", the
@@ -1094,7 +1102,17 @@ function ActiveWorkout() {
       const el = (setIdx >= 0 && setRefs.current.get(entry)?.get(setIdx)) || exRefs.current.get(entry)
       if (!el || typeof el.scrollIntoView !== 'function') return
       if (!moved && rowOnScreen(el)) return
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      // In the list the header is pinned over the page: land the row below it (block:'start',
+      // fed the header's current height like scrollToUnit) rather than centred behind it. Cards
+      // has no pinned header, so the actionable row is centred as it was.
+      if (listMode) {
+        const hdrH = hdrRef.current?.offsetHeight
+        if (hdrH) listRef.current?.style.setProperty('--whdr-h', hdrH + 'px')
+        const still = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        el.scrollIntoView(still ? { block: 'start' } : { block: 'start', behavior: 'smooth' })
+      } else {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     })
   }, [cur, isSuperset, listMode, A.entries.length])
   // The list opens at the exercise you are on, not at the top of the session (issue #224): you
