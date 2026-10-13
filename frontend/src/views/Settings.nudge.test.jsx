@@ -128,6 +128,13 @@ describe.each([['self-hosted (web push)', false], ['mobile (native)', true]])('S
     expect(toneRow()).toBeFalsy()
   })
 
+  // The iPhone UI test (ios/App/AppUITests) finds these switches by name; so does VoiceOver.
+  it('names its switch, so it can be found without reading the row around it', async () => {
+    await mount()
+    expect(nudgeRow().querySelector('[role=switch]').getAttribute('aria-label')).toBe('Nudge me when I skip a planned workout')
+    if (mobile) expect(host.querySelector('[role=switch][aria-label="Workout day reminder"]')).toBeTruthy()
+  })
+
   it('is not offered while the reminder is off', async () => {
     mocks.S.reminder = { on: false, time: '08:00', nudge: true }
     await mount()

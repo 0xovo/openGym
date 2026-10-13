@@ -85,7 +85,9 @@ jobs:
           retention-days: 7
 
   # A walk through the app in the simulator (ios/App/AppUITests): a rest that ends while the app
-  # is in the background must arrive as a notification, a sheet must stay above the keyboard.
+  # is in the background must arrive as a notification, a sheet must stay above the keyboard, and
+  # the training reminder and missed-day nudge must be pending with iOS once switched on (read
+  # through the -OpenGymUITestPending probe in MainViewController.swift).
   # The exercise media are left out of this build; the screenshots show placeholders.
   ui-tests:
     runs-on: macos-26
