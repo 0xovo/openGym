@@ -1,6 +1,7 @@
 import Foundation
 import Capacitor
 import Network
+import System
 #if canImport(BackgroundAssets)
 import BackgroundAssets
 #endif
@@ -92,7 +93,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
                 }
                 let manager = AssetPackManager.shared
                 let watcher = Task { [weak self] in
-                    for await update in manager.statusUpdates(forAssetPackWithID: id) {
+                    for await update in await manager.statusUpdates(forAssetPackWithID: id) {
                         if case .downloading(_, let progress) = update {
                             self?.notifyListeners("progress", data: ["packId": id, "fraction": progress.fractionCompleted])
                         }
@@ -101,6 +102,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
                 defer { watcher.cancel() }
                 do {
                     let pack = try await manager.assetPack(withID: id)
+                    // ensureLocalAvailability(of:requireLatestVersion:) only from iOS 26.4.
                     try await manager.ensureLocalAvailability(of: pack)
                     call.resolve()
                 } catch is CancellationError {
@@ -134,12 +136,15 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 
-    /// The folder a downloaded pack's files are in, found through one file it holds: Background
-    /// Assets reads all downloaded packs as one tree and answers for a path, not for a pack.
+    /// The folder a downloaded pack's files are in, checked through one file it holds: Background
+    /// Assets reads all downloaded packs as one tree and answers for a path, not for a pack, with
+    /// a well-formed URL whether or not anything is there. Every pack keeps its files under its own
+    /// id, so the folder is that pack's alone.
     private func localFolder(_ id: String, _ probe: String) -> URL? {
         #if canImport(BackgroundAssets)
         if #available(iOS 26.0, *) {
-            guard let file = try? AssetPackManager.shared.url(for: "\(id)/\(probe).webp") else { return nil }
+            guard let file = try? AssetPackManager.shared.url(for: FilePath("\(id)/\(probe).webp")),
+                  FileManager.default.fileExists(atPath: file.path) else { return nil }
             return file.deletingLastPathComponent()
         }
         #endif
@@ -161,14 +166,25 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
     private static func onWifi() async -> Bool {
         await withCheckedContinuation { done in
             let monitor = NWPathMonitor()
-            var answered = false
+            let once = Once()
             monitor.pathUpdateHandler = { path in
-                guard !answered else { return }
-                answered = true
+                guard once.first() else { return }
                 monitor.cancel()
                 done.resume(returning: path.status == .satisfied && !path.isExpensive && !path.isConstrained)
             }
             monitor.start(queue: DispatchQueue(label: "ch.opengym.app.anim-packs.path"))
         }
+    }
+}
+
+/// True the first time only: the path monitor may answer more than once, the continuation once.
+private final class Once: @unchecked Sendable {
+    private let lock = NSLock()
+    private var done = false
+    func first() -> Bool {
+        lock.lock(); defer { lock.unlock() }
+        if done { return false }
+        done = true
+        return true
     }
 }
