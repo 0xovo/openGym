@@ -54,12 +54,17 @@ cp "$PROFILE" "$APP/embedded.mobileprovision"
 
 # The entitlements are the profile's own (application identifier, team), never a debug build's.
 openssl smime -inform der -verify -noverify -in "$PROFILE" -out "$WORK/profile.plist" 2>/dev/null
-python3 - "$WORK/profile.plist" "$WORK/entitlements.plist" <<'PY'
+python3 - "$WORK/profile.plist" "$WORK/entitlements.plist" "$APP/Info.plist" <<'PY'
 import plistlib, sys
 p = plistlib.load(open(sys.argv[1], 'rb'))
 e = dict(p['Entitlements'])
 e['get-task-allow'] = False
 assert e['application-identifier'].endswith('.ch.opengym.app'), e['application-identifier']
+# The profile carries every capability the App ID has (HealthKit for the watch and the Health
+# step); a build whose app doesn't ask for Health yet must not claim it.
+info = plistlib.load(open(sys.argv[3], 'rb'))
+if 'NSHealthShareUsageDescription' not in info:
+    for k in [k for k in e if k.startswith('com.apple.developer.healthkit')]: del e[k]
 plistlib.dump(e, open(sys.argv[2], 'wb'))
 print('profile:', p['Name'], '| team', p['TeamIdentifier'][0], '| expires', p['ExpirationDate'])
 PY
