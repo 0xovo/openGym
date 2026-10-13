@@ -2293,4 +2293,7 @@ export default {
   'Training reminders, only if you switch them on': 'ट्रेनिंग रिमाइंडर, सिर्फ़ अगर आप चालू करें',
   'You can change it anytime in your phone’s settings.': 'आप इसे कभी भी अपने फ़ोन की सेटिंग्स में बदल सकते हैं।',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'फ़ोन लॉक होकर जेब में हो तब भी, रेस्ट खत्म होने पर openGym आपके कंधे पर थपकी दे सकता है।',
+  // --- Coach message box ---
+  'Make the box bigger': 'बॉक्स बड़ा करें',
+  'Make the box smaller': 'बॉक्स छोटा करें',
 }

@@ -2293,4 +2293,7 @@ export default {
   'Training reminders, only if you switch them on': 'Antrenman hatırlatıcıları, sadece açarsan',
   'You can change it anytime in your phone’s settings.': 'Bunu istediğin zaman telefonunun ayarlarından değiştirebilirsin.',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'Telefon kilitli halde cebinde olsa bile, dinlenme bitince openGym omzuna dokunabilir.',
+  // --- Coach message box ---
+  'Make the box bigger': 'Kutuyu büyüt',
+  'Make the box smaller': 'Kutuyu küçült',
 }

@@ -2293,4 +2293,7 @@ export default {
   'Training reminders, only if you switch them on': '训练提醒，只在你开启时',
   'You can change it anytime in your phone’s settings.': '你随时可以在手机设置里更改。',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': '即使手机锁屏放在口袋里，休息结束时 openGym 也能拍拍你的肩膀。',
+  // --- Coach message box ---
+  'Make the box bigger': '放大输入框',
+  'Make the box smaller': '缩小输入框',
 }

@@ -2296,4 +2296,7 @@ export default {
   'Training reminders, only if you switch them on': 'Edzésemlékeztetők, csak ha bekapcsolod',
   'You can change it anytime in your phone’s settings.': 'Ezt bármikor megváltoztathatod a telefonod beállításaiban.',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'Az openGym megkoppintja a vállad, amikor letelt a pihenő, akkor is, ha a lezárt telefon a zsebedben van.',
+  // --- Coach message box ---
+  'Make the box bigger': 'Nagyobb mező',
+  'Make the box smaller': 'Kisebb mező',
 }

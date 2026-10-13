@@ -2293,4 +2293,7 @@ export default {
   'Training reminders, only if you switch them on': '운동 알림은 켰을 때만',
   'You can change it anytime in your phone’s settings.': '언제든 휴대폰 설정에서 바꿀 수 있어요.',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': '휴대폰이 잠긴 채 주머니에 있어도 휴식이 끝나면 openGym이 어깨를 톡 쳐 드려요.',
+  // --- Coach message box ---
+  'Make the box bigger': '입력창 크게',
+  'Make the box smaller': '입력창 작게',
 }

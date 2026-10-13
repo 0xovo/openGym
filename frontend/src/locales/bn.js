@@ -2372,4 +2372,7 @@ export default {
   'Training reminders, only if you switch them on': 'ট্রেনিংয়ের রিমাইন্ডার, শুধু আপনি চালু করলে',
   'You can change it anytime in your phone’s settings.': 'ফোনের সেটিংসে যেকোনো সময় এটি বদলাতে পারেন।',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'ফোন লক করে পকেটে রাখলেও, বিশ্রাম শেষ হলে openGym আপনার কাঁধে টোকা দিতে পারে।',
+  // --- Coach message box ---
+  'Make the box bigger': 'লেখার বাক্স বড় করুন',
+  'Make the box smaller': 'লেখার বাক্স ছোট করুন',
 }

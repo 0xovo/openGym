@@ -2293,4 +2293,7 @@ export default {
   'Training reminders, only if you switch them on': 'Promemoria di allenamento, solo se li attivi',
   'You can change it anytime in your phone’s settings.': 'Puoi cambiarlo quando vuoi nelle impostazioni del telefono.',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym può darti un colpetto sulla spalla quando un recupero è finito, anche con il telefono bloccato in tasca.',
+  // --- Coach message box ---
+  'Make the box bigger': 'Ingrandisci il riquadro',
+  'Make the box smaller': 'Rimpicciolisci il riquadro',
 }

@@ -1454,6 +1454,7 @@ export const PT_BR_OVERRIDES = {
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'O openGym pode te dar um toque no ombro quando um descanso acaba, mesmo com o celular bloqueado no bolso.',
   // --- background check before the nudge ---
   'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Registrou um treino em outro dispositivo? Antes do aviso, o celular confirma com o seu servidor, sempre que deixar o aplicativo rodar em segundo plano. Abrir o aplicativo sempre deixa tudo em dia.',
+  // --- Coach message box ---
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

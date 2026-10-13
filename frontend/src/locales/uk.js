@@ -2290,4 +2290,7 @@ export default {
   'Training reminders, only if you switch them on': 'Нагадування про тренування, лише якщо ти їх увімкнеш',
   'You can change it anytime in your phone’s settings.': 'Це можна змінити будь-коли в налаштуваннях телефона.',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym може поплескати тебе по плечу, коли відпочинок скінчиться, навіть якщо телефон заблокований і лежить у кишені.',
+  // --- Coach message box ---
+  'Make the box bigger': 'Збільшити поле',
+  'Make the box smaller': 'Зменшити поле',
 }

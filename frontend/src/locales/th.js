@@ -2304,4 +2304,7 @@ export default {
   'Training reminders, only if you switch them on': 'การแจ้งเตือนการฝึก เฉพาะเมื่อคุณเปิดใช้',
   'You can change it anytime in your phone’s settings.': 'เปลี่ยนได้ทุกเมื่อในการตั้งค่าของโทรศัพท์',
   'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym สะกิดไหล่คุณได้เมื่อหมดเวลาพัก แม้โทรศัพท์จะล็อกอยู่ในกระเป๋า',
+  // --- Coach message box ---
+  'Make the box bigger': 'ขยายช่องพิมพ์',
+  'Make the box smaller': 'ย่อช่องพิมพ์',
 }
