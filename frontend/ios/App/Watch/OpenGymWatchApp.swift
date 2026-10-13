@@ -335,40 +335,43 @@ struct RestView: View {
     let end: Date
 
     var body: some View {
-        ZStack {
-            TimelineView(.periodic(from: .now, by: 0.25)) { ctx in
-                let total = max(1, end.timeIntervalSince(store.restStartedAt ?? end.addingTimeInterval(-90)))
-                let left = max(0, end.timeIntervalSince(ctx.date))
-                ZStack {
-                    Circle().stroke(Theme.dim, lineWidth: 7)
-                    Circle()
-                        .trim(from: 0, to: CGFloat(left / total))
-                        .stroke(Theme.accent, style: StrokeStyle(lineWidth: 7, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
+        // The ring and the countdown in it take the space above the two corner buttons, so nothing
+        // overlaps on any size (it did on 46 mm when the ring filled the whole screen).
+        VStack(spacing: 2) {
+            ZStack {
+                TimelineView(.periodic(from: .now, by: 0.25)) { ctx in
+                    let total = max(1, end.timeIntervalSince(store.restStartedAt ?? end.addingTimeInterval(-90)))
+                    let left = max(0, end.timeIntervalSince(ctx.date))
+                    ZStack {
+                        Circle().stroke(Theme.dim, lineWidth: 7)
+                        Circle()
+                            .trim(from: 0, to: CGFloat(left / total))
+                            .stroke(Theme.accent, style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                    }
                 }
-            }
-            .padding(4)
-            VStack(spacing: 2) {
-                Text(timerInterval: Date()...end, countsDown: true)
-                    .font(.system(size: 46, weight: .semibold, design: .rounded).monospacedDigit())
-                    .minimumScaleFactor(0.6)
-                    .lineLimit(1)
-                    .multilineTextAlignment(.center)
-                if let e = store.entry, let si = store.setIndex {
-                    Text(verbatim: "\(e.name) · \(si + 1)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                VStack(spacing: 1) {
+                    Text(timerInterval: Date()...end, countsDown: true)
+                        .font(.system(size: 44, weight: .semibold, design: .rounded).monospacedDigit())
+                        .minimumScaleFactor(0.5)
                         .lineLimit(1)
-                        .padding(.horizontal, 24)
+                        .multilineTextAlignment(.center)
+                    if let e = store.entry, let si = store.setIndex {
+                        Text(verbatim: "\(e.name) · \(si + 1)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
                 }
+                .padding(.horizontal, 18)
             }
-            VStack {
+            .aspectRatio(1, contentMode: .fit)
+            .padding(.horizontal, 6)
+            HStack {
+                EdgeButton(systemImage: "goforward.15", label: Text("+15s")) { store.addRest(15) }
                 Spacer()
-                HStack {
-                    EdgeButton(systemImage: "goforward.15", label: Text("+15s")) { store.addRest(15) }
-                    Spacer()
-                    EdgeButton(systemImage: "forward.end.fill", label: Text("Skip")) { store.skipRest() }
-                }
+                EdgeButton(systemImage: "forward.end.fill", label: Text("Skip")) { store.skipRest() }
             }
         }
         .ignoresSafeArea(edges: .bottom)
