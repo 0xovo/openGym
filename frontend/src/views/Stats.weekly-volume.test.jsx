@@ -71,6 +71,8 @@ describe('Stats — weekly planned vs completed volume', () => {
     expect([...comparison().querySelectorAll('[data-muscle-volume]')].map(item => item.dataset.muscleVolume))
       .toEqual(['chest', 'biceps', 'triceps'])
     expect(value('chest').textContent).toBe('8/12 · 67%')
+    // #573: every row's figure is the same fixed-width kind, so the bars line up
+    for (const m of ['chest', 'biceps', 'triceps']) expect(value(m).classList.contains('cmp'), m).toBe(true)
     expect(value('chest').getAttribute('aria-label')).toBe('Completed 8 sets · Planned 12 sets')
     expect(bar('chest').style.width).toBe('67%')
     expect(value('triceps').textContent).toBe('0/4.8 · 0%')
