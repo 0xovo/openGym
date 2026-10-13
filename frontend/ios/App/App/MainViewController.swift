@@ -12,6 +12,7 @@ class MainViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(PrintPlugin())
         bridge?.registerPluginInstance(RestAlertPlugin())
         bridge?.registerPluginInstance(DeviceAuthPlugin())
+        bridge?.registerPluginInstance(AnimationPacksPlugin())
         bridge?.registerPluginInstance(NudgeCheckPlugin())
         // After loadView has finished: the view is the web view only once it has.
         if ProcessInfo.processInfo.arguments.contains(MainViewController.pendingProbeArgument) {

@@ -28,6 +28,7 @@ import SyncBanner from './components/SyncBanner.jsx'
 import RestTimer from './components/RestTimer.jsx'
 import TimerFlash from './components/TimerFlash.jsx'
 import { openDeviceLinkRedeem } from './components/Passkeys.jsx'
+import { useAnimPacksBoot } from './components/Animations.jsx'
 import Login from './views/Login.jsx'
 import MobileOnboarding from './views/MobileOnboarding.jsx'
 import PermissionSteps from './views/PermissionSteps.jsx'
@@ -83,6 +84,9 @@ function Shell() {
   useEffect(() => { setAlarmBuzzer(MOBILE && S.vibrate !== false && S.vibrateOnSilent ? buzzAsAlarm : null) }, [S.vibrate, S.vibrateOnSilent])
   // iPhone app: the page cannot buzz (no navigator.vibrate), its native side can.
   useEffect(() => { if (MOBILE) nativePlatform().then(p => { if (p === 'ios') setNativeBuzzer(buzzAsAlarm) }) }, [])
+  // Store apps: which animation packs this device has, and the one the chosen quality wants for
+  // the figure shown (components/Animations.jsx). Nothing on the web.
+  useAnimPacksBoot()
   const isGuest = useStore(s => s.isGuest())
   const needsMobileOnboarding = useStore(s => s.needsMobileOnboarding)
   const permSteps = useStore(s => s.permSteps)

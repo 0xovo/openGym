@@ -10,6 +10,7 @@
 #
 # Usage:
 #   scripts/ios/finish-ipa.sh <App-unsigned.ipa> <dist.p12> <p12-password-file> <profile.mobileprovision> [out.ipa]
+#   EXT_PROFILE=<extension.mobileprovision> ...   once the IPA carries the asset pack downloader
 #
 # Before: the phone build with the app's animations, from the same commit as the IPA:
 #   cd frontend && VITE_CLIP_EXT=webp APP_MEDIA_DIR=/mnt/backup-hdd/opengym-media/build-appwebp npm run build:mobile
@@ -63,8 +64,30 @@ plistlib.dump(e, open(sys.argv[2], 'wb'))
 print('profile:', p['Name'], '| team', p['TeamIdentifier'][0], '| expires', p['ExpirationDate'])
 PY
 
+# The asset pack downloader extension (Background Assets, ios/App/AnimationPacksDownloader) is
+# signed with its own App Store profile, given as EXT_PROFILE: its bundle id and its entitlements
+# (the App Group it shares with the app) are its own.
+EXT="$APP/Extensions/AnimationPacksDownloader.appex"
+EXT_SIGN=()
+if [ -d "$EXT" ]; then
+  [ -n "${EXT_PROFILE:-}" ] || { echo "the IPA carries AnimationPacksDownloader.appex: set EXT_PROFILE to its App Store profile" >&2; exit 1; }
+  cp "$EXT_PROFILE" "$EXT/embedded.mobileprovision"
+  openssl smime -inform der -verify -noverify -in "$EXT_PROFILE" -out "$WORK/ext-profile.plist" 2>/dev/null
+  python3 - "$WORK/ext-profile.plist" "$WORK/ext-entitlements.plist" <<'PY'
+import plistlib, sys
+p = plistlib.load(open(sys.argv[1], 'rb'))
+e = dict(p['Entitlements'])
+e['get-task-allow'] = False
+assert e['application-identifier'].endswith('.ch.opengym.app.AnimationPacksDownloader'), e['application-identifier']
+assert 'group.ch.opengym.app' in e.get('com.apple.security.application-groups', []), 'the extension profile has no App Group'
+plistlib.dump(e, open(sys.argv[2], 'wb'))
+print('extension profile:', p['Name'], '| expires', p['ExpirationDate'])
+PY
+  EXT_SIGN=(--entitlements-xml-file "Extensions/AnimationPacksDownloader.appex/AnimationPacksDownloader:$WORK/ext-entitlements.plist")
+fi
+
 "$RCODESIGN" sign --p12-file "$P12" --p12-password-file "$P12PASS" \
-  --entitlements-xml-file "App:$WORK/entitlements.plist" "$APP"
+  --entitlements-xml-file "App:$WORK/entitlements.plist" "${EXT_SIGN[@]}" "$APP"
 
 (cd "$WORK/ipa" && rm -f "$OUT" && python3 -m zipfile -c "$OUT" Payload)
 echo "signed: $OUT ($(du -h "$OUT" | cut -f1), $CLIPS animations)"
