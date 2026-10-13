@@ -256,12 +256,11 @@ struct AdjustView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Picker("", selection: $target) {
-                Text("Reps").tag(CrownTarget.reps)
-                Text(store.unit).tag(CrownTarget.weight)
+            // What the crown turns: reps or the weight (no segmented picker on watchOS).
+            HStack(spacing: 6) {
+                CrownChoice(title: Text("Reps"), on: target == .reps) { target = .reps }
+                CrownChoice(title: Text(store.unit), on: target == .weight) { target = .weight }
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
             Text(formatNumber(target == .weight ? store.weight : store.reps))
                 .font(.system(size: 52, weight: .semibold, design: .rounded).monospacedDigit())
                 .foregroundStyle(Theme.accent)
@@ -386,5 +385,23 @@ struct ClipView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .accessibilityHidden(true)
+    }
+}
+
+struct CrownChoice: View {
+    let title: Text
+    let on: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            title
+                .font(.footnote.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
+                .background(Capsule().fill(on ? Theme.accent : Color.gray.opacity(0.25)))
+                .foregroundStyle(on ? Color.black : Color.primary)
+        }
+        .buttonStyle(.plain)
     }
 }
