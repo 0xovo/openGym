@@ -24,6 +24,9 @@ for the reports, each with a patch and a test. Self-hosters: please update.
 - The Coach forgets a stored API key when its server address moves to another host. Enter it again.
 - Request paths the server would have to tidy up (`..`, backslashes) are refused, nginx stops
   naming its version, and Android backups no longer include the paired server's sign-in.
+- **One owner, many admins.** Any admin could delete every other admin and then clear the activity
+  log. Now one admin is the owner: only they make or remove admins, delete an admin, clear the log
+  or hand the role on (Admin, tap a user). Existing instances: the oldest admin is the owner.
 
 ## v1.4.1 (2026-10-10)
 

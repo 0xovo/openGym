@@ -60,6 +60,7 @@ const FIRST_USER_ADMIN = /^(1|true|yes|on)$/i.test(process.env.FIRST_USER_ADMIN 
 function claimFirstAdmin(req, user) {
   if (!FIRST_USER_ADMIN || db.users.length !== 0) return;
   user.admin = true;
+  user.owner = true;
   audit(req, 'admin.first-user', { user });
 }
 // Guest mode ("Continue without account") keeps everything in the browser and never touches this
@@ -148,6 +149,22 @@ db.subs = db.subs || [];
 db.invites = db.invites || [];
 db.deviceLinks = db.deviceLinks || [];   // unused one-time device links, hashed (device-link.js)
 const isAdmin = user => !!user && (user.admin === true || ADMIN_UIDS.includes(user.id));
+// One owner per instance, any number of admins. Admins run the place day to day (users, invites,
+// the Coach); the owner is the one admin the others cannot act on: only the owner appoints or
+// removes admins, deletes an admin's account, hands the role on, or clears the activity log.
+// Without this any admin could delete every other admin and then wipe the log of having done it.
+// The owner is whoever carries `owner: true` (the first profile under FIRST_USER_ADMIN, or a
+// handover); an instance from before the role has none, so it falls to the first ADMIN_UIDS entry
+// that has a profile, then to the oldest admin record. Decided on every call, never cached, so a
+// deleted or demoted owner cannot leave the instance without one.
+function ownerId() {
+  const flagged = db.users.find(u => u.owner === true && isAdmin(u));
+  if (flagged) return flagged.id;
+  const fromEnv = ADMIN_UIDS.find(id => db.users.some(u => u.id === id));
+  if (fromEnv) return fromEnv;
+  return db.users.find(isAdmin)?.id || null;
+}
+const isOwner = user => !!user && isAdmin(user) && user.id === ownerId();
 // 0600: db.json holds passkey credential material. It used to be covered by a blanket 0700 on
 // the whole directory; now that the directory stays traversable, the file carries its own mode.
 // Once the new version is on disk, a second copy of it goes to db.json.bak, the same durable
@@ -673,6 +690,11 @@ function requireAdmin(req, res) {
   if (!isAdmin(user)) { audit(req, 'admin.denied', { ok: false, user }); json(res, 403, { error: 'forbidden' }); return null; }
   return user;
 }
+function requireOwner(req, res) {
+  const user = requireAdmin(req, res); if (!user) return null;
+  if (!isOwner(user)) { audit(req, 'admin.denied', { ok: false, user }); json(res, 403, { error: 'only the owner can do this' }); return null; }
+  return user;
+}
 const expireCookie = name => `${name}=; Path=/; Max-Age=0; HttpOnly;${SECURE} SameSite=Lax`;
 function sessionCookie(user) {
   const fresh = `${COOKIE}=${makeSession(user, 'c')}; Path=/; Max-Age=${SESSION_DAYS * 86400}; HttpOnly;${SECURE} SameSite=Lax`;
@@ -1184,7 +1206,7 @@ function loginTarget(body) {
 }
 const acctKey = u => 'acct:' + u.id;
 const passkeyCount = u => db.creds.filter(c => c.userId === u.id).length;
-const publicUser = u => ({ id: u.id, name: u.name, admin: isAdmin(u) });
+const publicUser = u => ({ id: u.id, name: u.name, admin: isAdmin(u), ...(isOwner(u) ? { owner: true } : {}) });
 const POLICY_ERRORS = {
   'too-short': `the password needs at least ${MIN_LENGTH} characters`,
   'too-long': `the password can have at most ${MAX_LENGTH} characters`,
@@ -2068,7 +2090,7 @@ const routes = {
     if (!s) return json(res, 401, { error: 'not signed in' });
     const { user } = s;
     const renew = s.bearer && s.kind !== 'c' && s.exp - Date.now() < SESSION_DAYS * 86400000 / 2;
-    json(res, 200, { user: { id: user.id, name: user.name, admin: isAdmin(user) }, ...(renew ? { token: makeSession(user) } : {}) });
+    json(res, 200, { user: publicUser(user), ...(renew ? { token: makeSession(user) } : {}) });
   },
 
   'POST /api/register/options': async (req, res) => {
@@ -2146,7 +2168,7 @@ const routes = {
     });
     saveDb();
     audit(req, 'auth.register.ok', { user, msg: invite ? invite.code : null });
-    json(res, 200, { user: { id: user.id, name: user.name, admin: isAdmin(user) } }, { 'Set-Cookie': sessionCookie(user) });
+    json(res, 200, { user: publicUser(user) }, { 'Set-Cookie': sessionCookie(user) });
   },
 
   'POST /api/login/options': async (req, res) => {
@@ -2208,7 +2230,7 @@ const routes = {
       return json(res, 403, { error: 'this account has been disabled', code: 'disabled' });
     }
     audit(req, 'auth.login.ok', { user });
-    json(res, 200, { user: { id: user.id, name: user.name, admin: isAdmin(user) } }, { 'Set-Cookie': sessionCookie(user) });
+    json(res, 200, { user: publicUser(user) }, { 'Set-Cookie': sessionCookie(user) });
   },
 
   // Reads the session purely so the sign-out can be recorded; the cookie is cleared either way.
@@ -2267,7 +2289,7 @@ const routes = {
       return json(res, 400, { error: 'invalid or expired code', code: 'pair-invalid' });
     }
     audit(req, 'auth.pair.ok', { user });
-    json(res, 200, { token: makeSession(user), user: { id: user.id, name: user.name, admin: isAdmin(user) } });
+    json(res, 200, { token: makeSession(user), user: publicUser(user) });
   },
 
   // Absent entirely while PASSWORD_LOGIN is off, so each of them is a plain 404.
@@ -2540,7 +2562,7 @@ const routes = {
       const last = workouts[workouts.length - 1];
       return {
         id: u.id, name: u.name, created: u.created || null,
-        disabled: !!u.disabled, admin: isAdmin(u), invitedBy: u.invitedBy || null,
+        disabled: !!u.disabled, admin: isAdmin(u), owner: isOwner(u), invitedBy: u.invitedBy || null,
         workouts: workouts.length,
         lastWorkout: last ? last.d : null,
         lastSync: lastSyncOf(u, S),
@@ -2563,7 +2585,7 @@ const routes = {
     const S = readState(u.id) || {};
     json(res, 200, {
       user: {
-        id: u.id, name: u.name, created: u.created || null, disabled: !!u.disabled, admin: isAdmin(u), invitedBy: u.invitedBy || null,
+        id: u.id, name: u.name, created: u.created || null, disabled: !!u.disabled, admin: isAdmin(u), owner: isOwner(u), invitedBy: u.invitedBy || null,
         // Only on an instance with password sign-in: whether they have one, and until when an
         // unused reset code is good.
         ...(PASSWORD_LOGIN ? { password: hasPassword(u), email: u.email || null, resetUntil: u.pwReset?.exp > Date.now() ? u.pwReset.exp : null } : {})
@@ -2606,6 +2628,8 @@ const routes = {
     if (!u) return json(res, 404, { error: 'no such user' });
     if (u.id === admin.id) return json(res, 400, { error: 'you cannot delete your own account' });
     if (isAdmin(u) && db.users.filter(isAdmin).length <= 1) return json(res, 400, { error: 'cannot delete the last admin' });
+    if (isOwner(u)) return json(res, 400, { error: 'the owner cannot be deleted; hand the role to another admin first' });
+    if (isAdmin(u) && !isOwner(admin)) { audit(req, 'admin.denied', { ok: false, user: admin, target: u }); return json(res, 403, { error: 'only the owner can delete an admin' }); }
     const name = u.name;
     db.users = db.users.filter(x => x.id !== u.id);
     db.creds = (db.creds || []).filter(c => c.userId !== u.id);
@@ -2620,6 +2644,39 @@ const routes = {
     saveDb();
     // Logged with the name, because the id is about to mean nothing to anyone reading this back.
     audit(req, 'admin.user.delete', { user: admin, msg: name });
+    json(res, 200, { ok: true, id: u.id });
+  },
+
+  // Appoint or remove an admin. Owner only, never on themselves, and not for an admin named in
+  // ADMIN_UIDS: that one comes back on the next restart whatever db.json says, so the switch
+  // would lie. A disabled account is enabled first, so nobody is promoted while locked out.
+  'POST /api/admin/user/role': async (req, res) => {
+    const owner = requireOwner(req, res); if (!owner) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    if (u.id === owner.id) return json(res, 400, { error: 'the owner stays an admin' });
+    if (typeof body.admin !== 'boolean') return json(res, 400, { error: 'admin must be true or false' });
+    if (ADMIN_UIDS.includes(u.id)) return json(res, 400, { error: 'this admin is set in ADMIN_UIDS on the server' });
+    if (body.admin && u.disabled) return json(res, 400, { error: 'enable the account first' });
+    if (body.admin) u.admin = true; else { delete u.admin; delete u.owner; }
+    saveDb();
+    audit(req, body.admin ? 'admin.role.grant' : 'admin.role.revoke', { user: owner, target: u });
+    json(res, 200, { ok: true, id: u.id, admin: isAdmin(u) });
+  },
+
+  // Hand the owner role to another admin. The old owner stays an admin.
+  'POST /api/admin/owner': async (req, res) => {
+    const owner = requireOwner(req, res); if (!owner) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    if (u.id === owner.id) return json(res, 400, { error: 'you already are the owner' });
+    if (!isAdmin(u) || u.disabled) return json(res, 400, { error: 'make them an admin first' });
+    for (const x of db.users) delete x.owner;
+    u.owner = true;
+    saveDb();
+    audit(req, 'admin.owner.transfer', { user: owner, target: u });
     json(res, 200, { ok: true, id: u.id });
   },
 
@@ -2688,8 +2745,9 @@ const routes = {
   // Deleting the log is itself logged, and auditSeq is not reset — so a clear always leaves a
   // visible gap in the ids and can't be used to quietly erase a trace. There is no export route:
   // ./data/audit.log already is the export, in a format jq reads directly.
+  // Owner only: an admin who could clear it could erase the trace of what they did.
   'POST /api/admin/audit/clear': async (req, res) => {
-    const admin = requireAdmin(req, res); if (!admin) return;
+    const admin = requireOwner(req, res); if (!admin) return;
     try { fs.unlinkSync(auditFile); } catch { /* nothing logged yet */ }
     auditCount = 0;
     audit(req, 'admin.audit.clear', { user: admin });

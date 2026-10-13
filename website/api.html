@@ -245,7 +245,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   <p class="api-facts">
     <span>OpenAPI 3.1.0</span>
     <span>openGym v1.4.1</span>
-    <span>69 endpoints</span>
+    <span>71 endpoints</span>
     <span>AGPL-3.0-or-later</span>
   </p>
 
@@ -277,7 +277,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   </div>
   <div class="ov">
     <h3>Environment-dependent behavior</h3>
-<ul><li><code>INVITE_ONLY=1</code>: registration requires a valid invite code (minted by an admin).</li><li><code>ALLOW_GUEST=0</code>: hides the client-side &quot;continue without account&quot; mode; the server merely reports the flag via <code>GET /api/config</code> (guest mode never talks to this API at all).</li><li><code>ADMIN_UIDS=&lt;uid&gt;,&lt;uid&gt;</code>: user ids treated as admins (a <code>&quot;admin&quot;: true</code> flag on the user record in <code>db.json</code> works too). Admins get the <code>/api/admin/*</code> routes.</li><li><code>FIRST_USER_ADMIN</code> (default off; <code>1</code> turns it on): the first profile registered on an instance with no profiles gets that <code>&quot;admin&quot;: true</code> flag. Decided at registration only, never applied to an instance that already has profiles.</li><li><code>AUDIT_LOG</code> (default on), <code>AUDIT_MAX</code> (default 5000 events), <code>AUDIT_DAYS</code> (default 90), <code>AUDIT_IP</code> (<code>off</code> | <code>net</code> | <code>full</code>, default off) shape the audit log served by <code>GET /api/admin/audit</code>.</li><li><code>PASSWORD_LOGIN=1</code>: adds the <code>password</code> routes and <code>password_login: true</code> in <code>GET /api/config</code>. Off by default.</li><li><code>DEFAULT_LANG</code> (e.g. <code>pt-BR</code>; unset by default): <code>default_lang</code> in <code>GET /api/config</code>, the language of the sign-in screen and of every profile that never picked one.</li><li><code>TRUST_PROXY=1</code>: the throttle reads the client address from proxy headers (set by the bundled <code>docker-compose.yml</code>, where only the web container can reach the API).</li><li><code>MEDIA_UPLOADS</code> (default on; <code>0</code> removes the <code>media</code> routes and the <code>media</code> block of <code>GET /api/config</code>), <code>MEDIA_QUOTA_MB</code> (200 per profile, <code>0</code> = no cap), <code>MEDIA_IMAGE_MAX_MB</code> (2), <code>MEDIA_GIF_MAX_MB</code> (8), <code>MEDIA_VIDEO_MAX_MB</code> (40), <code>MEDIA_VIDEO_MAX_SEC</code> (60), <code>MEDIA_GC_GRACE_DAYS</code> (14), <code>MEDIA_UPLOADS_PER_HOUR</code> (600 per profile), <code>MEDIA_MIN_FREE_MB</code> (512, <code>0</code> = no floor): photos and videos of custom exercises (tag <code>media</code>). Every MB here is 2^20 bytes.</li></ul>
+<ul><li><code>INVITE_ONLY=1</code>: registration requires a valid invite code (minted by an admin).</li><li><code>ALLOW_GUEST=0</code>: hides the client-side &quot;continue without account&quot; mode; the server merely reports the flag via <code>GET /api/config</code> (guest mode never talks to this API at all).</li><li><code>ADMIN_UIDS=&lt;uid&gt;,&lt;uid&gt;</code>: user ids treated as admins (a <code>&quot;admin&quot;: true</code> flag on the user record in <code>db.json</code> works too). Admins get the <code>/api/admin/*</code> routes. One admin is the owner: the record with <code>&quot;owner&quot;: true</code>, else the first <code>ADMIN_UIDS</code> entry with a profile, else the oldest admin. Only the owner appoints and removes admins, deletes an admin, hands the role on and clears the audit log.</li><li><code>FIRST_USER_ADMIN</code> (default off; <code>1</code> turns it on): the first profile registered on an instance with no profiles gets that <code>&quot;admin&quot;: true</code> flag and is the owner. Decided at registration only, never applied to an instance that already has profiles.</li><li><code>AUDIT_LOG</code> (default on), <code>AUDIT_MAX</code> (default 5000 events), <code>AUDIT_DAYS</code> (default 90), <code>AUDIT_IP</code> (<code>off</code> | <code>net</code> | <code>full</code>, default off) shape the audit log served by <code>GET /api/admin/audit</code>.</li><li><code>PASSWORD_LOGIN=1</code>: adds the <code>password</code> routes and <code>password_login: true</code> in <code>GET /api/config</code>. Off by default.</li><li><code>DEFAULT_LANG</code> (e.g. <code>pt-BR</code>; unset by default): <code>default_lang</code> in <code>GET /api/config</code>, the language of the sign-in screen and of every profile that never picked one.</li><li><code>TRUST_PROXY=1</code>: the throttle reads the client address from proxy headers (set by the bundled <code>docker-compose.yml</code>, where only the web container can reach the API).</li><li><code>MEDIA_UPLOADS</code> (default on; <code>0</code> removes the <code>media</code> routes and the <code>media</code> block of <code>GET /api/config</code>), <code>MEDIA_QUOTA_MB</code> (200 per profile, <code>0</code> = no cap), <code>MEDIA_IMAGE_MAX_MB</code> (2), <code>MEDIA_GIF_MAX_MB</code> (8), <code>MEDIA_VIDEO_MAX_MB</code> (40), <code>MEDIA_VIDEO_MAX_SEC</code> (60), <code>MEDIA_GC_GRACE_DAYS</code> (14), <code>MEDIA_UPLOADS_PER_HOUR</code> (600 per profile), <code>MEDIA_MIN_FREE_MB</code> (512, <code>0</code> = no floor): photos and videos of custom exercises (tag <code>media</code>). Every MB here is 2^20 bytes.</li></ul>
   </div>
   <div class="ov">
     <h3>Conventions</h3>
@@ -2657,7 +2657,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="ep-sum">Delete a user and everything of theirs</span>
   </summary>
   <div class="ep-body">
-<p>Removes the account for good: the user record, their passkeys, their push subscriptions, their live presence, their training history file, their uploaded photos and videos (<code>DATA_DIR/uploads/&lt;uid&gt;/</code>) and any Coach credential stored for them. Not reversible; <code>/api/admin/user/disable</code> is the reversible one. An admin cannot delete their own account, and the last admin cannot be deleted. Audited by name, since the id stops meaning anything.</p>
+<p>Removes the account for good: the user record, their passkeys, their push subscriptions, their live presence, their training history file, their uploaded photos and videos (<code>DATA_DIR/uploads/&lt;uid&gt;/</code>) and any Coach credential stored for them. Not reversible; <code>/api/admin/user/disable</code> is the reversible one. An admin cannot delete their own account, the last admin and the owner cannot be deleted, and only the owner deletes another admin. Audited by name, since the id stops meaning anything.</p>
     <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Admin only: a signed-in session whose user is an admin (<code>ADMIN_UIDS</code> or <code>admin:true</code>), as the session cookie or a Bearer token.</span></p>
 
 <p class="ep-h">Request body <span class="p-hint">(JSON)</span></p><div class="ptab">
@@ -2675,7 +2675,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   </div>
   <div class="prow rrow">
     <span class="r-code s4">400</span>
-    <span class="p-desc">Your own account, or the last admin.<span class="r-sig"><code>{&quot;error&quot;:&quot;you cannot delete your own account&quot;}</code></span></span>
+    <span class="p-desc">Your own account, the last admin, or the owner.<span class="r-sig"><code>{&quot;error&quot;:&quot;you cannot delete your own account&quot;}</code></span></span>
   </div>
   <div class="prow rrow">
     <span class="r-code s4">401</span>
@@ -2688,6 +2688,99 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   <div class="prow rrow">
     <span class="r-code s4">404</span>
     <span class="p-desc">No user with that id.<span class="r-sig"><code>{&quot;error&quot;:&quot;no such user&quot;}</code></span></span>
+  </div>
+    </div>
+  </div>
+</details>
+
+<details class="ep" id="op-adminUserRole">
+  <summary>
+    <span class="m post">POST</span>
+    <span class="ep-path"><code>/api/admin/user/role</code><span class="ep-chip admin">admin</span></span>
+    <span class="ep-chev" aria-hidden="true"></span>
+    <span class="ep-sum">Owner: make someone an admin, or remove the role</span>
+  </summary>
+  <div class="ep-body">
+<p>Owner only (403 for any other admin). Not on the owner themselves, not on an admin named in <code>ADMIN_UIDS</code> (the server would restore them on restart), and a disabled account is enabled before it can be promoted. Removing the role keeps the account and its data.</p>
+    <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Admin only: a signed-in session whose user is an admin (<code>ADMIN_UIDS</code> or <code>admin:true</code>), as the session cookie or a Bearer token.</span></p>
+
+<p class="ep-h">Request body <span class="p-hint">(JSON)</span></p><div class="ptab">
+  <div class="prow">
+    <span class="p-name">id<em class="p-req" title="required">required</em></span>
+    <span class="p-type">string</span>
+    <span class="p-desc">The user id.</span>
+  </div>
+  <div class="prow">
+    <span class="p-name">admin<em class="p-req" title="required">required</em></span>
+    <span class="p-type">boolean</span>
+    <span class="p-desc"></span>
+  </div>
+</div>
+    <p class="ep-h">Responses</p>
+    <div class="ptab">
+  <div class="prow rrow">
+    <span class="r-code s2">200</span>
+    <span class="p-desc">Changed.<span class="r-sig">{ ok: always true, id: string, admin: boolean }</span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">400</span>
+    <span class="p-desc">The owner, an <code>ADMIN_UIDS</code> admin, a disabled account, or no boolean.</span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">401</span>
+    <span class="p-desc">No session, expired/revoked session, or a disabled account.<span class="r-sig"><code>{&quot;error&quot;:&quot;not signed in&quot;}</code></span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">403</span>
+    <span class="p-desc">Signed in, but not an admin. The attempt is recorded in the audit log.<span class="r-sig"><code>{&quot;error&quot;:&quot;forbidden&quot;}</code></span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">404</span>
+    <span class="p-desc">No user with that id.</span>
+  </div>
+    </div>
+  </div>
+</details>
+
+<details class="ep" id="op-adminOwnerTransfer">
+  <summary>
+    <span class="m post">POST</span>
+    <span class="ep-path"><code>/api/admin/owner</code><span class="ep-chip admin">admin</span></span>
+    <span class="ep-chev" aria-hidden="true"></span>
+    <span class="ep-sum">Owner: hand the owner role to another admin</span>
+  </summary>
+  <div class="ep-body">
+<p>Owner only. The target must already be an enabled admin; the previous owner stays an admin.</p>
+    <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Admin only: a signed-in session whose user is an admin (<code>ADMIN_UIDS</code> or <code>admin:true</code>), as the session cookie or a Bearer token.</span></p>
+
+<p class="ep-h">Request body <span class="p-hint">(JSON)</span></p><div class="ptab">
+  <div class="prow">
+    <span class="p-name">id<em class="p-req" title="required">required</em></span>
+    <span class="p-type">string</span>
+    <span class="p-desc">The user id.</span>
+  </div>
+</div>
+    <p class="ep-h">Responses</p>
+    <div class="ptab">
+  <div class="prow rrow">
+    <span class="r-code s2">200</span>
+    <span class="p-desc">Handed over.<span class="r-sig">{ ok: always true, id: string }</span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">400</span>
+    <span class="p-desc">Yourself, or not an enabled admin.</span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">401</span>
+    <span class="p-desc">No session, expired/revoked session, or a disabled account.<span class="r-sig"><code>{&quot;error&quot;:&quot;not signed in&quot;}</code></span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">403</span>
+    <span class="p-desc">Signed in, but not an admin. The attempt is recorded in the audit log.<span class="r-sig"><code>{&quot;error&quot;:&quot;forbidden&quot;}</code></span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">404</span>
+    <span class="p-desc">No user with that id.</span>
   </div>
     </div>
   </div>
@@ -2854,10 +2947,10 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="m post">POST</span>
     <span class="ep-path"><code>/api/admin/audit/clear</code><span class="ep-chip admin">admin</span></span>
     <span class="ep-chev" aria-hidden="true"></span>
-    <span class="ep-sum">Clear the activity log</span>
+    <span class="ep-sum">Owner: clear the activity log</span>
   </summary>
   <div class="ep-body">
-<p>Deletes the log file. The clear is itself the first event of the fresh log, and event ids are never reset, so a wipe always leaves a visible id gap.</p>
+<p>Owner only, so no other admin can erase a trace of what they did. Deletes the log file. The clear is itself the first event of the fresh log, and event ids are never reset, so a wipe always leaves a visible id gap.</p>
     <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Admin only: a signed-in session whose user is an admin (<code>ADMIN_UIDS</code> or <code>admin:true</code>), as the session cookie or a Bearer token.</span></p>
 
 
@@ -3315,6 +3408,11 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="p-name">name</span>
     <span class="p-type">string</span>
     <span class="p-desc"></span>
+  </div>
+  <div class="prow">
+    <span class="p-name">owner</span>
+    <span class="p-type">boolean</span>
+    <span class="p-desc">Present (true) only for the instance owner.</span>
   </div>
   <div class="prow">
     <span class="p-name">admin</span>
@@ -4162,6 +4260,11 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="p-desc"></span>
   </div>
   <div class="prow">
+    <span class="p-name">owner</span>
+    <span class="p-type">boolean</span>
+    <span class="p-desc">The one admin who manages the others.</span>
+  </div>
+  <div class="prow">
     <span class="p-name">admin</span>
     <span class="p-type">boolean</span>
     <span class="p-desc"></span>
@@ -4291,6 +4394,11 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="p-name">user.disabled</span>
     <span class="p-type">boolean</span>
     <span class="p-desc"></span>
+  </div>
+  <div class="prow">
+    <span class="p-name">user.owner</span>
+    <span class="p-type">boolean</span>
+    <span class="p-desc">The one admin who manages the others.</span>
   </div>
   <div class="prow">
     <span class="p-name">user.admin</span>
