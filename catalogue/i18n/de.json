@@ -132,7 +132,14 @@
     ]
   },
   "1014": {
-    "name": "V-Up mit Band"
+    "name": "V-Up mit Band",
+    "description": "Bei diesem V-Up hebst du Beine und Oberkörper gleichzeitig an und hältst dabei ein Widerstandsband. So trainierst du Bauch und Hüftbeuger.",
+    "instructions": [
+        "Leg dich flach auf den Rücken, streck die Beine aus und halte das Band mit ausgestreckten Armen über dem Kopf.",
+        "Spann den Bauch an und heb Beine und Oberkörper gleichzeitig vom Boden. Führ dabei deine Hände in Richtung Zehen.",
+        "Halte die V-Position kurz und senk Beine und Oberkörper langsam wieder ab.",
+        "Wiederhole die Bewegung so oft wie geplant."
+    ]
   },
   "1018": {
     "name": "Shrugs mit Band"
