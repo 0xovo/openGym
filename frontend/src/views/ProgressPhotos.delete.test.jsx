@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useStore, DEF } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
-import { PhotoView, progressPhotosOf } from './ProgressPhotos.jsx'
+import { PhotoView, progressPhotosOf, AddPhotosSheet } from './ProgressPhotos.jsx'
+import { todayISO } from '../lib/format.js'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
@@ -58,3 +59,42 @@ describe('removing a progress photo', () => {
     expect(useStore.getState().S.workouts).toEqual(before)
   })
 })
+
+describe('photos filed under a day (#557)', () => {
+  it('show in the gallery with the workout photos, and come off with Undo the same way', () => {
+    useStore.setState({ S: { ...state(), dayPhotos: { [ref(7).hash]: { d: '2026-10-03', m: ref(7), _ts: 1 } } } })
+    const photos = progressPhotosOf(useStore.getState().S)
+    expect(photos.map(p => p.d)).toEqual(['2026-10-05', '2026-10-03', '2026-10-01', '2026-10-01', '2026-10-01'])
+    const p = photos.find(x => x.day)
+    act(() => root.render(<PhotoView p={p} close={() => {}} />))
+    act(() => button('Remove').click())
+    act(() => [...host.querySelectorAll('.mviewer-ask button')].find(b => b.textContent === 'Remove').click())
+    expect(useStore.getState().S.dayPhotos[ref(7).hash]).toEqual({ _ts: expect.any(Number) })
+    act(() => useUI.getState().runToastAction())
+    expect(useStore.getState().S.dayPhotos[ref(7).hash]).toMatchObject({ d: '2026-10-03', m: ref(7) })
+    expect(useStore.getState().S.workouts.map(w => w.media.length)).toEqual([3, 1])
+  })
+})
+
+describe('adding photos for a day', () => {
+  const item = exif => ({ file: new Blob(['x']), exif })
+  it('one photo: the day it was taken, changeable; several: their own days, the rest on the picked one', async () => {
+    const save = vi.fn(async () => {})
+    act(() => root.render(<AddPhotosSheet items={[item('2026-09-14')]} close={() => {}} save={save} />))
+    expect(host.querySelector('h3').textContent).toBe('Add 1 photo')
+    expect(host.querySelector('input[type=date]').value).toBe('2026-09-14')
+    expect(host.querySelector('input[type=date]').max).toBe(todayISO())
+    await act(async () => { button('Add').click() })
+    expect(save).toHaveBeenCalledWith([item('2026-09-14')], '2026-09-14')
+
+    act(() => root.render(null))
+    act(() => root.render(<AddPhotosSheet items={[item('2026-09-14'), item(null), item(null)]} close={() => {}} save={save} />))
+    expect(host.textContent).toContain('1 photo knows its day and goes there. The others go on the day below.')
+    expect(host.querySelector('input[type=date]').value).toBe(todayISO())
+    act(() => root.render(null))
+    act(() => root.render(<AddPhotosSheet items={[item('2026-09-14'), item('2026-09-15')]} close={() => {}} save={save} />))
+    expect(host.querySelector('input[type=date]')).toBeNull()
+    expect(host.textContent).toContain('Each photo goes on the day it was taken.')
+  })
+})
+
