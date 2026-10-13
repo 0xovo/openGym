@@ -69,7 +69,16 @@
     ]
   },
   "1007": {
-    "name": "Stehender gedrehter Crunch mit Band"
+    "name": "Stehender gedrehter Crunch mit Band",
+    "description": "Ein stehender Crunch mit Drehung und Widerstandsband: Du führst einen Ellbogen zum gegenüberliegenden Knie und trainierst so deine geraden und seitlichen Bauchmuskeln.",
+    "instructions": [
+        "Stell dich schulterbreit hin, leg das Band um deinen oberen Rücken und kreuz es vor deiner Brust.",
+        "Halte die Bandenden fest. Deine Ellbogen bleiben angewinkelt und nah an den Seiten.",
+        "Spann den Bauch an, dreh deinen Oberkörper zur Seite und führ einen Ellbogen zum gegenüberliegenden Knie.",
+        "Halte die Position kurz und geh zurück in die Ausgangsposition.",
+        "Wiederhole die Bewegung auf der anderen Seite.",
+        "Wechsle die Seiten ab, bis du deine Wiederholungen geschafft hast."
+    ]
   },
   "1009": {
     "name": "Steifbeiniges Kreuzheben mit Band"
