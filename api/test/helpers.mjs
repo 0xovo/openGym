@@ -53,6 +53,14 @@ export function writeState(dir, uid, S) {
   fs.writeFileSync(path.join(dir, 'state-' + uid + '.json'), JSON.stringify(S));
 }
 
+/** A fixture date moved so that 2026-07-20 is always a week ago. The Coach only looks back 12
+    weeks from today, so fixed dates expired on their own (2026-10-13); the gaps between them,
+    which is what the tests are about, stay as written. */
+export function recent(iso) {
+  const anchor = Date.UTC(2026, 6, 20), today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00Z').getTime();
+  return new Date(Date.parse(iso + 'T00:00:00Z') - anchor + today - 7 * 86400000).toISOString().slice(0, 10);
+}
+
 /** A profile that has consented and has some history — the usual starting point. */
 export function sampleState(over = {}) {
   return {
@@ -68,10 +76,10 @@ export function sampleState(over = {}) {
     week: { 1: 'r1', 3: 'r1', 5: 'r1' },
     dayPlan: {},
     exWeights: { '0001': { w: 20 } },
-    bodyweight: [{ d: '2026-07-01', w: 78 }, { d: '2026-07-20', w: 78.5 }],
+    bodyweight: [{ d: recent('2026-07-01'), w: 78 }, { d: recent('2026-07-20'), w: 78.5 }],
     customEx: [],
     workouts: [{
-      id: 'w1', d: '2026-07-20', name: 'Full body A', start: 1000, end: 1000 + 45 * 60000, vol: 600, prs: [],
+      id: 'w1', d: recent('2026-07-20'), name: 'Full body A', start: 1000, end: 1000 + 45 * 60000, vol: 600, prs: [],
       entries: [{
         id: '0001', target: { sets: 3, reps: 10, weight: 20 },
         sets: [{ w: 20, r: 10, done: true, rpe: 9.5 }, { w: 20, r: 9, done: true, rpe: 10 }, { w: 20, r: 8, done: true, rpe: 10 }]
