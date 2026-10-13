@@ -39,6 +39,7 @@ import { routineChangesFromEntry, updateRoutineFromEntry } from '../lib/routines
 import { sessionNoProg, setSessionNoProg, setEntryNoProg, joinSessionNoProg } from '../lib/session-noprog.js'
 import { glyphOf } from '../lib/glyphs.js'
 import { markAllSetsDone, sessionHistory } from '../lib/backfill.js'
+import { bindWatchActions } from '../lib/watch-sync.js'
 import { bestSetFor } from '../lib/exercise-history.js'
 import { isWarmupRow, isFailureSet, toggleFailure, isDropSet, isRestPauseSet, dropsOf, clustersOf, addDrop, addCluster, removeDropAt, removeClusterAt, setDropAt, setClusterAt, nextDropWeight, nextBurstReps, isSideSet, makeSideSet, setSideField, toggleSide, addSideDrop, removeSideDropAt, setSideDropAt, addSideCluster, removeSideClusterAt, setSideClusterAt, WEIGHT_ORIGIN_MANUAL } from '../lib/workout-model.js'
 import { canMoveActiveWorkoutUnit, moveActiveWorkoutUnit, canMoveActiveWorkoutEntry, moveActiveWorkoutEntry } from '../lib/active-workout-order.js'
@@ -1752,6 +1753,18 @@ function ActiveWorkout() {
       onFocusProgress?.({ unitDone: freshUnitDone })
     }
   }
+  // The Apple Watch ticks sets through this same toggle (lib/watch-sync.js): the weight and reps it
+  // logged go into the row first, then the tick runs as if tapped here (rest, high-water mark, the
+  // end-of-workout sheet). A row already ticked only takes the numbers.
+  const toggleRef = useRef(toggle)
+  toggleRef.current = toggle
+  useEffect(() => bindWatchActions({
+    setDone: (idx, i, { w, r }) => {
+      if (useStore.getState().S.active?.editingWorkoutId) return   // a saved workout being edited is not the session
+      mutEntry(idx, en => { const set = en.sets[i]; if (!set) return; if (w != null) set.w = w; if (r != null) set.r = r })
+      if (!useStore.getState().S.active?.entries?.[idx]?.sets?.[i]?.done) toggleRef.current(idx, i)
+    },
+  }), [])
 
   // After the finished exercise folded away (toggle, above): the new current one is the next thing
   // to do, so if it now sits under the header or low on the screen with little more than its title

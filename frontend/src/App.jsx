@@ -13,6 +13,7 @@ import { setNav, notePath, keyBefore } from './lib/nav.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
+import { startWatchSync } from './lib/watch-sync.js'
 import { useWakeLock } from './lib/wakelock.js'
 import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
@@ -321,5 +322,13 @@ export default function App() {
   }, [])
   // iOS: swipe from the left edge for the page's own back button (lib/edge-swipe-back.js)
   useEffect(() => installEdgeSwipeBack(), [])
+  // iPhone app with an Apple Watch: the running workout goes to the watch, its ticks come back
+  // (lib/watch-sync.js). Nothing at all on the web, on Android, or without a paired watch.
+  useEffect(() => {
+    if (!MOBILE) return
+    let stop = null, gone = false
+    startWatchSync({ useStore, useUI }).then(fn => { if (gone) fn(); else stop = fn })
+    return () => { gone = true; stop?.() }
+  }, [])
   return <HashRouter><Shell /></HashRouter>
 }
