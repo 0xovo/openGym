@@ -89,23 +89,28 @@ jobs:
           APP=build/dd/Build/Products/Debug-watchsimulator/OpenGymWatch.app
           test -d "$APP" || { echo "::warning::no watch app was built"; exit 1; }
           if ! xcrun simctl list runtimes | grep -q watchOS; then xcodebuild -downloadPlatform watchOS || true; fi
-          UDID=$(xcrun simctl list devices available -j | node -e '
-            const d = JSON.parse(require("fs").readFileSync(0)).devices
-            const all = Object.entries(d).filter(([k]) => k.includes("watchOS")).flatMap(([, v]) => v)
-            const w = all.filter(x => /Apple Watch/.test(x.name))
-            const pick = w.find(x => /Series (9|10|11)/.test(x.name)) || w.pop()
-            process.stdout.write(pick ? pick.udid : "")')
-          test -n "$UDID" || { echo "::warning::no watch simulator available"; exit 1; }
-          xcrun simctl boot "$UDID" || true
-          xcrun simctl bootstatus "$UDID" -b
-          xcrun simctl install "$UDID" "$APP"
           mkdir -p build/watch
-          # One screenshot per screen: the exercise, the crown editor, the rest, no workout.
-          for screen in set adjust rest idle; do
-            xcrun simctl terminate "$UDID" ch.opengym.app.watchkitapp 2>/dev/null || true
-            xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen"
-            sleep 6
-            xcrun simctl io "$UDID" screenshot "build/watch/$screen.png"
+          # Every screen on a small and a large watch: 41 or 42 mm, 45 or 46 mm.
+          for size in small large; do
+            UDID=$(xcrun simctl list devices available -j | SIZE=$size node -e '
+              const d = JSON.parse(require("fs").readFileSync(0)).devices
+              const all = Object.entries(d).filter(([k]) => k.includes("watchOS")).flatMap(([, v]) => v).filter(x => /Apple Watch/.test(x.name))
+              const re = process.env.SIZE === "small" ? /\((40|41|42)mm\)/ : /\((44|45|46)mm\)/
+              const pick = all.filter(x => re.test(x.name) && !/Ultra|SE/.test(x.name)).pop() || all.filter(x => re.test(x.name)).pop()
+              process.stdout.write(pick ? pick.udid + " " + pick.name.replace(/[^A-Za-z0-9]+/g, "-") : "")')
+            test -n "$UDID" || { echo "::warning::no $size watch simulator"; continue; }
+            NAME=${UDID#* }; UDID=${UDID%% *}
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl install "$UDID" "$APP"
+            for screen in idle empty set weight rest finish; do
+              xcrun simctl terminate "$UDID" ch.opengym.app.watchkitapp 2>/dev/null || true
+              xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen"
+              sleep 6
+              xcrun simctl io "$UDID" screenshot "build/watch/$size-$screen.png"
+            done
+            echo "$size: $NAME" >> build/watch/devices.txt
+            xcrun simctl shutdown "$UDID" || true
           done
           ls -la build/watch
       - uses: actions/upload-artifact@v6

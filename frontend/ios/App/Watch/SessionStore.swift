@@ -129,7 +129,15 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     override init() {
         super.init()
         if isDemo {
-            apply(json: SessionStore.demoScreen == "idle" ? SessionStore.demoReadyJSON : SessionStore.demoJSON)
+            if SessionStore.demoScreen != "empty" {
+                apply(json: SessionStore.demoScreen == "idle" ? SessionStore.demoReadyJSON : SessionStore.demoJSON)
+            }
+            if SessionStore.demoScreen == "finish" {
+                DispatchQueue.main.async { self.entryIndex = self.workout?.entries.count ?? 0 }
+            }
+            if SessionStore.demoScreen == "weight" {
+                DispatchQueue.main.async { self.loadTargets() }
+            }
             if SessionStore.demoScreen == "rest" {
                 DispatchQueue.main.async { self.startRest(until: Date().addingTimeInterval(83), notify: false) }
             }
@@ -184,6 +192,23 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     }
 
     var unit: String { workout?.unit ?? "kg" }
+
+    /// What the complications and the Smart Stack widget show (WidgetState).
+    var widgetState: WidgetState {
+        if let w = workout {
+            if let end = restEndsAt, end > Date() {
+                return WidgetState(mode: "rest", title: entry?.name ?? w.name, detail: "", restEndsAt: end)
+            }
+            if let e = entry, let si = setIndex {
+                let s = e.sets[si]
+                let numbers = "\(formatNumber(s.w ?? 0)) \(w.unit) × \(formatNumber(s.r ?? 0))"
+                return WidgetState(mode: "set", title: e.name, detail: numbers, restEndsAt: nil)
+            }
+            return WidgetState(mode: "set", title: w.name, detail: "", restEndsAt: nil)
+        }
+        if let today = ready?.today { return WidgetState(mode: "today", title: today.name, detail: "", restEndsAt: nil) }
+        return .idle
+    }
     var weightStep: Double { unit == "lb" ? 5 : 2.5 }
 
     /* ---------- snapshots from the phone ---------- */

@@ -12,6 +12,7 @@
 #   scripts/ios/finish-ipa.sh <App-unsigned.ipa> <dist.p12> <p12-password-file> <profile.mobileprovision> [out.ipa]
 #   EXT_PROFILE=<extension.mobileprovision> ...   once the IPA carries the asset pack downloader
 #   WATCH_PROFILE=<watch.mobileprovision> ...     once the IPA carries the Apple Watch app
+#   WATCH_WIDGET_PROFILE=<widget.mobileprovision>  once the watch app carries its widget
 #
 # Before: the phone build with the app's animations, from the same commit as the IPA:
 #   cd frontend && VITE_CLIP_EXT=webp APP_MEDIA_DIR=/mnt/backup-hdd/opengym-media/build-appwebp npm run build:mobile
@@ -105,6 +106,24 @@ plistlib.dump(e, open(sys.argv[2], 'wb'))
 print('watch profile:', p['Name'], '| expires', p['ExpirationDate'])
 PY
   WATCH_SIGN=(--entitlements-xml-file "Watch/OpenGymWatch.app/OpenGymWatch:$WORK/watch-entitlements.plist")
+  # Its complications / Smart Stack widget (OpenGymWatch.app/PlugIns), with its own profile.
+  WIDGET="$WATCH/PlugIns/OpenGymWatchWidgets.appex"
+  if [ -d "$WIDGET" ]; then
+    [ -n "${WATCH_WIDGET_PROFILE:-}" ] || { echo "the watch app carries its widget: set WATCH_WIDGET_PROFILE to its App Store profile" >&2; exit 1; }
+    cp "$WATCH_WIDGET_PROFILE" "$WIDGET/embedded.mobileprovision"
+    openssl smime -inform der -verify -noverify -in "$WATCH_WIDGET_PROFILE" -out "$WORK/widget-profile.plist" 2>/dev/null
+    python3 - "$WORK/widget-profile.plist" "$WORK/widget-entitlements.plist" <<'PY'
+import plistlib, sys
+p = plistlib.load(open(sys.argv[1], 'rb'))
+e = dict(p['Entitlements'])
+e['get-task-allow'] = False
+assert e['application-identifier'].endswith('.ch.opengym.app.watchkitapp.widgets'), e['application-identifier']
+assert 'group.ch.opengym.app' in e.get('com.apple.security.application-groups', []), 'the widget profile has no App Group'
+plistlib.dump(e, open(sys.argv[2], 'wb'))
+print('watch widget profile:', p['Name'], '| expires', p['ExpirationDate'])
+PY
+    WATCH_SIGN+=(--entitlements-xml-file "Watch/OpenGymWatch.app/PlugIns/OpenGymWatchWidgets.appex/OpenGymWatchWidgets:$WORK/widget-entitlements.plist")
+  fi
 fi
 
 "$RCODESIGN" sign --p12-file "$P12" --p12-password-file "$P12PASS" \

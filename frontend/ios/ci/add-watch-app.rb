@@ -5,9 +5,11 @@
 #
 #   ruby frontend/ios/ci/add-watch-app.rb
 #
-# App Store Connect needs, before a signed build: the bundle id ch.opengym.app.watchkitapp (with
-# HealthKit once the workout session is in) and an App Store provisioning profile for it; the
-# release script then signs App.app/Watch/OpenGymWatch.app with that profile.
+# App Store Connect needs, before a signed build: the bundle ids ch.opengym.app.watchkitapp
+# (HealthKit, App Group group.ch.opengym.app) and ch.opengym.app.watchkitapp.widgets (App Group
+# group.ch.opengym.app), an App Store provisioning profile for each; the release script
+# (scripts/ios/finish-ipa.sh) signs the watch app with WATCH_PROFILE and its widget extension with
+# WATCH_WIDGET_PROFILE.
 require 'xcodeproj'
 
 NAME = 'OpenGymWatch'
@@ -67,6 +69,44 @@ embed.symbol_dst_subfolder_spec = :products_directory
 embed.dst_path = '$(CONTENTS_FOLDER_PATH)/Watch'
 file = embed.add_file_reference(watch.product_reference, true)
 file.settings = { 'ATTRIBUTES' => ['RemoveHeadersOnCopy'] }
+
+# The complications and the Smart Stack widget (ios/App/WatchWidgets), a WidgetKit extension in the
+# watch app (OpenGymWatch.app/PlugIns), reading the state the app writes (Watch/WidgetState.swift,
+# compiled into both) through the App Group group.ch.opengym.app.
+WIDGET = 'OpenGymWatchWidgets'
+WIDGET_DIR = 'WatchWidgets'
+widget = proj.new_target(:app_extension, WIDGET, :watchos, '10.0')
+wgroup = proj.main_group.new_group(WIDGET_DIR, WIDGET_DIR)
+wsources = Dir.children(File.join(dir, WIDGET_DIR)).select { |f| f.end_with?('.swift') }.sort.map { |f| wgroup.new_file(f) }
+shared = group.files.find { |f| f.path == 'WidgetState.swift' }
+widget.add_file_references(wsources + [shared].compact)
+wgroup.new_file('Info.plist')
+wgroup.new_file("#{WIDGET}.entitlements")
+widget.add_system_framework('WidgetKit')
+widget.add_system_framework('SwiftUI')
+widget.build_configurations.each do |c|
+  s = c.build_settings
+  s['PRODUCT_NAME'] = '$(TARGET_NAME)'
+  s['PRODUCT_BUNDLE_IDENTIFIER'] = "#{BUNDLE_ID}.widgets"
+  s['INFOPLIST_FILE'] = "#{WIDGET_DIR}/Info.plist"
+  s['GENERATE_INFOPLIST_FILE'] = 'NO'
+  s['CODE_SIGN_ENTITLEMENTS'] = "#{WIDGET_DIR}/#{WIDGET}.entitlements"
+  s['CODE_SIGN_STYLE'] = 'Automatic'
+  s['SWIFT_VERSION'] = '5.0'
+  s['SDKROOT'] = 'watchos'
+  s['WATCHOS_DEPLOYMENT_TARGET'] = '10.0'
+  s['TARGETED_DEVICE_FAMILY'] = '4'
+  s['SKIP_INSTALL'] = 'YES'
+  s['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
+  s['MARKETING_VERSION'] = app_settings['MARKETING_VERSION']
+  s['CURRENT_PROJECT_VERSION'] = app_settings['CURRENT_PROJECT_VERSION']
+  s['LD_RUNPATH_SEARCH_PATHS'] = ['$(inherited)', '@executable_path/Frameworks', '@executable_path/../../Frameworks']
+end
+watch.add_dependency(widget)
+wembed = watch.new_copy_files_build_phase('Embed Foundation Extensions')
+wembed.symbol_dst_subfolder_spec = :plug_ins
+wfile = wembed.add_file_reference(widget.product_reference, true)
+wfile.settings = { 'ATTRIBUTES' => ['RemoveHeadersOnCopy'] }
 
 # A scheme of its own, so CI can build and run just the watch app in a watch simulator.
 scheme = Xcodeproj::XCScheme.new
