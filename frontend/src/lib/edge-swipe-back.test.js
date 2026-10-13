@@ -185,3 +185,19 @@ describe('the gesture', () => {
     expect(rowDown).toHaveBeenCalledTimes(1)
   })
 })
+
+// The gesture finds a page's back button by data-back. A back arrow added later without it just
+// has no swipe, silently: every chevron button that navigates away (nav(...) or a back()) has it.
+describe('every page back arrow is marked', () => {
+  const files = import.meta.glob('../views/*.jsx', { query: '?raw', import: 'default', eager: true })
+  it('carries data-back', () => {
+    const unmarked = []
+    for (const [file, src] of Object.entries(files)) {
+      for (const line of src.split('\n')) {
+        if (!/chevronLeft/.test(line) || !/<button/.test(line)) continue
+        if (/onClick=\{(\(\) => nav\(|back\}|home\})/.test(line) && !/data-back/.test(line)) unmarked.push(file + ': ' + line.trim())
+      }
+    }
+    expect(unmarked).toEqual([])
+  })
+})
