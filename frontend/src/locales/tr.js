@@ -2310,4 +2310,49 @@ export default {
   'Still only': 'Yalnızca sabit resim',
   'Waiting for Wi-Fi': 'Wi-Fi bekleniyor',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'Kutuyu büyüt',
+  'Make the box smaller': 'Kutuyu küçült',
+  // --- progress photos: remove ---
+  'Photo removed': 'Fotoğraf kaldırıldı',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Bir taraftan sonra, diğerinden önce kısa bir nefes. Tam dinlenme iki taraf da bitince gelir.',
+  'Like the work sets': 'Çalışma setleri gibi',
+  'No timer': 'Zamanlayıcı yok',
+  'Pick a time': 'Süre seç',
+  'Rest between sides': 'Taraflar arası dinlenme',
+  'Rest between warm-ups': 'Isınma setleri arası dinlenme',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'Isınma setleri hafif, o yüzden daha az ya da hiç dinlenmeyebilir. Sonuncusu yine de ilk çalışma setinden önce tam dinlenmeyi alır.',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'Fotoğraf ekle',
+  'Each photo goes on the day it was taken.': 'Her fotoğraf çekildiği güne gider.',
+  'No progress photos yet. Add one for today or any day before.': 'Henüz ilerleme fotoğrafı yok. Bugün ya da önceki bir gün için bir tane ekle.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'Fotoğrafa göre {0} tarihinde çekilmiş. Başka bir günse günü değiştir.',
+  'They all go on the day below.': 'Hepsi aşağıdaki güne gider.',
+  'Which day is this photo from?': 'Bu fotoğraf hangi günden?',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'Sunucun fotoğrafları yalnızca antrenman olan günlerde saklıyor. Bir güncellemeyle her gün için saklayabilir.',
+  'Add {0} photo': '{0} fotoğraf ekle',
+  'Add {0} photos': '{0} fotoğraf ekle',
+  '{0} photo added': '{0} fotoğraf eklendi',
+  '{0} photos added': '{0} fotoğraf eklendi',
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} fotoğraf gününü biliyor ve oraya gidiyor. Diğerleri aşağıdaki güne gider.',
+  '{0} photos know their day and go there. The others go on the day below.': '{0} fotoğraf gününü biliyor ve oraya gidiyor. Diğerleri aşağıdaki güne gider.',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Tüm ilerleme fotoğrafların tarihe göre, herhangi bir gün için. Bir de önce/sonra kaydırıcısı.',
+  // --- routine backups ---
+  'Add a backup': 'Yedek ekle',
+  'Backups': 'Yedekler',
+  'Backups for {0}': '{0} için yedekler',
+  'Everything else': 'Geri kalan her şey',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Makine dolu mu? Yerine ne yapacağını seç, antrenman ortasında değiştirirken önce bunlar çıkar.',
+  'Remove “{0}”': '“{0}” kaldır',
+  'That’s plenty of backups.': 'Bu kadar yedek yeter.',
+  'Your backups': 'Yedeklerin',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Burada eklenecek ağırlık yok: önce tekrar, sonra set artar.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Kartlar ve Odak düzeninde Geri ve İleri, bitmiş egzersizlerin üstünden atlar.',
+  'Skip completed exercises': 'Tamamlanan egzersizleri atla',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Bu uygulama geçiş anahtarıyla onaylayamaz. Kodu bu profille oturum açmış bir tarayıcıda oluştur ya da önce orada bir parola ekle.',
 }

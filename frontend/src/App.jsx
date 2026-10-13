@@ -70,6 +70,7 @@ function applyPrefs(theme, accent) {
 }
 
 function Shell() {
+  const [workoutAction, setWorkoutAction] = useState(null)
   const navigate = useNavigate()
   const loc = useLocation()
   const navType = useNavigationType()
@@ -211,17 +212,17 @@ function Shell() {
   }, [loc.pathname, navType])
   // bound to the workout, not to the route — checking Stats mid-session keeps the screen on
   useWakeLock(!!S.active && !S.active.editingWorkoutId && S.keepAwake !== false)
-  // A running workout has the whole screen (v1.3.11): no tab bar, and the rest bar docks to the
-  // bottom edge in its place. Its header's ⌄ goes back to the app, where the tab bar's Resume
-  // brings it back.
+  // Workouts keep navigation hidden, with only their primary action below the rest timer.
   const inWorkout = loc.pathname === '/workout' && !!S.active
+  const hasWorkoutAction = inWorkout && !S.active.editingWorkoutId && !S.active.backfill
+    && workoutAction?.sessionId === S.active.id
   useEffect(() => {
-    document.body.classList.toggle('no-tabbar', inWorkout)
+    document.body.classList.toggle('no-tabbar', inWorkout && !hasWorkoutAction)
     return () => document.body.classList.remove('no-tabbar')
-  }, [inWorkout])
+  }, [inWorkout, hasWorkoutAction])
   // The chat owns the bottom of the screen as well: its composer sits where the tabs would be.
   // The first-launch card has no tabs either: they changed the route behind it.
-  const noTabs = inWorkout || loc.pathname === '/coach' || needsMobileOnboarding || permSteps
+  const noTabs = (inWorkout && !hasWorkoutAction) || loc.pathname === '/coach' || needsMobileOnboarding || permSteps
 
   const authed = user || isGuest
   if (!ready && !authed) return (
@@ -240,7 +241,7 @@ function Shell() {
       {S.checkIn !== false && <Route path="/checkin" element={<CheckIn />} />}
       <Route path="/plan" element={<Plan />} />
       <Route path="/plan/r/:id" element={<RoutineEdit />} />
-      <Route path="/workout" element={<Workout />} />
+      <Route path="/workout" element={<Workout onActionChange={setWorkoutAction} />} />
       <Route path="/stats" element={<Stats />} />
       <Route path="/history" element={<History />} />
       <Route path="/library" element={<Library />} />
@@ -278,7 +279,7 @@ function Shell() {
           would ride along with the page for the length of it. Decides for itself when to show —
           including on the sign-in screen, when the server has just ended the session. */}
       <SyncBanner />
-      {!noTabs && <TabBar onStart={startFlow} />}
+      {!noTabs && <TabBar onStart={startFlow} workoutAction={workoutAction} workoutOnly={inWorkout} />}
       <RestTimer />
       <Modals />
       <Toast />

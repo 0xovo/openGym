@@ -2310,4 +2310,49 @@ export default {
   'Still only': '정지 이미지만',
   'Waiting for Wi-Fi': 'Wi-Fi 기다리는 중',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': '입력창 크게',
+  'Make the box smaller': '입력창 작게',
+  // --- progress photos: remove ---
+  'Photo removed': '사진을 지웠어요',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': '한쪽을 마치고 다른 쪽 전에 잠깐 숨 돌려요. 양쪽을 다 하면 원래 휴식이 시작돼요.',
+  'Like the work sets': '본 세트와 같이',
+  'No timer': '타이머 없음',
+  'Pick a time': '시간 고르기',
+  'Rest between sides': '좌우 사이 휴식',
+  'Rest between warm-ups': '워밍업 세트 사이 휴식',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': '워밍업은 가벼우니 짧게 쉬거나 안 쉬어도 돼요. 마지막 워밍업 뒤에는 첫 본 세트 전에 원래 휴식을 다 줘요.',
+  // --- progress photos for any day (#557) ---
+  'Add photos': '사진 추가',
+  'Each photo goes on the day it was taken.': '사진마다 찍은 날로 들어가요.',
+  'No progress photos yet. Add one for today or any day before.': '아직 진행 사진이 없어요. 오늘이나 지난 날짜로 하나 추가해 보세요.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': '사진에는 {0}에 찍었다고 나와요. 다른 날이었다면 날짜를 바꾸세요.',
+  'They all go on the day below.': '모두 아래 날짜로 들어가요.',
+  'Which day is this photo from?': '이 사진은 어느 날 사진인가요?',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': '서버가 운동한 날에만 사진을 보관해요. 업데이트하면 어느 날이든 보관할 수 있어요.',
+  'Add {0} photo': '사진 {0}장 추가',
+  'Add {0} photos': '사진 {0}장 추가',
+  '{0} photo added': '사진 {0}장을 추가했어요',
+  '{0} photos added': '사진 {0}장을 추가했어요',
+  '{0} photo knows its day and goes there. The others go on the day below.': '사진 {0}장은 찍은 날을 알아서 그날로 들어가요. 나머지는 아래 날짜로 들어가요.',
+  '{0} photos know their day and go there. The others go on the day below.': '사진 {0}장은 찍은 날을 알아서 그날로 들어가요. 나머지는 아래 날짜로 들어가요.',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': '모든 진행 사진을 날짜순으로, 어느 날이든. 비포/애프터 슬라이더도 있어요.',
+  // --- routine backups ---
+  'Add a backup': '대체 운동 추가',
+  'Backups': '대체 운동',
+  'Backups for {0}': '{0} 대체 운동',
+  'Everything else': '나머지 전부',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': '기구가 사용 중인가요? 대신 할 운동을 골라 두면 운동 중 교체할 때 먼저 보여 줘요.',
+  'Remove “{0}”': '“{0}” 빼기',
+  'That’s plenty of backups.': '대체 운동은 이 정도면 충분해요.',
+  'Your backups': '내 대체 운동',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': '여기엔 더할 무게가 없어요. 반복 수를 늘리고, 그다음 세트를 늘려요.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': '카드와 포커스에서 이전/다음이 끝난 운동을 건너뛰어요.',
+  'Skip completed exercises': '끝난 운동 건너뛰기',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': '이 앱에서는 패스키로 확인할 수 없어요. 이 프로필로 로그인한 브라우저에서 코드를 만들거나, 먼저 그곳에서 비밀번호를 추가하세요.',
 }

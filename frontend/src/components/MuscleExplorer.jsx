@@ -17,9 +17,9 @@ import { isFav, sortFavouritesFirst } from '../lib/favourites.js'
 
 // One explorer for the Library and every catalogue picker. Supplying `onPick` turns
 // a result into a selection; without it the explorer behaves like the normal Library.
-export default function MuscleExplorer({ onPick, onDetail, onPlan, pickIcon = 'plus' }) {
+export default function MuscleExplorer({ onPick, onDetail, onPlan, pickIcon = 'plus', initial = null }) {
   const S = useStore(s => s.S)
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(initial)
   const [q, setQ] = useState('')
   const [bp, setBp] = useState('')
   const [eq, setEq] = useState('')

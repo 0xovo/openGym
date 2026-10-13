@@ -2314,4 +2314,49 @@ export default {
   'Still only': 'Только картинка',
   'Waiting for Wi-Fi': 'Ждём Wi-Fi',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'Увеличить поле',
+  'Make the box smaller': 'Уменьшить поле',
+  // --- progress photos: remove ---
+  'Photo removed': 'Фото удалено',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Короткая передышка после одной стороны, перед другой. Полный отдых будет, когда обе стороны готовы.',
+  'Like the work sets': 'Как рабочие подходы',
+  'No timer': 'Без таймера',
+  'Pick a time': 'Выбрать время',
+  'Rest between sides': 'Отдых между сторонами',
+  'Rest between warm-ups': 'Отдых между разминочными подходами',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'Разминка лёгкая, так что отдыхать можно меньше или вовсе нет. После последней разминки всё равно будет полный отдых перед первым рабочим подходом.',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'Добавить фото',
+  'Each photo goes on the day it was taken.': 'Каждое фото попадёт в день, когда оно сделано.',
+  'No progress photos yet. Add one for today or any day before.': 'Пока нет фото прогресса. Добавьте одно на сегодня или на любой прошлый день.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'Судя по фото, оно сделано {0}. Измените день, если это был другой.',
+  'They all go on the day below.': 'Все попадут в день ниже.',
+  'Which day is this photo from?': 'Из какого дня это фото?',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'Ваш сервер хранит фото только в дни с тренировкой. После обновления он сможет хранить их для любого дня.',
+  'Add {0} photo': 'Добавить {0} фото',
+  'Add {0} photos': { one: 'Добавить {0} фото', few: 'Добавить {0} фото', many: 'Добавить {0} фото' },
+  '{0} photo added': 'Добавлено {0} фото',
+  '{0} photos added': { one: 'Добавлено {0} фото', few: 'Добавлено {0} фото', many: 'Добавлено {0} фото' },
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} фото знает свой день и попадёт туда. Остальные попадут в день ниже.',
+  '{0} photos know their day and go there. The others go on the day below.': { one: '{0} фото знает свой день и попадёт туда. Остальные попадут в день ниже.', few: '{0} фото знают свой день и попадут туда. Остальные попадут в день ниже.', many: '{0} фото знают свой день и попадут туда. Остальные попадут в день ниже.' },
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Все фото прогресса по датам, за любой день. И ползунок «до и после».',
+  // --- routine backups ---
+  'Add a backup': 'Добавить замену',
+  'Backups': 'Замены',
+  'Backups for {0}': 'Замены для {0}',
+  'Everything else': 'Всё остальное',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Тренажёр занят? Выберите, что сделаете вместо него, и при замене посреди тренировки они будут первыми.',
+  'Remove “{0}”': 'Убрать «{0}»',
+  'That’s plenty of backups.': 'Замен уже достаточно.',
+  'Your backups': 'Ваши замены',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Здесь нечего добавлять в весе: растут повторения, потом подходы.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'В Карточках и Фокусе «Назад» и «Далее» перескакивают готовые упражнения.',
+  'Skip completed exercises': 'Пропускать выполненные упражнения',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Это приложение не может подтвердить ключом доступа. Создайте код в браузере, где вы вошли в этот профиль, или сначала задайте там пароль.',
 }

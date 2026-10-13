@@ -2321,4 +2321,49 @@ export default {
   'Still only': 'ภาพนิ่งเท่านั้น',
   'Waiting for Wi-Fi': 'รอ Wi-Fi',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'ขยายช่องพิมพ์',
+  'Make the box smaller': 'ย่อช่องพิมพ์',
+  // --- progress photos: remove ---
+  'Photo removed': 'ลบรูปแล้ว',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'พักหายใจสั้น ๆ หลังข้างหนึ่ง ก่อนอีกข้าง พักเต็มเมื่อทำครบทั้งสองข้าง',
+  'Like the work sets': 'เหมือนเซ็ตหลัก',
+  'No timer': 'ไม่มีตัวจับเวลา',
+  'Pick a time': 'เลือกเวลา',
+  'Rest between sides': 'พักระหว่างสองข้าง',
+  'Rest between warm-ups': 'พักระหว่างเซ็ตวอร์มอัพ',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'เซ็ตวอร์มอัพเบา จึงพักน้อยลงหรือไม่พักเลยก็ได้ เซ็ตสุดท้ายยังได้พักเต็มก่อนเซ็ตหลักแรก',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'เพิ่มรูป',
+  'Each photo goes on the day it was taken.': 'แต่ละรูปจะไปอยู่ในวันที่ถ่าย',
+  'No progress photos yet. Add one for today or any day before.': 'ยังไม่มีรูปความก้าวหน้า เพิ่มสักรูปสำหรับวันนี้หรือวันก่อนหน้า',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'รูปบอกว่าถ่ายเมื่อ {0} เปลี่ยนวันได้ถ้าเป็นวันอื่น',
+  'They all go on the day below.': 'ทั้งหมดจะไปอยู่ในวันด้านล่าง',
+  'Which day is this photo from?': 'รูปนี้มาจากวันไหน',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'เซิร์ฟเวอร์ของคุณเก็บรูปเฉพาะวันที่มีการออกกำลังกาย อัปเดตแล้วจะเก็บได้ทุกวัน',
+  'Add {0} photo': 'เพิ่ม {0} รูป',
+  'Add {0} photos': 'เพิ่ม {0} รูป',
+  '{0} photo added': 'เพิ่มแล้ว {0} รูป',
+  '{0} photos added': 'เพิ่มแล้ว {0} รูป',
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} รูปรู้วันของตัวเองและจะไปอยู่ที่นั่น ที่เหลือไปอยู่ในวันด้านล่าง',
+  '{0} photos know their day and go there. The others go on the day below.': '{0} รูปรู้วันของตัวเองและจะไปอยู่ที่นั่น ที่เหลือไปอยู่ในวันด้านล่าง',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'รูปความก้าวหน้าทุกรูปเรียงตามวันที่ วันไหนก็ได้ พร้อมแถบเลื่อนเปรียบเทียบก่อน/หลัง',
+  // --- routine backups ---
+  'Add a backup': 'เพิ่มท่าสำรอง',
+  'Backups': 'ท่าสำรอง',
+  'Backups for {0}': 'ท่าสำรองของ {0}',
+  'Everything else': 'อย่างอื่นทั้งหมด',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'เครื่องไม่ว่างใช่ไหม เลือกว่าจะทำอะไรแทน แล้วตอนสลับท่าระหว่างออกกำลังกายจะเห็นพวกนี้ก่อน',
+  'Remove “{0}”': 'เอา “{0}” ออก',
+  'That’s plenty of backups.': 'ท่าสำรองเท่านี้ก็พอแล้ว',
+  'Your backups': 'ท่าสำรองของคุณ',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'ท่านี้ไม่ต้องเพิ่มน้ำหนัก: เพิ่มจำนวนครั้งก่อน แล้วค่อยเพิ่มเซ็ต',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'ในโหมดการ์ดและโฟกัส ปุ่มก่อนหน้า/ถัดไปจะข้ามท่าที่ทำเสร็จแล้ว',
+  'Skip completed exercises': 'ข้ามท่าที่ทำเสร็จแล้ว',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'แอปนี้ยืนยันด้วยพาสคีย์ไม่ได้ สร้างรหัสในเบราว์เซอร์ที่ลงชื่อเข้าใช้โปรไฟล์นี้ หรือเพิ่มรหัสผ่านที่นั่นก่อน',
 }

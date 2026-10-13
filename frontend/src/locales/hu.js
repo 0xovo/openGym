@@ -2313,4 +2313,49 @@ export default {
   'Still only': 'Csak állókép',
   'Waiting for Wi-Fi': 'Wi-Fire vár',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'Nagyobb mező',
+  'Make the box smaller': 'Kisebb mező',
+  // --- progress photos: remove ---
+  'Photo removed': 'Fotó eltávolítva',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Egy kis szusszanás az egyik oldal után, a másik előtt. A teljes pihenő akkor jön, ha mindkét oldal kész.',
+  'Like the work sets': 'Mint a munkasorozatok',
+  'No timer': 'Nincs időzítő',
+  'Pick a time': 'Idő választása',
+  'Rest between sides': 'Pihenő az oldalak között',
+  'Rest between warm-ups': 'Pihenő a bemelegítő sorozatok között',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'A bemelegítés könnyű, így kevesebb pihenő is elég, vagy semmi. Az utolsó így is megkapja a teljes pihenőt az első munkasorozat előtt.',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'Fotók hozzáadása',
+  'Each photo goes on the day it was taken.': 'Minden fotó arra a napra kerül, amikor készült.',
+  'No progress photos yet. Add one for today or any day before.': 'Még nincs fejlődési fotó. Adj hozzá egyet mára vagy egy korábbi napra.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'A fotó szerint {0} napon készült. Változtasd meg a napot, ha más volt.',
+  'They all go on the day below.': 'Mind a lenti napra kerül.',
+  'Which day is this photo from?': 'Melyik napról van ez a fotó?',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'A szervered csak edzésnapokon tartja meg a fotókat. Egy frissítéssel bármelyik napra megtartja őket.',
+  'Add {0} photo': '{0} fotó hozzáadása',
+  'Add {0} photos': '{0} fotó hozzáadása',
+  '{0} photo added': '{0} fotó hozzáadva',
+  '{0} photos added': '{0} fotó hozzáadva',
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} fotó tudja a napját, és oda kerül. A többi a lenti napra kerül.',
+  '{0} photos know their day and go there. The others go on the day below.': '{0} fotó tudja a napját, és oda kerül. A többi a lenti napra kerül.',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Minden fejlődési fotó dátum szerint, bármelyik napról. Plusz egy előtte/utána csúszka.',
+  // --- routine backups ---
+  'Add a backup': 'Helyettesítő hozzáadása',
+  'Backups': 'Helyettesítők',
+  'Backups for {0}': 'Helyettesítők ehhez: {0}',
+  'Everything else': 'Minden más',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Foglalt a gép? Válaszd ki, mit csinálsz helyette, és edzés közbeni cserénél ezeket kínálja elsőnek.',
+  'Remove “{0}”': '„{0}” eltávolítása',
+  'That’s plenty of backups.': 'Ennyi helyettesítő bőven elég.',
+  'Your backups': 'A helyettesítőid',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Itt nincs mit súlyban hozzáadni: előbb az ismétlések nőnek, aztán a sorozatok.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Kártyák és Fókusz nézetben az Előző és a Következő átugorja a kész gyakorlatot.',
+  'Skip completed exercises': 'Kész gyakorlatok átugrása',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Ez az app nem tud jelszókulccsal megerősíteni. Készítsd el a kódot egy böngészőben, ahol ebbe a profilba vagy bejelentkezve, vagy előbb adj meg ott egy jelszót.',
 }

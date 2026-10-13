@@ -17,7 +17,7 @@ import { pinState } from '../lib/queue.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { api, beacon } from '../lib/api.js'
 import { pyramidRestFor, maxRecordAt, isPyramid, pyramidLabel } from '../lib/pyramid.js'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor } from '../lib/supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex, advanceAfterTimedRest } from '../lib/supersetFlow.js'
 import Media from '../components/Media.jsx'
 import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
@@ -440,11 +440,11 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
       subtitle: setLabel(entry.id, s, entry.target, speedUnit),
       sections: [
         // A warm-up logged as a work set (or the other way round) changes phase here. Reps sets
-        // only, the kind a warm-up is added as; one work set always stays, and a per-side
-        // exercise's work sets keep their sides, so a warm-up there is not made one again.
+        // only, the kind a warm-up is added as; one work set always stays. A per-side set keeps
+        // its two sides either way (#575), so it goes back and forth like any other.
         { items: [
           !warm && mode === 'reps' && canBeWarmup(s) && entry.sets.some((x, j) => j !== i && !isWarmupRow(x)) && { icon: 'sunrise', label: t('Make it a warm-up set'), onClick: () => setPhaseAt(i, true) },
-          warm && mode === 'reps' && !perSide && { icon: 'dumbbell', label: t('Count it as a working set'), onClick: () => setPhaseAt(i, false) },
+          warm && mode === 'reps' && { icon: 'dumbbell', label: t('Count it as a working set'), onClick: () => setPhaseAt(i, false) },
           // Taken to failure: a toggle with its check, like the menu's other on/off rows. It counts
           // as RIR 0 wherever effort is read, unless a rating was logged on the set. A timed
           // per-side pair is one set, so both halves get it.
@@ -916,7 +916,7 @@ const coveredTop = () => {
   return inset
 }
 
-function ActiveWorkout() {
+function ActiveWorkout({ onActionChange }) {
   const nav = useNavigate()
   const S = useStore(s => s.S)
   const update = useStore(s => s.update)
@@ -958,6 +958,19 @@ function ActiveWorkout() {
   // The session's own choice (the Layout menu) wins over the saved one (Settings → Workout), the
   // way the layout itself does, so someone who always wants it switches it on once.
   const collapseOn = listMode && !!(A.collapseCompleted ?? S.collapseCompleted)
+  // Cards and Focus: Prev, Next and the swipe jump over finished exercises (#523).
+  const skipDone = !listMode && S.skipCompleted === true
+  // Cards and Focus: when the rest after a timed exercise's last set runs out, the next exercise
+  // comes up on its own (#532, lib/supersetFlow.js advanceAfterTimedRest). Once per rest.
+  const readyRest = timer?.ready ? timer : null
+  useEffect(() => {
+    if (!readyRest || listMode || editing) return
+    const live = useStore.getState().S.active
+    if (!live) return
+    const timed = idx => modeOf({ ...(live.entries[idx]?.target || {}), id: live.entries[idx]?.id }) === 'time'
+    const to = advanceAfterTimedRest(live.entries, supersetUnits(live.entries), readyRest.forIdx, live.cur, timed)
+    if (to != null) update(s => { if (s.active && s.active.cur === live.cur) s.active.cur = to })
+  }, [readyRest?.endsAt])
   // A finished unit you tapped open again to look at or fix (Discord: "minimize completed exercises
   // so I view only what I have yet to do"). This screen's own memory: a reload folds it back.
   // Keyed by index like the units, so a different number of exercises starts over.
@@ -979,6 +992,7 @@ function ActiveWorkout() {
   const exRefs = useRef(new Map())
   const setRefs = useRef(new Map())
   const focusPointerEpoch = useRef(0)
+  const [focusSet, setFocusSet] = useState(null)
   const bindExRef = (entry, el) => {
     if (el) exRefs.current.set(entry, el)
     else {
@@ -1323,7 +1337,8 @@ function ActiveWorkout() {
       if (active.cur < 0 || active.cur >= active.entries.length) return null
       const freshUnits = supersetUnits(active.entries)
       const freshUnitIdx = freshUnits.findIndex(candidate => candidate.includes(active.cur))
-      return freshUnitIdx < 0 ? null : freshUnits[freshUnitIdx + direction]?.[0] ?? null
+      // Cards and Focus may jump over finished exercises (Settings, "Skip completed exercises").
+      return freshUnitIdx < 0 ? null : freshUnits[stepUnitIndex(active.entries, freshUnits, freshUnitIdx, direction, skipDone)]?.[0] ?? null
     }
     if (targetFor(useStore.getState().S.active) == null) return
     update(s => {
@@ -1674,6 +1689,16 @@ function ActiveWorkout() {
     else if (exJustDone && cardioEntry) useUI.getState().toast(t('Cardio logged'))
     else if (exJustDone && m === 'time') useUI.getState().toast(t('Hold logged'))
 
+    // One side of a per-side reps set ticked, the other still to go: the exercise's own break
+    // between sides, when it has one (sideRestFor); none otherwise, as before.
+    if (side && !checked) {
+      const row = useStore.getState().S.active?.entries[idx]?.sets[i]
+      const other = side === 'L' ? 'R' : 'L'
+      if (row?.sides?.[side]?.done && !row.sides[other]?.done) {
+        const pause = sideRestFor(useStore.getState().S.active.entries[idx].target, { timed: false })
+        if (pause > 0) startRest(pause, idx, { kind: 'switch', forSet: i })
+      }
+    }
     // Only progress beyond this exercise's high-water mark may navigate or change rest. This
     // prevents an uncheck/re-check of finished work from replaying the flow side effects.
     const fresh = useStore.getState().S.active
@@ -1726,9 +1751,9 @@ function ActiveWorkout() {
       const sideOf = r => r && !isWarmupRow(r) ? r.side : null
       const partner = sideOf(rows[i]) === 'L' && sideOf(rows[i + 1]) === 'R' ? rows[i + 1]
         : sideOf(rows[i]) === 'R' && sideOf(rows[i - 1]) === 'L' ? rows[i - 1] : null
-      if (m === 'time' && partner && !partner.done && restAfter > 0) {
-        startRest(Math.min(SWITCH_SIDES_SEC, restAfter), idx, { kind: 'switch', forSet: i })
-        return
+      if (m === 'time' && partner && !partner.done) {
+        const pause = sideRestFor(fresh.entries[idx].target, { timed: true, restAfter, switchSec: SWITCH_SIDES_SEC })
+        if (pause > 0) { startRest(pause, idx, { kind: 'switch', forSet: i }); return }
       }
 
       // Singleton units are ordinary exercises: they rest between sets and after the closing
@@ -1816,13 +1841,7 @@ function ActiveWorkout() {
     if (window.requestAnimationFrame) window.requestAnimationFrame(scroll)
     else window.setTimeout(scroll, 0)
   }
-  onKey.current = event => {
-    // A sheet on top owns the keyboard (Escape closes it, Enter confirms in it).
-    if (useUI.getState().sheets.length) return false
-    const action = workoutKeyAction(event, { tabbed: tabbed.current, rtl: document.documentElement.dir === 'rtl' })
-    if (!action) return false
-    event.preventDefault()
-    if (action !== 'tick') { navigateUnit(action === 'next' ? 1 : -1); showCurrent(); return true }
+  const tickNext = (keepLayout = false) => {
     // A hold being timed: the key is its "Done", which logs what was actually held, once the
     // hold has run past its first moments (HOLD_KEY_GRACE_MS).
     const work = useUI.getState().work
@@ -1835,12 +1854,62 @@ function ActiveWorkout() {
     if (!next) return true
     // The exercise on screen is finished: this press brings up the next one, and the one after
     // ticks its set. A key never logs a set for an exercise that was not in front of you.
-    if (!next.current) { focusUnit(next.idx); showCurrent(); return true }
+    if (!next.current) {
+      if (keepLayout) update(s => { if (s.active) s.active.cur = next.idx })
+      else focusUnit(next.idx)
+      showCurrent()
+      return true
+    }
     // A timed set is started rather than ticked, as its play button does; the timer ticks it.
     if (!next.side && modeAt(next.idx) === 'time') startTimed(next.idx, next.i)
     else toggle(next.idx, next.i, next.side)
     return true
   }
+  onKey.current = event => {
+    // A sheet on top owns the keyboard (Escape closes it, Enter confirms in it).
+    if (useUI.getState().sheets.length) return false
+    const action = workoutKeyAction(event, { tabbed: tabbed.current, rtl: document.documentElement.dir === 'rtl' })
+    if (!action) return false
+    event.preventDefault()
+    if (action !== 'tick') { navigateUnit(action === 'next' ? 1 : -1); showCurrent(); return true }
+    return tickNext()
+  }
+  const nextActionSet = nextOpenSet(A.entries, cur)
+  const focusNeedsReveal = focusMode && nextActionSet?.current && focusSet
+    && (focusSet.idx !== nextActionSet.idx || focusSet.i !== nextActionSet.i)
+  const actionKind = editing || A.backfill || !A.entries.length ? null
+    : work ? 'done' : !nextActionSet ? 'finish' : !nextActionSet.current || focusNeedsReveal ? 'next'
+    : !nextActionSet.side && modeAt(nextActionSet.idx) === 'time' ? 'start'
+    : nextActionSet.side || 'complete'
+  const actionLabel = actionKind === 'done' ? t('Done') : actionKind === 'finish' ? t('Finish')
+    : actionKind === 'next' ? t('Next') : actionKind === 'start' ? t('Start')
+    : actionKind === 'L' ? t('Complete left side') : actionKind === 'R' ? t('Complete right side') : t('Complete')
+  const actionAria = actionKind === 'finish' ? t('Finish workout')
+    : actionKind === 'L' ? t('Complete left side') : actionKind === 'R' ? t('Complete right side')
+    : actionKind === 'complete' ? t('Complete set') : actionLabel
+  const primaryAction = useRef(null)
+  primaryAction.current = () => {
+    const fresh = useStore.getState().S.active
+    if (!fresh || fresh.id !== A.id || fresh.editingWorkoutId || fresh.backfill || useUI.getState().sheets.length) return
+    if (!useUI.getState().work && focusNeedsReveal) {
+      focusPointerEpoch.current++
+      update(s => { if (s.active) s.active.cur = nextActionSet.idx })
+      return
+    }
+    if (!useUI.getState().work && !nextOpenSet(fresh.entries, fresh.cur)) {
+      if (fresh.entries.length) finishWorkoutSheet({ onDiscard: discardWorkout })
+      return
+    }
+    tickNext(true)
+  }
+  useEffect(() => {
+    onActionChange?.(actionKind ? {
+      sessionId: A.id, label: actionLabel, ariaLabel: actionAria,
+      icon: actionKind === 'start' ? 'play' : actionKind === 'next' ? 'chevronRight' : actionKind === 'finish' ? 'flag' : 'check',
+      run: () => primaryAction.current?.(),
+    } : null)
+    return () => onActionChange?.(null)
+  }, [onActionChange, A.id, actionKind, actionLabel, actionAria])
   useEffect(() => {
     // A Space that ticked must not also press the button a click left focus on. Preventing the
     // keydown is enough for Chrome; Firefox presses a button on the keyup, so that goes too.
@@ -2006,7 +2075,7 @@ function ActiveWorkout() {
           // so none of it can be pressed. That includes a superset's header with its Unpair, and a
           // lone exercise's "Make superset" buttons when Settings shows them: without them the
           // header's words moved over, or the card grew by a row, as it landed.
-          const adjacent = units[unitIdx + direction] || []
+          const adjacent = units[stepUnitIndex(A.entries, units, unitIdx, direction, skipDone)] || []
           if (!adjacent.length) return null
           return adjacent.length > 1 ? (
             <div className="ss-card">
@@ -2026,7 +2095,7 @@ function ActiveWorkout() {
         }}>
       {focusMode ? (
         <FocusView entryIdx={cur} unit={unit}
-          onSelectEntry={selectFocusEntry} onAdvanceUnit={advanceFocusUnit} pointerEpoch={focusPointerEpoch.current}
+          onSelectEntry={selectFocusEntry} onAdvanceUnit={advanceFocusUnit} pointerEpoch={focusPointerEpoch.current} onSetChange={setFocusSet}
           onPairPrev={onPairPrev} onPairNext={onPairNext} onUnpair={() => unpairAt(cur)}
           {...blockProps(cur)} />
       ) : isSuperset ? (
@@ -2103,7 +2172,7 @@ if (typeof document !== 'undefined') document.addEventListener('pointerdown', ()
 // Test seam: a fresh launch, nobody has touched anything yet.
 export function _resetHintQuiet() { lastTouchAt = 0 }
 
-export default function Workout() {
+export default function Workout({ onActionChange }) {
   const active = useStore(s => s.S.active)
-  return active ? <ActiveWorkout /> : <StartChooser />
+  return active ? <ActiveWorkout onActionChange={onActionChange} /> : <StartChooser />
 }

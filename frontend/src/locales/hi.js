@@ -2310,4 +2310,49 @@ export default {
   'Still only': 'सिर्फ़ स्थिर तस्वीर',
   'Waiting for Wi-Fi': 'Wi-Fi का इंतज़ार',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'बॉक्स बड़ा करें',
+  'Make the box smaller': 'बॉक्स छोटा करें',
+  // --- progress photos: remove ---
+  'Photo removed': 'फ़ोटो हटाई गई',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'एक तरफ़ के बाद, दूसरी से पहले थोड़ा दम लें। पूरा आराम तब, जब दोनों तरफ़ हो जाएँ।',
+  'Like the work sets': 'वर्क सेट जैसा',
+  'No timer': 'कोई टाइमर नहीं',
+  'Pick a time': 'समय चुनें',
+  'Rest between sides': 'दोनों तरफ़ के बीच आराम',
+  'Rest between warm-ups': 'वॉर्म-अप के बीच आराम',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'वॉर्म-अप हल्के होते हैं, इसलिए आराम कम या बिल्कुल नहीं भी चलेगा। आख़िरी वॉर्म-अप को पहले वर्क सेट से पहले पूरा आराम मिलता है।',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'फ़ोटो जोड़ें',
+  'Each photo goes on the day it was taken.': 'हर फ़ोटो उसी दिन पर जाएगी जिस दिन ली गई थी।',
+  'No progress photos yet. Add one for today or any day before.': 'अभी कोई प्रोग्रेस फ़ोटो नहीं। आज या किसी पिछले दिन के लिए एक जोड़ें।',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'फ़ोटो के मुताबिक यह {0} को ली गई थी। कोई और दिन था तो दिन बदल दें।',
+  'They all go on the day below.': 'सभी नीचे वाले दिन पर जाएँगी।',
+  'Which day is this photo from?': 'यह फ़ोटो किस दिन की है?',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'आपका सर्वर सिर्फ़ वर्कआउट वाले दिनों पर फ़ोटो रखता है। अपडेट के बाद वह किसी भी दिन के लिए रख पाएगा।',
+  'Add {0} photo': '{0} फ़ोटो जोड़ें',
+  'Add {0} photos': '{0} फ़ोटो जोड़ें',
+  '{0} photo added': '{0} फ़ोटो जोड़ी गई',
+  '{0} photos added': '{0} फ़ोटो जोड़ी गईं',
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} फ़ोटो अपना दिन जानती है और वहीं जाएगी। बाकी नीचे वाले दिन पर जाएँगी।',
+  '{0} photos know their day and go there. The others go on the day below.': '{0} फ़ोटो अपना दिन जानती हैं और वहीं जाएँगी। बाकी नीचे वाले दिन पर जाएँगी।',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'हर प्रोग्रेस फ़ोटो तारीख़ के क्रम में, किसी भी दिन की। साथ में पहले/बाद का स्लाइडर।',
+  // --- routine backups ---
+  'Add a backup': 'विकल्प जोड़ें',
+  'Backups': 'विकल्प',
+  'Backups for {0}': '{0} के विकल्प',
+  'Everything else': 'बाकी सब',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'मशीन खाली नहीं? उसकी जगह क्या करेंगे चुनें, वर्कआउट के बीच बदलते समय ये पहले दिखेंगे।',
+  'Remove “{0}”': '“{0}” हटाएँ',
+  'That’s plenty of backups.': 'इतने विकल्प काफ़ी हैं।',
+  'Your backups': 'आपके विकल्प',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'यहाँ वज़न जोड़ने की ज़रूरत नहीं: पहले रेप्स बढ़ेंगे, फिर सेट।',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'कार्ड और फ़ोकस में पिछला और अगला पूरे हो चुके व्यायाम को छोड़ देते हैं।',
+  'Skip completed exercises': 'पूरे हुए व्यायाम छोड़ें',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'यह ऐप पासकी से पुष्टि नहीं कर सकता। इस प्रोफ़ाइल में साइन इन किए ब्राउज़र में कोड बनाएँ, या पहले वहाँ एक पासवर्ड जोड़ें।',
 }

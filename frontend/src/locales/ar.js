@@ -2365,4 +2365,49 @@ export default {
   'Still only': 'صورة ثابتة فقط',
   'Waiting for Wi-Fi': 'بانتظار Wi-Fi',
   '{0} px': '{0} px',
+  // --- Coach message box ---
+  'Make the box bigger': 'تكبير مربع الكتابة',
+  'Make the box smaller': 'تصغير مربع الكتابة',
+  // --- progress photos: remove ---
+  'Photo removed': 'تمت إزالة الصورة',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'استراحة قصيرة بعد جانب وقبل الآخر. الاستراحة الكاملة تأتي بعد إنهاء الجانبين.',
+  'Like the work sets': 'مثل مجموعات العمل',
+  'No timer': 'بلا مؤقت',
+  'Pick a time': 'اختر مدة',
+  'Rest between sides': 'الاستراحة بين الجانبين',
+  'Rest between warm-ups': 'الاستراحة بين مجموعات الإحماء',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'مجموعات الإحماء خفيفة، فيمكن أن تكون استراحتها أقصر أو بلا استراحة. آخرها يحصل على الاستراحة الكاملة قبل أول مجموعة عمل.',
+  // --- progress photos for any day (#557) ---
+  'Add photos': 'إضافة صور',
+  'Each photo goes on the day it was taken.': 'كل صورة تذهب إلى اليوم الذي التُقطت فيه.',
+  'No progress photos yet. Add one for today or any day before.': 'لا صور تقدّم بعد. أضف واحدة لليوم أو لأي يوم سابق.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'تقول الصورة إنها التُقطت في {0}. غيّر اليوم إن كان يومًا آخر.',
+  'They all go on the day below.': 'كلها تذهب إلى اليوم أدناه.',
+  'Which day is this photo from?': 'من أي يوم هذه الصورة؟',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'خادمك يحتفظ بالصور فقط في أيام التمرين. التحديث يتيح له الاحتفاظ بها لأي يوم.',
+  'Add {0} photo': 'إضافة {0} صورة',
+  'Add {0} photos': 'إضافة {0} صور',
+  '{0} photo added': 'تمت إضافة {0} صورة',
+  '{0} photos added': 'تمت إضافة {0} صور',
+  '{0} photo knows its day and goes there. The others go on the day below.': '{0} صورة تعرف يومها وتذهب إليه. البقية تذهب إلى اليوم أدناه.',
+  '{0} photos know their day and go there. The others go on the day below.': '{0} صور تعرف يومها وتذهب إليه. البقية تذهب إلى اليوم أدناه.',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'كل صور التقدّم مرتبة حسب التاريخ، لأي يوم. ومعها شريط مقارنة قبل وبعد.',
+  // --- routine backups ---
+  'Add a backup': 'إضافة بديل',
+  'Backups': 'البدائل',
+  'Backups for {0}': 'بدائل {0}',
+  'Everything else': 'كل ما عدا ذلك',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'الجهاز مشغول؟ اختر ما ستفعله بدلًا منه، وسيعرضها التبديل أثناء التمرين أولًا.',
+  'Remove “{0}”': 'إزالة «{0}»',
+  'That’s plenty of backups.': 'هذا عدد كافٍ من البدائل.',
+  'Your backups': 'بدائلك',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'لا وزن يُضاف هنا: يزيد التمرين بالتكرارات ثم بالمجموعات.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'في البطاقات والتركيز، يتخطى «السابق» و«التالي» التمرين المنتهي.',
+  'Skip completed exercises': 'تخطّي التمارين المكتملة',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'لا يستطيع هذا التطبيق التأكيد بمفتاح مرور. أنشئ الرمز في متصفح مسجّل الدخول إلى هذا الملف الشخصي، أو أضف كلمة مرور هناك أولًا.',
 }

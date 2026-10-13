@@ -1465,6 +1465,29 @@ export const PT_BR_OVERRIDES = {
   'Waiting for Wi-Fi': 'Esperando o Wi-Fi',
   // --- background check before the nudge ---
   'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Registrou um treino em outro dispositivo? Antes do aviso, o celular confirma com o seu servidor, sempre que deixar o aplicativo rodar em segundo plano. Abrir o aplicativo sempre deixa tudo em dia.',
+  // --- Coach message box ---
+  // --- progress photos: remove ---
+  // --- set-specific rest ---
+  'No timer': 'Sem cronômetro',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'O aquecimento é leve, então pode descansar menos ou nada. O último continua tendo o descanso completo antes da sua primeira série de trabalho.',
+  // --- progress photos for any day (#557) ---
+  'No progress photos yet. Add one for today or any day before.': 'Ainda não há fotos de progresso. Adicione uma para hoje ou para um dia anterior.',
+  'The photo says it was taken on {0}. Change the day if it was another one.': 'A foto diz que foi tirada em {0}. Mude o dia se foi outro.',
+  'They all go on the day below.': 'Todas vão para o dia abaixo.',
+  'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'Seu servidor só guarda fotos em dias com treino. Uma atualização permite guardá-las para qualquer dia.',
+  // --- progress photos card ---
+  'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Todas as fotos de progresso por data, de qualquer dia. E um controle deslizante de antes/depois.',
+  // --- routine backups ---
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Máquina ocupada? Escolha o que você faria no lugar dela, e uma troca no meio do treino mostra estes primeiro.',
+  'Remove “{0}”': 'Remover “{0}”',
+  'Your backups': 'Seus substitutos',
+  // --- #583 bodyweight step ---
+  'Nothing to add in weight here: it goes up in reps, then sets.': 'Aqui não há peso para acrescentar: sobe em repetições e depois em séries.',
+  // --- #523 skip completed ---
+  'In Cards and Focus, Prev and Next hop over a finished exercise.': 'Em Cartões e Foco, Anterior e Próximo pulam os exercícios concluídos.',
+  'Skip completed exercises': 'Pular exercícios concluídos',
+  // --- #551 device link from the phone ---
+  'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Este aplicativo não consegue confirmar com uma chave de acesso. Crie o código em um navegador conectado a este perfil, ou adicione uma senha lá primeiro.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

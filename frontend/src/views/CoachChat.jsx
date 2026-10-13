@@ -23,6 +23,7 @@ import { exLine } from '../lib/history.js'
 import { speedUnitOf } from '../lib/speed.js'
 import { DEMO } from '../lib/demo.js'
 import { MOBILE } from '../lib/mobile.js'
+import ChatInput from '../components/ChatInput.jsx'
 import {
   coachAvailable, hasConsent, emptyCoach, appendChat, recordTiming, estimateMs, profileLines,
   markStale, applicable, applyChangeSet, applyCreatedPlan, recordDismissal, recordDebrief, logEntry,
@@ -50,6 +51,8 @@ export default function CoachChat() {
   const openSheet = useUI(s => s.openSheet)
   const { job, pending, cap, loading, lastError, last, refresh, maxMessageLen } = useCoachStatus(true)
   const [text, setText] = useState('')
+  // The message box opened into a tall editor (components/ChatInput.jsx); closed again on send.
+  const [expanded, setExpanded] = useState(false)
   const [busy, setBusy] = useState(false)
   const endRef = useRef(null)
   const prevJob = useRef(null)
@@ -113,6 +116,7 @@ export default function CoachChat() {
       else await requestReview(msg)
       update(s => appendChat(s, { role: 'user', kind: 'text', text: msg }))
       setText('')
+      setExpanded(false)
       refresh()
     } catch (e) {
       // A server that refuses the job says so in English, with its class beside it: the class
@@ -222,10 +226,9 @@ export default function CoachChat() {
         {!!(S.routines || []).length && <button className="qchip" onClick={pickRoutine}><Icon name="wrench" />{t('Improve a routine')}</button>}
         {community && <button className="qchip" onClick={showCohort}><Icon name="person" />{t('Compare')}</button>}
       </div>}
-      <div className="composer-in">
-        <textarea rows={1} value={text} maxLength={maxMessageLen || 1000} placeholder={placeholder} disabled={!!job}
-          onChange={e => setText(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }} />
+      <div className={'composer-in' + (expanded ? ' tall' : '')}>
+        <ChatInput value={text} onChange={setText} onSend={send} placeholder={placeholder} disabled={!!job}
+          maxLength={maxMessageLen || 1000} expanded={expanded} setExpanded={setExpanded} />
         <button className="send" onClick={send} disabled={!text.trim() || busy || !!job} aria-label={t('Send')}><Icon name="arrowUp" /></button>
       </div>
       {cap?.limit > 0 && <div className="composer-cap">{t('{0} of {1} Coach runs used today', cap.used, cap.limit)}</div>}

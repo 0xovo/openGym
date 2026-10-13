@@ -75,7 +75,7 @@
 .ob-hint{text-align:center;font-size:13px;color:var(--label-3);margin-top:8px}
 
 /* ---------- chat ---------- */
-.chat{padding-bottom:40px}
+.chat{padding-bottom:calc(40px + var(--composer-extra,0px))}
 .chat-hdr{
   display:flex;align-items:center;gap:10px;
   /* Pinned like a messenger's title bar: it eats the app shell's top padding so the blur
@@ -173,13 +173,25 @@
   background:color-mix(in srgb,var(--bg) 88%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(12px);backdrop-filter:saturate(180%) blur(12px)
 }
-.composer-in{max-width:560px;margin:0 auto;display:flex;gap:8px;align-items:flex-end}
+/* The Android app reports the keyboard instead of shrinking the page (lib/native-keyboard.js):
+   the composer rides on top of it. */
+:root[data-native-kb] .composer{bottom:var(--native-kb);padding-bottom:10px}
+.composer-in{max-width:560px;margin:0 auto;display:flex;gap:8px;align-items:flex-end;position:relative}
+/* The height is set by components/ChatInput.jsx: as tall as the text, up to 40% of the screen
+   above the keyboard, or 70% opened into the tall editor. */
 .composer textarea{
-  flex:1;min-height:44px;max-height:120px;resize:none;border-radius:22px;padding:11px 16px;
+  flex:1;min-height:44px;resize:none;border-radius:22px;padding:11px 16px;overflow-y:auto;
   font-size:16px;line-height:1.35;background:var(--surface);color:var(--label);border:none;outline:none;
   font-family:inherit;letter-spacing:-.008em
 }
 .composer textarea:focus{box-shadow:inset 0 0 0 1.5px var(--acc)}
+.composer-in.tall textarea{border-radius:18px}
+/* The toggle between the growing box and the tall editor, on the box's top corner. */
+.composer-grow{
+  position:absolute;top:-30px;left:4px;width:28px;height:28px;border-radius:99px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  background:var(--surface);color:var(--label-2);box-shadow:0 1px 3px rgba(0,0,0,.18)
+}
 .composer textarea::placeholder{color:var(--label-3)}
 .send{
   width:44px;height:44px;border-radius:99px;background:var(--acc);color:var(--on-acc);flex:none;
