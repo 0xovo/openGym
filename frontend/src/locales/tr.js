@@ -2298,4 +2298,12 @@ export default {
   'Make the box smaller': 'Kutuyu küçült',
   // --- progress photos: remove ---
   'Photo removed': 'Fotoğraf kaldırıldı',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Bir taraftan sonra, diğerinden önce kısa bir nefes. Tam dinlenme iki taraf da bitince gelir.',
+  'Like the work sets': 'Çalışma setleri gibi',
+  'No timer': 'Zamanlayıcı yok',
+  'Pick a time': 'Süre seç',
+  'Rest between sides': 'Taraflar arası dinlenme',
+  'Rest between warm-ups': 'Isınma setleri arası dinlenme',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'Isınma setleri hafif, o yüzden daha az ya da hiç dinlenmeyebilir. Sonuncusu yine de ilk çalışma setinden önce tam dinlenmeyi alır.',
 }

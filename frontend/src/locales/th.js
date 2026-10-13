@@ -2309,4 +2309,12 @@ export default {
   'Make the box smaller': 'ย่อช่องพิมพ์',
   // --- progress photos: remove ---
   'Photo removed': 'ลบรูปแล้ว',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'พักหายใจสั้น ๆ หลังข้างหนึ่ง ก่อนอีกข้าง พักเต็มเมื่อทำครบทั้งสองข้าง',
+  'Like the work sets': 'เหมือนเซ็ตหลัก',
+  'No timer': 'ไม่มีตัวจับเวลา',
+  'Pick a time': 'เลือกเวลา',
+  'Rest between sides': 'พักระหว่างสองข้าง',
+  'Rest between warm-ups': 'พักระหว่างเซ็ตวอร์มอัพ',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'เซ็ตวอร์มอัพเบา จึงพักน้อยลงหรือไม่พักเลยก็ได้ เซ็ตสุดท้ายยังได้พักเต็มก่อนเซ็ตหลักแรก',
 }

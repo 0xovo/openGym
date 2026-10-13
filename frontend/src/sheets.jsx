@@ -1736,8 +1736,15 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     const withMeant = dbLoad ? { dbLoad } : {}
     // "Last set to failure": written only when on, so a plan that never asked keeps its shape.
     const withFailure = c.lastToFailure === true ? { lastToFailure: true } : {}
+    // The warm-ups' own rest and the break between sides (Discord "set-specific rest timers"):
+    // optional fields, written only when chosen, so a config that never touched them keeps its
+    // exact shape and rests as it always did (lib/supersetFlow.js warmupRestSecFor, sideRestFor).
+    const withSetRests = {
+      ...(c.warmupRestOff === true ? { warmupRestOff: true } : c.warmupRestSec > 0 ? { warmupRestSec: Math.round(c.warmupRestSec) } : {}),
+      ...(perSide && c.sideRestSec > 0 ? { sideRestSec: Math.round(c.sideRestSec) } : {}),
+    }
     if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 8), ...withNote, ...withRest })
-    else if (mode === 'time') onSave({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withMeant, ...withFailure })
+    else if (mode === 'time') onSave({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withSetRests, ...withMeant, ...withFailure })
     else {
       // A unilateral target is stored even: the split has to divide, and a typed 15 would
       // otherwise plan seven reps on one side and eight on the other, every session.
@@ -1749,7 +1756,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         range = normalizeRepRange(reps, c.repsMin, stride)
         reps = range.reps
       }
-      const out = { sets, mode: 'reps', reps, weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withMeant }
+      const out = { sets, mode: 'reps', reps, weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withSetRests, ...withMeant }
       // The list is the prescription; sets and reps follow it, so everything that reads the
       // flat target (a config sheet reopened with the toggle off, older builds) still makes sense.
       const list = pyramid ? normalizePyramid(c.pyramid, stride) : []
@@ -1903,6 +1910,44 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     <div className="small dim" style={{ marginBottom: 18 }}>
       {t('Rest after each set of this exercise. 0:00 means your default rest.')}
     </div>
+    {/* The warm-ups' own rest: like the work sets (no field, as always), no timer, or a time of
+        their own. The last warm-up still rests the full work rest before the first work set. */}
+    {!cardio && <>
+      <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
+        <Row icon="timer" iconTint="var(--yellow)" title={t('Rest between warm-ups')} accessory="chevron"
+          value={c.warmupRestOff === true ? t('No timer') : c.warmupRestSec > 0 ? fmtRest(c.warmupRestSec) : t('Like the work sets')}
+          onClick={() => menuSheet({
+            title: t('Rest between warm-ups'),
+            items: [
+              { icon: 'timer', label: t('Like the work sets'), on: !(c.warmupRestOff === true) && !(c.warmupRestSec > 0), onClick: () => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return rest }) },
+              { icon: 'pause', label: t('No timer'), on: c.warmupRestOff === true, onClick: () => setC(x => { const { warmupRestSec, ...rest } = x; return { ...rest, warmupRestOff: true } }) },
+              { icon: 'clock', label: t('Pick a time'), on: c.warmupRestOff !== true && c.warmupRestSec > 0, onClick: () => durationSheet({
+                title: t('Rest between warm-ups'), value: c.warmupRestSec > 0 ? c.warmupRestSec : 30, max: REST_MAX, off: t('No timer'),
+                onDone: v => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return v > 0 ? { ...rest, warmupRestSec: v } : { ...rest, warmupRestOff: true } }),
+              }) },
+            ],
+          })} />
+      </div>
+      <div className="small dim" style={{ marginBottom: 18 }}>
+        {t('Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.')}
+      </div>
+    </>}
+    {/* The break between the two sides of a per-side set. Without one: none for reps, the short
+        switch pause for a hold, as before. */}
+    {!cardio && perSide && <>
+      <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
+        <Row icon="sides" iconTint="var(--blue)" title={t('Rest between sides')} accessory="chevron"
+          value={c.sideRestSec > 0 ? fmtRest(c.sideRestSec) : mode === 'time' ? t('Default ({0})', fmtRest(10)) : t('No timer')}
+          onClick={() => durationSheet({
+            title: t('Rest between sides'), value: c.sideRestSec > 0 ? c.sideRestSec : 0, max: REST_MAX,
+            off: mode === 'time' ? t('Default ({0})', fmtRest(10)) : t('No timer'),
+            onDone: v => setC(x => { const { sideRestSec, ...rest } = x; return v > 0 ? { ...rest, sideRestSec: v } : rest }),
+          })} />
+      </div>
+      <div className="small dim" style={{ marginBottom: 18 }}>
+        {t('A breather after one side, before the other. The full rest comes once both sides are done.')}
+      </div>
+    </>}
     {/* ---------- bodyweight + per side (issues #31/#32/#33) ---------- */}
     {!cardio && <div className="sect-b" style={{ marginBottom: 8 }}>
       <Row icon="figureStrength" iconTint="var(--acc)" title={t('Bodyweight')}

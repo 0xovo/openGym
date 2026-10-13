@@ -1456,6 +1456,9 @@ export const PT_BR_OVERRIDES = {
   'Logged a workout on another device? Before the nudge goes out, the phone checks with your server whenever it lets the app run in the background. Opening the app always catches up.': 'Registrou um treino em outro dispositivo? Antes do aviso, o celular confirma com o seu servidor, sempre que deixar o aplicativo rodar em segundo plano. Abrir o aplicativo sempre deixa tudo em dia.',
   // --- Coach message box ---
   // --- progress photos: remove ---
+  // --- set-specific rest ---
+  'No timer': 'Sem cronômetro',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'O aquecimento é leve, então pode descansar menos ou nada. O último continua tendo o descanso completo antes da sua primeira série de trabalho.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

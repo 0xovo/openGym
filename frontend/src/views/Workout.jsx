@@ -17,7 +17,7 @@ import { pinState } from '../lib/queue.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { api, beacon } from '../lib/api.js'
 import { pyramidRestFor, maxRecordAt, isPyramid, pyramidLabel } from '../lib/pyramid.js'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor } from '../lib/supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor } from '../lib/supersetFlow.js'
 import Media from '../components/Media.jsx'
 import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
@@ -1674,6 +1674,16 @@ function ActiveWorkout() {
     else if (exJustDone && cardioEntry) useUI.getState().toast(t('Cardio logged'))
     else if (exJustDone && m === 'time') useUI.getState().toast(t('Hold logged'))
 
+    // One side of a per-side reps set ticked, the other still to go: the exercise's own break
+    // between sides, when it has one (sideRestFor); none otherwise, as before.
+    if (side && !checked) {
+      const row = useStore.getState().S.active?.entries[idx]?.sets[i]
+      const other = side === 'L' ? 'R' : 'L'
+      if (row?.sides?.[side]?.done && !row.sides[other]?.done) {
+        const pause = sideRestFor(useStore.getState().S.active.entries[idx].target, { timed: false })
+        if (pause > 0) startRest(pause, idx, { kind: 'switch', forSet: i })
+      }
+    }
     // Only progress beyond this exercise's high-water mark may navigate or change rest. This
     // prevents an uncheck/re-check of finished work from replaying the flow side effects.
     const fresh = useStore.getState().S.active
@@ -1726,9 +1736,9 @@ function ActiveWorkout() {
       const sideOf = r => r && !isWarmupRow(r) ? r.side : null
       const partner = sideOf(rows[i]) === 'L' && sideOf(rows[i + 1]) === 'R' ? rows[i + 1]
         : sideOf(rows[i]) === 'R' && sideOf(rows[i - 1]) === 'L' ? rows[i - 1] : null
-      if (m === 'time' && partner && !partner.done && restAfter > 0) {
-        startRest(Math.min(SWITCH_SIDES_SEC, restAfter), idx, { kind: 'switch', forSet: i })
-        return
+      if (m === 'time' && partner && !partner.done) {
+        const pause = sideRestFor(fresh.entries[idx].target, { timed: true, restAfter, switchSec: SWITCH_SIDES_SEC })
+        if (pause > 0) { startRest(pause, idx, { kind: 'switch', forSet: i }); return }
       }
 
       // Singleton units are ordinary exercises: they rest between sets and after the closing

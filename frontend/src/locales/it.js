@@ -2298,4 +2298,12 @@ export default {
   'Make the box smaller': 'Rimpicciolisci il riquadro',
   // --- progress photos: remove ---
   'Photo removed': 'Foto rimossa',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Un attimo di respiro dopo un lato, prima dell’altro. Il recupero pieno arriva quando hai finito entrambi i lati.',
+  'Like the work sets': 'Come le serie allenanti',
+  'No timer': 'Nessun timer',
+  'Pick a time': 'Scegli un tempo',
+  'Rest between sides': 'Recupero tra i lati',
+  'Rest between warm-ups': 'Recupero tra i riscaldamenti',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'Il riscaldamento è leggero, quindi può recuperare meno o per niente. L’ultimo ha comunque il recupero pieno prima della prima serie allenante.',
 }

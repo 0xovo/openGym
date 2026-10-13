@@ -2301,4 +2301,12 @@ export default {
   'Make the box smaller': 'Kisebb mező',
   // --- progress photos: remove ---
   'Photo removed': 'Fotó eltávolítva',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Egy kis szusszanás az egyik oldal után, a másik előtt. A teljes pihenő akkor jön, ha mindkét oldal kész.',
+  'Like the work sets': 'Mint a munkasorozatok',
+  'No timer': 'Nincs időzítő',
+  'Pick a time': 'Idő választása',
+  'Rest between sides': 'Pihenő az oldalak között',
+  'Rest between warm-ups': 'Pihenő a bemelegítő sorozatok között',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'A bemelegítés könnyű, így kevesebb pihenő is elég, vagy semmi. Az utolsó így is megkapja a teljes pihenőt az első munkasorozat előtt.',
 }

@@ -2353,4 +2353,12 @@ export default {
   'Make the box smaller': 'تصغير مربع الكتابة',
   // --- progress photos: remove ---
   'Photo removed': 'تمت إزالة الصورة',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'استراحة قصيرة بعد جانب وقبل الآخر. الاستراحة الكاملة تأتي بعد إنهاء الجانبين.',
+  'Like the work sets': 'مثل مجموعات العمل',
+  'No timer': 'بلا مؤقت',
+  'Pick a time': 'اختر مدة',
+  'Rest between sides': 'الاستراحة بين الجانبين',
+  'Rest between warm-ups': 'الاستراحة بين مجموعات الإحماء',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'مجموعات الإحماء خفيفة، فيمكن أن تكون استراحتها أقصر أو بلا استراحة. آخرها يحصل على الاستراحة الكاملة قبل أول مجموعة عمل.',
 }

@@ -2377,4 +2377,12 @@ export default {
   'Make the box smaller': 'লেখার বাক্স ছোট করুন',
   // --- progress photos: remove ---
   'Photo removed': 'ছবি সরানো হয়েছে',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'এক দিকের পর অন্য দিকের আগে একটু দম নেওয়া। দুই দিক শেষ হলে পুরো বিশ্রাম।',
+  'Like the work sets': 'কাজের সেটের মতো',
+  'No timer': 'টাইমার নেই',
+  'Pick a time': 'সময় বেছে নিন',
+  'Rest between sides': 'দুই দিকের মাঝে বিশ্রাম',
+  'Rest between warm-ups': 'ওয়ার্ম-আপের মাঝে বিশ্রাম',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'ওয়ার্ম-আপ হালকা, তাই বিশ্রাম কম বা একেবারেই না হলেও চলে। শেষটি প্রথম কাজের সেটের আগে পুরো বিশ্রাম পায়।',
 }

@@ -114,8 +114,23 @@ export function warmupRestSecFor(entry, setIdx, workRestSec) {
   if (!set || !isWarmupRow(set)) return workRestSec
   const next = sets.slice(setIdx + 1).find(s => !s.done)
   if (!next || !isWarmupRow(next)) return workRestSec
+  // "No timer" between ramp sets: an optional `warmupRestOff` (set in the exercise's settings).
+  if (entry?.target?.warmupRestOff === true) return 0
   const own = Number(entry?.target?.warmupRestSec)
   return own > 0 ? own : workRestSec
+}
+
+/**
+ * The break between the two sides of one per-side set, or null for none. An exercise may set its
+ * own `sideRestSec` (optional, Discord "set-specific rest timers"). Without it nothing changes:
+ * a timed hold pauses `switchSec` (capped at the set's rest, and none with the rest switched off),
+ * and a reps set has no break between its sides, as before the field existed.
+ */
+export function sideRestFor(target, { timed, restAfter, switchSec }) {
+  const own = Math.round(Number(target?.sideRestSec)) || 0
+  if (own > 0) return own
+  if (timed && restAfter > 0) return Math.min(switchSec, restAfter)
+  return null
 }
 
 // Decide where a newly completed superset set goes next. Spent members are skipped, including

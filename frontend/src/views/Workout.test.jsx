@@ -300,6 +300,33 @@ describe('Workout set completion flow', () => {
     expect(mocks.startRest).toHaveBeenCalledTimes(3)
   })
 
+  // Discord "set-specific rest timers": "no timer" between ramp sets, a break between sides.
+  it('with "no timer" for warm-ups, a ramp set starts no rest; the last ramp set still rests the work rest', async () => {
+    await mount([exercise('ramped-squat', [false, false, false], {
+      target: { mode: 'reps', reps: 6, weight: 125, bodyweight: false, restSec: 150, warmupRestOff: true },
+      sets: [{ w: 60, r: 8, done: false, phase: 'warmup' }, { w: 95, r: 5, done: false, phase: 'warmup' }, { w: 125, r: 6, done: false }, { w: 125, r: 6, done: false }],
+    })])
+    await toggleSet(0)
+    expect(mocks.startRest).toHaveBeenLastCalledWith(0, expect.any(Number), { forSet: expect.any(Number) })
+    await toggleSet(1)
+    expect(mocks.startRest).toHaveBeenLastCalledWith(150, expect.any(Number), { forSet: expect.any(Number) })
+  })
+
+  it('a per-side set rests the exercise\'s break between sides; without one, nothing between them as before', async () => {
+    const lunge = extra => exercise('split-squat', [false], {
+      target: { mode: 'reps', reps: 10, weight: 20, side: true, ...extra },
+      sets: [{ w: 20, r: 10, done: false, sides: { L: { w: 20, r: 5, done: false }, R: { w: 20, r: 5, done: false } } }, { w: 20, r: 10, done: false, sides: { L: { w: 20, r: 5, done: false }, R: { w: 20, r: 5, done: false } } }],
+    })
+    await mount([lunge({ sideRestSec: 20 })], 0, { active: { workoutView: 'focus' } })
+    await click(container.querySelector('[data-focus-side="L"] button[aria-label="Complete left side"]'))
+    expect(mocks.startRest).toHaveBeenLastCalledWith(20, 0, { kind: 'switch', forSet: 0 })
+    await unmount()
+    mocks.startRest.mockClear()
+    await mount([lunge({})], 0, { active: { workoutView: 'focus' } })
+    await click(container.querySelector('[data-focus-side="L"] button[aria-label="Complete left side"]'))
+    expect(mocks.startRest).not.toHaveBeenCalled()
+  })
+
   it('starts rest after a non-final ordinary set, but stops rest without restarting it on the final set', async () => {
     await mount([exercise('plain-bench', [false, false, false])])
     await toggleSet(0)

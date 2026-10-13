@@ -2302,4 +2302,12 @@ export default {
   'Make the box smaller': 'Уменьшить поле',
   // --- progress photos: remove ---
   'Photo removed': 'Фото удалено',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Короткая передышка после одной стороны, перед другой. Полный отдых будет, когда обе стороны готовы.',
+  'Like the work sets': 'Как рабочие подходы',
+  'No timer': 'Без таймера',
+  'Pick a time': 'Выбрать время',
+  'Rest between sides': 'Отдых между сторонами',
+  'Rest between warm-ups': 'Отдых между разминочными подходами',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'Разминка лёгкая, так что отдыхать можно меньше или вовсе нет. После последней разминки всё равно будет полный отдых перед первым рабочим подходом.',
 }

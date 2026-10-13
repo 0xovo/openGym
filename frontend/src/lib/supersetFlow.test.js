@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor } from './supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor } from './supersetFlow.js'
 
 const entry = done => ({ sets: done.map(value => ({ done: value })) })
 
@@ -135,6 +135,26 @@ describe('restSecFor', () => {
     expect(restSecFor(entries, [], 90)).toBe(90)
     expect(restSecFor(entries, [7], 90)).toBe(90)
     expect(restSecFor(undefined, [0], undefined)).toBe(0)
+  })
+})
+
+describe('set-specific rests (Discord: rest for warm-ups and between sides)', () => {
+  const ramp = target => ({ target, sets: [{ phase: 'warmup', done: false }, { phase: 'warmup', done: false }, { done: false }] })
+  it('"no timer" between ramp sets is 0; the last ramp set still rests the work rest', () => {
+    expect(warmupRestSecFor(ramp({ warmupRestOff: true, warmupRestSec: 45 }), 0, 150)).toBe(0)
+    expect(warmupRestSecFor(ramp({ warmupRestOff: true }), 1, 150)).toBe(150)
+  })
+  it('anything but true is not "no timer": the old behaviour', () => {
+    for (const v of [false, 'true', 1, null]) expect(warmupRestSecFor(ramp({ warmupRestOff: v }), 0, 150), String(v)).toBe(150)
+  })
+  it('between sides: the exercise\'s own break, else what it always was', () => {
+    expect(sideRestFor({ sideRestSec: 20 }, { timed: false })).toBe(20)
+    expect(sideRestFor({ sideRestSec: 20 }, { timed: true, restAfter: 0, switchSec: 10 })).toBe(20)
+    // without one: reps has no break, a hold the switch pause capped at its rest, none with rest off
+    expect(sideRestFor({}, { timed: false })).toBeNull()
+    expect(sideRestFor(undefined, { timed: true, restAfter: 90, switchSec: 10 })).toBe(10)
+    expect(sideRestFor({}, { timed: true, restAfter: 5, switchSec: 10 })).toBe(5)
+    expect(sideRestFor({ sideRestSec: 0 }, { timed: true, restAfter: 0, switchSec: 10 })).toBeNull()
   })
 })
 

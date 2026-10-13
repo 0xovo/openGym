@@ -2298,4 +2298,12 @@ export default {
   'Make the box smaller': '입력창 작게',
   // --- progress photos: remove ---
   'Photo removed': '사진을 지웠어요',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': '한쪽을 마치고 다른 쪽 전에 잠깐 숨 돌려요. 양쪽을 다 하면 원래 휴식이 시작돼요.',
+  'Like the work sets': '본 세트와 같이',
+  'No timer': '타이머 없음',
+  'Pick a time': '시간 고르기',
+  'Rest between sides': '좌우 사이 휴식',
+  'Rest between warm-ups': '워밍업 세트 사이 휴식',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': '워밍업은 가벼우니 짧게 쉬거나 안 쉬어도 돼요. 마지막 워밍업 뒤에는 첫 본 세트 전에 원래 휴식을 다 줘요.',
 }

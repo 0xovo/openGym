@@ -2298,4 +2298,12 @@ export default {
   'Make the box smaller': 'Achicar el cuadro',
   // --- progress photos: remove ---
   'Photo removed': 'Foto quitada',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'Un respiro tras un lado, antes del otro. El descanso completo llega cuando terminas ambos lados.',
+  'Like the work sets': 'Como las series de trabajo',
+  'No timer': 'Sin temporizador',
+  'Pick a time': 'Elegir un tiempo',
+  'Rest between sides': 'Descanso entre lados',
+  'Rest between warm-ups': 'Descanso entre calentamientos',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'El calentamiento es ligero, así que puede descansar menos o nada. El último sigue teniendo el descanso completo antes de tu primera serie de trabajo.',
 }

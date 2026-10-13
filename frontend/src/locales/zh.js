@@ -2298,4 +2298,12 @@ export default {
   'Make the box smaller': '缩小输入框',
   // --- progress photos: remove ---
   'Photo removed': '已移除照片',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': '一侧做完、另一侧开始前，稍微喘口气。两侧都做完后才是完整的休息。',
+  'Like the work sets': '和正式组一样',
+  'No timer': '不计时',
+  'Pick a time': '选择时长',
+  'Rest between sides': '两侧之间的休息',
+  'Rest between warm-ups': '热身组之间的休息',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': '热身组较轻，可以少休息或不休息。最后一个热身组在第一个正式组前仍会得到完整的休息。',
 }

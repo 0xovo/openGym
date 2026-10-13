@@ -2298,4 +2298,12 @@ export default {
   'Make the box smaller': 'बॉक्स छोटा करें',
   // --- progress photos: remove ---
   'Photo removed': 'फ़ोटो हटाई गई',
+  // --- set-specific rest ---
+  'A breather after one side, before the other. The full rest comes once both sides are done.': 'एक तरफ़ के बाद, दूसरी से पहले थोड़ा दम लें। पूरा आराम तब, जब दोनों तरफ़ हो जाएँ।',
+  'Like the work sets': 'वर्क सेट जैसा',
+  'No timer': 'कोई टाइमर नहीं',
+  'Pick a time': 'समय चुनें',
+  'Rest between sides': 'दोनों तरफ़ के बीच आराम',
+  'Rest between warm-ups': 'वॉर्म-अप के बीच आराम',
+  'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'वॉर्म-अप हल्के होते हैं, इसलिए आराम कम या बिल्कुल नहीं भी चलेगा। आख़िरी वॉर्म-अप को पहले वर्क सेट से पहले पूरा आराम मिलता है।',
 }
