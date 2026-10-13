@@ -54,6 +54,13 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         }
     }
 
+    /// "on", "off" or "denied", for the phone's Settings → Apple Watch.
+    var status: String {
+        guard HKHealthStore.isHealthDataAvailable() else { return "off" }
+        if store.authorizationStatus(for: HKObjectType.workoutType()) == .sharingDenied { return "denied" }
+        return enabled ? "on" : "off"
+    }
+
     /// The phone's setting, when it sends one: on asks for the permission (once) right away.
     func syncSetting(_ on: Bool?) {
         guard let on = on, on != enabled else { return }
@@ -61,16 +68,25 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             requestAuthorization { ok in
                 self.enabled = ok
                 if ok && self.wanted { self.start() }
+                self.onStatus?()
             }
         } else {
             enabled = false
             end(save: true)
+            onStatus?()
         }
     }
 
+    /// Told when the status changes (SessionStore reports it to the phone).
+    var onStatus: (() -> Void)?
+
+    /// The workout's id, for Apple Health's sync identifier (the phone writes none of its own then).
+    private var workoutId: String?
+
     /// A workout started here or picked up from the phone: the session starts now.
-    func start() {
+    func start(workoutId wid: String? = nil) {
         wanted = true
+        if let wid = wid { workoutId = wid }
         guard enabled, session == nil, HKHealthStore.isHealthDataAvailable() else { return }
         let config = HKWorkoutConfiguration()
         config.activityType = .traditionalStrengthTraining
@@ -88,6 +104,10 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             let now = Date()
             s.startActivity(with: now)
             b.beginCollection(withStart: now) { _, _ in }
+            // One workout in Apple Health, not two: the phone skips writing one with this sync id.
+            if let wid = workoutId {
+                b.addMetadata([HKMetadataKeySyncIdentifier: "opengym-w-\(wid)", HKMetadataKeySyncVersion: 1]) { _, _ in }
+            }
             startQuery(from: now)
             running = true
         } catch {
@@ -120,6 +140,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
     /// The workout ended: saved to Apple Health, or dropped when `save` is false.
     func end(save: Bool) {
         wanted = false
+        workoutId = nil
         if let q = query { store.stop(q); query = nil }
         guard let s = session, let b = builder else { return }
         s.end()

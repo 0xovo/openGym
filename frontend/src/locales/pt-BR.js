@@ -1488,6 +1488,18 @@ export const PT_BR_OVERRIDES = {
   'Skip completed exercises': 'Pular exercícios concluídos',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Este aplicativo não consegue confirmar com uma chave de acesso. Crie o código em um navegador conectado a este perfil, ou adicione uma senha lá primeiro.',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'Peso',
+  'Send workouts to the watch': 'Enviar treinos para o relógio',
+  'Apple Health on the watch': 'Saúde no relógio',
+  'Tap the wrist when a rest is over': 'Toque no pulso no fim do descanso',
+  'The Digital Crown turns first': 'A Digital Crown ajusta primeiro',
+  'No Apple Watch paired with this iPhone': 'Nenhum Apple Watch pareado com este iPhone',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'O openGym ainda não está no seu Apple Watch. Instale pelo app Watch.',
+  'openGym is on your Apple Watch': 'O openGym está no seu Apple Watch',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Não permitido no relógio. Permita no app Saúde do seu iPhone.',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'A frequência cardíaca durante o treino e ao lado de cada série, e o treino salvo no Saúde. O relógio pergunta uma vez.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

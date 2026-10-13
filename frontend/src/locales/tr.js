@@ -2355,4 +2355,16 @@ export default {
   'Skip completed exercises': 'Tamamlanan egzersizleri atla',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Bu uygulama geçiş anahtarıyla onaylayamaz. Kodu bu profille oturum açmış bir tarayıcıda oluştur ya da önce orada bir parola ekle.',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'Ağırlık',
+  'Send workouts to the watch': 'Antrenmanları saate gönder',
+  'Apple Health on the watch': 'Saatte Sağlık',
+  'Tap the wrist when a rest is over': 'Dinlenme bitince bileğe dokun',
+  'The Digital Crown turns first': 'Digital Crown önce bunu değiştirir',
+  'No Apple Watch paired with this iPhone': 'Bu iPhone ile eşlenmiş Apple Watch yok',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym henüz Apple Watch’unda değil. Watch uygulamasından yükle.',
+  'openGym is on your Apple Watch': 'openGym Apple Watch’unda',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Saatte izin verilmedi. iPhone’undaki Sağlık uygulamasından izin ver.',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Antrenman sırasında ve her setin yanında nabız, antrenman Sağlık’a kaydedilir. Saat bir kez sorar.',
 }

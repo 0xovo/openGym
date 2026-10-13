@@ -2352,4 +2352,16 @@ export default {
   'Skip completed exercises': 'Пропускати виконані вправи',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Цей застосунок не може підтвердити ключем доступу. Створіть код у браузері, де ви ввійшли в цей профіль, або спершу задайте там пароль.',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'Вага',
+  'Send workouts to the watch': 'Надсилати тренування на годинник',
+  'Apple Health on the watch': 'Здоровʼя на годиннику',
+  'Tap the wrist when a rest is over': 'Дотик до зап’ястя в кінці відпочинку',
+  'The Digital Crown turns first': 'Digital Crown спершу змінює',
+  'No Apple Watch paired with this iPhone': 'До цього iPhone не під’єднано Apple Watch',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym ще немає на твоєму Apple Watch. Установи його в програмі Watch.',
+  'openGym is on your Apple Watch': 'openGym є на твоєму Apple Watch',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'На годиннику не дозволено. Дозволь у програмі «Здоров’я» на iPhone.',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Пульс під час тренування і біля кожного підходу, тренування зберігається у «Здоров’ї». Годинник спитає один раз.',
 }

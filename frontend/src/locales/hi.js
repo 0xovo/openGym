@@ -2355,4 +2355,16 @@ export default {
   'Skip completed exercises': 'पूरे हुए व्यायाम छोड़ें',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'यह ऐप पासकी से पुष्टि नहीं कर सकता। इस प्रोफ़ाइल में साइन इन किए ब्राउज़र में कोड बनाएँ, या पहले वहाँ एक पासवर्ड जोड़ें।',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'वज़न',
+  'Send workouts to the watch': 'वर्कआउट वॉच पर भेजें',
+  'Apple Health on the watch': 'वॉच पर Apple Health',
+  'Tap the wrist when a rest is over': 'रेस्ट खत्म होने पर कलाई पर टैप',
+  'The Digital Crown turns first': 'Digital Crown पहले बदलता है',
+  'No Apple Watch paired with this iPhone': 'इस iPhone से कोई Apple Watch जुड़ी नहीं है',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym अभी आपकी Apple Watch पर नहीं है। Watch ऐप से इंस्टॉल करें।',
+  'openGym is on your Apple Watch': 'openGym आपकी Apple Watch पर है',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'वॉच पर अनुमति नहीं है। iPhone के Health ऐप में अनुमति दें।',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'वर्कआउट के दौरान और हर सेट के साथ धड़कन, और वर्कआउट Apple Health में सेव। वॉच एक बार पूछती है।',
 }

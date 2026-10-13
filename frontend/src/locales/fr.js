@@ -2355,4 +2355,16 @@ export default {
   'Skip completed exercises': 'Sauter les exercices terminés',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Cette app ne peut pas confirmer avec une passkey. Crée le code dans un navigateur connecté à ce profil, ou ajoute d’abord un mot de passe là-bas.',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'Poids',
+  'Send workouts to the watch': 'Envoyer les séances à la montre',
+  'Apple Health on the watch': 'Santé sur la montre',
+  'Tap the wrist when a rest is over': 'Taper au poignet à la fin du repos',
+  'The Digital Crown turns first': 'La Digital Crown règle d’abord',
+  'No Apple Watch paired with this iPhone': 'Aucune Apple Watch jumelée à cet iPhone',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym n’est pas encore sur ton Apple Watch. Installe-le dans l’app Watch.',
+  'openGym is on your Apple Watch': 'openGym est sur ton Apple Watch',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Non autorisé sur la montre. Autorise-le dans l’app Santé de ton iPhone.',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Le pouls pendant la séance et à côté de chaque série, et la séance enregistrée dans Santé. La montre demande une fois.',
 }

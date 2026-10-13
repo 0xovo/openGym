@@ -2366,4 +2366,16 @@ export default {
   'Skip completed exercises': 'ข้ามท่าที่ทำเสร็จแล้ว',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'แอปนี้ยืนยันด้วยพาสคีย์ไม่ได้ สร้างรหัสในเบราว์เซอร์ที่ลงชื่อเข้าใช้โปรไฟล์นี้ หรือเพิ่มรหัสผ่านที่นั่นก่อน',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'น้ำหนัก',
+  'Send workouts to the watch': 'ส่งการฝึกไปที่นาฬิกา',
+  'Apple Health on the watch': 'Apple Health บนนาฬิกา',
+  'Tap the wrist when a rest is over': 'แตะข้อมือเมื่อหมดเวลาพัก',
+  'The Digital Crown turns first': 'Digital Crown ปรับอะไรก่อน',
+  'No Apple Watch paired with this iPhone': 'ไม่มี Apple Watch ที่จับคู่กับ iPhone นี้',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'ยังไม่มี openGym บน Apple Watch ติดตั้งได้ในแอป Watch',
+  'openGym is on your Apple Watch': 'มี openGym บน Apple Watch แล้ว',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'ไม่ได้รับอนุญาตบนนาฬิกา อนุญาตได้ในแอปสุขภาพบน iPhone',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'อัตราการเต้นของหัวใจระหว่างฝึกและข้างแต่ละเซ็ต และบันทึกการฝึกลงในสุขภาพ นาฬิกาจะถามครั้งเดียว',
 }

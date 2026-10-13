@@ -154,7 +154,6 @@ struct IdleView: View {
                         }
                         .padding(.top, 6)
                     }
-                    HealthToggle(health: store.health).padding(.top, 6)
                 }
                 .padding(.horizontal, 4)
             }

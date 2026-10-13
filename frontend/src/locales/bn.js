@@ -2434,4 +2434,16 @@ export default {
   'Skip completed exercises': 'শেষ হওয়া ব্যায়াম বাদ দিন',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'এই অ্যাপ পাসকি দিয়ে নিশ্চিত করতে পারে না। এই প্রোফাইলে সাইন ইন করা ব্রাউজারে কোডটি বানান, অথবা আগে সেখানে একটি পাসওয়ার্ড যোগ করুন।',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'ওজন',
+  'Send workouts to the watch': 'ওয়ার্কআউট ঘড়িতে পাঠান',
+  'Apple Health on the watch': 'ঘড়িতে Apple Health',
+  'Tap the wrist when a rest is over': 'বিশ্রাম শেষে কবজিতে টোকা',
+  'The Digital Crown turns first': 'Digital Crown প্রথমে বদলায়',
+  'No Apple Watch paired with this iPhone': 'এই iPhone-এর সাথে কোনো Apple Watch যুক্ত নেই',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym এখনও আপনার Apple Watch-এ নেই। Watch অ্যাপ থেকে ইনস্টল করুন।',
+  'openGym is on your Apple Watch': 'openGym আপনার Apple Watch-এ আছে',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'ঘড়িতে অনুমতি নেই। iPhone-এর Health অ্যাপে অনুমতি দিন।',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'ওয়ার্কআউটের সময় আর প্রতিটি সেটের পাশে হার্ট রেট, আর ওয়ার্কআউট Apple Health-এ সেভ। ঘড়ি একবার জিজ্ঞেস করে।',
 }

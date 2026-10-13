@@ -2348,4 +2348,16 @@ export default {
   'Skip completed exercises': '跳過已完成的動作',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': '此 App 無法以通行密鑰確認。請在已登入此個人檔案的瀏覽器中產生代碼，或先在那裡設定密碼。',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': '重量',
+  'Send workouts to the watch': '把訓練傳送到手錶',
+  'Apple Health on the watch': '手錶上的「健康」',
+  'Tap the wrist when a rest is over': '休息結束時輕點手腕',
+  'The Digital Crown turns first': '數位錶冠先調整',
+  'No Apple Watch paired with this iPhone': '沒有與這台 iPhone 配對的 Apple Watch',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': '你的 Apple Watch 上還沒有 openGym。請在 Watch App 中安裝。',
+  'openGym is on your Apple Watch': 'openGym 已在你的 Apple Watch 上',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': '手錶上未獲允許。請在 iPhone 的「健康」App 中允許。',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': '訓練中及每組旁的心率，以及儲存到「健康」的訓練。手錶只會詢問一次。',
 }

@@ -2358,4 +2358,16 @@ export default {
   'Skip completed exercises': 'Kész gyakorlatok átugrása',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Ez az app nem tud jelszókulccsal megerősíteni. Készítsd el a kódot egy böngészőben, ahol ebbe a profilba vagy bejelentkezve, vagy előbb adj meg ott egy jelszót.',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'Súly',
+  'Send workouts to the watch': 'Edzések küldése az órára',
+  'Apple Health on the watch': 'Egészség az órán',
+  'Tap the wrist when a rest is over': 'Koppintás a csuklón, ha letelt a pihenő',
+  'The Digital Crown turns first': 'A Digital Crown először ezt állítja',
+  'No Apple Watch paired with this iPhone': 'Nincs Apple Watch párosítva ezzel az iPhone-nal',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'Az openGym még nincs az Apple Watchodon. Telepítsd a Watch appban.',
+  'openGym is on your Apple Watch': 'Az openGym rajta van az Apple Watchodon',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Nincs engedélyezve az órán. Engedélyezd az iPhone Egészség appjában.',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Pulzus edzés közben és minden sorozat mellett, az edzés az Egészség appba mentve. Az óra egyszer kérdez.',
 }

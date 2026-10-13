@@ -2410,4 +2410,16 @@ export default {
   'Skip completed exercises': 'تخطّي التمارين المكتملة',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'لا يستطيع هذا التطبيق التأكيد بمفتاح مرور. أنشئ الرمز في متصفح مسجّل الدخول إلى هذا الملف الشخصي، أو أضف كلمة مرور هناك أولًا.',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': 'الوزن',
+  'Send workouts to the watch': 'إرسال التمارين إلى الساعة',
+  'Apple Health on the watch': 'صحتي على الساعة',
+  'Tap the wrist when a rest is over': 'نقرة على المعصم عند انتهاء الراحة',
+  'The Digital Crown turns first': 'التاج الرقمي يغيّر أولًا',
+  'No Apple Watch paired with this iPhone': 'لا توجد Apple Watch مقترنة بهذا الـ iPhone',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym ليس على Apple Watch بعد. ثبّته من تطبيق Watch.',
+  'openGym is on your Apple Watch': 'openGym موجود على Apple Watch',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'غير مسموح على الساعة. اسمح به من تطبيق صحتي على iPhone.',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'النبض أثناء التمرين وبجانب كل مجموعة، والتمرين محفوظ في صحتي. تسأل الساعة مرة واحدة.',
 }

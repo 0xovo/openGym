@@ -25,6 +25,7 @@ import { sessionHistory } from './backfill.js'
 import { buildCombinedEntries, deriveSessionName } from './session-merge.js'
 import { todayISO } from './format.js'
 import { sanitizeHr } from './heart-rate.js'
+import { readWatchPrefs, settingsForWatch, writeWatchStatus, onWatchPrefs } from './watch-settings.js'
 
 export const SNAPSHOT_VERSION = 1
 const APPLIED_KEY = 'gym_watch_applied'
@@ -198,6 +199,9 @@ export function applyEvents (events, getState) {
       const idx = entryIndexOf(A, ev)
       const set = idx >= 0 ? A.entries[idx].sets?.[ev.setIdx] : null
       if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at), hr: sanitizeHr(ev.hr) })
+    } else if (ev.type === 'watchStatus') {
+      // What the watch says about itself, for Settings → Apple Watch. Never queued behind anything.
+      writeWatchStatus(ev)
     } else if (ev.type === 'setHr') {
       // The rest's heart rate comes once the rest is over, maybe after the workout was saved:
       // a field on that set, wherever the set is now. Nothing for a reading that does not hold up.
@@ -300,13 +304,19 @@ export async function startWatchSync ({ useStore, useUI }) {
     if (!linked) return
     try {
       const S = useStore.getState().S
-      const json = JSON.stringify(buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) }))
+      const prefs = readWatchPrefs()
+      // Settings → Apple Watch: off, the watch is told there is nothing (no workout, nothing ready).
+      const snap = prefs.enabled
+        ? buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) })
+        : { v: SNAPSHOT_VERSION, unit: S.unit === 'lb' ? 'lb' : 'kg', active: null, ready: null }
+      snap.settings = settingsForWatch(prefs)
+      const json = JSON.stringify(snap)
       if (json !== lastSent) {
         const r = await p.WatchBridge.sendSnapshot({ json })
         if (r && r.sent) lastSent = json
       }
       // The workout's animations, once per workout and exercise (the native side remembers).
-      const clips = clipsFor(S)
+      const clips = prefs.enabled ? clipsFor(S) : []
       const key = S.active ? S.active.id + '|' + clips.map(c => c.exId).join(',') : ''
       if (clips.length && key !== lastClips) {
         await p.WatchBridge.sendClips({ wid: S.active.id, clips })
@@ -319,12 +329,13 @@ export async function startWatchSync ({ useStore, useUI }) {
   // The rest as the watch needs it changes when it starts, stops or is paused, not every second.
   const restOf = t => (t ? `${t.endsAt}|${!!t.paused}|${!!t.ready}` : '')
   const offUI = useUI.subscribe((s, prev) => { if (s.timer !== prev.timer && restOf(s.timer) !== restOf(prev.timer)) schedule() })
+  const offPrefs = onWatchPrefs(() => schedule())
   const sub = await p.WatchBridge.addListener('watchEvent', () => { drainWatchEvents() })
   const onVisible = () => { if (document.visibilityState === 'visible') { drainWatchEvents(); checkLink().then(() => schedule()) } }
   document.addEventListener('visibilitychange', onVisible)
   schedule()
   drainWatchEvents()
-  return () => { offStore(); offUI(); sub?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
+  return () => { offStore(); offUI(); offPrefs(); sub?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
 }
 
 // Test seams.
@@ -364,4 +375,11 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp, {
   if (recount) recount(w)
   if (stamp) stamp(w)
   return true
+}
+
+/** Whether a watch is paired and has the app, for Settings → Apple Watch. */
+export async function watchStatus () {
+  const p = await watchPlugin()
+  if (!p) return { paired: false, installed: false }
+  try { const st = await p.WatchBridge.status(); return { paired: !!st?.paired, installed: !!st?.installed } } catch { return { paired: false, installed: false } }
 }

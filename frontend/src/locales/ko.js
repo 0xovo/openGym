@@ -2355,4 +2355,16 @@ export default {
   'Skip completed exercises': '끝난 운동 건너뛰기',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': '이 앱에서는 패스키로 확인할 수 없어요. 이 프로필로 로그인한 브라우저에서 코드를 만들거나, 먼저 그곳에서 비밀번호를 추가하세요.',
+  // --- Settings → Apple Watch ---
+  'Apple Watch': 'Apple Watch',
+  'Weight': '무게',
+  'Send workouts to the watch': '운동을 워치로 보내기',
+  'Apple Health on the watch': '워치에서 건강 앱 연동',
+  'Tap the wrist when a rest is over': '휴식이 끝나면 손목을 톡',
+  'The Digital Crown turns first': 'Digital Crown이 먼저 바꾸는 값',
+  'No Apple Watch paired with this iPhone': '이 iPhone과 페어링된 Apple Watch가 없어요',
+  'openGym is not on your Apple Watch yet. Install it in the Watch app.': '아직 Apple Watch에 openGym이 없어요. Watch 앱에서 설치하세요.',
+  'openGym is on your Apple Watch': 'Apple Watch에 openGym이 있어요',
+  'Not allowed on the watch. Allow it in the Health app on your iPhone.': '워치에서 허용되지 않았어요. iPhone의 건강 앱에서 허용하세요.',
+  'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': '운동 중과 각 세트 옆의 심박수, 그리고 건강 앱에 저장되는 운동. 워치가 한 번 물어봐요.',
 }

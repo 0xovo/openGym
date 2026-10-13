@@ -48,6 +48,7 @@ import { DeleteAccountRow } from '../components/DeleteAccount.jsx'
 import { Section, Row, SelectRow, Switch, Segmented, Button, TextField, SearchField } from '../components/ui.jsx'
 import { PAGES, ROOT_GROUPS, pageVisible, searchSettings, pageTrail } from './settings-pages.js'
 import { pathBefore } from '../lib/nav.js'
+import WatchSettingsPage from './WatchSettings.jsx'
 
 /* Settings (v1.3.11). The root is one screen: an account card, eleven rows that each open a page
    (/settings/<page>), and a search over every row. Rare things live one level further down
@@ -156,6 +157,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
   // --- update check state ---
   const [updateInfo, setUpdateInfo] = useState(null) // { hasUpdate, latestVersion, apkUrl, hashUrl } | null
   const [android, setAndroid] = useState(false)
+  const [ios, setIos] = useState(false)   // the iPhone app: Settings → Apple Watch
   const [selfUpdate, setSelfUpdate] = useState(false)   // the sideloaded APK, which updates itself
   const [checking, setChecking] = useState(false)
   // Where auto-backup writes on this Android phone, for the Auto-backup row's own subtitle.
@@ -171,6 +173,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     if (!MOBILE) return
     isAndroid().then(async ok => {
       setAndroid(ok)
+      setIos(!ok)
       const own = ok && await selfUpdates()
       setSelfUpdate(own)
       if (own && page === 'about') checkForUpdate().then(setUpdateInfo).catch(() => {})
@@ -402,7 +405,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
   /* ---------------- what the pages and the search need to know about this device ---------------- */
   const canVibrate = vibrateSupported()
   const ctx = {
-    user, mobile: MOBILE, android, demo: DEMO, wakeOK, hasMedia, pwOn, webauthn: webauthnOK(),
+    user, mobile: MOBILE, android, ios: MOBILE && ios, demo: DEMO, wakeOK, hasMedia, pwOn, webauthn: webauthnOK(),
     sound: !!S.sound, playOnSilent: playOnSilentSupported(), canVibrate, vibrate: S.vibrate !== false,
     profiles: (S.equipProfiles || []).length > 0, nameLang: EXERCISE_NAME_LANGS.includes(baseLang(lang)),
     pushOK: !MOBILE && pushSupported(), reminderOn: !!S.reminder?.on, nudge: !!S.reminder?.nudge,
@@ -425,6 +428,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     coach: () => (coachLocal?.mode === 'server' ? t('Your server') : coachLocal?.mode === 'byok' ? t('Your API key') : t('Off')),
     data: () => '',
     about: () => 'v' + __APP_VERSION__,
+    watch: () => '',
   }
 
   const open = id => {
@@ -458,6 +462,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     })} />
 
   const pages = {
+    watch: () => <WatchSettingsPage />,
     workout: () => <>
       <Section title={t('Rest')} footer={t('Each exercise can have its own rest too. Set it in the exercise settings of a routine.')}>
         {restRow}

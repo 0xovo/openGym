@@ -81,8 +81,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             // Relaunched (mid-workout or not): the session as it was, then the latest from the phone.
             state = saved
             loadTargets()
-            if saved.workout != nil { health.start() }
+            if let w = saved.workout { health.start(workoutId: w.id) }
         }
+        health.onStatus = { [weak self] in self?.sendStatus() }
         let center = UNUserNotificationCenter.current()
         center.delegate = self
         if !isDemo { center.requestAuthorization(options: [.alert, .sound]) { _, _ in } }
@@ -161,7 +162,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 // A workout this watch picks up (the app opened mid-workout, or the phone started one).
                 self.setStartedAt = Date()
                 self.picked = [:]
-                self.health.start()
+                self.health.start(workoutId: next.workout?.id)
             }
             if let rest = snap.active?.rest, next.workout?.id == snap.active?.id {
                 let end = Date(timeIntervalSince1970: rest.endsAt / 1000)
@@ -219,7 +220,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         setStartedAt = now
         restAfter = nil
         loadTargets()
-        health.start()
+        health.start(workoutId: next.workout?.id)
         send(event: event)
         WKInterfaceDevice.current().play(.start)
     }
@@ -362,6 +363,14 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         // The phone's latest snapshot: also what a watch app opened mid-workout picks the session up from.
         if let json = session.receivedApplicationContext["snapshot"] as? String { apply(json: json) }
+        sendStatus()
+    }
+
+    /// What the phone's Settings → Apple Watch shows about this watch.
+    func sendStatus() {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        send(event: ["id": UUID().uuidString, "type": "watchStatus", "health": health.status, "version": version,
+                     "at": Date().timeIntervalSince1970 * 1000])
     }
 
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
