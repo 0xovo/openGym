@@ -2459,6 +2459,13 @@ paths:
                 properties:
                   provider: { type: string, description: "Provider id, e.g. `anthropic`." }
                   providerLabel: { type: string }
+                  host:
+                    type: string
+                    nullable: true
+                    description: >-
+                      Host the provider's requests go to (an HTTPS provider's base URL, host and
+                      port only), or null for a runtime provider. The app asks the user once per
+                      provider and host before the first request.
                   categories:
                     type: array
                     items: { type: string, enum: [plan, training, bodyweight, profile, prefs] }
@@ -2467,6 +2474,7 @@ paths:
               example:
                 provider: anthropic
                 providerLabel: Claude
+                host: api.anthropic.com
                 categories: [plan, training, bodyweight, profile, prefs]
                 version: 1
         '401': { $ref: '#/components/responses/Unauthorized' }

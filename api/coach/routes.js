@@ -24,6 +24,7 @@ const USER_ERROR = {
   shared: cfgStore.SHARED_ACCOUNT_REFUSAL,
   unprivileged: 'the Coach is switched off on this instance for safety reasons'
 };
+const hostOf = url => { try { return url ? new URL(url).host : null; } catch { return null; } };
 const HTTP_FOR = { off: 503, busy: 409, cap: 429, consent: 403, shared: 409, unprivileged: 503 };
 
 export function coachRoutes({ json, readBody, readSession, requireAdmin }) {
@@ -54,6 +55,10 @@ export function coachRoutes({ json, readBody, readSession, requireAdmin }) {
       json(res, 200, {
         provider: cfg.provider,
         providerLabel: cfgStore.providerMeta(cfg).label,
+        // Where an HTTPS provider's requests go, host only: the app asks once per provider and
+        // host before anything is sent there, and a compatible endpoint is only nameable by it.
+        // Never the path, and the base URL cannot carry credentials (validateBaseUrl).
+        host: hostOf(baseUrlFor(cfg.provider, cfg)),
         categories: DATA_CATEGORIES,
         version: 1
       });

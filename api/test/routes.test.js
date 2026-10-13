@@ -158,6 +158,23 @@ test('the disclosure names the provider and the same five categories the payload
   assert.equal(r.status, 200);
   assert.equal(r.body.providerLabel, 'Google Gemini');
   assert.deepEqual(r.body.categories, ['plan', 'training', 'bodyweight', 'profile', 'prefs']);
+  assert.equal(r.body.host, 'generativelanguage.googleapis.com');
+});
+
+test('the disclosure says which host a job would go to, and nothing more of the URL', async () => {
+  fresh({ provider: 'compatible', providerOptions: { compatible: { baseUrl: 'https://llm.example.org:8443/v1' } } });
+  const { call } = harness();
+  let r = await call('GET /api/coach/disclosure');
+  assert.equal(r.status, 200);
+  assert.equal(r.body.provider, 'compatible');
+  assert.equal(r.body.host, 'llm.example.org:8443');
+  assert.ok(!JSON.stringify(r.body).includes('/v1'), 'no path, only the host');
+
+  // A runtime provider has no base URL to name; the app says the provider instead.
+  fresh({ provider: 'claude' });
+  r = await call('GET /api/coach/disclosure');
+  assert.equal(r.body.host, null);
+  assert.equal(r.body.providerLabel, 'Claude (Anthropic)');
 });
 
 /* ---------- debrief + cohort routes ---------- */
