@@ -1761,11 +1761,11 @@ function ActiveWorkout() {
   // The time is the watch's: the phone may hear of the set much later (lib/finish-workout.js
   // sessionEnd reads the sets' times). The watch's Finish runs the phone's Finish and save.
   useEffect(() => bindWatchActions({
-    setDone: (idx, i, { w, r, at }) => {
+    setDone: (idx, i, { w, r, at, hr }) => {
       if (useStore.getState().S.active?.editingWorkoutId) return   // a saved workout being edited is not the session
       mutEntry(idx, en => { const set = en.sets[i]; if (!set) return; if (w != null) set.w = w; if (r != null) set.r = r })
       if (!useStore.getState().S.active?.entries?.[idx]?.sets?.[i]?.done) toggleRef.current(idx, i)
-      if (at) mutEntry(idx, en => { const set = en.sets[i]; if (set?.done) set.at = at })
+      if (at || hr) mutEntry(idx, en => { const set = en.sets[i]; if (!set?.done) return; if (at) set.at = at; if (hr) set.hr = hr })
     },
     finish: () => { if (!useStore.getState().S.active?.editingWorkoutId) finishWorkoutNow() },
   }), [])

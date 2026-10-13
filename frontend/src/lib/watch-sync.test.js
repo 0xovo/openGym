@@ -59,7 +59,7 @@ describe('the events from the watch', () => {
     bindWatchActions({ setDone })
     expect(applyEvents([ev('a'), ev('a')], () => ({ S }))).toEqual(['a', 'a'])
     expect(setDone).toHaveBeenCalledTimes(1)
-    expect(setDone).toHaveBeenCalledWith(0, 1, { w: 62.5, r: 7, at: 1 })
+    expect(setDone).toHaveBeenCalledWith(0, 1, { w: 62.5, r: 7, at: 1, hr: null })
     // …and again later (a second drain, a restart of the page): still once
     expect(applyEvents([ev('a')], () => ({ S }))).toEqual(['a'])
     expect(setDone).toHaveBeenCalledTimes(1)
@@ -72,7 +72,7 @@ describe('the events from the watch', () => {
     bindWatchActions({ setDone })
     expect(applyEvents([ev('moved'), ev('gone', { exId: '9999', entryIdx: 5 }), ev('other', { wid: 'w-2' })], () => ({ S }))).toEqual(['moved', 'gone', 'other'])
     expect(setDone).toHaveBeenCalledTimes(1)
-    expect(setDone).toHaveBeenCalledWith(1, 1, { w: 62.5, r: 7, at: 1 })
+    expect(setDone).toHaveBeenCalledWith(1, 1, { w: 62.5, r: 7, at: 1, hr: null })
   })
 
   it('wait in the queue while the workout screen is not there', () => {
@@ -90,7 +90,7 @@ describe('the native queue', () => {
     const setDone = vi.fn()
     bindWatchActions({ setDone })
     await drainWatchEvents()
-    expect(setDone).toHaveBeenCalledWith(0, 1, { w: 60, r: 8, at: null })
+    expect(setDone).toHaveBeenCalledWith(0, 1, { w: 60, r: 8, at: null, hr: null })
     expect(p.ack).toHaveBeenCalledWith({ ids: ['x1'] })
   })
 
@@ -139,7 +139,7 @@ describe('starting and finishing on the watch', () => {
     bindWatchActions({ setDone, finish })
     expect(applyEvents([...events, { id: 'f1', type: 'finish', wid: 'watch-1', at: 1700000200000 }], () => ({ S }))).toEqual(['s1', 'd1', 'f1'])
     expect(start).toHaveBeenCalledTimes(1)
-    expect(setDone).toHaveBeenCalledWith(0, 0, { w: 60, r: 8, at: 1700000100000 })
+    expect(setDone).toHaveBeenCalledWith(0, 0, { w: 60, r: 8, at: 1700000100000, hr: null })
     expect(finish).toHaveBeenCalledTimes(1)
   })
 
@@ -149,5 +149,22 @@ describe('starting and finishing on the watch', () => {
     bindWatchAppActions({ start })
     expect(applyEvents([{ id: 's2', type: 'start', routineIds: ['r'], wid: 'watch-2', at: 1 }], () => ({ S }))).toEqual(['s2'])
     expect(start).not.toHaveBeenCalled()
+  })
+})
+
+describe('heart rate from the watch', () => {
+  it('rides on the tick when the reading holds up, and comes late for the rest through the app', () => {
+    const S = state()
+    const setDone = vi.fn(), patchSet = vi.fn()
+    bindWatchActions({ setDone, finish: vi.fn() })
+    bindWatchAppActions({ start: vi.fn(), patchSet })
+    applyEvents([
+      { id: 'h1', type: 'setDone', wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1, w: 60, r: 8, at: 5, hr: { avg: 131.2, max: 150 } },
+      { id: 'h2', type: 'setHr', wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1, restHr: { avg: 112, max: 128 } },
+      { id: 'h3', type: 'setHr', wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1, restHr: { avg: 9000, max: 1 } },
+    ], () => ({ S }))
+    expect(setDone).toHaveBeenCalledWith(0, 1, { w: 60, r: 8, at: 5, hr: { avg: 131, max: 150 } })
+    expect(patchSet).toHaveBeenCalledTimes(1)
+    expect(patchSet).toHaveBeenCalledWith({ wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1 }, { restHr: { avg: 112, max: 128 } })
   })
 })

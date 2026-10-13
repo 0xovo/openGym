@@ -22,6 +22,7 @@ import { isWarmupRow } from './workout-model.js'
 import { sessionHistory } from './backfill.js'
 import { buildCombinedEntries, deriveSessionName } from './session-merge.js'
 import { todayISO } from './format.js'
+import { sanitizeHr } from './heart-rate.js'
 
 export const SNAPSHOT_VERSION = 1
 const APPLIED_KEY = 'gym_watch_applied'
@@ -124,6 +125,7 @@ function entryIndexOf (A, ev) {
  *   start   { routineIds, wid, at }  the app starts that session with the watch's id and start
  *   setDone { wid, exId, entryIdx, setIdx, w, r, at }   the workout screen's own tick
  *   finish  { wid, at }              the workout screen's own Finish and save
+ *   setHr   { wid, exId, entryIdx, setIdx, hr?, restHr? }   heart rate on a set (lib/heart-rate.js)
  */
 export function applyEvents (events, getState) {
   if (!Array.isArray(events)) return []
@@ -144,7 +146,18 @@ export function applyEvents (events, getState) {
       if (!handlers) break
       const idx = entryIndexOf(A, ev)
       const set = idx >= 0 ? A.entries[idx].sets?.[ev.setIdx] : null
-      if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at) })
+      if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at), hr: sanitizeHr(ev.hr) })
+    } else if (ev.type === 'setHr') {
+      // The rest's heart rate comes once the rest is over, maybe after the workout was saved:
+      // a field on that set, wherever the set is now. Nothing for a reading that does not hold up.
+      const fields = {}
+      const hr = sanitizeHr(ev.hr), restHr = sanitizeHr(ev.restHr)
+      if (hr) fields.hr = hr
+      if (restHr) fields.restHr = restHr
+      if (Object.keys(fields).length) {
+        if (!appHandlers) break
+        appHandlers.patchSet({ wid: ev.wid, exId: ev.exId, entryIdx: ev.entryIdx, setIdx: ev.setIdx }, fields)
+      }
     } else if (ev.type === 'finish' && ours) {
       if (!handlers) break
       handlers.finish()
@@ -157,7 +170,7 @@ export function applyEvents (events, getState) {
   return done
 }
 
-/** The app's own actions, for what needs no screen (starting a session). Returns the unbind. */
+/** The app's own actions, for what needs no screen (starting a session, a set's heart rate). */
 export function bindWatchAppActions (h) {
   appHandlers = h
   drainWatchEvents()
@@ -246,3 +259,28 @@ export async function startWatchSync ({ useStore, useUI }) {
 // Test seams.
 export function _setWatchPluginForTest (plugin, getState) { pluginP = Promise.resolve(plugin ? { WatchBridge: plugin } : null); getStateRef = getState || null }
 export function _resetWatchSync () { handlers = null; appHandlers = null; pluginP = null; getStateRef = null; draining = null }
+
+/**
+ * Writes `fields` (heart rate) onto one set: in the running session when it is that workout, else in
+ * the saved workout of that id, which is then stamped as edited so the next sync keeps the change
+ * (lib/sync-merge.js: of two copies of a workout the one edited last wins). Only these optional
+ * fields are ever added; nothing is removed or renamed.
+ */
+export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp) {
+  const find = w => {
+    if (!w || !Array.isArray(w.entries)) return null
+    const i = w.entries[entryIdx] && w.entries[entryIdx].id === exId ? entryIdx : w.entries.findIndex(e => e && e.id === exId)
+    return i >= 0 ? w.entries[i].sets?.[setIdx] || null : null
+  }
+  if (s.active && s.active.id === wid) {
+    const set = find(s.active)
+    if (set) Object.assign(set, fields)
+    return !!set
+  }
+  const w = (s.workouts || []).find(x => x && x.id === wid)
+  const set = find(w)
+  if (!set) return false
+  Object.assign(set, fields)
+  if (stamp) stamp(w)
+  return true
+}

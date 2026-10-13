@@ -13,7 +13,8 @@ import { setNav, notePath, keyBefore } from './lib/nav.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
-import { startWatchSync, bindWatchAppActions } from './lib/watch-sync.js'
+import { startWatchSync, bindWatchAppActions, patchSetIn } from './lib/watch-sync.js'
+import { stampWorkout } from './lib/sync-merge.js'
 import { useWakeLock } from './lib/wakelock.js'
 import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
@@ -330,7 +331,10 @@ export default function App() {
     startWatchSync({ useStore, useUI }).then(fn => { if (gone) fn(); else stop = fn })
     // A session started on the watch starts here as the phone's Start does, with the watch's id
     // and start time, and no weigh-in question (the lifter is at the watch, not here).
-    const unbind = bindWatchAppActions({ start: (ids, opts) => beginWorkout(ids, null, opts) })
+    const unbind = bindWatchAppActions({
+      start: (ids, opts) => beginWorkout(ids, null, opts),
+      patchSet: (where, fields) => useStore.getState().update(s => { patchSetIn(s, where, fields, stampWorkout) }),
+    })
     return () => { gone = true; stop?.(); unbind() }
   }, [])
   return <HashRouter><Shell /></HashRouter>
