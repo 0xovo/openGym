@@ -264,11 +264,18 @@ export async function startWatchSync ({ useStore, useUI }) {
     }
     return ready
   }
+  // Whether a watch with the app is there: asked at start and when the app comes back, not on every
+  // change. Without one nothing below runs at all: no snapshot, no clips, no bridge call per tick.
+  let linked = false
+  const checkLink = async () => {
+    try { const st = await p.WatchBridge.status(); linked = !!(st && st.paired && st.installed) } catch { linked = false }
+    return linked
+  }
+  await checkLink()
   const send = async () => {
     tm = null
+    if (!linked) return
     try {
-      const st = await p.WatchBridge.status()
-      if (!st || !st.paired || !st.installed) return
       const S = useStore.getState().S
       const json = JSON.stringify(buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) }))
       if (json !== lastSent) {
@@ -284,11 +291,13 @@ export async function startWatchSync ({ useStore, useUI }) {
       }
     } catch { /* no watch, or not now: the next change tries again */ }
   }
-  const schedule = () => { clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
+  const schedule = () => { if (!linked) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
   const offStore = useStore.subscribe((s, prev) => { if (s.S !== prev.S) schedule() })
-  const offUI = useUI.subscribe((s, prev) => { if (s.timer !== prev.timer) schedule() })
+  // The rest as the watch needs it changes when it starts, stops or is paused, not every second.
+  const restOf = t => (t ? `${t.endsAt}|${!!t.paused}|${!!t.ready}` : '')
+  const offUI = useUI.subscribe((s, prev) => { if (s.timer !== prev.timer && restOf(s.timer) !== restOf(prev.timer)) schedule() })
   const sub = await p.WatchBridge.addListener('watchEvent', () => { drainWatchEvents() })
-  const onVisible = () => { if (document.visibilityState === 'visible') { drainWatchEvents(); schedule() } }
+  const onVisible = () => { if (document.visibilityState === 'visible') { drainWatchEvents(); checkLink().then(() => schedule()) } }
   document.addEventListener('visibilitychange', onVisible)
   schedule()
   drainWatchEvents()

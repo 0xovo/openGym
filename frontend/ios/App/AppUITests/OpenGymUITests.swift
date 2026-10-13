@@ -126,12 +126,10 @@ final class OpenGymUITests: XCTestCase {
         let resume = app.buttons["Resume"]
         let home = app.buttons["Log"]
         let local = app.buttons["Use on this device"]
-        var landed = false
-        for _ in 0..<60 {
-            if finish.exists || resume.exists || home.exists || local.exists { landed = true; break }
-            sleep(1)
-        }
-        XCTAssertTrue(landed, "the app never showed a screen")
+        // One query for any of the four, waited on, rather than four polled every second: on a busy
+        // simulator each poll is a whole snapshot of the app, and they ran past XCTest's limit (CI 10-13).
+        let anyScreen = app.buttons.matching(NSPredicate(format: "label IN %@", ["Finish", "Resume", "Log", "Use on this device"])).firstMatch
+        XCTAssertTrue(anyScreen.waitForExistence(timeout: 120), "the app never showed a screen")
         if local.exists { chooseLocal() }
         if !finish.exists && resume.exists { resume.tap() }
         if !finish.waitForExistence(timeout: 5) {
