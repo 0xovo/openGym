@@ -16,7 +16,7 @@ import { t } from '../lib/i18n.js'
 import { DAYN } from '../lib/format.js'
 import { EXDB } from '../lib/exercises.js'
 import { emptyCoach, coachAvailable, hasConsent, CONSENT_VERSION, CATEGORY_TEXT, appendChat } from '../lib/coach.js'
-import { requestPlan, disclosure, JOB_ERRORS } from '../lib/coach-api.js'
+import { requestPlan, disclosure, JOB_ERRORS, isDeclined } from '../lib/coach-api.js'
 import { DEMO } from '../lib/demo.js'
 import { MOBILE } from '../lib/mobile.js'
 import { activeProfile } from '../lib/equipment.js'
@@ -115,7 +115,9 @@ export default function CoachIntake() {
       nav('/coach', { replace: true })
     } catch (e) {
       // The server's refusal is English with its class beside it; the class picks the line.
-      toast(JOB_ERRORS[e.data?.code] || e.message || t('Could not ask the Coach')); setBusy(false)
+      // "Not now" on the data-sharing question sends nothing and says nothing; the answers are saved.
+      if (!isDeclined(e)) toast(JOB_ERRORS[e.data?.code] || e.message || t('Could not ask the Coach'))
+      setBusy(false)
     }
   }
 

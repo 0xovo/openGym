@@ -50,6 +50,8 @@ vi.mock('../lib/coach-api.js', () => ({
   requestPlan: vi.fn(() => Promise.resolve({})),
   disclosure: vi.fn(() => Promise.resolve(null)),
   JOB_ERRORS: { busy: 'the app’s busy line' },
+  ensureAiConsent: vi.fn(() => Promise.resolve(true)),
+  isDeclined: e => e?.code === 'declined',
 }))
 vi.mock('../coach.css', () => ({}))
 

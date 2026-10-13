@@ -29,7 +29,8 @@ import {
   changeTitle, changeValues, exName, canRevert, revertLast
 } from '../lib/coach.js'
 import { insightsFor, sessionInsights } from '../lib/coach-insights.js'
-import { useCoachStatus, requestReview, requestDebrief, requestPlan, refinePlan, resolvePending, cohortStats, setCohortShare, jobErrorText, awaitedJob, settleAwaited, JOB_ERRORS } from '../lib/coach-api.js'
+import { useCoachStatus, requestReview, requestDebrief, requestPlan, refinePlan, resolvePending, cohortStats, setCohortShare, jobErrorText, awaitedJob, settleAwaited, JOB_ERRORS, ensureAiConsent, isDeclined } from '../lib/coach-api.js'
+import { AiConsentSection } from '../components/CoachConsentSheet.jsx'
 import { confirmSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
 import { glyphOf } from '../lib/glyphs.js'
@@ -116,7 +117,8 @@ export default function CoachChat() {
     } catch (e) {
       // A server that refuses the job says so in English, with its class beside it: the class
       // picks the translated line. One with no line here ('shared') keeps the server's words.
-      toast(JOB_ERRORS[e.data?.code] || e.message || t('Could not ask the Coach'))
+      // "Not now" on the data-sharing question is an answer, not a failure: the text stays put.
+      if (!isDeclined(e)) toast(JOB_ERRORS[e.data?.code] || e.message || t('Could not ask the Coach'))
     }
     setBusy(false)
   }
@@ -127,7 +129,7 @@ export default function CoachChat() {
       await fn()
       update(s => appendChat(s, { role: 'user', kind: 'text', text: line }))
       refresh()
-    } catch (e) { toast(JOB_ERRORS[e.data?.code] || e.message || t('Could not ask the Coach')) }
+    } catch (e) { if (!isDeclined(e)) toast(JOB_ERRORS[e.data?.code] || e.message || t('Could not ask the Coach')) }
     setBusy(false)
   }
   const askReview = () => ask(() => requestReview(''), t('Have a look at my training and tell me what you would change.'))
@@ -164,6 +166,7 @@ export default function CoachChat() {
       {idle && <Row icon="clipboard" iconTint="var(--indigo)" title={t('Start a new plan')} subtitle={t('A fresh plan from your answers; your workouts stay')} accessory="chevron" onClick={() => { close(); askNewPlan() }} />}
       <Row icon="pencil" iconTint="var(--indigo)" title={t('Edit my answers')} subtitle={t('Goal, days, equipment, limits')} accessory="chevron" onClick={() => closeThenNav(close, '/coach/intake?edit=1')} />
       <Row icon="clock" iconTint="var(--purple)" title={t('Automatic reviews')} subtitle={cadenceLabel(coach)} accessory="chevron" onClick={() => { close(); cadenceSheet(openSheet, update) }} />
+      {!DEMO && <Row icon="shield" iconTint="var(--green)" title={t('AI data sharing')} subtitle={t('Who may see your training')} accessory="chevron" onClick={() => { close(); openSheet(() => <div className="chat-menu"><AiConsentSection /></div>) }} />}
       {canRevert(S) && <Row icon="reset" iconTint="var(--blue)" title={t('Undo the last Coach changes')} accessory="chevron" onClick={() => { close(); doRevert() }} />}
     </div>
     <div style={{ height: 10 }} />
@@ -749,10 +752,17 @@ function CadenceSheet({ update }) {
   const coach = useStore(s => s.S.coach) || emptyCoach()
   const cadence = coach.cadence && coach.cadence !== 'off' ? coach.cadence : null
   const mode = !cadence ? 'off' : cadence.weekly ? 'weekly' : 'every'
-  const setMode = m => update(s => {
-    const c = (s.coach = s.coach || emptyCoach())
-    c.cadence = m === 'off' ? 'off' : m === 'weekly' ? { weekly: { day: 0, time: '18:00' } } : { everyWorkouts: 4 }
-  })
+  // Automatic reviews send your training while nobody is looking, so switching them on is where
+  // the data-sharing question is asked for them. "Not now" leaves them off.
+  const setMode = async m => {
+    if (m !== 'off') {
+      try { await ensureAiConsent() } catch (e) { if (!isDeclined(e)) useUI.getState().toast(e.message || t('Could not ask the Coach')); return }
+    }
+    update(s => {
+      const c = (s.coach = s.coach || emptyCoach())
+      c.cadence = m === 'off' ? 'off' : m === 'weekly' ? { weekly: { day: 0, time: '18:00' } } : { everyWorkouts: 4 }
+    })
+  }
   const patch = fn => update(s => { const c = (s.coach = s.coach || emptyCoach()); fn(c) })
   return <>
     <h3>{t('Automatic reviews')}</h3>

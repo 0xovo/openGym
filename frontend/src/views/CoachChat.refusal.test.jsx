@@ -48,6 +48,8 @@ vi.mock('../lib/coach-api.js', () => ({
   setCohortShare: vi.fn(() => Promise.resolve({ ok: true })),
   jobErrorText: () => 'err',
   JOB_ERRORS: { busy: 'the app’s busy line' },
+  ensureAiConsent: vi.fn(() => Promise.resolve(true)),
+  isDeclined: e => e?.code === 'declined',
 }))
 vi.mock('../sheets.jsx', () => ({ startFlow: vi.fn(), confirmSheet: vi.fn() }))
 vi.mock('../lib/api.js', () => ({
