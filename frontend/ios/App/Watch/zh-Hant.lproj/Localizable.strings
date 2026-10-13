@@ -1,0 +1,20 @@
+/* openGym on the Apple Watch, zh-Hant. Written by ios/ci/watch-strings.mjs: change that, not this. */
+
+"Today" = "今天";
+"Start workout" = "開始訓練";
+"Done" = "完成";
+"Warm-up" = "熱身組";
+"Reps" = "次數";
+"Rest" = "休息";
+"Skip" = "略過";
+"Finish workout" = "結束訓練";
+"Finish workout?" = "結束訓練？";
+"Finish and save" = "結束並儲存";
+"Cancel" = "取消";
+"Rest’s over. Next set!" = "休息結束，下一組！";
+"Last time: %@" = "上次: %@";
+"No workout running" = "沒有進行中的訓練";
+"Start one on your iPhone and it shows up here." = "在 iPhone 上開始，它就會出現在這裡。";
+"All sets done" = "所有組已完成";
+"Next: %@, set %lld" = "下一個：%@，第 %lld 組";
+"%@, set %lld" = "%@，第 %lld 組";

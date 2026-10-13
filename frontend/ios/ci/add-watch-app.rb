@@ -29,6 +29,13 @@ group = proj.main_group.new_group(DIR, DIR)
 sources = Dir.children(File.join(dir, DIR)).select { |f| f.end_with?('.swift') }.sort
 watch.add_file_references(sources.map { |f| group.new_file(f) })
 group.new_file('Info.plist')
+# The icon, from the iPhone app's (Watch/Assets.xcassets/AppIcon), and the strings in every language.
+watch.add_resources([group.new_file('Assets.xcassets')])
+Dir.children(File.join(dir, DIR)).select { |f| f.end_with?('.lproj') }.sort.each do |lproj|
+  ref = group.new_file(lproj)
+  ref.last_known_file_type = 'folder'
+  watch.add_resources([ref])
+end
 entitlements = File.join(dir, DIR, "#{NAME}.entitlements")
 group.new_file("#{NAME}.entitlements") if File.exist?(entitlements)
 
@@ -46,7 +53,7 @@ watch.build_configurations.each do |c|
   s['WATCHOS_DEPLOYMENT_TARGET'] = '10.0'
   s['TARGETED_DEVICE_FAMILY'] = '4'
   s['SKIP_INSTALL'] = 'YES'
-  s['ASSETCATALOG_COMPILER_APPICON_NAME'] = ''
+  s['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'
   s['MARKETING_VERSION'] = app_settings['MARKETING_VERSION']
   s['CURRENT_PROJECT_VERSION'] = app_settings['CURRENT_PROJECT_VERSION']
   s['LD_RUNPATH_SEARCH_PATHS'] = ['$(inherited)', '@executable_path/Frameworks']

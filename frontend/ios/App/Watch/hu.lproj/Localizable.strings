@@ -1,0 +1,20 @@
+/* openGym on the Apple Watch, hu. Written by ios/ci/watch-strings.mjs: change that, not this. */
+
+"Today" = "Ma";
+"Start workout" = "Edzés indítása";
+"Done" = "Kész";
+"Warm-up" = "Bemelegítés";
+"Reps" = "Ism.";
+"Rest" = "Pihenő";
+"Skip" = "Kihagyás";
+"Finish workout" = "Edzés befejezése";
+"Finish workout?" = "Befejezed az edzést?";
+"Finish and save" = "Befejezés és mentés";
+"Cancel" = "Mégse";
+"Rest’s over. Next set!" = "Vége a pihenőnek. Jöhet a következő sorozat!";
+"Last time: %@" = "Legutóbb: %@";
+"No workout running" = "Nincs folyamatban edzés";
+"Start one on your iPhone and it shows up here." = "Indíts egyet az iPhone-on, és itt megjelenik.";
+"All sets done" = "Minden sorozat kész";
+"Next: %@, set %lld" = "Következik: %@, %lld. sorozat";
+"%@, set %lld" = "%@, %lld. sorozat";

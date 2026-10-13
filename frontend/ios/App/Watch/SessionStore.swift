@@ -318,11 +318,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         }
         guard notify else { return }
         let content = UNMutableNotificationContent()
-        content.title = "Rest's over"
+        content.title = String(localized: "Rest’s over. Next set!")
         if let e = entry, let si = setIndex {
-            content.body = "\(e.name), set \(si + 1)"
-        } else {
-            content.body = "Next set!"
+            content.body = String(localized: "\(e.name), set \(si + 1)")
         }
         content.sound = .default
         content.interruptionLevel = .timeSensitive
