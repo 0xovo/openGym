@@ -2,6 +2,7 @@ import Foundation
 import Capacitor
 import Network
 import System
+import WebKit
 #if canImport(BackgroundAssets)
 import BackgroundAssets
 #endif
@@ -14,6 +15,14 @@ import BackgroundAssets
  * scripts/media/make-pack-manifests.mjs; inside a pack a drawing sits at `<packId>/<id>.webp`.
  * The page side is frontend/src/lib/anim-packs.js. On an older iOS every call answers
  * "unavailable" and the app shows its built-in animations.
+ *
+ * Reading a pack's files: Background Assets keeps all downloaded packs as one shared namespace
+ * that is only meant to be read through AssetPackManager (contents(at:), descriptor(for:)); a
+ * URL from url(for:) is valid for this process only and is not a folder with the pack's files in
+ * it (build 30 showed a "downloaded" pack of 0.1 MB and no new animations). So the page never
+ * gets a path: it asks for opengym-pack://<packId>/<drawing>.webp, which AnimationPackSchemeHandler
+ * answers with the file's bytes from contents(at:searchingInAssetPackWithID:), memory-mapped, on a
+ * background queue. Nothing is copied and nothing leaves the app.
  *
  * The app needs, in Info.plist, BAAppGroupID, BAHasManagedAssetPacks and BAUsesAppleHosting, and
  * the downloader extension (AnimationPacksDownloader), which the system runs to fetch packs.
@@ -28,13 +37,15 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "download", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "remove", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "localPath", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "info", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "diagnose", returnType: CAPPluginReturnPromise),
     ]
 
     /// Only the ids the app knows: a pack id from the page goes nowhere else.
-    private static let packPattern = try! NSRegularExpression(pattern: "^anim-(240|360|480|720|1080)-(male|female)$")
+    static let packPattern = try! NSRegularExpression(pattern: "^anim-(240|360|480|720|1080)-(male|female)$")
     private static let probePattern = try! NSRegularExpression(pattern: "^[0-9]{4,5}$")
 
-    private static func matches(_ re: NSRegularExpression, _ s: String) -> Bool {
+    static func matches(_ re: NSRegularExpression, _ s: String) -> Bool {
         re.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)) != nil
     }
 
@@ -55,7 +66,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
     /// extension. Background Assets stops the app outright (a "programmer error") when the group
     /// or the extension is missing, as in an unsigned simulator build, so without them the packs
     /// are simply not offered and nothing touches AssetPackManager.
-    private static let supported: Bool = {
+    static let supported: Bool = {
         guard #available(iOS 26.0, *) else { return false }
         let info = Bundle.main.infoDictionary ?? [:]
         guard info["BAUsesAppleHosting"] as? Bool == true, let group = info["BAAppGroupID"] as? String else { return false }
@@ -65,26 +76,106 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
     }()
     private var supported: Bool { AnimationPacksPlugin.supported }
 
+    /// A TestFlight (or development) build: the page shows the packs' details row there.
+    private static let testFlight: Bool = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+
     @objc func available(_ call: CAPPluginCall) {
-        call.resolve(["available": supported])
+        call.resolve(["available": supported, "testflight": AnimationPacksPlugin.testFlight])
     }
 
+    /// The URL the page reads a pack's files from (AnimationPackSchemeHandler).
+    static func base(_ id: String) -> String { "\(AnimationPackSchemeHandler.scheme)://\(id)" }
+
+    /// 'ready' when the pack is on this device and its probe file can be read, with its size on
+    /// disk (worked out once per pack version, then kept: it walks every file).
     @objc func status(_ call: CAPPluginCall) {
         guard let (id, probe) = packArgs(call, probe: true) else { return }
-        guard supported, let folder = localFolder(id, probe) else {
-            call.resolve(["state": "none"])
+        guard supported else { call.resolve(["state": "none"]); return }
+        #if canImport(BackgroundAssets)
+        if #available(iOS 26.0, *) {
+            Task {
+                guard AnimationPacksPlugin.readable(id, probe) else {
+                    call.resolve(["state": "none"])
+                    return
+                }
+                call.resolve(["state": "ready", "bytes": await AnimationPacksPlugin.localBytes(id), "base": AnimationPacksPlugin.base(id)])
+            }
             return
         }
-        call.resolve(["state": "ready", "bytes": AnimationPacksPlugin.size(of: folder)])
+        #endif
+        call.resolve(["state": "none"])
     }
 
+    /// Kept for older pages: the base to read the pack's files from, never a file path.
     @objc func localPath(_ call: CAPPluginCall) {
         guard let (id, probe) = packArgs(call, probe: true) else { return }
-        guard supported, let folder = localFolder(id, probe) else {
+        guard supported, AnimationPacksPlugin.readable(id, probe) else {
             call.reject("not downloaded", "unavailable")
             return
         }
-        call.resolve(["path": folder.path])
+        call.resolve(["path": AnimationPacksPlugin.base(id), "base": AnimationPacksPlugin.base(id)])
+    }
+
+    /// What a pack costs to download, before it is: { downloadSize } in bytes, from Apple.
+    @objc func info(_ call: CAPPluginCall) {
+        guard let (id, _) = packArgs(call, probe: false) else { return }
+        guard supported else { call.resolve([:]); return }
+        #if canImport(BackgroundAssets)
+        if #available(iOS 26.0, *) {
+            Task {
+                if let pack = try? await AssetPackManager.shared.assetPack(withID: id) {
+                    call.resolve(["downloadSize": pack.downloadSize, "version": pack.version])
+                } else {
+                    call.resolve([:])
+                }
+            }
+            return
+        }
+        #endif
+        call.resolve([:])
+    }
+
+    /// For the details row (TestFlight): everything this side knows about one pack, as text.
+    @objc func diagnose(_ call: CAPPluginCall) {
+        guard let (id, probe) = packArgs(call, probe: true) else { return }
+        var out: [String: Any] = ["supported": supported, "base": AnimationPacksPlugin.base(id), "probe": "\(id)/\(probe).webp"]
+        guard supported else { call.resolve(out); return }
+        #if canImport(BackgroundAssets)
+        if #available(iOS 26.0, *) {
+            Task {
+                let manager = AssetPackManager.shared
+                out["readable"] = AnimationPacksPlugin.readable(id, probe)
+                if #available(iOS 26.4, *) {
+                    out["status"] = AnimationPacksPlugin.describe(await manager.localStatus(ofAssetPackWithID: id))
+                }
+                do {
+                    let data = try manager.contents(at: FilePath("\(id)/\(probe).webp"), searchingInAssetPackWithID: id, options: .mappedIfSafe)
+                    out["probeBytes"] = data.count
+                } catch {
+                    out["probeError"] = String(describing: error)
+                }
+                if let url = try? manager.url(for: FilePath("\(id)/\(probe).webp")) {
+                    out["probeUrl"] = url.path
+                    out["probeUrlExists"] = FileManager.default.fileExists(atPath: url.path)
+                    let folder = url.deletingLastPathComponent()
+                    out["folderFiles"] = (try? FileManager.default.contentsOfDirectory(atPath: folder.path).count) ?? -1
+                }
+                if let dir = try? manager.url(for: FilePath(id)) {
+                    out["packUrl"] = dir.path
+                    let (files, bytes) = AnimationPacksPlugin.walk(dir)
+                    out["packFiles"] = files
+                    out["packBytes"] = bytes
+                }
+                if let pack = try? await manager.assetPack(withID: id) {
+                    out["downloadSize"] = pack.downloadSize
+                    out["version"] = pack.version
+                }
+                call.resolve(out)
+            }
+            return
+        }
+        #endif
+        call.resolve(out)
     }
 
     @objc func download(_ call: CAPPluginCall) {
@@ -111,6 +202,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
                     let pack = try await manager.assetPack(withID: id)
                     // ensureLocalAvailability(of:requireLatestVersion:) only from iOS 26.4.
                     try await manager.ensureLocalAvailability(of: pack)
+                    UserDefaults.standard.removeObject(forKey: AnimationPacksPlugin.bytesKey(id))
                     call.resolve()
                 } catch is CancellationError {
                     call.reject("cancelled", "cancelled")
@@ -132,6 +224,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
             Task {
                 do {
                     try await AssetPackManager.shared.remove(assetPackWithID: id)
+                    UserDefaults.standard.removeObject(forKey: AnimationPacksPlugin.bytesKey(id))
                     call.resolve()
                 } catch {
                     call.reject(error.localizedDescription, "failed")
@@ -143,30 +236,63 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 
-    /// The folder a downloaded pack's files are in, checked through one file it holds: Background
-    /// Assets reads all downloaded packs as one tree and answers for a path, not for a pack, with
-    /// a well-formed URL whether or not anything is there. Every pack keeps its files under its own
-    /// id, so the folder is that pack's alone.
-    private func localFolder(_ id: String, _ probe: String) -> URL? {
+    /// Whether the pack's probe file can be read through Background Assets: the test that the
+    /// pack is really there for the scheme handler, not only listed as downloaded.
+    static func readable(_ id: String, _ probe: String) -> Bool {
         #if canImport(BackgroundAssets)
         if #available(iOS 26.0, *) {
-            guard let file = try? AssetPackManager.shared.url(for: FilePath("\(id)/\(probe).webp")),
-                  FileManager.default.fileExists(atPath: file.path) else { return nil }
-            return file.deletingLastPathComponent()
+            guard let fd = try? AssetPackManager.shared.descriptor(for: FilePath("\(id)/\(probe).webp"), searchingInAssetPackWithID: id) else { return false }
+            try? fd.close()
+            return true
         }
         #endif
-        return nil
+        return false
     }
 
-    private static func size(of folder: URL) -> Int {
-        let keys: [URLResourceKey] = [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey]
-        guard let files = FileManager.default.enumerator(at: folder, includingPropertiesForKeys: keys) else { return 0 }
-        var total = 0
-        for case let f as URL in files {
-            let v = try? f.resourceValues(forKeys: Set(keys))
-            total += v?.totalFileAllocatedSize ?? v?.fileAllocatedSize ?? 0
+    /// The pack's size on disk: its files counted once through the merged directory url(for:)
+    /// gives for the pack's own folder (all of a pack's files sit under its id), then kept until
+    /// the pack is downloaded again or removed.
+    @available(iOS 26.0, *)
+    private static func localBytes(_ id: String) async -> Int {
+        let key = bytesKey(id)
+        let kept = UserDefaults.standard.integer(forKey: key)
+        if kept > 0 { return kept }
+        #if canImport(BackgroundAssets)
+        guard let dir = try? AssetPackManager.shared.url(for: FilePath(id)) else { return 0 }
+        let bytes = walk(dir).1
+        if bytes > 0 { UserDefaults.standard.set(bytes, forKey: key) }
+        return bytes
+        #else
+        return 0
+        #endif
+    }
+
+    static func bytesKey(_ id: String) -> String { "animPackBytes.\(id)" }
+
+    /// Files and bytes under a folder.
+    static func walk(_ dir: URL) -> (Int, Int) {
+        let keys: [URLResourceKey] = [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey]
+        guard let e = FileManager.default.enumerator(at: dir, includingPropertiesForKeys: keys) else { return (0, 0) }
+        var files = 0, bytes = 0
+        for case let f as URL in e {
+            guard let v = try? f.resourceValues(forKeys: Set(keys)), v.isRegularFile == true else { continue }
+            files += 1
+            bytes += v.totalFileAllocatedSize ?? v.fileAllocatedSize ?? 0
         }
-        return total
+        return (files, bytes)
+    }
+
+    @available(iOS 26.0, *)
+    private static func describe(_ s: AssetPack.Status) -> String {
+        var parts: [String] = []
+        if s.contains(.downloadAvailable) { parts.append("downloadAvailable") }
+        if s.contains(.downloading) { parts.append("downloading") }
+        if s.contains(.downloaded) { parts.append("downloaded") }
+        if s.contains(.upToDate) { parts.append("upToDate") }
+        if s.contains(.outOfDate) { parts.append("outOfDate") }
+        if s.contains(.updateAvailable) { parts.append("updateAvailable") }
+        if s.contains(.obsolete) { parts.append("obsolete") }
+        return parts.isEmpty ? "none" : parts.joined(separator: ",")
     }
 
     /// Whether the phone is on a network that costs nothing extra (Wi-Fi or a cable), now.
@@ -193,5 +319,65 @@ private final class Once: @unchecked Sendable {
         if done { return false }
         done = true
         return true
+    }
+}
+
+/**
+ * Serves opengym-pack://<packId>/<drawing>.webp to the web view from the downloaded asset pack,
+ * read through AssetPackManager (memory-mapped) off the main thread. Only the app's pack ids and
+ * plain drawing names; anything else is a 404. Registered on the web view's configuration by
+ * MainViewController.
+ */
+final class AnimationPackSchemeHandler: NSObject, WKURLSchemeHandler {
+    static let scheme = "opengym-pack"
+    private static let filePattern = try! NSRegularExpression(pattern: "^[A-Za-z0-9_-]{1,64}\\.webp$")
+    private let queue = DispatchQueue(label: "ch.opengym.app.anim-pack-files", qos: .userInitiated, attributes: .concurrent)
+    private var stopped = Set<ObjectIdentifier>()
+    private let lock = NSLock()
+
+    func webView(_ webView: WKWebView, start task: WKURLSchemeTask) {
+        guard let url = task.request.url, let id = url.host,
+              AnimationPacksPlugin.matches(AnimationPacksPlugin.packPattern, id) else { return fail(task, 404) }
+        let file = url.lastPathComponent
+        guard url.pathComponents.count == 2, AnimationPacksPlugin.matches(AnimationPackSchemeHandler.filePattern, file) else { return fail(task, 404) }
+        let key = ObjectIdentifier(task)
+        queue.async {
+            var data: Data?
+            #if canImport(BackgroundAssets)
+            if #available(iOS 26.0, *) {
+                data = try? AssetPackManager.shared.contents(at: FilePath("\(id)/\(file)"), searchingInAssetPackWithID: id, options: .mappedIfSafe)
+            }
+            #endif
+            DispatchQueue.main.async {
+                guard self.take(key) else { return }
+                guard let data = data else { return self.fail(task, 404) }
+                let headers = [
+                    "Content-Type": "image/webp",
+                    "Content-Length": String(data.count),
+                    "Cache-Control": "max-age=31536000, immutable",
+                    "Access-Control-Allow-Origin": "*",
+                ]
+                let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)!
+                task.didReceive(response)
+                task.didReceive(data)
+                task.didFinish()
+            }
+        }
+    }
+
+    func webView(_ webView: WKWebView, stop task: WKURLSchemeTask) {
+        lock.lock(); stopped.insert(ObjectIdentifier(task)); lock.unlock()
+    }
+
+    /// False once WebKit stopped the task: answering it then would throw.
+    private func take(_ key: ObjectIdentifier) -> Bool {
+        lock.lock(); defer { lock.unlock() }
+        return stopped.remove(key) == nil
+    }
+
+    private func fail(_ task: WKURLSchemeTask, _ code: Int) {
+        guard let url = task.request.url else { return }
+        task.didReceive(HTTPURLResponse(url: url, statusCode: code, httpVersion: "HTTP/1.1", headerFields: ["Access-Control-Allow-Origin": "*"])!)
+        task.didFinish()
     }
 }

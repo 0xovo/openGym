@@ -141,3 +141,20 @@ describe('what the animation shows', () => {
     expect(img().getAttribute('src')).toBe('exercise-media/clip/2476.webp')
   })
 })
+
+describe('sizes and details', () => {
+  it('says what a pack takes to download before it is downloaded', async () => {
+    await packs.refresh()
+    await mount(<AnimationQualitySheet close={() => {}} />)
+    const row = rowByTitle('480 px')
+    expect(row.textContent).toMatch(/Not downloaded · ~742 MB/)
+  })
+  it('shows the packs’ details after five taps on the title', async () => {
+    await packs.refresh()
+    await mount(<AnimationQualitySheet close={() => {}} />)
+    expect(host.textContent).not.toContain('Check the packs')
+    const h3 = host.querySelector('h3')
+    for (let i = 0; i < 5; i++) await act(async () => { h3.click() })
+    expect(host.textContent).toContain('Check the packs')
+  })
+})
