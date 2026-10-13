@@ -48,7 +48,8 @@ export const deviceInfo = () => {
 }
 
 /* ---------------------------------------------------------------- state */
-// packs: { [packId]: { state: 'none'|'ready'|'downloading'|'failed'|'needs-wifi', progress, bytes, base } }
+// packs: { [packId]: { state: 'none'|'ready'|'downloading'|'failed'|'needs-wifi', progress, bytes, base, dir } }
+// (`dir`: the pack's folder as the native side names it, for the Apple Watch's clips, lib/watch-sync.js)
 let state = { available: false, checked: false, packs: {}, prefs: readPrefs() }
 const listeners = new Set()
 const emit = () => { for (const fn of listeners) fn() }
@@ -75,7 +76,7 @@ async function readPack(p, id) {
     const st = await p.Packs.status({ packId: id, probe: probeFor(id) })
     if (st?.state !== 'ready') { setPack(id, { state: state.packs[id]?.state === 'downloading' ? 'downloading' : 'none', bytes: 0, base: null }); return }
     const { path } = await p.Packs.localPath({ packId: id, probe: probeFor(id) })
-    setPack(id, { state: 'ready', bytes: Number(st.bytes) || 0, base: path ? p.toUrl(path) : null, progress: 1 })
+    setPack(id, { state: 'ready', bytes: Number(st.bytes) || 0, base: path ? p.toUrl(path) : null, dir: path || null, progress: 1 })
   } catch { setPack(id, { state: 'none', base: null }) }
 }
 

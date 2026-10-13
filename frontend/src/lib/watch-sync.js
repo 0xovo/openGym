@@ -15,7 +15,9 @@
 // The iPhone app only. Without a paired watch with the app on it, nothing is sent and nothing
 // arrives: the phone behaves exactly as before.
 import { MOBILE, nativePlatform } from './mobile.js'
-import { EXIDX, gifSrc, figureOf, isVideoSrc } from './exercises.js'
+import { EXIDX, gifSrc, figureOf } from './exercises.js'
+import { packId, packDrawingId } from './anim-quality.js'
+import { getState as animPacks } from './anim-packs.js'
 import { exerciseNameFor } from './i18n.js'
 import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds } from './history.js'
 import { isWarmupRow } from './workout-model.js'
@@ -104,21 +106,29 @@ export function buildSnapshot(S, { timer = null, ready = null } = {}) {
 }
 
 /**
- * The running workout's animations for the watch: the app's own clip of each exercise in it, as a
- * path inside the app package (the native side turns each into a small GIF and sends it as a file;
- * the watch deletes them when the workout ends). Nothing for a clip that is not a packaged file.
+ * The running workout's animations for the watch, from what this phone itself shows for each
+ * exercise: the smallest downloaded animation pack of the figure (240 px, `file`: a path in that
+ * pack's folder) when there is one, else the app's built-in clip (`path` inside the app package:
+ * the 180 px animated WebP of the store build, an MP4 loop in other builds). The native side makes
+ * each into a small GIF and sends it as a file; the watch deletes them when the workout ends.
+ * Nothing is ever fetched from anywhere.
  */
-export function clipsFor (S) {
+export const WATCH_PACK_PX = 240
+export function clipsFor (S, packs = animPacks().packs || {}) {
   const A = S && S.active
   if (!A || !Array.isArray(A.entries)) return []
   const figure = figureOf(S)
+  const pack = packs[packId(WATCH_PACK_PX, figure)]
+  const packDir = pack && pack.state === 'ready' && typeof pack.dir === 'string' && pack.dir ? pack.dir.replace(/\/$/, '') : null
   const out = [], seen = new Set()
   for (const e of A.entries) {
     const ex = e && EXIDX[e.id]
     if (!ex || seen.has(e.id) || !ex.gif) continue
-    const path = gifSrc(ex, figure)
-    if (!isVideoSrc(path) || /^[a-z]+:|^\//i.test(path) || path.includes('..')) continue
     seen.add(e.id)
+    const drawing = packDrawingId(ex, figure)
+    if (packDir && drawing && /^[A-Za-z0-9_-]+$/.test(drawing)) { out.push({ exId: e.id, file: `${packDir}/${drawing}.webp` }); continue }
+    const path = gifSrc(ex, figure)
+    if (!/\.(webp|mp4|gif)$/i.test(path) || /^[a-z]+:|^\//i.test(path) || path.includes('..')) continue
     out.push({ exId: e.id, path })
   }
   return out

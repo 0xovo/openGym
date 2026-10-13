@@ -30,9 +30,11 @@ import WatchConnectivity
  *   await WatchBridge.sendClips({ wid, clips: [{ exId, path }] })   // the workout's animations
  *
  * Animations: only the running workout's, only as files sent with transferFile (the watch keeps
- * them while that workout runs and deletes them after). Each comes from the app's own clip in the
- * app package (public/<path>, an MP4 loop), made into a small looping GIF here, because the watch
- * shows a frame sequence and plays no MP4 inline. Nothing is fetched from anywhere.
+ * them while that workout runs and deletes them after). Each is what this phone shows for that
+ * exercise: a file of a downloaded animation pack (`file`), or the app's built-in clip in the app
+ * package (`path` under public/: the store build's animated WebP, an MP4 loop in other builds).
+ * Made into a small looping GIF here (ImageIO reads animated WebP; AVFoundation the MP4), because
+ * the watch shows a frame sequence. Nothing is fetched from anywhere.
  */
 @objc(WatchBridgePlugin)
 public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
@@ -127,11 +129,10 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
             var sent = self.clipsSent[wid] ?? []
             if self.clipsSent.count > 4 { self.clipsSent = self.clipsSent.filter { $0.key == wid } }
             for clip in clips {
-                guard let exId = clip["exId"] as? String, let path = clip["path"] as? String,
-                      !sent.contains(exId), !path.contains(".."), !path.hasPrefix("/") else { continue }
-                let video = Bundle.main.bundleURL.appendingPathComponent("public").appendingPathComponent(path)
-                guard FileManager.default.fileExists(atPath: video.path),
-                      let gif = WatchBridgePlugin.gif(for: video, named: exId) else { continue }
+                guard let exId = clip["exId"] as? String, !sent.contains(exId),
+                      let source = WatchBridgePlugin.clipSource(clip),
+                      FileManager.default.isReadableFile(atPath: source.path),
+                      let gif = WatchBridgePlugin.gif(for: source, named: exId) else { continue }
                 s.transferFile(gif, metadata: ["exId": exId, "wid": wid])
                 sent.insert(exId)
             }
@@ -139,14 +140,29 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         }
     }
 
-    /// A small looping GIF of an MP4 clip (about 2 to 3 seconds, 160 px), cached by exercise.
-    static func gif(for video: URL, named name: String) -> URL? {
+    /// The clip's file: a pack file (an absolute .webp path the AnimationPacks plugin gave the page)
+    /// or a file in the app package (public/<path>). Anything else is refused.
+    static func clipSource(_ clip: [String: Any]) -> URL? {
+        let ok = { (p: String) in !p.contains("..") && ["webp", "gif", "mp4"].contains((p as NSString).pathExtension.lowercased()) }
+        if let file = clip["file"] as? String, file.hasPrefix("/"), ok(file), file.lowercased().hasSuffix(".webp") {
+            return URL(fileURLWithPath: file)
+        }
+        if let path = clip["path"] as? String, !path.hasPrefix("/"), ok(path) {
+            return Bundle.main.bundleURL.appendingPathComponent("public").appendingPathComponent(path)
+        }
+        return nil
+    }
+
+    /// A small looping GIF of a clip (160 px), cached by exercise: an animated WebP or GIF frame by
+    /// frame through ImageIO, an MP4 sampled about ten times a second through AVFoundation.
+    static func gif(for source: URL, named name: String) -> URL? {
         let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("watch-clips")
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let safe = name.replacingOccurrences(of: "/", with: "_")
         let out = dir.appendingPathComponent(safe + ".gif")
         if FileManager.default.fileExists(atPath: out.path) { return out }
-        let asset = AVURLAsset(url: video)
+        if source.pathExtension.lowercased() != "mp4" { return gifFromImage(source, to: out) }
+        let asset = AVURLAsset(url: source)
         let seconds = CMTimeGetSeconds(asset.duration)
         guard seconds.isFinite, seconds > 0 else { return nil }
         let gen = AVAssetImageGenerator(asset: asset)
@@ -166,6 +182,38 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
                 CGImageDestinationAddImage(dest, img, frameProps)
                 added += 1
             }
+        }
+        guard added > 0, CGImageDestinationFinalize(dest) else {
+            try? FileManager.default.removeItem(at: out)
+            return nil
+        }
+        return out
+    }
+
+    private static func gifFromImage(_ source: URL, to out: URL) -> URL? {
+        guard let src = CGImageSourceCreateWithURL(source as CFURL, nil) else { return nil }
+        let count = CGImageSourceGetCount(src)
+        guard count > 0,
+              let dest = CGImageDestinationCreateWithURL(out as CFURL, UTType.gif.identifier as CFString, count, nil) else { return nil }
+        CGImageDestinationSetProperties(dest, [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: 0]] as CFDictionary)
+        let thumb = [
+            kCGImageSourceCreateThumbnailFromImageAlways as String: true,
+            kCGImageSourceThumbnailMaxPixelSize as String: 160,
+            kCGImageSourceCreateThumbnailWithTransform as String: true,
+        ] as CFDictionary
+        var added = 0
+        for i in 0..<count {
+            guard let img = CGImageSourceCreateThumbnailAtIndex(src, i, thumb) else { continue }
+            let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [String: Any]
+            let webp = props?[kCGImagePropertyWebPDictionary as String] as? [String: Any]
+            let gifp = props?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+            let delay = (webp?[kCGImagePropertyWebPUnclampedDelayTime as String] as? Double)
+                ?? (webp?[kCGImagePropertyWebPDelayTime as String] as? Double)
+                ?? (gifp?[kCGImagePropertyGIFUnclampedDelayTime as String] as? Double)
+                ?? (gifp?[kCGImagePropertyGIFDelayTime as String] as? Double) ?? 0.1
+            let frame = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: delay > 0.01 ? delay : 0.1]] as CFDictionary
+            CGImageDestinationAddImage(dest, img, frame)
+            added += 1
         }
         guard added > 0, CGImageDestinationFinalize(dest) else {
             try? FileManager.default.removeItem(at: out)
