@@ -1235,6 +1235,23 @@ async function removeEmail(req, res, user, body) {
   json(res, 200, { ok: true, email: null });
 }
 
+// Everything of an account, gone for good: the user record, their passkeys, push subscriptions,
+// device links and live presence, and outside db.json their training history, any Coach
+// credential and their photos and videos. The admin's delete and the account's own both end here.
+function removeAccount(u) {
+  db.users = db.users.filter(x => x.id !== u.id);
+  db.creds = (db.creds || []).filter(c => c.userId !== u.id);
+  db.subs = (db.subs || []).filter(x => x.userId !== u.id);
+  dropDeviceLinks(db, u.id);
+  presence.delete(u.id);
+  // The training history and any Coach credential of theirs, both outside db.json.
+  try { fs.unlinkSync(stateFile(u.id)); } catch { /* already gone */ }
+  try { coachConfig.clearProfileAuth(u.id); } catch { /* nothing stored */ }
+  // Their photos and videos — the one place a profile's folder under uploads/ is removed.
+  try { MEDIA.removeUser(u.id); } catch (e) { console.error('media: could not remove uploads of', u.id, e.message); }
+  saveDb();
+}
+
 const passwordRoutes = {
   'POST /api/login/password': async (req, res) => {
     const body = await readBody(req);
@@ -2125,6 +2142,30 @@ const routes = {
     json(res, 200, { ok: true }, { 'Set-Cookie': clearCookie });
   },
 
+  // The account's own delete (App Store rule 5.1.1(v): an app you can sign up in lets you leave
+  // it too). Everything goes, exactly as when an admin deletes it (removeAccount). The body names
+  // the account, typed back by its owner: a stray or replayed request with only the session does
+  // nothing. No passkey or password proof on top: whoever holds the session can already wipe the
+  // profile's data with "Reset everything", and this is the one way out that must always work.
+  // The last admin is refused while anyone else is left, since nobody could then run the
+  // instance from the app; alone on it, they may go. The session ends with the account: its
+  // cookie is cleared here, and any other session stops verifying since the user is gone.
+  'POST /api/account/delete': async (req, res) => {
+    const user = readSession(req);
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    const body = await readBody(req);
+    if (readSession(req) !== user) return json(res, 401, { error: 'not signed in' });
+    if (typeof body.name !== 'string' || body.name.trim() !== user.name) {
+      return json(res, 400, { error: 'type the account name to confirm', code: 'confirm-name' });
+    }
+    if (isAdmin(user) && db.users.length > 1 && db.users.filter(isAdmin).length <= 1) {
+      return json(res, 409, { error: 'the last admin cannot leave while other profiles remain', code: 'last-admin' });
+    }
+    removeAccount(user);
+    audit(req, 'auth.account.delete', { user });
+    json(res, 200, { ok: true }, { 'Set-Cookie': clearCookie });
+  },
+
   // Mobile app pairing: called from an already signed-in browser tab (Settings → "Pair the
   // mobile app") to mint a short code the phone can redeem below.
   'POST /api/pair/create': async (req, res) => {
@@ -2480,17 +2521,7 @@ const routes = {
     if (u.id === admin.id) return json(res, 400, { error: 'you cannot delete your own account' });
     if (isAdmin(u) && db.users.filter(isAdmin).length <= 1) return json(res, 400, { error: 'cannot delete the last admin' });
     const name = u.name;
-    db.users = db.users.filter(x => x.id !== u.id);
-    db.creds = (db.creds || []).filter(c => c.userId !== u.id);
-    db.subs = (db.subs || []).filter(x => x.userId !== u.id);
-    dropDeviceLinks(db, u.id);
-    presence.delete(u.id);
-    // The training history and any Coach credential of theirs, both outside db.json.
-    try { fs.unlinkSync(stateFile(u.id)); } catch { /* already gone */ }
-    try { coachConfig.clearProfileAuth(u.id); } catch { /* nothing stored */ }
-    // Their photos and videos — the one place a profile's folder under uploads/ is removed.
-    try { MEDIA.removeUser(u.id); } catch (e) { console.error('media: could not remove uploads of', u.id, e.message); }
-    saveDb();
+    removeAccount(u);
     // Logged with the name, because the id is about to mean nothing to anyone reading this back.
     audit(req, 'admin.user.delete', { user: admin, msg: name });
     json(res, 200, { ok: true, id: u.id });

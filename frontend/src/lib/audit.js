@@ -21,6 +21,8 @@ const LABELS = {
   'auth.register.denied': 'Signup refused',
   'auth.logout': 'Signed out',
   'auth.logout.all': 'Signed out everywhere',
+  // Settings → "Delete my account": the profile removed itself and everything of theirs.
+  'auth.account.delete': 'Deleted their own account',
   // Device pairing (Settings → "Pair the mobile app"): the code is minted in a signed-in browser
   // tab and redeemed by the app, so "ok" is the phone coming online, not a sign-in.
   'auth.pair.create': 'Created a pairing code',
