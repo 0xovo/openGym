@@ -2281,4 +2281,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': 'Не підтверджено на цьому телефоні. Нічого не видалено.',
   'This phone has no screen lock, so the name you typed is the only check.': 'На цьому телефоні немає блокування екрана, тож введена назва буде єдиною перевіркою.',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Телефон перевірить, що це ви (обличчя, відбиток або код), а потім акаунт буде видалено.',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Не пропусти кінець відпочинку',
+  'One quick thing': 'Ще одна швидка річ',
+  'Rest timer, right on the lock screen': 'Таймер відпочинку просто на екрані блокування',
+  'Training reminders, only if you switch them on': 'Нагадування про тренування, лише якщо ти їх увімкнеш',
+  'You can change it anytime in your phone’s settings.': 'Це можна змінити будь-коли в налаштуваннях телефона.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym може поплескати тебе по плечу, коли відпочинок скінчиться, навіть якщо телефон заблокований і лежить у кишені.',
 }

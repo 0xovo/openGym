@@ -3,7 +3,8 @@ import XCTest
 /**
  * Walks the iPhone app the way someone new does and checks what only a real phone shows: that the
  * end of a rest still arrives as a notification once the app has left the screen (RestAlertPlugin),
- * and that a sheet with a text field stays above the keyboard. Run by .github/workflows/ios.yml,
+ * that a sheet with a text field stays above the keyboard, and that the training reminder and the
+ * missed-day nudge are really pending with iOS once switched on. Run by .github/workflows/ios.yml,
  * which adds this target to the project for the run only (ios/ci/add-ui-tests.rb). The run's
  * build carries no exercise media, so the screenshots it keeps show placeholders.
  */
@@ -33,7 +34,8 @@ final class OpenGymUITests: XCTestCase {
 
     /**
      * "Use on this device", until home shows. On a slow simulator the first tap can land while the
-     * page is still starting and go nowhere.
+     * page is still starting and go nowhere. The first-start notifications step comes right after
+     * the choice (views/PermissionSteps.jsx): it is allowed here, and so is the system's question.
      */
     private func chooseLocal() {
         if app.buttons["Log"].waitForExistence(timeout: 45) { return }   // chosen in an earlier test
@@ -41,9 +43,28 @@ final class OpenGymUITests: XCTestCase {
         XCTAssertTrue(local.waitForExistence(timeout: 60), "the onboarding choice did not show up")
         for _ in 0..<5 {
             if local.exists { local.tap() }
+            passPermissionStep()
             if app.buttons["Log"].waitForExistence(timeout: 8) { return }
         }
         XCTFail("home never showed after the onboarding choice")
+    }
+
+    /** The notifications step, if it shows: Allow, then the system's own Allow. */
+    private func passPermissionStep() {
+        let step = app.staticTexts["Never miss the end of a rest"]
+        guard step.waitForExistence(timeout: 6) else { return }
+        shot("0-permission-step")
+        let allow = app.buttons["Allow"]
+        if allow.exists { allow.tap() }
+        allowSystemAlert(within: 10)
+    }
+
+    private func allowSystemAlert(within seconds: Int) {
+        let allow = springboard.alerts.buttons["Allow"]
+        for _ in 0..<seconds {
+            if allow.exists { allow.tap(); return }
+            sleep(1)
+        }
     }
 
     // XCTest runs a class's tests in name order: the keyboard check wants a plain home screen, and
@@ -85,6 +106,74 @@ final class OpenGymUITests: XCTestCase {
         let arrived = banner.waitForExistence(timeout: 120)
         shot("4-notification")
         XCTAssertTrue(arrived, "the end of the rest never arrived as a notification")
+    }
+
+    /**
+     * The training reminder and the missed-day nudge reach iOS as pending local notifications:
+     * a workout logged today (finished here, or the one test2 left running), the reminder and
+     * the nudge switched on, and then iOS itself is asked what it holds for the app. The app
+     * shows that only when launched with -OpenGymUITestPending (MainViewController.swift).
+     * Reminder ids are 1000-1059 (one per planned day in 60), nudge ids 2000-2006
+     * (lib/mobile.js); with a three-day plan and a workout today the week ahead always has both.
+     */
+    func test3ReminderAndNudgeArePendingNotifications() {
+        app.launchArguments = ["-OpenGymUITestPending"]
+        app.launch()
+        let finish = app.buttons["Finish"]
+        let resume = app.buttons["Resume"]
+        let home = app.buttons["Log"]
+        let local = app.buttons["Use on this device"]
+        var landed = false
+        for _ in 0..<60 {
+            if finish.exists || resume.exists || home.exists || local.exists { landed = true; break }
+            sleep(1)
+        }
+        XCTAssertTrue(landed, "the app never showed a screen")
+        if local.exists { chooseLocal() }
+        if !finish.exists && resume.exists { resume.tap() }
+        if !finish.waitForExistence(timeout: 5) {
+            // Nothing running (test2 failed early or ran alone): start one the way test2 does.
+            XCTAssertTrue(home.waitForExistence(timeout: 30), "home did not show")
+            if app.buttons["Load starter plan"].waitForExistence(timeout: 5) {
+                tap(app.buttons["Load starter plan"], "Load starter plan")
+                tap(button(startingWith: "Full Body"), "the Full Body plan")
+            }
+            tap(app.buttons["Choose a different workout"], "Choose a different workout")
+            tap(app.staticTexts["Full Body A"], "Full Body A")
+            tap(app.switches["Set 1 done"], "Set 1 done")
+            allowSystemAlert(within: 5)
+        }
+        tap(finish, "Finish")
+        tap(button(startingWith: "Finish and save"), "Finish and save")
+        tap(app.buttons["Nice!"], "Nice! (the summary)", timeout: 20)
+        shot("6-finished")
+
+        tap(button(startingWith: "Settings"), "Settings")
+        tap(button(startingWith: "Reminders"), "Reminders")
+        let reminder = app.switches["Workout day reminder"]
+        XCTAssertTrue(reminder.waitForExistence(timeout: 15), "no reminder switch")
+        if (reminder.value as? String) != "1" { reminder.tap() }
+        allowSystemAlert(within: 3)
+        let nudge = app.switches["Nudge me when I skip a planned workout"]
+        XCTAssertTrue(nudge.waitForExistence(timeout: 15), "no nudge switch")
+        if (nudge.value as? String) != "1" { nudge.tap() }
+        shot("7-reminders-on")
+
+        // The store reschedules on its next save; poll what iOS holds until both kinds are there.
+        let probe = app.staticTexts["og-pending-notifications"]
+        XCTAssertTrue(probe.waitForExistence(timeout: 20), "the pending-notifications probe is missing")
+        var ids: [Int] = []
+        for _ in 0..<45 {
+            ids = probe.label.replacingOccurrences(of: "pending:", with: "").split(separator: ",").compactMap { Int($0) }
+            if ids.contains(where: { (1000...1059).contains($0) }) && ids.contains(where: { (2000...2006).contains($0) }) { break }
+            sleep(1)
+        }
+        let pending = XCTAttachment(string: probe.label)
+        pending.name = "pending notifications"
+        pending.lifetime = .keepAlways
+        add(pending)
+        XCTAssertTrue(ids.contains(where: { (1000...1059).contains($0) }), "no training reminder pending: \(probe.label)")
+        XCTAssertTrue(ids.contains(where: { (2000...2006).contains($0) }), "no missed-day nudge pending: \(probe.label)")
     }
 
     func test1WeighInSheetStaysAboveTheKeyboard() {

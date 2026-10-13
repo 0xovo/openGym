@@ -2363,4 +2363,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': 'এই ফোনে নিশ্চিত হয়নি। কিছুই মোছা হয়নি।',
   'This phone has no screen lock, so the name you typed is the only check.': 'এই ফোনে কোনো স্ক্রিন লক নেই, তাই আপনার লেখা নামটিই একমাত্র যাচাই।',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'আপনার ফোন যাচাই করবে এটি আপনি কি না (মুখ, আঙুলের ছাপ বা পাসকোড), তারপর অ্যাকাউন্ট মুছে যাবে।',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'বিশ্রামের শেষ আর কখনো মিস করবেন না',
+  'One quick thing': 'ছোট্ট একটা কথা',
+  'Rest timer, right on the lock screen': 'বিশ্রামের টাইমার, সরাসরি লক স্ক্রিনে',
+  'Training reminders, only if you switch them on': 'ট্রেনিংয়ের রিমাইন্ডার, শুধু আপনি চালু করলে',
+  'You can change it anytime in your phone’s settings.': 'ফোনের সেটিংসে যেকোনো সময় এটি বদলাতে পারেন।',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'ফোন লক করে পকেটে রাখলেও, বিশ্রাম শেষ হলে openGym আপনার কাঁধে টোকা দিতে পারে।',
 }

@@ -2284,4 +2284,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': 'इस फ़ोन पर पुष्टि नहीं हुई। कुछ भी नहीं हटाया गया।',
   'This phone has no screen lock, so the name you typed is the only check.': 'इस फ़ोन पर कोई स्क्रीन लॉक नहीं है, इसलिए आपका लिखा नाम ही एकमात्र जाँच है।',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'आपका फ़ोन जाँचेगा कि यह आप हैं (चेहरा, फ़िंगरप्रिंट या पासकोड), फिर खाता हट जाएगा।',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'रेस्ट का खत्म होना कभी न चूकें',
+  'One quick thing': 'बस एक छोटी सी बात',
+  'Rest timer, right on the lock screen': 'रेस्ट टाइमर, सीधे लॉक स्क्रीन पर',
+  'Training reminders, only if you switch them on': 'ट्रेनिंग रिमाइंडर, सिर्फ़ अगर आप चालू करें',
+  'You can change it anytime in your phone’s settings.': 'आप इसे कभी भी अपने फ़ोन की सेटिंग्स में बदल सकते हैं।',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'फ़ोन लॉक होकर जेब में हो तब भी, रेस्ट खत्म होने पर openGym आपके कंधे पर थपकी दे सकता है।',
 }

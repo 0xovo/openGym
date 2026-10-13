@@ -1100,7 +1100,7 @@ function MobileReminderCard({ S, update, toast }) {
     <Section title={t('Notifications')}
       footer={S.reminder?.on ? t('Reminds you at this time on days that have a routine planned.') + nudgeNote(S) : null}>
       <Row icon="calendar" iconTint="var(--orange)" title={t('Workout day reminder')}>
-        <Switch checked={!!S.reminder?.on} onChange={toggle} />
+        <Switch checked={!!S.reminder?.on} onChange={toggle} aria-label={t('Workout day reminder')} />
       </Row>
       {S.reminder?.on && (
         <Row icon="clock" iconTint="var(--purple)" title={t('Reminder time')}>
@@ -1119,7 +1119,7 @@ function NudgeRows({ S, setReminder }) {
   const r = S.reminder || {}
   return <>
     <Row icon="bell" iconTint="var(--red)" title={t('Nudge me when I skip a planned workout')}>
-      <Switch checked={!!r.nudge} onChange={() => setReminder({ nudge: !r.nudge })} />
+      <Switch checked={!!r.nudge} onChange={() => setReminder({ nudge: !r.nudge })} aria-label={t('Nudge me when I skip a planned workout')} />
     </Row>
     {r.nudge && (
       <SelectRow icon="chat" iconTint="var(--blue)" title={t('Nudge tone')}

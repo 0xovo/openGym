@@ -2284,4 +2284,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': 'Pas confirmé sur ce téléphone. Rien n’a été supprimé.',
   'This phone has no screen lock, so the name you typed is the only check.': 'Ce téléphone n’a pas de verrouillage d’écran, donc le nom tapé est la seule vérification.',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Ton téléphone vérifie que c’est bien toi (visage, empreinte ou code), puis le compte est supprimé.',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Ne rate plus jamais la fin d’un repos',
+  'One quick thing': 'Juste un petit truc',
+  'Rest timer, right on the lock screen': 'Le minuteur de repos, directement sur l’écran verrouillé',
+  'Training reminders, only if you switch them on': 'Des rappels d’entraînement, seulement si tu les actives',
+  'You can change it anytime in your phone’s settings.': 'Tu peux changer ça à tout moment dans les réglages de ton téléphone.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym peut te taper sur l’épaule quand un repos est fini, même avec le téléphone verrouillé dans ta poche.',
 }

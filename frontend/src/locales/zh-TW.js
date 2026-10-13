@@ -2277,4 +2277,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': '未在此手機上確認。沒有刪除任何內容。',
   'This phone has no screen lock, so the name you typed is the only check.': '此手機沒有螢幕鎖定，所以你輸入的名稱是唯一的驗證。',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': '手機會先確認是你本人（臉孔、指紋或密碼），然後刪除帳號。',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': '不再錯過休息結束',
+  'One quick thing': '還有一件小事',
+  'Rest timer, right on the lock screen': '休息計時，直接顯示在鎖定畫面',
+  'Training reminders, only if you switch them on': '訓練提醒，只在你開啟時',
+  'You can change it anytime in your phone’s settings.': '你隨時可以在手機設定裡更改。',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': '就算手機鎖著放在口袋裡，休息結束時 openGym 也能拍拍你的肩膀。',
 }

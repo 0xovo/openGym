@@ -2284,4 +2284,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': '이 휴대폰에서 확인되지 않았어요. 아무것도 삭제되지 않았어요.',
   'This phone has no screen lock, so the name you typed is the only check.': '이 휴대폰에는 화면 잠금이 없어서 입력한 이름이 유일한 확인이에요.',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': '휴대폰이 본인인지 확인한 뒤(얼굴, 지문 또는 암호) 계정을 삭제해요.',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': '휴식이 끝나는 순간을 놓치지 마세요',
+  'One quick thing': '잠깐 하나만요',
+  'Rest timer, right on the lock screen': '휴식 타이머를 잠금 화면에서 바로',
+  'Training reminders, only if you switch them on': '운동 알림은 켰을 때만',
+  'You can change it anytime in your phone’s settings.': '언제든 휴대폰 설정에서 바꿀 수 있어요.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': '휴대폰이 잠긴 채 주머니에 있어도 휴식이 끝나면 openGym이 어깨를 톡 쳐 드려요.',
 }

@@ -1444,6 +1444,13 @@ export const PT_BR_OVERRIDES = {
   'Not confirmed on this phone. Nothing was deleted.': 'Não foi confirmado neste celular. Nada foi excluído.',
   'This phone has no screen lock, so the name you typed is the only check.': 'Este celular não tem bloqueio de tela, então o nome que você digitou é a única verificação.',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'Seu celular confirma que é você (rosto, digital ou senha) e depois a conta é excluída.',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Nunca perca o fim de um descanso',
+  'One quick thing': 'Só uma coisa rápida',
+  'Rest timer, right on the lock screen': 'Timer de descanso, direto na tela de bloqueio',
+  'Training reminders, only if you switch them on': 'Lembretes de treino, só se você ativar',
+  'You can change it anytime in your phone’s settings.': 'Você pode mudar isso quando quiser nas configurações do celular.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'O openGym pode te dar um toque no ombro quando um descanso acaba, mesmo com o celular bloqueado no bolso.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

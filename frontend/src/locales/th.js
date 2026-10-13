@@ -2295,4 +2295,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': 'ยืนยันบนโทรศัพท์นี้ไม่สำเร็จ ไม่มีอะไรถูกลบ',
   'This phone has no screen lock, so the name you typed is the only check.': 'โทรศัพท์นี้ไม่มีการล็อกหน้าจอ ชื่อที่คุณพิมพ์จึงเป็นการตรวจสอบเดียว',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'โทรศัพท์จะตรวจสอบว่าเป็นคุณ (ใบหน้า ลายนิ้วมือ หรือรหัสผ่าน) แล้วจึงลบบัญชี',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'ไม่พลาดตอนพักจบอีกเลย',
+  'One quick thing': 'ขอแป๊บเดียว',
+  'Rest timer, right on the lock screen': 'ตัวจับเวลาพัก บนหน้าจอล็อกเลย',
+  'Training reminders, only if you switch them on': 'การแจ้งเตือนการฝึก เฉพาะเมื่อคุณเปิดใช้',
+  'You can change it anytime in your phone’s settings.': 'เปลี่ยนได้ทุกเมื่อในการตั้งค่าของโทรศัพท์',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym สะกิดไหล่คุณได้เมื่อหมดเวลาพัก แม้โทรศัพท์จะล็อกอยู่ในกระเป๋า',
 }

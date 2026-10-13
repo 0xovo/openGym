@@ -2287,4 +2287,11 @@ export default {
   'Not confirmed on this phone. Nothing was deleted.': 'Ezen a telefonon nem lett megerősítve. Semmi sem törlődött.',
   'This phone has no screen lock, so the name you typed is the only check.': 'Ezen a telefonon nincs képernyőzár, így a beírt név az egyetlen ellenőrzés.',
   'Your phone checks that it’s you (face, fingerprint or passcode), then the account is deleted.': 'A telefonod ellenőrzi, hogy te vagy-e (arc, ujjlenyomat vagy kód), aztán törlődik a fiók.',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Ne maradj le a pihenő végéről',
+  'One quick thing': 'Még egy gyors dolog',
+  'Rest timer, right on the lock screen': 'Pihenőidőzítő, egyenesen a lezárási képernyőn',
+  'Training reminders, only if you switch them on': 'Edzésemlékeztetők, csak ha bekapcsolod',
+  'You can change it anytime in your phone’s settings.': 'Ezt bármikor megváltoztathatod a telefonod beállításaiban.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'Az openGym megkoppintja a vállad, amikor letelt a pihenő, akkor is, ha a lezárt telefon a zsebedben van.',
 }

@@ -1508,7 +1508,10 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
   animation:sheetup .34s var(--ease);
   overscroll-behavior:contain;touch-action:pan-y;will-change:transform;
 }
-.sheet:has(.picker-search){
+/* A sheet with a field (.picker-search) or marked .kb-lift (the connect sheet) stands on the
+   keyboard instead of letting the system scroll the pinned page to reach the field: see
+   lib/use-sheet-keyboard.js for the two variables. */
+.sheet:has(.picker-search),.sheet:has(.kb-lift){
   bottom:max(var(--picker-keyboard-bottom,0px),var(--native-kb,0px));
   /* with the keyboard up the sheet is capped by the visual viewport — which still starts
      under the notch, hence the inset here too */
