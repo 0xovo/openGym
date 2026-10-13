@@ -2,7 +2,8 @@
 // and the person's choice of quality. The rules are lib/anim-quality.js; this is the state around
 // them and the bridge to the native AnimationPacks plugin:
 //
-//   available()                              → { available, testflight }   iOS 26+ with Apple-hosted packs
+//   available()                              → { available, testflight, packs? }   iOS 26+ with Apple-hosted packs;
+//                                              Android (Play build): `packs`, the ids this build has
 //   status({ packId, probe })                → { state: 'ready'|'none', bytes?, base? }
 //   info({ packId })                         → { downloadSize? } what the download costs, from Apple
 //   diagnose({ packId, probe })              → what the native side knows, for the details row
@@ -24,7 +25,7 @@
 // profile, its workouts and its history are not touched by any of this.
 import { MOBILE } from './mobile.js'
 import { EXIDX } from './exercises.js'
-import { PACK_QUALITIES, FIGURES, packId, packDrawingId, readChoice, wantedPack, DEFAULT_CHOICE } from './anim-quality.js'
+import { PACK_QUALITIES, FIGURES, packId, packDrawingId, readChoice, wantedPack, packQualities, parsePackId, DEFAULT_CHOICE } from './anim-quality.js'
 
 export const PREFS_KEY = 'gym_anim_v1'
 export const ALL_PACKS = PACK_QUALITIES.flatMap(px => FIGURES.map(f => packId(px, f)))
@@ -57,7 +58,8 @@ export const deviceInfo = () => {
 
 /* ---------------------------------------------------------------- state */
 // packs: { [packId]: { state: 'none'|'ready'|'downloading'|'failed'|'needs-wifi', progress, bytes, base, downloadSize } }
-let state = { available: false, testflight: false, checked: false, packs: {}, prefs: readPrefs() }
+// offered: the pack ids this build has (Android's Play build says), or null for all of them (iOS)
+let state = { available: false, testflight: false, offered: null, checked: false, packs: {}, prefs: readPrefs() }
 const listeners = new Set()
 const emit = () => { for (const fn of listeners) fn() }
 export const subscribe = fn => { listeners.add(fn); return () => listeners.delete(fn) }
@@ -101,19 +103,41 @@ async function readInfo(p, id) {
 }
 
 /** What downloading a pack takes, in bytes: Apple's figure, else the known one, else null. */
-export const downloadBytes = (id, s = state) => s.packs[id]?.downloadSize || KNOWN_DOWNLOAD_BYTES[id] || null
+// (The known figures are Apple's packs: a build that names its own packs gets its sizes from its store.)
+export const downloadBytes = (id, s = state) => s.packs[id]?.downloadSize || (s.offered ? null : KNOWN_DOWNLOAD_BYTES[id]) || null
+
+/** The qualities this build has a pack of for a figure: all the sharper ones, or those it names. */
+export const offeredQualities = (figure, s = state) =>
+  packQualities().filter(px => !s.offered || s.offered.includes(packId(px, figure)))
+
+/**
+ * The pack a choice wants for a figure on this build: the wanted quality's when the build has
+ * it, else the sharpest smaller one it has, else none (the built-in files).
+ */
+export function targetPack(choice, figure, device = deviceInfo(), s = state) {
+  const id = wantedPack(choice, figure, device)
+  if (!id || !s.offered || s.offered.includes(id)) return id
+  const want = parsePackId(id)?.px || 0
+  const px = offeredQualities(figure, s).filter(q => q <= want).pop()
+  return px ? packId(px, figure) : null
+}
 
 /** Asks the native side what it has. Once at start, and after every download or removal. */
 export async function refresh() {
   const p = await packsPlugin()
   if (!p) { state = { ...state, checked: true, available: false }; emit(); return state }
-  let available = false, testflight = false
-  try { const r = await p.Packs.available(); available = !!r?.available; testflight = !!r?.testflight } catch { available = false }
-  state = { ...state, checked: true, available, testflight }
+  let available = false, testflight = false, offered = null
+  try {
+    const r = await p.Packs.available()
+    available = !!r?.available; testflight = !!r?.testflight
+    if (Array.isArray(r?.packs)) offered = r.packs.filter(id => ALL_PACKS.includes(id))
+  } catch { available = false }
+  state = { ...state, checked: true, available, testflight, offered }
   emit()
   if (available) {
-    await Promise.all(ALL_PACKS.map(id => readPack(p, id)))
-    ALL_PACKS.forEach(id => { readInfo(p, id) })
+    const ids = offered || ALL_PACKS
+    await Promise.all(ids.map(id => readPack(p, id)))
+    ids.forEach(id => { readInfo(p, id) })
   }
   return state
 }
@@ -163,7 +187,7 @@ export async function remove(id) {
  */
 export function ensureWanted(figure, device = deviceInfo()) {
   if (!state.available) return null
-  const id = wantedPack(state.prefs.choice, figure, device)
+  const id = targetPack(state.prefs.choice, figure, device)
   if (!id) return null
   const st = state.packs[id]?.state
   if (st === 'ready' || st === 'downloading') return null
@@ -198,5 +222,5 @@ function defaultLoadImage(src) {
 
 export function _resetAnimPacks(next = {}) {
   pluginP = null; progressHooked = false; downloads.clear()
-  state = { available: false, testflight: false, checked: false, packs: {}, prefs: readPrefs(), ...next }
+  state = { available: false, testflight: false, offered: null, checked: false, packs: {}, prefs: readPrefs(), ...next }
 }

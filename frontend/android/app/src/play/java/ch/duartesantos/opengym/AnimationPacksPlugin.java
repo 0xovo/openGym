@@ -169,6 +169,10 @@ public class AnimationPacksPlugin extends Plugin {
         JSObject ret = new JSObject();
         ret.put("available", !parts.isEmpty());
         ret.put("testflight", BuildConfig.DEBUG);
+        // The packs this build has: the page offers only those (a quality may not be encoded yet).
+        JSArray ids = new JSArray();
+        for (String id : parts.keySet()) ids.put(id);
+        ret.put("packs", ids);
         call.resolve(ret);
     }
 
