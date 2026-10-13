@@ -266,7 +266,8 @@ Before the first request that would send anything to an AI provider, the app ask
 that names the provider (OpenAI, Anthropic, Google Gemini, or the host of a compatible endpoint),
 lists what goes there (the categories above plus whatever you type to the Coach) and says whether
 it goes straight from the phone with your key or through your openGym server to the provider its
-admin picked. "Not now" sends nothing. The answer is kept on that device, per provider and host
+admin picked. "Not now" sends nothing. The intake's own consent screen names the same provider
+and list, so agreeing there counts as this yes and a first-timer is asked once. The answer is kept on that device, per provider and host
 (`frontend/src/lib/coach-consent.js`), so pointing the Coach somewhere else asks again; the Coach
 menu's **AI data sharing** (and Settings → AI Coach on the phone) lists what was allowed and takes
 it back. Switching on automatic reviews asks too, and withdrawing the server's provider switches

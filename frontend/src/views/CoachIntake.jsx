@@ -16,7 +16,8 @@ import { t } from '../lib/i18n.js'
 import { DAYN } from '../lib/format.js'
 import { EXDB } from '../lib/exercises.js'
 import { emptyCoach, coachAvailable, hasConsent, CONSENT_VERSION, CATEGORY_TEXT, appendChat } from '../lib/coach.js'
-import { requestPlan, disclosure, JOB_ERRORS, isDeclined } from '../lib/coach-api.js'
+import { requestPlan, disclosure, JOB_ERRORS, isDeclined, coachVia } from '../lib/coach-api.js'
+import { consentTarget, allowAi } from '../lib/coach-consent.js'
 import { DEMO } from '../lib/demo.js'
 import { MOBILE } from '../lib/mobile.js'
 import { activeProfile } from '../lib/equipment.js'
@@ -89,7 +90,13 @@ export default function CoachIntake() {
   const next = () => (last ? finish() : setStep(step + 1))
   const back = () => (step ? setStep(step - 1) : nav(editing ? '/coach' : '/plan'))
 
-  const agree = () => {
+  const agree = info => {
+    // This screen just named the provider and listed what goes there, which is the question the
+    // data-sharing sheet asks before the first request (lib/coach-api.js ensureAiConsent). The
+    // yes counts for that provider and host too, so a first-timer is asked once, not twice.
+    // Only when the disclosure arrived: a screen that could not say where to is not a yes to it.
+    const target = !DEMO && consentTarget(info, coachVia())
+    if (target && !target.local) allowAi(target).catch(() => {})
     update(s => { s.coach = { ...(s.coach || emptyCoach()), consent: { agreedAt: new Date().toISOString(), version: CONSENT_VERSION } } })
     if (reconsentOnly) nav('/coach', { replace: true })
     else setStep(step + 1)
@@ -255,7 +262,7 @@ function Consent({ onAgree, onDecline }) {
   useEffect(() => { disclosure().then(setInfo).catch(() => {}) }, [])
   const who = info?.payer === 'you'
     ? t('Sent straight to {0} with your own API key. You pay for every request.', info.host || info.providerLabel)
-    : t('Sent to {0}, running on this server under the instance owner’s account.', info?.providerLabel || config?.coach?.providerLabel || t('the configured AI provider'))
+    : t('Sent to {0}, running on this server under the instance owner’s account.', (info?.provider === 'compatible' && info.host) || info?.providerLabel || config?.coach?.providerLabel || t('the configured AI provider'))
   return <>
     <div className="ob-eyebrow">{t('Before we start')}</div>
     <h1 className="ob-h">{t('Meet the Coach')}</h1>
@@ -273,7 +280,7 @@ function Consent({ onAgree, onDecline }) {
       <div style={{ color: 'var(--yellow)' }}>{t('The Coach is not a doctor or a physiotherapist. If something hurts, ask a professional.')}</div>
     </div>
     <div className="ob-foot" style={{ flexDirection: 'column' }}>
-      <Button variant="primary" onClick={onAgree}>{t('I understand, let’s go')}</Button>
+      <Button variant="primary" onClick={() => onAgree(info)}>{t('I understand, let’s go')}</Button>
       <Button onClick={onDecline}>{t('Not now')}</Button>
     </div>
   </>

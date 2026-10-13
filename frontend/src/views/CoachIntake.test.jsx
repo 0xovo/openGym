@@ -17,6 +17,7 @@ import CoachIntake from './CoachIntake.jsx'
 import { requestPlan, disclosure } from '../lib/coach-api.js'
 import { CONSENT_VERSION, CATEGORY_TEXT } from '../lib/coach.js'
 import { setLang } from '../lib/i18n.js'
+import { consentTarget, hasAiConsent, aiConsents, _resetAiConsent } from '../lib/coach-consent.js'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
@@ -51,6 +52,7 @@ vi.mock('../lib/coach-api.js', () => ({
   disclosure: vi.fn(() => Promise.resolve(null)),
   JOB_ERRORS: { busy: 'the app’s busy line' },
   ensureAiConsent: vi.fn(() => Promise.resolve(true)),
+  coachVia: () => 'server',
   isDeclined: e => e?.code === 'declined',
 }))
 vi.mock('../coach.css', () => ({}))
@@ -142,6 +144,42 @@ describe('CoachIntake — the consent screen', () => {
     expect(mocks.S.coach.profile).toBe(null)          // nothing else written yet
     expect(eyebrow()).toBe('Your goal')
     expect(all('.ob-dot')).toHaveLength(7)
+  })
+
+  it('agreeing is also the yes for the provider it names, so the data-sharing sheet does not ask again', async () => {
+    localStorage.clear(); _resetAiConsent()
+    const info = { provider: 'openai', providerLabel: 'OpenAI API', host: 'api.openai.com', categories: ['plan'], payer: 'instance' }
+    vi.mocked(disclosure).mockResolvedValue(info)
+    mount()
+    await settle()
+    tap('button', 'I understand')
+    await settle()
+    expect(await hasAiConsent(consentTarget(info, 'server'))).toBe(true)
+    expect((await aiConsents()).map(c => c.name)).toEqual(['OpenAI'])
+  })
+
+  it('a compatible endpoint is named by its host, and a model on the LAN or an unread disclosure records nothing', async () => {
+    localStorage.clear(); _resetAiConsent()
+    vi.mocked(disclosure).mockResolvedValue({ provider: 'compatible', providerLabel: 'OpenAI-compatible endpoint', host: 'llm.example.org', categories: ['plan'], payer: 'instance' })
+    mount()
+    await settle()
+    expect(host.textContent).toContain('Sent to llm.example.org')
+    act(() => root.unmount()); root = createRoot(host)
+
+    vi.mocked(disclosure).mockResolvedValue({ provider: 'compatible', providerLabel: 'OpenAI-compatible endpoint', host: '192.168.1.20:11434', categories: ['plan'], payer: 'instance' })
+    mount()
+    await settle()
+    tap('button', 'I understand')
+    await settle()
+    act(() => root.unmount()); root = createRoot(host)
+
+    mocks.S = fresh()
+    vi.mocked(disclosure).mockResolvedValue(null)
+    mount()
+    await settle()
+    tap('button', 'I understand')
+    await settle()
+    expect(await aiConsents()).toEqual([])
   })
 
   it('"Not now" writes nothing at all and goes back to the plan', () => {
