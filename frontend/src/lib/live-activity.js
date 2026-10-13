@@ -30,7 +30,7 @@ const APPLIED_KEY = 'gym_live_applied'
 const APPLIED_MAX = 300
 const SEND_DEBOUNCE_MS = 300
 // The sets after the current one the activity carries, so its Done can move on without the page.
-export const LIVE_AHEAD = 3
+export const LIVE_AHEAD = 8
 
 const num = v => (typeof v === 'number' && Number.isFinite(v) ? v : null)
 

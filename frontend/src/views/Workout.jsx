@@ -1756,15 +1756,23 @@ function ActiveWorkout() {
 
   // The Lock Screen's Done (lib/live-activity.js) ticks its set through this same toggle, as if
   // tapped here (rest timer, high-water mark, the end-of-workout sheet). The time is the tap's: the
-  // page may hear of it much later (lib/finish-workout.js sessionEnd reads the sets' times).
+  // page may hear of it much later (lib/finish-workout.js sessionEnd reads the sets' times), and so
+  // is the rest's start.
   const liveToggleRef = useRef(toggle)
   liveToggleRef.current = toggle
   useEffect(() => bindLiveActions({
     setDone: (idx, i, { at }) => {
       const A = useStore.getState().S.active
       if (!A || A.editingWorkoutId || A.entries?.[idx]?.sets?.[i]?.done) return
+      const restBefore = useUI.getState().timer
       liveToggleRef.current(idx, i)
-      if (at) mutEntry(idx, en => { const set = en.sets[i]; if (set?.done) set.at = at })
+      if (!at) return
+      mutEntry(idx, en => { const set = en.sets[i]; if (set?.done) set.at = at })
+      // The rest this tick started began at the tap, which the Lock Screen has been counting
+      // down since: heard of late, it is shortened by that much, or over already.
+      const rest = useUI.getState().timer
+      const late = Math.floor((Date.now() - at) / 1000)
+      if (late > 1 && rest && rest !== restBefore && !rest.ready && !rest.paused) useUI.getState().addRest(-late)
     },
   }), [])
 

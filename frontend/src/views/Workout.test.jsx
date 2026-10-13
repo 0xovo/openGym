@@ -40,6 +40,8 @@ const mocks = vi.hoisted(() => {
     workoutSettingsSheet: vi.fn(),
     nav: vi.fn(),
     setNoteSheet: vi.fn(),
+    addRest: vi.fn(),
+    live: null,
   }
   state.stopRest = vi.fn(() => { state.timer = null })
   state.stopWork = vi.fn(() => { state.work = null })
@@ -59,6 +61,7 @@ const mocks = vi.hoisted(() => {
     stopRest: state.stopRest,
     stopWork: state.stopWork,
     shiftRestOwner: vi.fn(),
+    addRest: state.addRest,
     startWork: state.startWork,
     toast: state.toast,
   })
@@ -82,6 +85,8 @@ vi.mock('../store/useUI.js', () => {
   return { useUI }
 })
 vi.mock('react-router-dom', () => ({ useNavigate: () => mocks.nav }))
+// The Live Activity's Done (lib/live-activity.js): the handler the workout screen binds.
+vi.mock('../lib/live-activity.js', () => ({ bindLiveActions: h => { mocks.live = h; return () => { if (mocks.live === h) mocks.live = null } } }))
 vi.mock('../sheets.jsx', () => ({
   startFlow: vi.fn(),
   exercisePicker: mocks.exercisePicker,
@@ -3441,5 +3446,34 @@ describe('the workout screen chrome (v1.3.11)', () => {
     await unmount()
     await mount([exercise('plain-bench', [false])], 0, { gifSize: 'mini', active: { workoutView: 'compact' } })
     expect(container.querySelector('.wthumb')).toBeNull()
+  })
+})
+
+describe('the Lock Screen\'s Done (Live Activity)', () => {
+  it('ticks the set through the same toggle, with the tap\'s time, and the rest counts from the tap', async () => {
+    mocks.startRest.mockImplementation(sec => { mocks.timer = { left: sec, total: sec, endsAt: Date.now() + sec * 1000 } })
+    await mount([exercise('live-bench', [false, false])])
+    expect(mocks.live).toBeTruthy()
+    const at = Date.now() - 30000
+    await act(async () => { mocks.live.setDone(0, 0, { at }) })
+    const set = mocks.S.active.entries[0].sets[0]
+    expect(set.done).toBe(true)
+    expect(set.at).toBe(at)
+    expect(mocks.startRest).toHaveBeenCalledTimes(1)
+    // 30 s of it already went by on the Lock Screen
+    expect(mocks.addRest).toHaveBeenCalledTimes(1)
+    expect(mocks.addRest.mock.calls[0][0]).toBeLessThanOrEqual(-29)
+    mocks.startRest.mockReset()
+  })
+
+  it('leaves a set already ticked alone, and a saved workout being edited', async () => {
+    await mount([exercise('live-bench', [true, false])])
+    await act(async () => { mocks.live.setDone(0, 0, { at: Date.now() }) })
+    expect(mocks.S.active.entries[0].sets[0].done).toBe(true)
+    expect(mocks.startRest).not.toHaveBeenCalled()
+    await unmount()
+    await mount([exercise('live-bench', [false])], 0, { active: { editingWorkoutId: 'w1' } })
+    await act(async () => { mocks.live.setDone(0, 0, { at: Date.now() }) })
+    expect(mocks.S.active.entries[0].sets[0].done).toBe(false)
   })
 })
