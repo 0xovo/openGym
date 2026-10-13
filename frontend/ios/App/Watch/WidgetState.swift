@@ -31,12 +31,13 @@ struct WidgetState: Codable, Equatable {
             && a.done == b.done && a.total == b.total && a.setLabel == b.setLabel
     }
 
-    /// The state as written, unless it is about a session long gone (the app stopped without
-    /// saying so): then nothing to show, and the iPhone's Live Activity has the Smart Stack.
+    /// The state as written, unless it is about a session the watch app has not touched for 45
+    /// minutes (it was closed, or the workout runs on the phone alone): then nothing to show, and
+    /// the iPhone's Live Activity has the Smart Stack to itself instead of two cards saying the same.
     static func read() -> WidgetState {
         guard let d = UserDefaults(suiteName: groupId)?.data(forKey: key),
               let s = try? JSONDecoder().decode(WidgetState.self, from: d) else { return .idle }
-        if (s.mode == "set" || s.mode == "rest") && Date().timeIntervalSince(s.updatedAt) > 3 * 3600 { return .idle }
+        if (s.mode == "set" || s.mode == "rest") && Date().timeIntervalSince(s.updatedAt) > 45 * 60 { return .idle }
         return s
     }
 

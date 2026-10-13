@@ -38,7 +38,15 @@ struct Provider: TimelineProvider {
         var entries = [Entry(date: Date(), state: state)]
         // When the rest is over the widget says so by itself; the app writes the next state then.
         if state.mode == "rest", let end = state.restEndsAt, end > Date() {
-            entries.append(Entry(date: end, state: WidgetState(mode: "set", title: state.title, detail: "", restEndsAt: nil)))
+            var after = state
+            after.mode = "set"
+            after.restEndsAt = nil
+            entries.append(Entry(date: end, state: after))
+        }
+        // Not touched by the watch app for 45 minutes: quiet (WidgetState.read says why).
+        if state.mode == "set" || state.mode == "rest" {
+            let quiet = max(Date(), state.updatedAt.addingTimeInterval(45 * 60))
+            entries.append(Entry(date: quiet, state: .idle))
         }
         completion(Timeline(entries: entries, policy: .never))
     }
