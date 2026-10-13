@@ -49,14 +49,24 @@ final class OpenGymUITests: XCTestCase {
         XCTFail("home never showed after the onboarding choice")
     }
 
-    /** The notifications step, if it shows: Allow, then the system's own Allow. */
+    /**
+     * The notifications step, if it shows: Allow, then the system's own Allow. Then the Apple
+     * Health step (iPhone only, where Health is there): Not now, which leaves it off.
+     */
     private func passPermissionStep() {
         let step = app.staticTexts["Never miss the end of a rest"]
-        guard step.waitForExistence(timeout: 6) else { return }
-        shot("0-permission-step")
-        let allow = app.buttons["Allow"]
-        if allow.exists { allow.tap() }
-        allowSystemAlert(within: 10)
+        if step.waitForExistence(timeout: 6) {
+            shot("0-permission-step")
+            let allow = app.buttons["Allow"]
+            if allow.exists { allow.tap() }
+            allowSystemAlert(within: 10)
+        }
+        let health = app.staticTexts["Your workouts in Apple Health"]
+        if health.waitForExistence(timeout: 4) {
+            shot("0b-apple-health-step")
+            let notNow = app.buttons["Not now"]
+            if notNow.exists { notNow.tap() }
+        }
     }
 
     private func allowSystemAlert(within seconds: Int) {
