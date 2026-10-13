@@ -12,6 +12,7 @@ import { buzzAsAlarm } from './lib/rest-alert.js'
 import { setNav } from './lib/nav.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
+import { installEdgeSwipeBack } from './lib/edge-swipe-back.js'
 import { useWakeLock } from './lib/wakelock.js'
 import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
@@ -259,5 +260,7 @@ export default function App() {
     initBackButton().then(fn => { if (gone) fn(); else stop = fn })
     return () => { gone = true; stop?.() }
   }, [])
+  // iOS: swipe from the left edge for the page's own back button (lib/edge-swipe-back.js)
+  useEffect(() => installEdgeSwipeBack(), [])
   return <HashRouter><Shell /></HashRouter>
 }

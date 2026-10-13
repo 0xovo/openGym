@@ -2145,3 +2145,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 [dir="rtl"] *{letter-spacing:0}
 .exfix-link{display:inline-flex;align-items:center;gap:5px;margin:14px 0 4px;color:var(--label-3);text-decoration:none}
 .list .similar-label{margin:16px 2px 6px;grid-column:1/-1}
+
+/* The edge swipe back (lib/edge-swipe-back.js): the page follows the finger over a dimmed
+   backdrop that stands in for the page underneath. */
+.edge-back-shade{position:fixed;inset:0;background:#000;opacity:.35;pointer-events:none;z-index:0}
+#app.edge-back-page{position:relative;z-index:1;background:var(--bg);box-shadow:0 0 28px rgba(0,0,0,.28);will-change:transform}
