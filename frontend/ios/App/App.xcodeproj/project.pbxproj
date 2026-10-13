@@ -24,6 +24,12 @@
 		AA0300000000000000000002 /* DeviceAuthPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0300000000000000000001 /* DeviceAuthPlugin.swift */; };
 		AA0400000000000000000002 /* AnimationPacksPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0400000000000000000001 /* AnimationPacksPlugin.swift */; };
 		AA0300000000000000000004 /* NudgeCheckPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0300000000000000000003 /* NudgeCheckPlugin.swift */; };
+		AA0500000000000000000002 /* AppleHealthPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0500000000000000000001 /* AppleHealthPlugin.swift */; };
+		AA0500000000000000000004 /* WidgetBridgePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0500000000000000000003 /* WidgetBridgePlugin.swift */; };
+		AA0500000000000000000006 /* LiveActivityPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0500000000000000000005 /* LiveActivityPlugin.swift */; };
+		AA0500000000000000000008 /* WorkoutActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0500000000000000000007 /* WorkoutActivity.swift */; };
+		AA0500000000000000000010 /* WidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0500000000000000000009 /* WidgetViews.swift */; };
+		AA0500000000000000000012 /* WidgetPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0500000000000000000011 /* WidgetPreview.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +55,12 @@
 		AA0400000000000000000001 /* AnimationPacksPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationPacksPlugin.swift; sourceTree = "<group>"; };
 		AA0400000000000000000003 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		AA0300000000000000000003 /* NudgeCheckPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NudgeCheckPlugin.swift; sourceTree = "<group>"; };
+		AA0500000000000000000001 /* AppleHealthPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleHealthPlugin.swift; sourceTree = "<group>"; };
+		AA0500000000000000000003 /* WidgetBridgePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBridgePlugin.swift; sourceTree = "<group>"; };
+		AA0500000000000000000005 /* LiveActivityPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityPlugin.swift; sourceTree = "<group>"; };
+		AA0500000000000000000007 /* WorkoutActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutActivity.swift; sourceTree = "<group>"; };
+		AA0500000000000000000009 /* WidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViews.swift; sourceTree = "<group>"; };
+		AA0500000000000000000011 /* WidgetPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPreview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +115,12 @@
 				AA0400000000000000000001 /* AnimationPacksPlugin.swift */,
 				AA0400000000000000000003 /* App.entitlements */,
 				AA0300000000000000000003 /* NudgeCheckPlugin.swift */,
+				AA0500000000000000000001 /* AppleHealthPlugin.swift */,
+				AA0500000000000000000003 /* WidgetBridgePlugin.swift */,
+				AA0500000000000000000005 /* LiveActivityPlugin.swift */,
+				AA0500000000000000000007 /* WorkoutActivity.swift */,
+				AA0500000000000000000009 /* WidgetViews.swift */,
+				AA0500000000000000000011 /* WidgetPreview.swift */,
 				AA0200000000000000000007 /* PrivacyInfo.xcprivacy */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
@@ -248,6 +266,12 @@
 				AA0300000000000000000002 /* DeviceAuthPlugin.swift in Sources */,
 				AA0400000000000000000002 /* AnimationPacksPlugin.swift in Sources */,
 				AA0300000000000000000004 /* NudgeCheckPlugin.swift in Sources */,
+				AA0500000000000000000002 /* AppleHealthPlugin.swift in Sources */,
+				AA0500000000000000000004 /* WidgetBridgePlugin.swift in Sources */,
+				AA0500000000000000000006 /* LiveActivityPlugin.swift in Sources */,
+				AA0500000000000000000008 /* WorkoutActivity.swift in Sources */,
+				AA0500000000000000000010 /* WidgetViews.swift in Sources */,
+				AA0500000000000000000012 /* WidgetPreview.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +416,13 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.4.2;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-weak_framework",
+					ActivityKit,
+					"-weak_framework",
+					AppIntents,
+				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = ch.opengym.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -413,6 +444,13 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.4.2;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-weak_framework",
+					ActivityKit,
+					"-weak_framework",
+					AppIntents,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = ch.opengym.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";

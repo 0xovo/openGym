@@ -1488,6 +1488,18 @@ export const PT_BR_OVERRIDES = {
   'Skip completed exercises': 'Pular exercícios concluídos',
   // --- #551 device link from the phone ---
   'This app can’t confirm with a passkey. Make the code in a browser signed in to this profile, or add a password there first.': 'Este aplicativo não consegue confirmar com uma chave de acesso. Crie o código em um navegador conectado a este perfil, ou adicione uma senha lá primeiro.',
+  'Write to Apple Health': 'Salvar no Apple Saúde',
+  'Workouts and weigh-ins go to Apple Health when you finish or change them.': 'Os treinos e as pesagens vão para o Apple Saúde quando você os termina ou altera.',
+  'Writing to Apple Health': 'Salvando no Apple Saúde',
+  'Could not write to Apple Health': 'Não foi possível salvar no Apple Saúde',
+  'Stop writing to Apple Health?': 'Parar de salvar no Apple Saúde?',
+  'What openGym already wrote can stay in Apple Health as your data, or be removed from it.': 'O que o openGym já salvou pode ficar no Apple Saúde como seus dados, ou ser removido.',
+  'Your workouts in Apple Health': 'Seus treinos no Apple Saúde',
+  'openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.': 'O openGym pode salvar cada treino e cada pesagem no Apple Saúde, e seu Apple Watch pode mostrar sua frequência cardíaca enquanto você treina.',
+  'Heart rate per set on your Apple Watch': 'Frequência cardíaca por série no seu Apple Watch',
+  'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
+  'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
+  'Workout running': 'Treino em andamento',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

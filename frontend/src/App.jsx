@@ -13,6 +13,8 @@ import { setNav, notePath, keyBefore } from './lib/nav.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
+import { startWidgetSync } from './lib/widgets.js'
+import { startLiveActivitySync } from './lib/live-activity.js'
 import { useWakeLock } from './lib/wakelock.js'
 import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
@@ -326,5 +328,15 @@ export default function App() {
   }, [])
   // iOS: swipe from the left edge for the page's own back button (lib/edge-swipe-back.js)
   useEffect(() => installEdgeSwipeBack(), [])
+  // iPhone app: the Home Screen widgets and the workout's Live Activity (lib/widgets.js,
+  // lib/live-activity.js). Nothing at all on the web or on Android.
+  useEffect(() => {
+    if (!MOBILE) return
+    const stops = [], gone = { v: false }
+    const keep = fn => { if (gone.v) fn(); else stops.push(fn) }
+    startWidgetSync({ useStore }).then(keep).catch(() => {})
+    startLiveActivitySync({ useStore, useUI }).then(keep).catch(() => {})
+    return () => { gone.v = true; stops.forEach(fn => fn()) }
+  }, [])
   return <HashRouter><Shell /></HashRouter>
 }

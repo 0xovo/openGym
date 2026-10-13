@@ -7,10 +7,15 @@
 // ask, anything else ('granted', 'denied', 'unsupported') skips the step: never a screen for a
 // permission already given, nor for one the OS will not show a dialog for any more. Each step is
 // shown once per device, whatever the answer; "Not now" leaves the in-context ask (the first
-// rest, the reminder switch) to do its job later. Apple Health / Health Connect can join the
-// list as another step without the screen changing.
+// rest, the reminder switch) to do its job later.
+//
+// iPhone only, Apple Health: Allow asks iOS for it (saving workouts and weigh-ins, reading the
+// heart rate and the body weight) and switches the app's Apple Health setting on, the same switch
+// as Settings → Apple Health (lib/health-sync.js), which the Apple Watch app goes by too. Not now
+// leaves it off, to switch on in Settings. Android keeps Health Connect in Settings as it is.
 import { MOBILE } from './mobile.js'
 import { askNotifPermissionOnce } from './rest-alert.js'
+import { healthStatus, loadHealth, enableHealth } from './health-sync.js'
 
 export const SEEN_KEY = 'gym_onboard_perms_seen'
 
@@ -29,11 +34,23 @@ async function notificationState() {
   } catch { return 'unsupported' }
 }
 
+// 'prompt' while the iPhone app has Apple Health to offer and it is still off.
+async function appleHealthState() {
+  const st = await healthStatus()
+  if (st.platform !== 'ios' || st.status !== 'available') return 'unsupported'
+  return (await loadHealth()).on ? 'granted' : 'prompt'
+}
+async function appleHealthRequest() {
+  const { useStore } = await import('../store/useStore.js')
+  return enableHealth(useStore.getState().S)
+}
+
 export const STEPS = [
   // The same request the first rest makes (rest-alert.js): it asks through LocalNotifications,
   // which is POST_NOTIFICATIONS on Android 13+ and the usual alert on iOS, and records the
   // answer so the first rest does not ask a second time.
   { id: 'notifications', state: notificationState, request: () => askNotifPermissionOnce() },
+  { id: 'appleHealth', state: appleHealthState, request: appleHealthRequest },
 ]
 
 /** The steps this device still has to see, in order. Empty off the phone app. */

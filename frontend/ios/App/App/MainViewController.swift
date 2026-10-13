@@ -24,6 +24,10 @@ class MainViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(DeviceAuthPlugin())
         bridge?.registerPluginInstance(AnimationPacksPlugin())
         bridge?.registerPluginInstance(NudgeCheckPlugin())
+        bridge?.registerPluginInstance(AppleHealthPlugin())
+        bridge?.registerPluginInstance(WidgetBridgePlugin())
+        bridge?.registerPluginInstance(LiveActivityPlugin())
+        WidgetPreview.runIfAsked()
         // After loadView has finished: the view is the web view only once it has.
         if ProcessInfo.processInfo.arguments.contains(MainViewController.pendingProbeArgument) {
             DispatchQueue.main.async { [weak self] in self?.showPendingProbe() }

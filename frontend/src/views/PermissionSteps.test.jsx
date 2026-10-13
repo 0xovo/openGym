@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
-const h = vi.hoisted(() => ({ MOBILE: true, display: 'prompt', after: 'granted', finish: vi.fn(), requests: 0 }))
+const h = vi.hoisted(() => ({ MOBILE: true, display: 'prompt', after: 'granted', finish: vi.fn(), requests: 0, health: { status: 'unsupported', granted: false, platform: null }, healthOn: false, enable: [] }))
 vi.mock('../lib/mobile.js', () => ({ get MOBILE() { return h.MOBILE }, nativePlatform: async () => (h.MOBILE ? 'ios' : null) }))
 vi.mock('@capacitor/local-notifications', () => ({
   LocalNotifications: {
@@ -18,8 +18,14 @@ vi.mock('@capacitor/local-notifications', () => ({
     requestPermissions: async () => { h.requests++; h.display = h.after; return { display: h.after } },
   },
 }))
+// Apple Health (iPhone only): lib/health-sync.js is played here; its own tests cover the writing.
+vi.mock('../lib/health-sync.js', () => ({
+  healthStatus: async () => h.health,
+  loadHealth: async () => ({ on: h.healthOn, written: {} }),
+  enableHealth: async S => { h.enable.push(S); h.healthOn = true; return { ok: true } },
+}))
 vi.mock('../store/useStore.js', () => {
-  const snap = () => ({ finishPermSteps: h.finish })
+  const snap = () => ({ finishPermSteps: h.finish, S: { unit: 'kg', workouts: [] } })
   const useStore = sel => (sel ? sel(snap()) : snap())
   useStore.getState = snap
   return { useStore }
@@ -31,7 +37,7 @@ const { NOTIF_ASKED_KEY, _resetNotifAsk } = await import('../lib/rest-alert.js')
 
 let host, root
 beforeEach(() => {
-  Object.assign(h, { MOBILE: true, display: 'prompt', after: 'granted', requests: 0 })
+  Object.assign(h, { MOBILE: true, display: 'prompt', after: 'granted', requests: 0, health: { status: 'unsupported', granted: false, platform: null }, healthOn: false, enable: [] })
   h.finish.mockReset()
   localStorage.clear()
   _resetNotifAsk()
@@ -90,6 +96,50 @@ describe('the screen', () => {
     h.display = 'granted'
     await mount()
     expect(host.textContent).toBe('')
+    expect(h.finish).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('Apple Health, on the iPhone', () => {
+  const iphone = () => { h.display = 'granted'; h.health = { status: 'available', granted: false, platform: 'ios' } }
+
+  it('is due on an iPhone with Apple Health while it is off; never on Android or once on', async () => {
+    iphone()
+    expect((await pendingSteps()).map(s => s.id)).toEqual(['appleHealth'])
+    h.healthOn = true
+    expect(await pendingSteps()).toEqual([])
+    h.healthOn = false
+    h.health = { status: 'available', granted: false, platform: 'android' }
+    expect(await pendingSteps()).toEqual([])
+    h.health = { status: 'unsupported', granted: false, platform: 'ios' }
+    expect(await pendingSteps()).toEqual([])
+  })
+
+  it('comes after notifications', async () => {
+    h.health = { status: 'available', granted: false, platform: 'ios' }
+    expect((await pendingSteps()).map(s => s.id)).toEqual(['notifications', 'appleHealth'])
+  })
+
+  it('explains it; Allow asks iOS and switches the setting on', async () => {
+    iphone()
+    await mount()
+    expect(host.textContent).toContain('Your workouts in Apple Health')
+    expect(host.textContent).toContain('Heart rate per set on your Apple Watch')
+    expect(host.textContent).toContain('You can change it anytime in Settings.')
+    expect(host.textContent).not.toMatch(/—/)
+    await click(button('Allow'))
+    expect(h.enable).toHaveLength(1)
+    expect(h.enable[0]).toMatchObject({ unit: 'kg' })
+    expect(h.finish).toHaveBeenCalledTimes(1)
+    expect(JSON.parse(localStorage.getItem(SEEN_KEY))).toEqual(['appleHealth'])
+  })
+
+  it('Not now leaves it off and goes on', async () => {
+    iphone()
+    await mount()
+    await click(button('Not now'))
+    expect(h.enable).toEqual([])
+    expect(h.healthOn).toBe(false)
     expect(h.finish).toHaveBeenCalledTimes(1)
   })
 })
