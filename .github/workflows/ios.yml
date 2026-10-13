@@ -54,6 +54,9 @@ jobs:
         run: |
           set -o pipefail
           swift test 2>&1 | tail -60
+      # The widgets and the Live Activity's extension, likewise until it is committed.
+      - run: ruby ios/ci/add-widgets.rb
+        working-directory: frontend
       - name: Build for the simulator
         working-directory: frontend/ios/App
         run: |
@@ -86,6 +89,23 @@ jobs:
           cat build/console.log | grep -v "^\s*$" | head -200
           if grep -q "not implemented on ios" build/console.log; then echo "::error::a plugin the page uses is missing on iOS"; exit 1; fi
           grep -q "RestAlert" build/console.log || { echo "::error::the page never reached the RestAlert plugin"; exit 1; }
+          echo "$UDID" > build/udid.txt
+      # The widgets and the Live Activity as pictures, light and dark (App/WidgetPreview.swift draws
+      # them with made-up data): nobody can put a widget on a simulator's Home Screen without a Mac.
+      - name: Draw the widgets
+        working-directory: frontend/ios/App
+        run: |
+          UDID=$(cat build/udid.txt)
+          xcrun simctl terminate "$UDID" ch.opengym.app 2>/dev/null || true
+          xcrun simctl launch "$UDID" ch.opengym.app -OpenGymWidgetPreview
+          DATA=$(xcrun simctl get_app_container "$UDID" ch.opengym.app data)
+          for i in $(seq 60); do test -f "$DATA/Documents/widget-preview/done.txt" && break; sleep 2; done
+          mkdir -p build/widgets
+          cp "$DATA"/Documents/widget-preview/*.png build/widgets/ 2>/dev/null || true
+          ls -la build/widgets
+          test -f "$DATA/Documents/widget-preview/done.txt" || { echo "::error::the widget pictures were never drawn"; exit 1; }
+          # The extension really is in the app, with its own Info.plist.
+          test -f build/dd/Build/Products/Debug-iphonesimulator/App.app/PlugIns/OpenGymWidgets.appex/Info.plist || { echo "::error::no widget extension in the app"; exit 1; }
       # The watch app on its own in a watch simulator, with the demo session it carries
       # (SessionStore.demoJSON: text only, no exercise media), for a look at it.
       - name: Show the watch app
@@ -137,6 +157,7 @@ jobs:
             frontend/ios/App/build/console.log
             frontend/ios/App/build/first-screen.png
             frontend/ios/App/build/watch
+            frontend/ios/App/build/widgets
           retention-days: 7
 
   # A walk through the app in the simulator (ios/App/AppUITests): a rest that ends while the app
@@ -161,6 +182,9 @@ jobs:
       - run: ruby ios/ci/add-asset-downloader.rb
         working-directory: frontend
       - run: ruby ios/ci/add-watch-app.rb
+        working-directory: frontend
+      # The widgets and the Live Activity's extension, likewise until it is committed.
+      - run: ruby ios/ci/add-widgets.rb
         working-directory: frontend
       - run: ruby ios/ci/add-ui-tests.rb
         working-directory: frontend
@@ -214,6 +238,9 @@ jobs:
       - run: ruby ios/ci/add-asset-downloader.rb
         working-directory: frontend
       - run: ruby ios/ci/add-watch-app.rb
+        working-directory: frontend
+      # The widgets and the Live Activity's extension, likewise until it is committed.
+      - run: ruby ios/ci/add-widgets.rb
         working-directory: frontend
       - name: Archive, unsigned
         working-directory: frontend/ios/App

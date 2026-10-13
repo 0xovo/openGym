@@ -16,6 +16,8 @@ import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
 import { startWatchSync, bindWatchAppActions, patchSetIn } from './lib/watch-sync.js'
 import { stampWorkout } from './lib/sync-merge.js'
+import { startWidgetSync } from './lib/widgets.js'
+import { startLiveActivitySync } from './lib/live-activity.js'
 import { useWakeLock } from './lib/wakelock.js'
 import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
@@ -346,6 +348,16 @@ export default function App() {
       openWorkout: () => { if (!String(window.location.hash || '').startsWith('#/workout')) navToWorkout() },
     })
     return () => { gone = true; stop?.(); unbind() }
+  }, [])
+  // iPhone app: the Home Screen widgets and the workout's Live Activity (lib/widgets.js,
+  // lib/live-activity.js). Nothing at all on the web or on Android.
+  useEffect(() => {
+    if (!MOBILE) return
+    const stops = [], gone = { v: false }
+    const keep = fn => { if (gone.v) fn(); else stops.push(fn) }
+    startWidgetSync({ useStore }).then(keep).catch(() => {})
+    startLiveActivitySync({ useStore, useUI }).then(keep).catch(() => {})
+    return () => { gone.v = true; stops.forEach(fn => fn()) }
   }, [])
   return <HashRouter><Shell /></HashRouter>
 }

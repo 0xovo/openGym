@@ -34,29 +34,63 @@ final class OpenGymUITests: XCTestCase {
 
     /**
      * "Use on this device", until home shows. On a slow simulator the first tap can land while the
-     * page is still starting and go nowhere. The first-start notifications step comes right after
-     * the choice (views/PermissionSteps.jsx): it is allowed here, and so is the system's question.
+     * page is still starting and go nowhere. The first-start steps come right after the choice
+     * (views/PermissionSteps.jsx): notifications (allowed here, and so is the system's question)
+     * and, on an iPhone with Apple Health, the Health step (Not now). Nothing is tapped twice and
+     * nothing in the app is tapped while a system alert is up: a late alert used to swallow one
+     * tap and pass the next one through to home underneath (CI 10-13, the gym card opened).
      */
     private func chooseLocal() {
         if app.buttons["Log"].waitForExistence(timeout: 45) { return }   // chosen in an earlier test
         let local = app.buttons["Use on this device"]
         XCTAssertTrue(local.waitForExistence(timeout: 60), "the onboarding choice did not show up")
         for _ in 0..<5 {
-            if local.exists { local.tap() }
-            passPermissionStep()
-            if app.buttons["Log"].waitForExistence(timeout: 8) { return }
+            if systemAlertUp() { allowSystemAlert(within: 20) }
+            if local.exists && local.isHittable { local.tap() }
+            passPermissionSteps()
+            if app.buttons["Log"].waitForExistence(timeout: 20) { return }
         }
         XCTFail("home never showed after the onboarding choice")
     }
 
-    /** The notifications step, if it shows: Allow, then the system's own Allow. */
-    private func passPermissionStep() {
-        let step = app.staticTexts["Never miss the end of a rest"]
-        guard step.waitForExistence(timeout: 6) else { return }
-        shot("0-permission-step")
-        let allow = app.buttons["Allow"]
-        if allow.exists { allow.tap() }
-        allowSystemAlert(within: 10)
+    private func systemAlertUp() -> Bool { springboard.alerts.firstMatch.exists }
+
+    /**
+     * Both first-start steps, whichever show, each answered once: notifications with Allow and then
+     * the system's own Allow (waited for up to 20 s, the simulator can be slow to ask), Apple Health
+     * with Not now, which leaves it off. Done when neither step is on screen any more.
+     */
+    private func passPermissionSteps() {
+        let notifications = app.staticTexts["Never miss the end of a rest"]
+        let health = app.staticTexts["Your workouts in Apple Health"]
+        var allowedNotifications = false, declinedHealth = false
+        let until = Date().addingTimeInterval(60)
+        guard notifications.waitForExistence(timeout: 8) || health.exists else { return }
+        while Date() < until {
+            if systemAlertUp() { allowSystemAlert(within: 20); sleep(1); continue }
+            if notifications.exists {
+                if !allowedNotifications {
+                    shot("0-permission-step")
+                    let allow = app.buttons["Allow"]
+                    if allow.exists { allow.tap(); allowedNotifications = true }
+                    // The system asks next; give it time before looking at the page again.
+                    _ = springboard.alerts.firstMatch.waitForExistence(timeout: 20)
+                }
+                sleep(1)
+                continue
+            }
+            if health.exists {
+                if !declinedHealth {
+                    shot("0b-apple-health-step")
+                    let notNow = app.buttons["Not now"]
+                    if notNow.exists { notNow.tap(); declinedHealth = true }
+                }
+                sleep(1)
+                continue
+            }
+            // Neither shows: the next step may still be coming (the page checks each one first).
+            if !health.waitForExistence(timeout: 3) && !notifications.exists { return }
+        }
     }
 
     private func allowSystemAlert(within seconds: Int) {
@@ -65,6 +99,19 @@ final class OpenGymUITests: XCTestCase {
             if allow.exists { allow.tap(); return }
             sleep(1)
         }
+    }
+
+    /** A switch on, for sure: tapped until it reads on, a system question answered in between. */
+    private func switchOn(_ sw: XCUIElement, _ what: String) {
+        XCTAssertTrue(sw.waitForExistence(timeout: 15), "no \(what) switch")
+        for _ in 0..<6 {
+            if systemAlertUp() { allowSystemAlert(within: 5) }
+            if (sw.value as? String) == "1" { return }
+            sw.tap()
+            allowSystemAlert(within: 5)
+            sleep(1)
+        }
+        XCTAssertEqual(sw.value as? String, "1", "the \(what) switch did not stay on")
     }
 
     // XCTest runs a class's tests in name order: the keyboard check wants a plain home screen, and
@@ -166,13 +213,8 @@ final class OpenGymUITests: XCTestCase {
 
         tap(button(startingWith: "Settings"), "Settings")
         tap(button(startingWith: "Reminders"), "Reminders")
-        let reminder = app.switches["Workout day reminder"]
-        XCTAssertTrue(reminder.waitForExistence(timeout: 15), "no reminder switch")
-        if (reminder.value as? String) != "1" { reminder.tap() }
-        allowSystemAlert(within: 3)
-        let nudge = app.switches["Nudge me when I skip a planned workout"]
-        XCTAssertTrue(nudge.waitForExistence(timeout: 15), "no nudge switch")
-        if (nudge.value as? String) != "1" { nudge.tap() }
+        switchOn(app.switches["Workout day reminder"], "reminder")
+        switchOn(app.switches["Nudge me when I skip a planned workout"], "nudge")
         shot("7-reminders-on")
 
         // The store reschedules on its next save; poll what iOS holds until both kinds are there.

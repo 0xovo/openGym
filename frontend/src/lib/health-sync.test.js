@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 // (HealthConnectPlugin.java) and the app's data directory are played in memory.
 const h = vi.hoisted(() => {
   vi.stubEnv('VITE_MOBILE', '1')
-  return { files: new Map(), calls: [], status: { status: 'available', granted: false }, grant: true, fail: null }
+  return { files: new Map(), calls: [], status: { status: 'available', granted: false }, grant: true, fail: null, platform: 'android', plugins: [] }
 })
 
 vi.mock('@capacitor/filesystem', () => ({
@@ -20,8 +20,8 @@ vi.mock('@capacitor/filesystem', () => ({
 }))
 vi.mock('@capacitor/app', () => ({ App: { addListener: () => ({ remove() {} }) } }))
 vi.mock('@capacitor/core', () => ({
-  Capacitor: { getPlatform: () => 'android' },
-  registerPlugin: () => ({
+  Capacitor: { getPlatform: () => h.platform },
+  registerPlugin: name => (h.plugins.push(name), {
     status: async () => ({ ...h.status }),
     requestPermissions: async () => { h.calls.push(['request']); h.status.granted = h.grant; return { granted: h.grant } },
     write: async arg => {
@@ -30,6 +30,7 @@ vi.mock('@capacitor/core', () => ({
     },
     remove: async arg => { h.calls.push(['remove', arg]) },
     openSettings: async () => {},
+    setEnabled: async ({ on }) => { h.calls.push(['setEnabled', on]) },
   }),
 }))
 
@@ -44,7 +45,7 @@ const file = () => JSON.parse(h.files.get('opengym-health.json') || 'null')
 let hs
 beforeEach(async () => {
   vi.resetModules()
-  h.files.clear(); h.calls = []; h.status = { status: 'available', granted: false }; h.grant = true; h.fail = null
+  h.files.clear(); h.calls = []; h.status = { status: 'available', granted: false }; h.grant = true; h.fail = null; h.platform = 'android'; h.plugins = []
   hs = await import('./health-sync.js')
 })
 
@@ -141,5 +142,39 @@ describe('turning it off', () => {
     await hs.disableHealth({ removeWritten: true })
     expect(removes()).toEqual([{ sessions: ['opengym-w-w1'], weights: ['opengym-bw-2026-09-17'] }])
     expect(file()).toMatchObject({ on: false, written: {} })
+  })
+})
+
+// The iPhone app: the same switch, the same records and file, through Apple Health
+// (AppleHealthPlugin.swift), which also tells the Apple Watch app whether it is on.
+describe('on the iPhone', () => {
+  beforeEach(async () => {
+    vi.resetModules()
+    h.platform = 'ios'
+    hs = await import('./health-sync.js')
+  })
+  it('talks to Apple Health and says which one it is', async () => {
+    expect(await hs.healthStatus()).toMatchObject({ status: 'available', platform: 'ios' })
+    expect(h.plugins).toEqual(['AppleHealth'])
+  })
+  it('writes the same records, and tells the watch when it goes on and off', async () => {
+    await hs.enableHealth(state([workout('w1', 17)]))
+    expect(writes()[0].sessions.map(r => r.id)).toEqual(['opengym-w-w1'])
+    expect(h.calls.filter(c => c[0] === 'setEnabled')).toEqual([['setEnabled', true]])
+    await hs.disableHealth({ removeWritten: false })
+    expect(h.calls.filter(c => c[0] === 'setEnabled')).toEqual([['setEnabled', true], ['setEnabled', false]])
+  })
+  it('tells the watch nothing when asking was refused', async () => {
+    h.grant = false
+    expect(await hs.enableHealth(state([]))).toMatchObject({ ok: false, reason: 'denied' })
+    expect(h.calls.filter(c => c[0] === 'setEnabled')).toEqual([])
+  })
+  it('Android has no watch to tell', async () => {
+    vi.resetModules()
+    h.platform = 'android'
+    hs = await import('./health-sync.js')
+    await hs.enableHealth(state([workout('w1', 17)]))
+    expect(h.calls.filter(c => c[0] === 'setEnabled')).toEqual([])
+    expect((await hs.healthStatus()).platform).toBe('android')
   })
 })

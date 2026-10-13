@@ -9,14 +9,21 @@ import { pendingSteps, markStepSeen } from '../lib/onboarding-perms.js'
 import Icon from '../components/Icon.jsx'
 import { Button } from '../components/ui.jsx'
 
-// What each step says. Literal t() calls, so check-source-strings sees them; a new step (Apple
-// Health, Health Connect) adds its own entry here and its check/request in onboarding-perms.js.
+// What each step says. Literal t() calls, so check-source-strings sees them; a new step adds its
+// own entry here and its check/request in onboarding-perms.js.
 const COPY = {
   notifications: () => ({
     icon: 'bell',
     title: t('Never miss the end of a rest'),
     body: t('openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.'),
     lines: [t('Rest timer, right on the lock screen'), t('Training reminders, only if you switch them on')],
+  }),
+  appleHealth: () => ({
+    icon: 'heart',
+    title: t('Your workouts in Apple Health'),
+    body: t('openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.'),
+    lines: [t('Workouts and weigh-ins saved to Apple Health'), t('Heart rate per set on your Apple Watch'), t('Switch it off anytime in Settings')],
+    foot: t('You can change it anytime in Settings.'),
   }),
 }
 
@@ -49,6 +56,6 @@ export default function PermissionSteps() {
     <Button variant="primary" disabled={busy} onClick={() => answer(true)}>{t('Allow')}</Button>
     <div style={{ height: 10 }} />
     <Button disabled={busy} onClick={() => answer(false)}>{t('Not now')}</Button>
-    <div className="dim small" style={{ marginTop: 18, lineHeight: 1.5 }}>{t('You can change it anytime in your phone’s settings.')}</div>
+    <div className="dim small" style={{ marginTop: 18, lineHeight: 1.5 }}>{c.foot || t('You can change it anytime in your phone’s settings.')}</div>
   </div>
 }
