@@ -163,3 +163,21 @@ export function supersetFlowStep(entries, unit, fromIdx) {
   const roundDone = !unit.slice(pos + 1).some(idx => hasWork(entries, idx))
   return { unitDone: false, roundDone, nextIdx }
 }
+
+/**
+ * Where Cards and Focus move on their own once the rest after a timed exercise's last set has run
+ * out (#532): a plank or an L-sit has nothing to adjust before the next exercise, so the screen
+ * goes there without a tap. Only when every exercise of the unit the rest was for is timed
+ * (`isTimed(idx)`) and finished, and that unit is still the one on screen; then the next unit with
+ * work left (nextUnfinishedUnit), its first exercise. null for anything else: weighted work still
+ * waits for Next, as before.
+ */
+export function advanceAfterTimedRest(entries, units, forIdx, cur, isTimed) {
+  if (!Array.isArray(entries) || !Array.isArray(units) || !Number.isInteger(forIdx)) return null
+  const unit = units.find(u => u.includes(forIdx))
+  if (!unit || !unit.includes(cur)) return null
+  if (!unit.every(idx => isTimed(idx) && (entries[idx]?.sets || []).length > 0 && !hasWork(entries, idx))) return null
+  const next = nextUnfinishedUnit(entries, units, forIdx)
+  return next ? next[0] : null
+}
+

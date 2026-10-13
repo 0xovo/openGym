@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex } from './supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex, advanceAfterTimedRest } from './supersetFlow.js'
 
 const entry = done => ({ sets: done.map(value => ({ done: value })) })
 
@@ -234,6 +234,29 @@ describe('stepUnitIndex (#523 skip completed exercises)', () => {
   it('a superset counts as finished only when every member is', () => {
     const e2 = [ex(true), ex(true), ex(false), ex(false)]
     expect(stepUnitIndex(e2, [[0], [1, 2], [3]], 0, 1, true)).toBe(1)
+  })
+})
+
+describe('advanceAfterTimedRest (#532)', () => {
+  const ex = (...done) => ({ sets: done.map(d => ({ done: d })) })
+  const timed = set => idx => set.includes(idx)
+  it('a finished timed exercise still on screen: the next with work left', () => {
+    const entries = [ex(true, true), ex(true), ex(false)]
+    expect(advanceAfterTimedRest(entries, [[0], [1], [2]], 0, 0, timed([0]))).toBe(2)
+  })
+  it('nothing for weighted work, an unfinished one, a screen already moved on, or no work left', () => {
+    const entries = [ex(true, true), ex(false)]
+    const units = [[0], [1]]
+    expect(advanceAfterTimedRest(entries, units, 0, 0, timed([]))).toBeNull()
+    expect(advanceAfterTimedRest([ex(true, false), ex(false)], units, 0, 0, timed([0]))).toBeNull()
+    expect(advanceAfterTimedRest(entries, units, 0, 1, timed([0]))).toBeNull()
+    expect(advanceAfterTimedRest([ex(true), ex(true)], units, 0, 0, timed([0]))).toBeNull()
+    expect(advanceAfterTimedRest(entries, units, undefined, 0, timed([0]))).toBeNull()
+  })
+  it('a superset only when every member is timed and done', () => {
+    const entries = [ex(true), ex(true), ex(false)]
+    expect(advanceAfterTimedRest(entries, [[0, 1], [2]], 1, 0, timed([0, 1]))).toBe(2)
+    expect(advanceAfterTimedRest(entries, [[0, 1], [2]], 1, 0, timed([1]))).toBeNull()
   })
 })
 

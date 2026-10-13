@@ -2880,6 +2880,22 @@ describe('workout controls: the more menu and the set menu', () => {
     expect(mocks.exerciseHistorySheet).toHaveBeenCalledWith('plain-row')
   })
 
+  // #532: the rest after a timed exercise's last set runs out, and the next exercise comes up.
+  it('after the last hold\'s rest runs out, Cards moves on to the next exercise; weighted work waits', async () => {
+    const plank = exercise('plain-plank', [true, true], { target: { mode: 'time', sec: 30 } })
+    await mount([plank, exercise('plain-row', [false])], 0)
+    mocks.timer = { ready: true, left: 0, forIdx: 0, endsAt: 123 }
+    await rerender()
+    expect(mocks.S.active.cur).toBe(1)
+    await unmount()
+    mocks.timer = null
+    await mount([exercise('plain-bench', [true, true]), exercise('plain-row', [false])], 0)
+    mocks.timer = { ready: true, left: 0, forIdx: 0, endsAt: 124 }
+    await rerender()
+    expect(mocks.S.active.cur).toBe(0)
+    mocks.timer = null
+  })
+
   // #523: "Skip completed exercises" makes Next hop over a finished exercise in Cards.
   it('with skip completed on, Next hops over a finished exercise; off, it steps to it', async () => {
     const three = () => [exercise('plain-bench', [false]), exercise('plain-row', [true, true]), exercise('plain-curl', [false])]

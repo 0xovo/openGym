@@ -17,7 +17,7 @@ import { pinState } from '../lib/queue.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { api, beacon } from '../lib/api.js'
 import { pyramidRestFor, maxRecordAt, isPyramid, pyramidLabel } from '../lib/pyramid.js'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex } from '../lib/supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex, advanceAfterTimedRest } from '../lib/supersetFlow.js'
 import Media from '../components/Media.jsx'
 import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
@@ -960,6 +960,17 @@ function ActiveWorkout({ onActionChange }) {
   const collapseOn = listMode && !!(A.collapseCompleted ?? S.collapseCompleted)
   // Cards and Focus: Prev, Next and the swipe jump over finished exercises (#523).
   const skipDone = !listMode && S.skipCompleted === true
+  // Cards and Focus: when the rest after a timed exercise's last set runs out, the next exercise
+  // comes up on its own (#532, lib/supersetFlow.js advanceAfterTimedRest). Once per rest.
+  const readyRest = timer?.ready ? timer : null
+  useEffect(() => {
+    if (!readyRest || listMode || editing) return
+    const live = useStore.getState().S.active
+    if (!live) return
+    const timed = idx => modeOf({ ...(live.entries[idx]?.target || {}), id: live.entries[idx]?.id }) === 'time'
+    const to = advanceAfterTimedRest(live.entries, supersetUnits(live.entries), readyRest.forIdx, live.cur, timed)
+    if (to != null) update(s => { if (s.active && s.active.cur === live.cur) s.active.cur = to })
+  }, [readyRest?.endsAt])
   // A finished unit you tapped open again to look at or fix (Discord: "minimize completed exercises
   // so I view only what I have yet to do"). This screen's own memory: a reload folds it back.
   // Keyed by index like the units, so a different number of exercises starts over.
