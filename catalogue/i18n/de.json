@@ -94,7 +94,17 @@
     ]
   },
   "1010": {
-    "name": "Kreuzheben mit Band und gestreckten Beinen"
+    "name": "Kreuzheben mit Band und gestreckten Beinen",
+    "description": "Bei diesem Kreuzheben mit Band beugst du dich mit fast gestreckten Beinen aus der Hüfte nach vorn. Das stärkt deinen unteren Rücken und die hinteren Oberschenkel.",
+    "instructions": [
+        "Stell dich schulterbreit auf das Band.",
+        "Halte die Enden mit beiden Händen fest. Die Handflächen zeigen zum Körper und die Arme bleiben gestreckt.",
+        "Spann deinen Bauch an und lass die Knie leicht gebeugt.",
+        "Beug dich langsam aus der Hüfte nach vorn. Halte dabei den Rücken gerade und die Brust aufrecht.",
+        "Führ die Hände mit dem Band Richtung Boden, während deine Beine fast gestreckt bleiben.",
+        "Halte unten kurz inne und spann Po und hintere Oberschenkel an, um dich wieder aufzurichten.",
+        "Wiederhole die Übung so oft wie geplant."
+    ]
   },
   "1011": {
     "name": "Sitzender Twist mit Band"
