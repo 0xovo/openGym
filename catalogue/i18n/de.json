@@ -107,7 +107,16 @@
     ]
   },
   "1011": {
-    "name": "Sitzender Twist mit Band"
+    "name": "Sitzender Twist mit Band",
+    "description": "Bei diesem Twist im Sitzen drehst du deinen Oberkörper gegen den Widerstand eines Bands. Dabei arbeiten vor allem deine Bauchmuskeln und die seitliche Rumpfmuskulatur.",
+    "instructions": [
+        "Setz dich mit ausgestreckten Beinen und geradem Rücken auf den Boden.",
+        "Leg das Band um deine Taille und halte die Enden mit beiden Händen fest.",
+        "Spann den Bauch an und dreh deinen Oberkörper langsam zur Seite. Der Rücken bleibt gerade und die Füße bleiben am Boden.",
+        "Halte die Drehung kurz und komm langsam zur Mitte zurück.",
+        "Dreh dich anschließend zur anderen Seite.",
+        "Wechsle die Seiten ab, bis du deine Wiederholungen geschafft hast."
+    ]
   },
   "1012": {
     "name": "Gedrehtes Überkopfdrücken mit Band"
