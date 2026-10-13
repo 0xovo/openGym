@@ -41,22 +41,55 @@ struct RootView: View {
     }
 }
 
-/* ---------- no workout ---------- */
+/* ---------- no workout: start one ---------- */
 
 struct IdleView: View {
+    @EnvironmentObject var store: SessionStore
+
     var body: some View {
-        VStack(spacing: 10) {
-            Image(systemName: "dumbbell.fill")
-                .font(.system(size: 34, weight: .semibold))
-                .foregroundStyle(Theme.accent)
-            Text("No workout running")
-                .font(.headline)
-            Text("Start one on your iPhone and it shows up here.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+        if let ready = store.ready, ready.today != nil || !ready.others.isEmpty {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    if let today = ready.today {
+                        Text("Today").font(.caption2).foregroundStyle(.secondary)
+                        Button { store.start(today) } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(today.name)
+                                    .font(.system(.headline, design: .rounded))
+                                    .lineLimit(2)
+                                Label("Start workout", systemImage: "play.fill")
+                                    .font(.footnote)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Theme.accent)
+                    }
+                    ForEach(Array(ready.others.enumerated()), id: \.offset) { pair in
+                        Button { store.start(pair.element) } label: {
+                            HStack {
+                                Text(pair.element.name).lineLimit(1)
+                                Spacer(minLength: 4)
+                                Image(systemName: "play.fill").font(.caption2).foregroundStyle(Theme.accent)
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            VStack(spacing: 10) {
+                Image(systemName: "dumbbell.fill")
+                    .font(.system(size: 34, weight: .semibold))
+                    .foregroundStyle(Theme.accent)
+                Text("No workout running")
+                    .font(.headline)
+                Text("Start one on your iPhone and it shows up here.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.horizontal, 8)
         }
-        .padding(.horizontal, 8)
     }
 }
 
@@ -71,8 +104,38 @@ struct ExercisePager: View {
             ForEach(Array((store.workout?.entries ?? []).enumerated()), id: \.offset) { pair in
                 ExercisePage(index: pair.offset).tag(pair.offset)
             }
+            FinishPage().tag(store.workout?.entries.count ?? 0)
         }
         .tabViewStyle(.verticalPage)
+    }
+}
+
+/// After the last exercise: one action, finish and save (on the phone, as its Finish and save).
+struct FinishPage: View {
+    @EnvironmentObject var store: SessionStore
+    @State private var confirming = false
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "flag.checkered")
+                .font(.system(size: 30, weight: .semibold))
+                .foregroundStyle(Theme.accent)
+            Text(store.workout?.name ?? "")
+                .font(.system(.headline, design: .rounded))
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+            Button { confirming = true } label: {
+                Label("Finish workout", systemImage: "checkmark")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(Theme.accent)
+        }
+        .padding(.horizontal, 6)
+        .confirmationDialog("Finish workout?", isPresented: $confirming) {
+            Button("Finish and save") { store.finish() }
+            Button("Cancel", role: .cancel) {}
+        }
     }
 }
 

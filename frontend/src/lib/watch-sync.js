@@ -80,12 +80,14 @@ export function buildReady (S, today = todayISO()) {
 export function buildSnapshot(S, { timer = null, ready = null } = {}) {
   const A = S && S.active
   const unit = S && S.unit === 'lb' ? 'lb' : 'kg'
-  if (!A || !Array.isArray(A.entries)) return { v: SNAPSHOT_VERSION, unit, active: null, ready }
+  const restSec = num(S && S.restSec) || 0
+  if (!A || !Array.isArray(A.entries)) return { v: SNAPSHOT_VERSION, unit, restSec, active: null, ready }
   let H = null
   try { H = sessionHistory(S) } catch { H = null }
   return {
     v: SNAPSHOT_VERSION,
     unit,
+    restSec,
     ready,
     active: {
       id: A.id || null,

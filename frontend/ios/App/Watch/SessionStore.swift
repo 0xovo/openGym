@@ -15,7 +15,22 @@ import WatchKit
 
 struct Snapshot: Codable {
     let v: Int
+    let unit: String?
+    let restSec: Double?
     let active: ActiveWorkout?
+    let ready: Ready?
+}
+
+/// What the watch can start by itself: today's planned session and a few other routines.
+struct Ready: Codable, Equatable {
+    let today: ReadySession?
+    let others: [ReadySession]
+}
+
+struct ReadySession: Codable, Equatable {
+    let routineIds: [String]
+    let name: String
+    let entries: [Entry]
 }
 
 struct ActiveWorkout: Codable, Equatable {
@@ -50,7 +65,23 @@ struct SetRow: Codable, Equatable {
 }
 
 final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserNotificationCenterDelegate {
-    @Published private(set) var workout: ActiveWorkout?
+    /// The session as the watch has it, kept across a relaunch of the watch app.
+    @Published private(set) var workout: ActiveWorkout? {
+        didSet {
+            guard !isDemo else { return }
+            let d = UserDefaults.standard
+            if let w = workout, let data = try? JSONEncoder().encode(w) { d.set(data, forKey: SessionStore.localKey) } else { d.removeObject(forKey: SessionStore.localKey) }
+        }
+    }
+    @Published private(set) var ready: Ready?
+    private var unitDefault = "kg"
+    private var restDefault: Double = 90
+    /// A session started here that the phone has not reported back yet.
+    private var startedHere: String? {
+        didSet { if !isDemo { UserDefaults.standard.set(startedHere, forKey: SessionStore.startedKey) } }
+    }
+    private static let localKey = "localWorkout"
+    private static let startedKey = "startedHere"
     @Published var entryIndex = 0
     @Published var weight: Double = 0
     @Published var reps: Double = 0
@@ -77,12 +108,18 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     override init() {
         super.init()
         if isDemo {
-            if SessionStore.demoScreen != "idle" { apply(json: SessionStore.demoJSON) }
+            apply(json: SessionStore.demoScreen == "idle" ? SessionStore.demoReadyJSON : SessionStore.demoJSON)
             if SessionStore.demoScreen == "rest" {
                 DispatchQueue.main.async { self.startRest(until: Date().addingTimeInterval(83), notify: false) }
             }
-        } else if let saved = UserDefaults.standard.string(forKey: SessionStore.savedKey) {
-            apply(json: saved)
+        } else {
+            let d = UserDefaults.standard
+            if let data = d.data(forKey: SessionStore.localKey), let w = try? JSONDecoder().decode(ActiveWorkout.self, from: data) {
+                workout = w
+                startedHere = d.string(forKey: SessionStore.startedKey)
+                loadTargets()
+            }
+            if let saved = d.string(forKey: SessionStore.savedKey) { apply(json: saved) }
         }
         // The rest's end as a notification, also when the app is not in front (not in the demo:
         // the permission question would cover the screenshot).
@@ -134,12 +171,19 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         guard let data = json.data(using: .utf8),
               let snap = try? JSONDecoder().decode(Snapshot.self, from: data) else { return }
         DispatchQueue.main.async {
+            self.ready = snap.ready
+            if let u = snap.unit { self.unitDefault = u }
+            if let r = snap.restSec, r > 0 { self.restDefault = r }
+            UserDefaults.standard.set(json, forKey: SessionStore.savedKey)
             guard var next = snap.active else {
+                // A session started here that the phone has not heard of yet stays.
+                if self.workout != nil && self.workout?.id == self.startedHere { return }
                 self.workout = nil
                 self.pending.removeAll()
-                self.restEndsAt = nil
+                self.skipRest()
                 return
             }
+            if next.id == self.startedHere { self.startedHere = nil }
             let sameWorkout = next.id != nil && next.id == self.workout?.id
             // Ticks made here and not yet on the phone stay ticked.
             for (ei, e) in next.entries.enumerated() {
@@ -153,9 +197,8 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             if let rest = next.rest {
                 self.startRest(until: Date(timeIntervalSince1970: rest.endsAt / 1000), notify: true)
             }
-            self.entryIndex = min(max(0, self.entryIndex), max(0, next.entries.count - 1))
+            self.entryIndex = min(max(0, self.entryIndex), next.entries.count)   // the last page is Finish
             self.loadTargets()
-            UserDefaults.standard.set(json, forKey: SessionStore.savedKey)
         }
     }
 
@@ -197,6 +240,43 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             entryIndex = next
         }
         loadTargets()
+    }
+
+    /// Starts a ready session here, the phone asleep or not: the watch's id and start time go to
+    /// the phone, which starts the same session with them when it next runs.
+    func start(_ session: ReadySession) {
+        let id = "watch-" + UUID().uuidString
+        let now = Date()
+        startedHere = id
+        workout = ActiveWorkout(id: id, name: session.name, unit: unitDefault, cur: 0, restSec: restDefault, rest: nil, entries: session.entries)
+        entryIndex = 0
+        picked = [:]
+        pending.removeAll()
+        loadTargets()
+        send(event: [
+            "id": UUID().uuidString,
+            "type": "start",
+            "routineIds": session.routineIds,
+            "wid": id,
+            "at": now.timeIntervalSince1970 * 1000,
+        ])
+        WKInterfaceDevice.current().play(.start)
+    }
+
+    /// Finishes the session: the phone saves it with its own Finish and save.
+    func finish() {
+        guard let w = workout else { return }
+        send(event: [
+            "id": UUID().uuidString,
+            "type": "finish",
+            "wid": w.id ?? "",
+            "at": Date().timeIntervalSince1970 * 1000,
+        ])
+        skipRest()
+        workout = nil
+        startedHere = nil
+        pending.removeAll()
+        WKInterfaceDevice.current().play(.stop)
     }
 
     func move(by step: Int) {
@@ -289,8 +369,14 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
 
     /* ---------- the demo the CI screenshot shows ---------- */
 
+    static let demoReadyJSON = """
+    {"v":1,"unit":"kg","restSec":90,"active":null,"ready":{"today":{"routineIds":["r1"],"name":"Push day","entries":[
+    {"id":"0025","name":"Bench Press","mode":"reps","restSec":120,"last":null,"sets":[{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false}]}]},
+    "others":[{"routineIds":["r2"],"name":"Pull day","entries":[]},{"routineIds":["r3"],"name":"Legs","entries":[]}]}}
+    """
+
     static let demoJSON = """
-    {"v":1,"active":{"id":"demo","name":"Push day","unit":"kg","cur":0,"restSec":90,"rest":null,"entries":[
+    {"v":1,"unit":"kg","restSec":90,"ready":null,"active":{"id":"demo","name":"Push day","unit":"kg","cur":0,"restSec":90,"rest":null,"entries":[
     {"id":"0025","name":"Bench Press","mode":"reps","restSec":120,"last":"60 kg × 8, 60 kg × 8, 60 kg × 7","sets":[
     {"w":60,"r":8,"sec":null,"done":true,"warmup":false},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false}]},
     {"id":"0426","name":"Overhead Press","mode":"reps","restSec":null,"last":null,"sets":[

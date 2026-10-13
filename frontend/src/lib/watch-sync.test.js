@@ -38,7 +38,7 @@ describe('the snapshot', () => {
   })
 
   it('says there is no workout when none runs, and no rest when it is paused or over', () => {
-    expect(buildSnapshot({ unit: 'kg' })).toEqual({ v: SNAPSHOT_VERSION, unit: 'kg', active: null, ready: null })
+    expect(buildSnapshot({ unit: 'kg' })).toEqual({ v: SNAPSHOT_VERSION, unit: 'kg', restSec: 0, active: null, ready: null })
     expect(buildSnapshot(state(), { timer: { endsAt: 5, paused: true } }).active.rest).toBeNull()
     expect(buildSnapshot(state(), { timer: { endsAt: 5, ready: true } }).active.rest).toBeNull()
     expect(buildSnapshot(state({ unit: 'lb' })).active.unit).toBe('lb')
