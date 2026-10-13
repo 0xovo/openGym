@@ -104,6 +104,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Delete my account on a paired phone: the phone's own face, fingerprint or screen lock
+         confirms it is the owner first (DeviceAuthPlugin). A normal permission, no prompt. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <!-- Gym check-in: scanning a membership QR/barcode with the camera. -->
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Health Connect (#200): write-only, asked for only when the user turns it on in Settings.

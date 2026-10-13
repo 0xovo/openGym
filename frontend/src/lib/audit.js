@@ -21,6 +21,8 @@ const LABELS = {
   'auth.register.denied': 'Signup refused',
   'auth.logout': 'Signed out',
   'auth.logout.all': 'Signed out everywhere',
+  // Settings → "Delete my account": the profile removed itself and everything of theirs.
+  'auth.account.delete': 'Deleted their own account',
   // Device pairing (Settings → "Pair the mobile app"): the code is minted in a signed-in browser
   // tab and redeemed by the app, so "ok" is the phone coming online, not a sign-in.
   'auth.pair.create': 'Created a pairing code',
@@ -112,7 +114,8 @@ const ACTS = {
   'password-remove': 'removing the password',
   'passkey-add': 'adding a passkey',
   'passkey-remove': 'removing a passkey',
-  'device-link': 'making a one-time code for another device'
+  'device-link': 'making a one-time code for another device',
+  'account-delete': 'deleting their account'
 }
 export const auditAct = act => ACTS[act] || (act ? String(act) : '')
 

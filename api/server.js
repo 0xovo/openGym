@@ -958,7 +958,9 @@ const THROTTLED = {
   // budget: the password that may prove them counts its own failures (passwordAttempt).
   'POST /api/device-link/options': 'link', 'POST /api/device-link/verify': 'link',
   'POST /api/account/passkeys/options': null, 'POST /api/account/device-link': null,
-  'DELETE /api/account/passkeys': null
+  'DELETE /api/account/passkeys': null,
+  // Deleting the account: the same, for the password that may prove it.
+  'POST /api/account/delete': null
 };
 
 // Which address the throttle counts against. Unlike clientIp() above, which only labels a log
@@ -1233,6 +1235,23 @@ async function removeEmail(req, res, user, body) {
   saveDb();
   audit(req, 'auth.email.remove', { user, msg: proof });
   json(res, 200, { ok: true, email: null });
+}
+
+// Everything of an account, gone for good: the user record, their passkeys, push subscriptions,
+// device links and live presence, and outside db.json their training history, any Coach
+// credential and their photos and videos. The admin's delete and the account's own both end here.
+function removeAccount(u) {
+  db.users = db.users.filter(x => x.id !== u.id);
+  db.creds = (db.creds || []).filter(c => c.userId !== u.id);
+  db.subs = (db.subs || []).filter(x => x.userId !== u.id);
+  dropDeviceLinks(db, u.id);
+  presence.delete(u.id);
+  // The training history and any Coach credential of theirs, both outside db.json.
+  try { fs.unlinkSync(stateFile(u.id)); } catch { /* already gone */ }
+  try { coachConfig.clearProfileAuth(u.id); } catch { /* nothing stored */ }
+  // Their photos and videos — the one place a profile's folder under uploads/ is removed.
+  try { MEDIA.removeUser(u.id); } catch (e) { console.error('media: could not remove uploads of', u.id, e.message); }
+  saveDb();
 }
 
 const passwordRoutes = {
@@ -2125,6 +2144,42 @@ const routes = {
     json(res, 200, { ok: true }, { 'Set-Cookie': clearCookie });
   },
 
+  // The account's own delete (App Store rule 5.1.1(v): an app you can sign up in lets you leave
+  // it too). Everything goes, exactly as when an admin deletes it (removeAccount). Two things
+  // stand in front of it: the account's name, typed back by its owner, so a stray request does
+  // nothing; and the same proof the other changes to a way in ask (proveOwner), since a session
+  // on its own may be a cookie someone walked off with. The proof is asked only once the delete
+  // could go ahead, so a refusal the request already decides spends no passkey prompt and no
+  // password check. One exception: the paired phone (a Bearer token) cannot hold a passkey for
+  // this server, its origin being the app's own, so for a profile with no password that counts
+  // the pairing itself is the proof ('device'). The app asks the phone's own lock (Face ID, a
+  // fingerprint, the passcode) before it sends. With a password, the phone sends it like
+  // everyone else. A browser's cookie never gets this. The last admin is refused while anyone
+  // else is left, since nobody could then run the instance from the app; alone on it, they may
+  // go. The session ends with the account: its cookie is cleared here, and any other session
+  // stops verifying since the user is gone.
+  'POST /api/account/delete': async (req, res) => {
+    const s = sessionOf(req);
+    if (!s) return json(res, 401, { error: 'not signed in' });
+    const { user } = s;
+    const body = await readBody(req);
+    if (sessionOf(req)?.user !== user) return json(res, 401, { error: 'not signed in' });
+    if (typeof body.name !== 'string' || body.name.trim() !== user.name) {
+      return json(res, 400, { error: 'type the account name to confirm', code: 'confirm-name' });
+    }
+    const lastAdmin = () => isAdmin(user) && db.users.length > 1 && db.users.filter(isAdmin).length <= 1;
+    const refuseLastAdmin = () => json(res, 409, { error: 'the last admin cannot leave while other profiles remain', code: 'last-admin' });
+    if (lastAdmin()) return refuseLastAdmin();
+    const proof = s.bearer && !passwordWayIn(user) ? 'device' : await proveOwner(req, res, user, body, 'account-delete');
+    if (!proof) return;
+    // Everything above awaited: the session may have ended, and another admin may have left.
+    if (readSession(req) !== user) return json(res, 401, { error: 'not signed in' });
+    if (lastAdmin()) return refuseLastAdmin();
+    removeAccount(user);
+    audit(req, 'auth.account.delete', { user, msg: proof });
+    json(res, 200, { ok: true }, { 'Set-Cookie': clearCookie });
+  },
+
   // Mobile app pairing: called from an already signed-in browser tab (Settings → "Pair the
   // mobile app") to mint a short code the phone can redeem below.
   'POST /api/pair/create': async (req, res) => {
@@ -2480,17 +2535,7 @@ const routes = {
     if (u.id === admin.id) return json(res, 400, { error: 'you cannot delete your own account' });
     if (isAdmin(u) && db.users.filter(isAdmin).length <= 1) return json(res, 400, { error: 'cannot delete the last admin' });
     const name = u.name;
-    db.users = db.users.filter(x => x.id !== u.id);
-    db.creds = (db.creds || []).filter(c => c.userId !== u.id);
-    db.subs = (db.subs || []).filter(x => x.userId !== u.id);
-    dropDeviceLinks(db, u.id);
-    presence.delete(u.id);
-    // The training history and any Coach credential of theirs, both outside db.json.
-    try { fs.unlinkSync(stateFile(u.id)); } catch { /* already gone */ }
-    try { coachConfig.clearProfileAuth(u.id); } catch { /* nothing stored */ }
-    // Their photos and videos — the one place a profile's folder under uploads/ is removed.
-    try { MEDIA.removeUser(u.id); } catch (e) { console.error('media: could not remove uploads of', u.id, e.message); }
-    saveDb();
+    removeAccount(u);
     // Logged with the name, because the id is about to mean nothing to anyone reading this back.
     audit(req, 'admin.user.delete', { user: admin, msg: name });
     json(res, 200, { ok: true, id: u.id });
