@@ -117,9 +117,6 @@ export function buildWidgetSnapshot (S, { today = todayISO() } = {}) {
       lastPR: t('Last PR'),
       done: t('Done'),
       running: t('Workout running'),
-      exercises: t('{0} exercises', days[0].count),
-      sets: t('Sets'),
-      start: t('Start workout'),
     },
   }
 }
