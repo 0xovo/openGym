@@ -4,7 +4,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   EDGE_PX, COMMIT_FRACTION, edgeSwipeEnabled, startsAtEdge, progressOf, lockOf, releaseOf,
-  backTarget, installEdgeSwipeBack,
+  backTarget, installEdgeSwipeBack, BACK_PREVIEW_EVENT,
 } from './edge-swipe-back.js'
 
 describe('where it is on', () => {
@@ -195,9 +195,107 @@ describe('every page back arrow is marked', () => {
     for (const [file, src] of Object.entries(files)) {
       for (const line of src.split('\n')) {
         if (!/chevronLeft/.test(line) || !/<button/.test(line)) continue
-        if (/onClick=\{(\(\) => nav\(|back\}|home\})/.test(line) && !/data-back/.test(line)) unmarked.push(file + ': ' + line.trim())
+        // …with where it goes (data-back="/plan"), for the page underneath; a bare attribute
+        // would render as "true" and point the preview nowhere.
+        if (/onClick=\{(\(\) => nav\(|back\}|home\})/.test(line) && !/data-back=/.test(line)) unmarked.push(file + ': ' + line.trim())
       }
     }
     expect(unmarked).toEqual([])
+  })
+})
+
+// TestFlight 1.4.2 (27): the page it goes back to shows underneath, sliding in from a little to
+// the left (parallax) under a fading shade; App.jsx renders it when asked (BACK_PREVIEW_EVENT).
+describe('the page underneath', () => {
+  let events
+  const stack = () => {
+    document.body.innerHTML = `<div id="app"><div class="page" data-path="/plan/r/1"><button data-back="/plan">Back</button><div class="swrow">a set</div></div></div><div id="modal-root"></div>`
+    back = document.querySelector('[data-back]'); back.onclick = vi.fn()
+    row = document.querySelector('.swrow')
+  }
+  // What App.jsx does on the event: the page underneath appears (or goes) in #app.
+  const onPreview = e => {
+    events.push(e.detail)
+    const app = document.getElementById('app')
+    if ('path' in e.detail) {
+      app.querySelector('.page.under')?.remove()
+      if (e.detail.path) { const u = document.createElement('div'); u.className = 'page under'; u.dataset.path = e.detail.path; app.append(u) }
+    }
+  }
+  beforeEach(() => { events = []; window.addEventListener(BACK_PREVIEW_EVENT, onPreview) })
+  afterEach(() => window.removeEventListener(BACK_PREVIEW_EVENT, onPreview))
+
+  it('is asked for as the edge touch is claimed, slides in with the page, and becomes the page on landing', () => {
+    stack(); stop = installEdgeSwipeBack(window, { enabled: true })
+    row.dispatchEvent(ptr('pointerdown', 6))
+    expect(events).toEqual([{ path: '/plan' }])
+    row.dispatchEvent(ptr('pointermove', 30))
+    row.dispatchEvent(ptr('pointermove', 6 + W / 2))
+    const top = document.querySelector('.page:not(.under)')
+    const under = document.querySelector('.page.under')
+    expect(top.style.transform).toBe(`translateX(${W / 2}px)`)
+    expect(under.style.visibility).toBe('visible')
+    expect(under.style.transform).toBe(`translateX(${-0.3 * 0.5 * W}px)`)    // halfway in: -15%
+    expect(document.querySelector('.edge-back-shade').style.opacity).toBe(String(0.5 * 0.35))
+    expect(top.classList.contains('edge-back-page')).toBe(true)
+    row.dispatchEvent(ptr('pointerup', 6 + W / 2))
+    expect(under.style.transform).toBe('translateX(0px)')                   // slides fully in
+    vi.advanceTimersByTime(261)
+    expect(events.at(-1)).toEqual({ commit: '/plan' })                      // App restores its scroll
+    expect(back.onclick).toHaveBeenCalledTimes(1)
+    expect(top.style.transform).toBe(`translateX(${W}px)`)                  // stays out: no flash back
+    expect(events).not.toContainEqual({ path: null })
+    // Two frames on, React has replaced it; a page still there (the button went nowhere) is reset.
+    vi.advanceTimersByTime(100)
+    expect(document.querySelector('.edge-back-shade')).toBeNull()
+    expect(top.style.transform).toBe('')
+  })
+
+  it('a cancelled swipe slides it back out and has it taken away', () => {
+    stack(); stop = installEdgeSwipeBack(window, { enabled: true })
+    row.dispatchEvent(ptr('pointerdown', 6))
+    row.dispatchEvent(ptr('pointermove', 30))
+    row.dispatchEvent(ptr('pointermove', 60))
+    row.dispatchEvent(ptr('pointerup', 60))
+    expect(document.querySelector('.page.under').style.transform).toBe(`translateX(${-0.3 * W}px)`)
+    vi.advanceTimersByTime(300)
+    expect(events.at(-1)).toEqual({ path: null })
+    expect(document.querySelector('.page.under')).toBeNull()
+    expect(document.querySelector('.edge-back-shade')).toBeNull()
+    expect(document.querySelector('.page').style.transform).toBe('')
+    expect(back.onclick).not.toHaveBeenCalled()
+  })
+
+  it('a tap at the edge asks for it and then lets it go', () => {
+    stack(); stop = installEdgeSwipeBack(window, { enabled: true })
+    row.dispatchEvent(ptr('pointerdown', 6))
+    row.dispatchEvent(ptr('pointerup', 6))
+    expect(events).toEqual([{ path: '/plan' }, { path: null }])
+  })
+
+  it('right to left: it slides in from the right', () => {
+    stack(); document.documentElement.dir = 'rtl'
+    stop = installEdgeSwipeBack(window, { enabled: true })
+    row.dispatchEvent(ptr('pointerdown', W - 6))
+    row.dispatchEvent(ptr('pointermove', W - 30))
+    row.dispatchEvent(ptr('pointermove', W - 6 - W / 2))
+    expect(document.querySelector('.page.under').style.transform).toBe(`translateX(${0.3 * 0.5 * W}px)`)
+  })
+
+  it('with reduced motion it is never asked for: nothing slides, the page just goes back', () => {
+    stack(); window.matchMedia = vi.fn(q => ({ matches: /reduce/.test(q) }))
+    stop = installEdgeSwipeBack(window, { enabled: true })
+    swipe(row, [6, 40, 250])
+    expect(events.filter(e => 'path' in e)).toEqual([])
+    expect(back.onclick).toHaveBeenCalledTimes(1)
+  })
+
+  it('a back button that cannot say where it goes (data-back="") swipes without one', () => {
+    stack(); back.setAttribute('data-back', '')
+    stop = installEdgeSwipeBack(window, { enabled: true })
+    swipe(row, [6, 40, 250])
+    vi.advanceTimersByTime(300)
+    expect(events).toEqual([])
+    expect(back.onclick).toHaveBeenCalledTimes(1)
   })
 })

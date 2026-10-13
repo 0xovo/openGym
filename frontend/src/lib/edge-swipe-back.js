@@ -25,6 +25,10 @@ export const SLOP_PX = 10          // movement before the gesture decides sidewa
 export const COMMIT_FRACTION = 1 / 3
 export const FLICK_PX_PER_MS = 0.5 // a flick this fast goes back from any distance past the slop
 const SETTLE_MS = 260
+const PARALLAX = 0.3          // the page underneath starts this far to the left, and slides in
+const SHADE = 0.35            // its dimming at the start of the swipe
+
+export const BACK_PREVIEW_EVENT = 'opengym:back-preview'
 
 /* ---------- pure decisions ---------- */
 
@@ -65,7 +69,8 @@ export function releaseOf({ dx, width, vx }) {
 /** The page's own back button, or null: visible, enabled, and not behind an open sheet. */
 export function backTarget(doc = document) {
   if (doc.querySelector('#modal-root.open')) return null
-  const el = doc.querySelector('#app [data-back]')
+  // the page on top: the one underneath (App.jsx `under`) has back buttons of its own
+  const el = doc.querySelector('#app > .page:not(.under) [data-back]') || doc.querySelector('#app [data-back]')
   if (!el || el.disabled) return null
   return el
 }
@@ -92,33 +97,71 @@ export function installEdgeSwipeBack(win = window, opts = {}) {
     else enabled = edgeSwipeEnabled({ mobile: false, ios, standalone })
   }
 
-  let g = null   // { id, x0, y0, t, x, lastX, lastT, vx, rtl, width, target, lock, page, shade }
+  let g = null   // { id, x0, y0, lastX, lastT, vx, rtl, width, target, path, lock, page, under, shade }
 
+  // The page it goes back to (App.jsx renders it underneath while asked to; `path` null ends
+  // that), and, as the swipe lands, where it is returning, so App restores its scroll position.
+  const preview = path => win.dispatchEvent(new win.CustomEvent(BACK_PREVIEW_EVENT, { detail: { path } }))
+  const committing = path => win.dispatchEvent(new win.CustomEvent(BACK_PREVIEW_EVENT, { detail: { commit: path } }))
+  const underlay = () => (g && (g.under || (g.under = doc.querySelector('#app > .page.under')))) || null
+
+  // transform and opacity only, so the frames stay on the compositor
   const paint = (dx, ms = 0) => {
     if (!g || !g.page) return
-    const off = Math.max(0, dx) * (g.rtl ? -1 : 1)
-    const tr = ms ? `transform ${ms}ms cubic-bezier(.32,.72,0,1)` : 'none'
-    g.page.style.transition = tr
-    g.page.style.transform = off ? `translateX(${off}px)` : ''
+    const p = Math.min(1, Math.max(0, dx) / g.width)
+    const dir = g.rtl ? -1 : 1
+    const tr = prop => (ms ? `${prop} ${ms}ms cubic-bezier(.32,.72,0,1)` : 'none')
+    g.page.style.transition = tr('transform')
+    g.page.style.transform = p ? `translateX(${p * g.width * dir}px)` : ''
+    const under = underlay()
+    if (under) {
+      under.style.visibility = 'visible'
+      under.style.transition = tr('transform')
+      under.style.transform = `translateX(${-PARALLAX * (1 - p) * g.width * dir}px)`
+    }
     if (g.shade) {
       g.shade.style.transition = ms ? `opacity ${ms}ms linear` : 'none'
-      g.shade.style.opacity = String(Math.max(0, 1 - dx / g.width) * 0.35)
+      g.shade.style.opacity = String((1 - p) * SHADE)
     }
   }
   const startVisual = () => {
     if (reducedMotion(win)) return
-    const page = doc.getElementById('app')
+    const page = doc.querySelector('#app > .page:not(.under)') || doc.getElementById('app')
     if (!page) return
     g.page = page
+    // The page's own ground reaches the screen's edges (index.css .edge-back-page::before): its
+    // box stops at #app's padding, and the page underneath must not show through around it.
+    const r = page.getBoundingClientRect()
+    page.style.setProperty('--eb-l', Math.max(0, r.left) + 'px')
+    page.style.setProperty('--eb-r', Math.max(0, g.width - r.right) + 'px')
+    page.style.setProperty('--eb-t', Math.max(0, r.top) + 'px')
+    page.style.setProperty('--eb-b', Math.max(0, (win.innerHeight || 0) - r.bottom) + 'px')
     page.classList.add('edge-back-page')
     const shade = doc.createElement('div')
     shade.className = 'edge-back-shade'
     page.parentNode.insertBefore(shade, page)
     g.shade = shade
   }
+  // Cancelled: everything back as it was, and the page underneath goes away.
   const endVisual = gesture => {
-    if (gesture.page) { gesture.page.style.transition = ''; gesture.page.style.transform = ''; gesture.page.classList.remove('edge-back-page') }
+    if (gesture.page) {
+      gesture.page.style.transition = ''; gesture.page.style.transform = ''
+      for (const v of ['--eb-l', '--eb-r', '--eb-t', '--eb-b']) gesture.page.style.removeProperty(v)
+      gesture.page.classList.remove('edge-back-page')
+    }
     gesture.shade?.remove()
+    if (gesture.path) preview(null)
+  }
+  // Landed: the page underneath is the page now (App keeps it, same element). The page that
+  // slid out stays where it went until React has taken it away, so nothing flashes back.
+  const landed = gesture => {
+    if (gesture.path) committing(gesture.path)
+    gesture.target.click()
+    const raf = win.requestAnimationFrame || (f => win.setTimeout(f, 16))
+    raf(() => raf(() => {
+      gesture.shade?.remove()
+      if (gesture.page?.isConnected) endVisual({ ...gesture, path: null })
+    }))
   }
 
   const onDown = e => {
@@ -130,7 +173,11 @@ export function installEdgeSwipeBack(win = window, opts = {}) {
     if (!target) return
     // Claimed: nothing under the edge (a set row, a card) starts its own swipe from this touch.
     e.stopPropagation()
-    g = { id: e.pointerId, x0: e.clientX, y0: e.clientY, lastX: e.clientX, lastT: e.timeStamp || Date.now(), vx: 0, rtl, width, target, lock: null }
+    // The page underneath starts mounting now, hidden, so it is there by the time the finger has
+    // moved far enough to show it. Not with reduced motion: nothing slides, nothing to show.
+    const path = reducedMotion(win) ? null : (target.getAttribute('data-back') || null)
+    g = { id: e.pointerId, x0: e.clientX, y0: e.clientY, lastX: e.clientX, lastT: e.timeStamp || Date.now(), vx: 0, rtl, width, target, path, lock: null }
+    if (path) preview(path)
   }
   const onMove = e => {
     if (!g || e.pointerId !== g.id) return
@@ -156,14 +203,11 @@ export function installEdgeSwipeBack(win = window, opts = {}) {
     if (done.lock !== 'go') { endVisual(done); return }
     const dx = progressOf(done.x0, e.clientX, done.rtl)
     const go = releaseOf({ dx, width: done.width, vx: done.vx }) === 'back' && e.type !== 'pointercancel'
-    if (!done.page) { endVisual(done); if (go) done.target.click(); return }
+    if (!done.page) { if (go) landed(done); else endVisual(done); return }
     g = done   // for paint
     paint(go ? done.width : 0, SETTLE_MS)
     g = null
-    win.setTimeout(() => {
-      if (go) done.target.click()
-      endVisual(done)
-    }, SETTLE_MS)
+    win.setTimeout(() => { if (go) landed(done); else endVisual(done) }, SETTLE_MS)
   }
   // A claimed touch must not scroll the page under it: pointer events alone do not stop a WebKit
   // scroll, and a scroll that starts in the slop cancels the pointer. Only touches that began in

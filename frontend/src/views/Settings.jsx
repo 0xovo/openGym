@@ -46,6 +46,7 @@ import { usePasskeys, PasskeysRow, DeviceLinkRow, openDeviceLinkRedeem } from '.
 import { DeleteAccountRow } from '../components/DeleteAccount.jsx'
 import { Section, Row, SelectRow, Switch, Segmented, Button, TextField, SearchField } from '../components/ui.jsx'
 import { PAGES, ROOT_GROUPS, pageVisible, searchSettings, pageTrail } from './settings-pages.js'
+import { pathBefore } from '../lib/nav.js'
 
 /* Settings (v1.3.11). The root is one screen: an account card, eleven rows that each open a page
    (/settings/<page>), and a search over every row. Rare things live one level further down
@@ -67,7 +68,7 @@ export function SettingsRoute() {
   const ctx = { user: useStore(s => s.user), mobile: MOBILE }
   if (page && (!PAGES[page] || !pageVisible(PAGES[page].parent || page, ctx))) return <Navigate to="/settings" replace />
   if (page === 'coach') return <Navigate to="/coach/setup" replace />
-  return <Settings key={page || 'root'} page={page || null} find={loc.state?.find || null} via={loc.state?.via || null} />
+  return <Settings key={page || 'root'} page={page || null} find={loc.state?.find || null} via={loc.state?.via || null} entryKey={loc.key} />
 }
 
 // "Mon" / "Sun" in the app's language, for the Plan & schedule row's preview.
@@ -80,7 +81,7 @@ const standalone = () => {
   try { return !!(window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true) } catch { return false }
 }
 
-export default function Settings({ page = null, find = null, via = null }) {
+export default function Settings({ page = null, find = null, via = null, entryKey = null }) {
   const nav = useNavigate()
   const S = useStore(s => s.S)
   const user = useStore(s => s.user)
@@ -918,7 +919,7 @@ export default function Settings({ page = null, find = null, via = null }) {
       <div className="sp-nav">
         {/* Named by what it says ("Settings", "Workout"), so a voice command for the visible
             word finds it; the chevron is hidden from assistive tech. */}
-        <button className="sp-back" data-back onClick={back}>
+        <button className="sp-back" data-back={((window.history.state?.idx || 0) > 0 ? pathBefore() : null) || (parent ? '/settings/' + parent : '/settings')} onClick={back}>
           <Icon name="chevronLeft" /><span>{parent ? t(PAGES[parent].title) : t('Settings')}</span>
         </button>
         <h1 className="sp-title">{t(PAGES[page].title)}</h1>
@@ -928,16 +929,17 @@ export default function Settings({ page = null, find = null, via = null }) {
   }
 
   /* ---------------- the root ---------------- */
-  return <SettingsRoot ctx={ctx} preview={preview} open={open} user={user} sync={sync}
+  return <SettingsRoot ctx={ctx} preview={preview} open={open} user={user} sync={sync} entryKey={entryKey}
     home={() => nav('/home')} go={(hit) => {
       if (hit.page === 'coach') { nav('/coach/setup'); return }
       nav('/settings/' + hit.page, hit.isPage ? undefined : { state: hit.via ? { find: hit.title, via: hit.via } : { find: hit.title } })
     }} />
 }
 
-function SettingsRoot({ ctx, preview, open, user, sync, home, go }) {
-  // The router's key for this history entry (what useLocation().key reads), taken once.
-  const [key] = useState(() => window.history.state?.key || null)
+function SettingsRoot({ ctx, preview, open, user, sync, home, go, entryKey }) {
+  // The router's key for this history entry, taken once. From the router rather than
+  // window.history: drawn under an edge swipe back the page is the entry before the current one.
+  const [key] = useState(() => (entryKey && entryKey !== 'default' && entryKey !== 'back-preview' ? entryKey : window.history.state?.key || null))
   const [q, setQ] = useState(() => (key && lastQuery.key === key ? lastQuery.q : ''))
   const set = v => { lastQuery = { q: v, key }; setQ(v) }
   const hits = q.trim() ? searchSettings(q, ctx) : null
@@ -952,7 +954,7 @@ function SettingsRoot({ ctx, preview, open, user, sync, home, go }) {
   const initial = user && !DEMO ? String(user.name || '?').trim().charAt(0).toUpperCase() : null
   return <div className="narrow">
     <div className="sp-nav">
-      <button className="sp-back" data-back onClick={home} aria-label={t('Home')}><Icon name="chevronLeft" /><span>{t('Home')}</span></button>
+      <button className="sp-back" data-back="/home" onClick={home} aria-label={t('Home')}><Icon name="chevronLeft" /><span>{t('Home')}</span></button>
     </div>
     <h1 className="sp-root-title">{t('Settings')}</h1>
     <div className="sp-search">

@@ -179,7 +179,15 @@ body.no-tabbar #app{padding-bottom:calc(24px + var(--sab))}
 body.no-tabbar.resting #app{padding-bottom:calc(96px + var(--sab))}
 .workout-end-spacer{height:0}
 @keyframes viewfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-#app.vfade{animation:viewfade var(--med) var(--ease)}
+#app > .page.vfade{animation:viewfade var(--med) var(--ease)}
+/* The page an edge swipe back returns to (App.jsx Page `under`, lib/edge-swipe-back.js): laid
+   out where #app lays out a page, fixed under the current one, at the scroll position it was
+   left at (.page-in is moved up by it), hidden until the finger has committed to the swipe. */
+#app > .page.under{
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;overflow:hidden;
+  padding:inherit;max-width:inherit;margin:0 auto;
+  visibility:hidden;pointer-events:none;will-change:transform;
+}
 
 /* Connection indicator (components/SyncBanner.jsx): pinned under the status bar for as long as
    the app is not connected to a server. It carries the page's own ground and blur, like the
@@ -2146,7 +2154,14 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .exfix-link{display:inline-flex;align-items:center;gap:5px;margin:14px 0 4px;color:var(--label-3);text-decoration:none}
 .list .similar-label{margin:16px 2px 6px;grid-column:1/-1}
 
-/* The edge swipe back (lib/edge-swipe-back.js): the page follows the finger over a dimmed
-   backdrop that stands in for the page underneath. */
-.edge-back-shade{position:fixed;inset:0;background:#000;opacity:.35;pointer-events:none;z-index:0}
-#app.edge-back-page{position:relative;z-index:1;background:var(--bg);box-shadow:0 0 28px rgba(0,0,0,.28);will-change:transform}
+/* The edge swipe back (lib/edge-swipe-back.js): the page follows the finger, the one it goes
+   back to slides in underneath with a shade over it. The sliding page's own ground reaches the
+   screen's edges (--eb-*: how far #app's padding and margins leave it short of them). */
+.edge-back-shade{position:fixed;inset:0;background:#000;opacity:.35;pointer-events:none;z-index:1}
+.edge-back-page{position:relative;z-index:2;will-change:transform}
+.edge-back-page::before{
+  content:'';position:absolute;z-index:-1;pointer-events:none;background:var(--bg);
+  top:calc(-1 * var(--eb-t,0px));bottom:calc(-1 * var(--eb-b,0px));
+  left:calc(-1 * var(--eb-l,0px));right:calc(-1 * var(--eb-r,0px));
+  box-shadow:0 0 28px rgba(0,0,0,.28);
+}

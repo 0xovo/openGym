@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation, useNavigationType } from 'react-router-dom'
 import { useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
@@ -9,10 +9,10 @@ import { setLang, useLang, baseLang } from './lib/i18n.js'
 import { effectiveLang } from './lib/default-lang.js'
 import { setPlayOnSilent, setVibrate, setAlarmBuzzer, setNativeBuzzer } from './lib/sound.js'
 import { buzzAsAlarm } from './lib/rest-alert.js'
-import { setNav } from './lib/nav.js'
+import { setNav, notePath, keyBefore } from './lib/nav.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
-import { installEdgeSwipeBack } from './lib/edge-swipe-back.js'
+import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
 import { useWakeLock } from './lib/wakelock.js'
 import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
@@ -157,10 +157,37 @@ function Shell() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+  // The edge swipe back (lib/edge-swipe-back.js) asks for the page it goes back to underneath
+  // while the finger moves (`preview`), and says where it is going as it lets go (`returning`):
+  // that page comes back where it was scrolled to, as the back button's push would not.
+  const [preview, setPreview] = useState(null)
+  const returning = useRef(null)
+  useEffect(() => {
+    const on = e => {
+      const d = e.detail || {}
+      if ('commit' in d) returning.current = d.commit
+      else setPreview(d.path || null)
+    }
+    window.addEventListener(BACK_PREVIEW_EVENT, on)
+    return () => window.removeEventListener(BACK_PREVIEW_EVENT, on)
+  }, [])
+  // Any navigation ends a preview: promoted (it is the page now) or not needed any more.
+  useEffect(() => { setPreview(null) }, [loc.pathname])
   useLayoutEffect(() => {
     const first = pathRef.current === null
     const samePath = pathRef.current === loc.pathname
     pathRef.current = loc.pathname
+    notePath(loc.pathname, loc.key)
+    if (returning.current && returning.current === loc.pathname && !first) {
+      returning.current = null
+      const y = scrollPositions.get(loc.pathname) || 0
+      // Promoted from the preview it is laid out already: back at y in this same frame. A page
+      // mounted fresh (no preview) needs its layout pass first, as a POP does.
+      if (document.querySelector('#app > .page[data-promoted]')) { window.scrollTo(0, y); return }
+      const frame = window.requestAnimationFrame(() => window.scrollTo(0, y))
+      return () => window.cancelAnimationFrame(frame)
+    }
+    returning.current = null
     // A fresh load arrives as a POP with nothing remembered. It goes to the top like any new
     // route — now, not a frame later: that frame landed on top of a scroll a view made on mount
     // (the superset card centring its row, views/Workout.jsx), and a smooth scroll cut off by a
@@ -201,42 +228,47 @@ function Shell() {
     </div>
   )
 
+  const view = l => (!authed ? <Login /> : needsMobileOnboarding ? <MobileOnboarding /> : permSteps ? <PermissionSteps /> : (
+    <Routes location={l}>
+      <Route path="/home" element={<Home />} />
+      {/* Gym check-in — switched off in Settings, the route falls through to the
+          catch-all redirect below. */}
+      {S.checkIn !== false && <Route path="/checkin" element={<CheckIn />} />}
+      <Route path="/plan" element={<Plan />} />
+      <Route path="/plan/r/:id" element={<RoutineEdit />} />
+      <Route path="/workout" element={<Workout />} />
+      <Route path="/stats" element={<Stats />} />
+      <Route path="/history" element={<History />} />
+      <Route path="/library" element={<Library />} />
+      <Route path="/muscles" element={<Muscles />} />
+      <Route path="/structural-balance" element={<StructuralBalance />} />
+      <Route path="/progress-photos" element={<ProgressPhotos />} />
+      <Route path="/measurements" element={<Measurements />} />
+      <Route path="/settings" element={<SettingsRoute />} />
+      <Route path="/settings/:page" element={<SettingsRoute />} />
+      {/* The Coach screens gate themselves on the instance config; the routes exist
+          unconditionally so a deep link from a notification lands somewhere sane
+          rather than on the catch-all. */}
+      <Route path="/coach" element={<CoachChat />} />
+      <Route path="/coach/intake" element={<CoachIntake />} />
+      <Route path="/coach/proposal" element={<Navigate to="/coach" replace />} />
+      <Route path="/coach/setup" element={<CoachSetup />} />
+      <Route path="/admin" element={user?.admin ? <Admin /> : <Navigate to="/home" replace />} />
+      <Route path="*" element={<Navigate to="/home" replace />} />
+    </Routes>
+  ))
+  const showPreview = !!preview && preview !== loc.pathname && authed && !needsMobileOnboarding && !permSteps
+
   return (
     <>
-      {/* keyed on the route: a view that throws is contained, and switching tabs
-          re-mounts the boundary, so the tab bar is always a way out */}
-      <div id="app" className="vfade" key={loc.pathname}>
-        <ErrorBoundary>
-          {!authed ? <Login /> : needsMobileOnboarding ? <MobileOnboarding /> : permSteps ? <PermissionSteps /> : (
-            <Routes>
-              <Route path="/home" element={<Home />} />
-              {/* Gym check-in — switched off in Settings, the route falls through to the
-                  catch-all redirect below. */}
-              {S.checkIn !== false && <Route path="/checkin" element={<CheckIn />} />}
-              <Route path="/plan" element={<Plan />} />
-              <Route path="/plan/r/:id" element={<RoutineEdit />} />
-              <Route path="/workout" element={<Workout />} />
-              <Route path="/stats" element={<Stats />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/library" element={<Library />} />
-              <Route path="/muscles" element={<Muscles />} />
-              <Route path="/structural-balance" element={<StructuralBalance />} />
-              <Route path="/progress-photos" element={<ProgressPhotos />} />
-              <Route path="/measurements" element={<Measurements />} />
-              <Route path="/settings" element={<SettingsRoute />} />
-              <Route path="/settings/:page" element={<SettingsRoute />} />
-              {/* The Coach screens gate themselves on the instance config; the routes exist
-                  unconditionally so a deep link from a notification lands somewhere sane
-                  rather than on the catch-all. */}
-              <Route path="/coach" element={<CoachChat />} />
-              <Route path="/coach/intake" element={<CoachIntake />} />
-              <Route path="/coach/proposal" element={<Navigate to="/coach" replace />} />
-              <Route path="/coach/setup" element={<CoachSetup />} />
-              <Route path="/admin" element={user?.admin ? <Admin /> : <Navigate to="/home" replace />} />
-              <Route path="*" element={<Navigate to="/home" replace />} />
-            </Routes>
-          )}
-        </ErrorBoundary>
+      {/* One page per route, keyed on it: a view that throws is contained, and switching tabs
+          re-mounts the boundary, so the tab bar is always a way out. While an edge swipe back
+          is under way the page it goes back to sits underneath (Page `under`), and as the swipe
+          lands it simply stays: same key, same parent, so React keeps it instead of mounting
+          the route again. */}
+      <div id="app">
+        <Page key={loc.pathname} loc={loc} render={view} />
+        {showPreview && <Page key={preview} loc={previewLoc(preview)} render={view} under scrollY={scrollPositions.get(preview) || 0} />}
       </div>
       {/* Outside #app: the view's fade-in animates a transform, and a fixed element inside it
           would ride along with the page for the length of it. Decides for itself when to show —
@@ -249,6 +281,33 @@ function Shell() {
       <TimerFlash />
     </>
   )
+}
+
+// The location the page underneath renders with: the entry it will be, when history knows it.
+const previewLoc = pathname => ({ pathname, search: '', hash: '', state: null, key: keyBefore(pathname) || 'back-preview' })
+
+/* One route's page. `under`: the page an edge swipe back is about to return to, drawn beneath
+   the current one (index.css .page.under): fixed, at the scroll position it was left at, inert
+   and hidden from assistive tech, so nothing in it can be tapped, focused or read out while it
+   only shows. When the swipe lands it becomes the page in place (same element, same state, no
+   second mount, no fade): the styles the gesture painted on it go, and App puts the window back
+   at that scroll position in the same frame. */
+function Page({ loc, render, under = false, scrollY = 0 }) {
+  const ref = useRef(null)
+  const wasUnder = useRef(under)
+  const promoted = wasUnder.current && !under
+  useLayoutEffect(() => {
+    if (under || !wasUnder.current) return
+    const el = ref.current
+    if (el) { el.style.transform = ''; el.style.transition = ''; el.style.visibility = '' }
+  }, [under])
+  return <div ref={ref} className={'page' + (under ? ' under' : wasUnder.current ? '' : ' vfade')}
+    data-path={loc.pathname} data-promoted={promoted ? '' : undefined}
+    aria-hidden={under || undefined} inert={under || undefined}>
+    <div className="page-in" style={under && scrollY ? { transform: `translateY(${-scrollY}px)` } : undefined}>
+      <ErrorBoundary>{render(loc)}</ErrorBoundary>
+    </div>
+  </div>
 }
 
 export default function App() {

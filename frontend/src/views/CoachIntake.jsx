@@ -140,7 +140,7 @@ export default function CoachIntake() {
 
   return <div className="narrow ob">
     <div className="ob-top">
-      <button className="iconbtn" data-back onClick={back} aria-label={t('Back')}><Icon name="chevronLeft" /></button>
+      <button className="iconbtn" data-back={step ? '' : editing ? '/coach' : '/plan'} onClick={back} aria-label={t('Back')}><Icon name="chevronLeft" /></button>
       {key !== 'consent' && <div className="ob-dots">
         {dots.map((s, i) => <span key={s} className={'ob-dot' + (i === dotIndex ? ' on' : i < dotIndex ? ' done' : '')} />)}
       </div>}
