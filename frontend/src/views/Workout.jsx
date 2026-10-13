@@ -40,6 +40,7 @@ import { sessionNoProg, setSessionNoProg, setEntryNoProg, joinSessionNoProg } fr
 import { glyphOf } from '../lib/glyphs.js'
 import { markAllSetsDone, sessionHistory } from '../lib/backfill.js'
 import { bestSetFor } from '../lib/exercise-history.js'
+import { bindLiveActions } from '../lib/live-activity.js'
 import { isWarmupRow, isFailureSet, toggleFailure, isDropSet, isRestPauseSet, dropsOf, clustersOf, addDrop, addCluster, removeDropAt, removeClusterAt, setDropAt, setClusterAt, nextDropWeight, nextBurstReps, isSideSet, makeSideSet, setSideField, toggleSide, addSideDrop, removeSideDropAt, setSideDropAt, addSideCluster, removeSideClusterAt, setSideClusterAt, WEIGHT_ORIGIN_MANUAL } from '../lib/workout-model.js'
 import { canMoveActiveWorkoutUnit, moveActiveWorkoutUnit, canMoveActiveWorkoutEntry, moveActiveWorkoutEntry } from '../lib/active-workout-order.js'
 import { nextOpenSet, workoutKeyAction } from '../lib/workout-keys.js'
@@ -1752,6 +1753,20 @@ function ActiveWorkout() {
       onFocusProgress?.({ unitDone: freshUnitDone })
     }
   }
+
+  // The Lock Screen's Done (lib/live-activity.js) ticks its set through this same toggle, as if
+  // tapped here (rest timer, high-water mark, the end-of-workout sheet). The time is the tap's: the
+  // page may hear of it much later (lib/finish-workout.js sessionEnd reads the sets' times).
+  const liveToggleRef = useRef(toggle)
+  liveToggleRef.current = toggle
+  useEffect(() => bindLiveActions({
+    setDone: (idx, i, { at }) => {
+      const A = useStore.getState().S.active
+      if (!A || A.editingWorkoutId || A.entries?.[idx]?.sets?.[i]?.done) return
+      liveToggleRef.current(idx, i)
+      if (at) mutEntry(idx, en => { const set = en.sets[i]; if (set?.done) set.at = at })
+    },
+  }), [])
 
   // After the finished exercise folded away (toggle, above): the new current one is the next thing
   // to do, so if it now sits under the header or low on the screen with little more than its title
