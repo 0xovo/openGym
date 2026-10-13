@@ -35,7 +35,15 @@
     ]
   },
   "1004": {
-    "name": "Kniebeuge mit Band"
+    "name": "Kniebeuge mit Band",
+    "description": "Eine Kniebeuge mit Widerstandsband knapp über den Knien. Damit trainierst du vor allem Po und Oberschenkel.",
+    "instructions": [
+        "Stell dich schulterbreit hin und leg das Band knapp über deine Knie.",
+        "Spann den Bauch an, halte die Brust aufrecht und schieb deinen Po nach hinten, während du in die Kniebeuge gehst.",
+        "Achte darauf, dass deine Knie in Richtung deiner Zehen zeigen und du das Gewicht auf den Fersen hältst.",
+        "Halte unten kurz inne und drück dich dann über die Fersen wieder nach oben.",
+        "Wiederhole die Kniebeuge so oft wie geplant."
+    ]
   },
   "1005": {
     "name": "Stehender Crunch mit Band"
