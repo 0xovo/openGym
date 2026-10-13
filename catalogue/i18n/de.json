@@ -22,7 +22,17 @@
     ]
   },
   "1003": {
-    "name": "Rudern in der Kniebeuge mit Band"
+    "name": "Rudern in der Kniebeuge mit Band",
+    "description": "Diese Übung kombiniert eine Kniebeuge mit Rudern am Widerstandsband. So trainierst du Beine, Po und Rücken.",
+    "instructions": [
+        "Befestige das Band ungefähr auf Hüfthöhe an einem stabilen Punkt.",
+        "Stell dich schulterbreit mit dem Gesicht zur Befestigung hin.",
+        "Halte die Bandgriffe mit ausgestreckten Armen vor dir. Deine Handflächen zeigen zueinander.",
+        "Beuge die Knie und geh in die Kniebeuge. Halte dabei den Rücken gerade und die Brust aufrecht.",
+        "Zieh die Griffe aus der Kniebeuge zu deinem Körper und führ die Schulterblätter zusammen.",
+        "Halte kurz inne, gib dann langsam nach und kehr in die Ausgangsposition zurück.",
+        "Wiederhole die Bewegung so oft wie geplant."
+    ]
   },
   "1004": {
     "name": "Kniebeuge mit Band"
