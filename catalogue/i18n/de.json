@@ -1,13 +1,14 @@
 {
-  "1000": {
-    "name": "Wadenheben einbeinig rückwärts mit Band"
-    "instructions": [
-      "„Stelle dich mit den Füßen hüftbreit auseinander und lege das Band um deinen Fußballen.“,
-      „Halte dich an einem stabilen Gegenstand fest, um dein Gleichgewicht zu halten.“,
-      „Hebe die Ferse vom Boden ab und verlagere dein Gewicht auf den Fußballen.“,
-      „Halt kurz an und senke die Ferse dann langsam wieder ab.“,
-      „Wiederholen Sie die Übung so oft wie gewünscht und wechseln Sie dann zum anderen Bein.“
-    ],
+"1000": {
+  "name": "Wadenheben einbeinig rückwärts mit Band",
+  "description": "Eine einbeinige Übung mit einem Widerstandsband zur Kräftigung der Wadenmuskulatur.",
+  "instructions": [
+      "Stelle dich hüftbreit hin und lege das Band um deinen Fußballen.",
+      "Halte dich an einem stabilen Gegenstand fest, um dein Gleichgewicht zu halten.",
+      "Hebe die Ferse langsam vom Boden ab und verlagere dein Gewicht auf den Fußballen.",
+      "Halte die Position kurz und senke die Ferse anschließend kontrolliert ab.",
+      "Wiederhole die Bewegung so oft wie vorgesehen und wechsle anschließend das Bein."
+    ]
   },
   "1002": {
     "name": "Liegendes gerades Beinheben mit Band"
