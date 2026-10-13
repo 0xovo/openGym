@@ -578,12 +578,16 @@ paths:
         stored for them. Not reversible. The body carries the account's name, typed back
         by its owner, and the same proof as setting a password (see OwnerProof): a
         passkey assertion made for this request, or the current password while
-        `PASSWORD_LOGIN` is on. The name and the last-admin rule are checked before the
-        proof is asked. The last admin is refused while any other profile remains (the
+        `PASSWORD_LOGIN` is on. A paired phone (Bearer token) cannot hold a passkey for
+        the server, so for a profile with no password that counts the pairing itself is
+        the proof (audited as `device`; the app asks the phone's own screen lock first);
+        a profile with one sends the current password from the phone too. Cookie
+        sessions always need the proof. The name and the last-admin rule are checked
+        before the proof is asked. The last admin is refused while any other profile remains (the
         instance would be left with nobody to run it); the only profile on an instance
         may delete itself. Clears the caller's cookie; every other session and Bearer
         token of the account stops working with it. Audited as `auth.account.delete`,
-        with the name and the proof it was made with; a refused proof as
+        with the name and the proof it was made with (`passkey`, `password`, `device`); a refused proof as
         `auth.proof.fail` with `act: account-delete`.
       requestBody:
         required: true

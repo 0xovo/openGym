@@ -2150,21 +2150,27 @@ const routes = {
   // nothing; and the same proof the other changes to a way in ask (proveOwner), since a session
   // on its own may be a cookie someone walked off with. The proof is asked only once the delete
   // could go ahead, so a refusal the request already decides spends no passkey prompt and no
-  // password check. The last admin is refused while anyone else is left, since nobody could then
-  // run the instance from the app; alone on it, they may go. The session ends with the account:
-  // its cookie is cleared here, and any other session stops verifying since the user is gone.
+  // password check. One exception: the paired phone (a Bearer token) cannot hold a passkey for
+  // this server, its origin being the app's own, so for a profile with no password that counts
+  // the pairing itself is the proof ('device'). The app asks the phone's own lock (Face ID, a
+  // fingerprint, the passcode) before it sends. With a password, the phone sends it like
+  // everyone else. A browser's cookie never gets this. The last admin is refused while anyone
+  // else is left, since nobody could then run the instance from the app; alone on it, they may
+  // go. The session ends with the account: its cookie is cleared here, and any other session
+  // stops verifying since the user is gone.
   'POST /api/account/delete': async (req, res) => {
-    const user = readSession(req);
-    if (!user) return json(res, 401, { error: 'not signed in' });
+    const s = sessionOf(req);
+    if (!s) return json(res, 401, { error: 'not signed in' });
+    const { user } = s;
     const body = await readBody(req);
-    if (readSession(req) !== user) return json(res, 401, { error: 'not signed in' });
+    if (sessionOf(req)?.user !== user) return json(res, 401, { error: 'not signed in' });
     if (typeof body.name !== 'string' || body.name.trim() !== user.name) {
       return json(res, 400, { error: 'type the account name to confirm', code: 'confirm-name' });
     }
     const lastAdmin = () => isAdmin(user) && db.users.length > 1 && db.users.filter(isAdmin).length <= 1;
     const refuseLastAdmin = () => json(res, 409, { error: 'the last admin cannot leave while other profiles remain', code: 'last-admin' });
     if (lastAdmin()) return refuseLastAdmin();
-    const proof = await proveOwner(req, res, user, body, 'account-delete');
+    const proof = s.bearer && !passwordWayIn(user) ? 'device' : await proveOwner(req, res, user, body, 'account-delete');
     if (!proof) return;
     // Everything above awaited: the session may have ended, and another admin may have left.
     if (readSession(req) !== user) return json(res, 401, { error: 'not signed in' });
