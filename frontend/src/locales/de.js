@@ -2342,4 +2342,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0} Fotos kennen ihren Tag und landen dort. Die anderen landen am Tag unten.',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Alle Fortschrittsfotos nach Datum, für jeden Tag. Dazu ein Vorher-nachher-Regler.',
+  // --- routine backups ---
+  'Add a backup': 'Ausweichübung hinzufügen',
+  'Backups': 'Ausweichübungen',
+  'Backups for {0}': 'Ausweichübungen für {0}',
+  'Everything else': 'Alles andere',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Gerät belegt? Wähl, was du stattdessen machst, und beim Tauschen im Training kommen die zuerst.',
+  'Remove “{0}”': '„{0}“ entfernen',
+  'That’s plenty of backups.': 'Das sind genug Ausweichübungen.',
+  'Your backups': 'Deine Ausweichübungen',
 }

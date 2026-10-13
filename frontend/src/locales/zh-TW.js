@@ -2315,4 +2315,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0} 張相片知道自己的日期，會放到那天。其餘的放到下面的日期。',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': '所有進度相片按日期排列，任何一天都行。還有前後對比滑桿。',
+  // --- routine backups ---
+  'Add a backup': '新增備選動作',
+  'Backups': '備選動作',
+  'Backups for {0}': '{0} 的備選動作',
+  'Everything else': '其他全部',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': '器材被占用了？選好你要改做的動作，訓練中替換時會先顯示這些。',
+  'Remove “{0}”': '移除「{0}」',
+  'That’s plenty of backups.': '備選動作已經夠多了。',
+  'Your backups': '你的備選動作',
 }

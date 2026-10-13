@@ -2322,4 +2322,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '사진 {0}장은 찍은 날을 알아서 그날로 들어가요. 나머지는 아래 날짜로 들어가요.',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': '모든 진행 사진을 날짜순으로, 어느 날이든. 비포/애프터 슬라이더도 있어요.',
+  // --- routine backups ---
+  'Add a backup': '대체 운동 추가',
+  'Backups': '대체 운동',
+  'Backups for {0}': '{0} 대체 운동',
+  'Everything else': '나머지 전부',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': '기구가 사용 중인가요? 대신 할 운동을 골라 두면 운동 중 교체할 때 먼저 보여 줘요.',
+  'Remove “{0}”': '“{0}” 빼기',
+  'That’s plenty of backups.': '대체 운동은 이 정도면 충분해요.',
+  'Your backups': '내 대체 운동',
 }

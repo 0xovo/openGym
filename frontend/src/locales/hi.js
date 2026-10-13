@@ -2322,4 +2322,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0} फ़ोटो अपना दिन जानती हैं और वहीं जाएँगी। बाकी नीचे वाले दिन पर जाएँगी।',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'हर प्रोग्रेस फ़ोटो तारीख़ के क्रम में, किसी भी दिन की। साथ में पहले/बाद का स्लाइडर।',
+  // --- routine backups ---
+  'Add a backup': 'विकल्प जोड़ें',
+  'Backups': 'विकल्प',
+  'Backups for {0}': '{0} के विकल्प',
+  'Everything else': 'बाकी सब',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'मशीन खाली नहीं? उसकी जगह क्या करेंगे चुनें, वर्कआउट के बीच बदलते समय ये पहले दिखेंगे।',
+  'Remove “{0}”': '“{0}” हटाएँ',
+  'That’s plenty of backups.': 'इतने विकल्प काफ़ी हैं।',
+  'Your backups': 'आपके विकल्प',
 }

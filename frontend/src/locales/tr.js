@@ -2322,4 +2322,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0} fotoğraf gününü biliyor ve oraya gidiyor. Diğerleri aşağıdaki güne gider.',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Tüm ilerleme fotoğrafların tarihe göre, herhangi bir gün için. Bir de önce/sonra kaydırıcısı.',
+  // --- routine backups ---
+  'Add a backup': 'Yedek ekle',
+  'Backups': 'Yedekler',
+  'Backups for {0}': '{0} için yedekler',
+  'Everything else': 'Geri kalan her şey',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Makine dolu mu? Yerine ne yapacağını seç, antrenman ortasında değiştirirken önce bunlar çıkar.',
+  'Remove “{0}”': '“{0}” kaldır',
+  'That’s plenty of backups.': 'Bu kadar yedek yeter.',
+  'Your backups': 'Yedeklerin',
 }

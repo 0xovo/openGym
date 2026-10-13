@@ -2322,4 +2322,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': { one: '{0} zdjęcie zna swój dzień i tam trafi. Pozostałe trafią na dzień poniżej.', few: '{0} zdjęcia znają swój dzień i tam trafią. Pozostałe trafią na dzień poniżej.', many: '{0} zdjęć zna swój dzień i tam trafi. Pozostałe trafią na dzień poniżej.' },
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Wszystkie zdjęcia postępów według daty, z dowolnego dnia. Do tego suwak przed/po.',
+  // --- routine backups ---
+  'Add a backup': 'Dodaj zamiennik',
+  'Backups': 'Zamienniki',
+  'Backups for {0}': 'Zamienniki dla {0}',
+  'Everything else': 'Wszystko inne',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Maszyna zajęta? Wybierz, co zrobisz zamiast niej, a zamiana w trakcie treningu pokaże je najpierw.',
+  'Remove “{0}”': 'Usuń „{0}”',
+  'That’s plenty of backups.': 'Tyle zamienników wystarczy.',
+  'Your backups': 'Twoje zamienniki',
 }

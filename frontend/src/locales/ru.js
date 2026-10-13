@@ -2326,4 +2326,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': { one: '{0} фото знает свой день и попадёт туда. Остальные попадут в день ниже.', few: '{0} фото знают свой день и попадут туда. Остальные попадут в день ниже.', many: '{0} фото знают свой день и попадут туда. Остальные попадут в день ниже.' },
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Все фото прогресса по датам, за любой день. И ползунок «до и после».',
+  // --- routine backups ---
+  'Add a backup': 'Добавить замену',
+  'Backups': 'Замены',
+  'Backups for {0}': 'Замены для {0}',
+  'Everything else': 'Всё остальное',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Тренажёр занят? Выберите, что сделаете вместо него, и при замене посреди тренировки они будут первыми.',
+  'Remove “{0}”': 'Убрать «{0}»',
+  'That’s plenty of backups.': 'Замен уже достаточно.',
+  'Your backups': 'Ваши замены',
 }

@@ -2377,4 +2377,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0} صور تعرف يومها وتذهب إليه. البقية تذهب إلى اليوم أدناه.',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'كل صور التقدّم مرتبة حسب التاريخ، لأي يوم. ومعها شريط مقارنة قبل وبعد.',
+  // --- routine backups ---
+  'Add a backup': 'إضافة بديل',
+  'Backups': 'البدائل',
+  'Backups for {0}': 'بدائل {0}',
+  'Everything else': 'كل ما عدا ذلك',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'الجهاز مشغول؟ اختر ما ستفعله بدلًا منه، وسيعرضها التبديل أثناء التمرين أولًا.',
+  'Remove “{0}”': 'إزالة «{0}»',
+  'That’s plenty of backups.': 'هذا عدد كافٍ من البدائل.',
+  'Your backups': 'بدائلك',
 }

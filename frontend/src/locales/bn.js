@@ -2401,4 +2401,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0}টি ছবি তাদের দিন জানে আর সেখানে যাবে। বাকিগুলো নিচের দিনে যাবে।',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'সব অগ্রগতির ছবি তারিখ অনুযায়ী সাজানো, যেকোনো দিনের। সঙ্গে আগে/পরে তুলনার স্লাইডার।',
+  // --- routine backups ---
+  'Add a backup': 'বিকল্প যোগ করুন',
+  'Backups': 'বিকল্প',
+  'Backups for {0}': '{0}-এর বিকল্প',
+  'Everything else': 'বাকি সব',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'মেশিন ফাঁকা নেই? এর বদলে কী করবেন বেছে নিন, ওয়ার্কআউটের মাঝে বদলানোর সময় এগুলোই আগে আসবে।',
+  'Remove “{0}”': '“{0}” সরান',
+  'That’s plenty of backups.': 'এতগুলো বিকল্পই যথেষ্ট।',
+  'Your backups': 'আপনার বিকল্প',
 }

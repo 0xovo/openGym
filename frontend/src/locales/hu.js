@@ -2325,4 +2325,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0} fotó tudja a napját, és oda kerül. A többi a lenti napra kerül.',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Minden fejlődési fotó dátum szerint, bármelyik napról. Plusz egy előtte/utána csúszka.',
+  // --- routine backups ---
+  'Add a backup': 'Helyettesítő hozzáadása',
+  'Backups': 'Helyettesítők',
+  'Backups for {0}': 'Helyettesítők ehhez: {0}',
+  'Everything else': 'Minden más',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Foglalt a gép? Válaszd ki, mit csinálsz helyette, és edzés közbeni cserénél ezeket kínálja elsőnek.',
+  'Remove “{0}”': '„{0}” eltávolítása',
+  'That’s plenty of backups.': 'Ennyi helyettesítő bőven elég.',
+  'Your backups': 'A helyettesítőid',
 }

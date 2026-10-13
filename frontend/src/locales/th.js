@@ -2333,4 +2333,13 @@ export default {
   '{0} photos know their day and go there. The others go on the day below.': '{0} รูปรู้วันของตัวเองและจะไปอยู่ที่นั่น ที่เหลือไปอยู่ในวันด้านล่าง',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'รูปความก้าวหน้าทุกรูปเรียงตามวันที่ วันไหนก็ได้ พร้อมแถบเลื่อนเปรียบเทียบก่อน/หลัง',
+  // --- routine backups ---
+  'Add a backup': 'เพิ่มท่าสำรอง',
+  'Backups': 'ท่าสำรอง',
+  'Backups for {0}': 'ท่าสำรองของ {0}',
+  'Everything else': 'อย่างอื่นทั้งหมด',
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'เครื่องไม่ว่างใช่ไหม เลือกว่าจะทำอะไรแทน แล้วตอนสลับท่าระหว่างออกกำลังกายจะเห็นพวกนี้ก่อน',
+  'Remove “{0}”': 'เอา “{0}” ออก',
+  'That’s plenty of backups.': 'ท่าสำรองเท่านี้ก็พอแล้ว',
+  'Your backups': 'ท่าสำรองของคุณ',
 }

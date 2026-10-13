@@ -1466,6 +1466,10 @@ export const PT_BR_OVERRIDES = {
   'Your server keeps photos only on days with a workout. An update lets it keep them for any day.': 'Seu servidor só guarda fotos em dias com treino. Uma atualização permite guardá-las para qualquer dia.',
   // --- progress photos card ---
   'Every progress photo, lined up by date, for any day. Plus a before/after slider.': 'Todas as fotos de progresso por data, de qualquer dia. E um controle deslizante de antes/depois.',
+  // --- routine backups ---
+  'Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.': 'Máquina ocupada? Escolha o que você faria no lugar dela, e uma troca no meio do treino mostra estes primeiro.',
+  'Remove “{0}”': 'Remover “{0}”',
+  'Your backups': 'Seus substitutos',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
