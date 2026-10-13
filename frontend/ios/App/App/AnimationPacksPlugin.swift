@@ -145,7 +145,9 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
             Task {
                 let manager = AssetPackManager.shared
                 out["readable"] = AnimationPacksPlugin.readable(id, probe)
-                out["status"] = AnimationPacksPlugin.describe(await manager.localStatus(ofAssetPackWithID: id))
+                if #available(iOS 26.4, *) {
+                    out["status"] = AnimationPacksPlugin.describe(await manager.localStatus(ofAssetPackWithID: id))
+                }
                 do {
                     let data = try manager.contents(at: FilePath("\(id)/\(probe).webp"), searchingInAssetPackWithID: id, options: .mappedIfSafe)
                     out["probeBytes"] = data.count
