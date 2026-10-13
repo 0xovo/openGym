@@ -2906,6 +2906,23 @@ describe('workout controls: the more menu and the set menu', () => {
     expect(sets()[0]).toEqual({ w: 60, r: 5, done: false })
   })
 
+  // #575: a per-side exercise's set menu had no "Make it a warm-up set".
+  it('makes a per-side set a warm-up and back, both sides kept', async () => {
+    const side = (l, r) => ({ w: 20, r: l + r, done: false, sides: { L: { w: 20, r: l, done: false }, R: { w: 20, r: r, done: false } } })
+    await mount([{ id: 'plain-lunge', target: { mode: 'reps', reps: 10, weight: 20, side: true }, sets: [side(5, 5), side(4, 6)] }])
+    const openSet = async k => { await act(async () => { container.querySelectorAll('button.n')[k].dispatchEvent(new dom.Event('click', { bubbles: true })) }) }
+    await openSet(1)
+    await act(async () => { item('Make it a warm-up set').onClick() })
+    const sets = () => mocks.S.active.entries[0].sets
+    expect(isWarmupRow(sets()[0])).toBe(true)
+    expect(sets()[0].sides).toEqual({ L: { w: 20, r: 4, done: false }, R: { w: 20, r: 6, done: false } })
+    await rerender()
+    await openSet(0)
+    await act(async () => { item('Count it as a working set').onClick() })
+    expect(sets().every(x => !isWarmupRow(x))).toBe(true)
+    expect(sets()[0].sides).toEqual({ L: { w: 20, r: 4, done: false }, R: { w: 20, r: 6, done: false } })
+  })
+
   it('brings the legacy button rows back per switch', async () => {
     await mount([exercise('plain-bench', [false]), exercise('plain-row', [false])], 0, {
       wc: { setShortcuts: true, pairButtons: true, exerciseButtons: true },

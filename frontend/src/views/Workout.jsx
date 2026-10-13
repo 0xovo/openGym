@@ -440,11 +440,11 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
       subtitle: setLabel(entry.id, s, entry.target, speedUnit),
       sections: [
         // A warm-up logged as a work set (or the other way round) changes phase here. Reps sets
-        // only, the kind a warm-up is added as; one work set always stays, and a per-side
-        // exercise's work sets keep their sides, so a warm-up there is not made one again.
+        // only, the kind a warm-up is added as; one work set always stays. A per-side set keeps
+        // its two sides either way (#575), so it goes back and forth like any other.
         { items: [
           !warm && mode === 'reps' && canBeWarmup(s) && entry.sets.some((x, j) => j !== i && !isWarmupRow(x)) && { icon: 'sunrise', label: t('Make it a warm-up set'), onClick: () => setPhaseAt(i, true) },
-          warm && mode === 'reps' && !perSide && { icon: 'dumbbell', label: t('Count it as a working set'), onClick: () => setPhaseAt(i, false) },
+          warm && mode === 'reps' && { icon: 'dumbbell', label: t('Count it as a working set'), onClick: () => setPhaseAt(i, false) },
           // Taken to failure: a toggle with its check, like the menu's other on/off rows. It counts
           // as RIR 0 wherever effort is read, unless a rating was logged on the set. A timed
           // per-side pair is one set, so both halves get it.

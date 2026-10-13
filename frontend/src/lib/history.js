@@ -1071,15 +1071,21 @@ export function insertWarmupRow(rows, mode, target, step = 2.5, floor = 0) {
 // warm-up (its weight, reps and tick kept; drops, bursts, sides and effort dropped, since a
 // warm-up has none) and moves to the end of the warm-ups, so it is numbered, rested and left out
 // of progression and records like any other warm-up. A row that is one already is left alone.
-// Only a plain straight set: a warm-up is one weight times one rep count, so a drop set would
-// lose its drops, a rest-pause row would add its bursts into one inflated rep count, and a
-// per-side row would merge both sides with no way back (a per-side warm-up is never made a work
-// set again).
-export const canBeWarmup = row => !!row && !isWarmupRow(row) && !isSideSet(row) && !isDropSet(row) && !isRestPauseSet(row)
+// Only a straight set: a warm-up is one weight times one rep count, so a drop set would lose its
+// drops and a rest-pause row would add its bursts into one inflated rep count. A per-side row
+// (#575) stays per side, the way insertWarmupRow adds a warm-up to a unilateral exercise: each
+// side keeps its own weight, reps and tick, so it can be made a work set again with nothing lost.
+export const canBeWarmup = row => !!row && !isWarmupRow(row) && !isDropSet(row) && !isRestPauseSet(row)
 
 export function makeWarmupAt(rows, i) {
   const src = rows[i]
   if (!canBeWarmup(src)) return rows
+  if (isSideSet(src)) {
+    const side = v => ({ w: v.w || 0, r: v.r, done: !!v.done })
+    const warm = syncSideAggregate({ phase: 'warmup', warmup: true, sides: { L: side(src.sides.L), R: side(src.sides.R) } })
+    if (src.at != null) warm.at = src.at
+    return placeRow(rows, i, warm)
+  }
   const warm = { w: src.w || 0, r: src.r, done: !!src.done, phase: 'warmup', warmup: true }
   if (src.at != null) warm.at = src.at
   return placeRow(rows, i, warm)
