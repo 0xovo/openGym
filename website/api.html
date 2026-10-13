@@ -245,7 +245,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   <p class="api-facts">
     <span>OpenAPI 3.1.0</span>
     <span>openGym v1.4.1</span>
-    <span>70 endpoints</span>
+    <span>71 endpoints</span>
     <span>AGPL-3.0-or-later</span>
   </p>
 
@@ -1605,6 +1605,42 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   <div class="prow rrow">
     <span class="r-code s2">200</span>
     <span class="p-desc">The current revision (0 when the profile has no state yet).<span class="r-sig">{ rev: integer, wid: string }</span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">401</span>
+    <span class="p-desc">No session, expired/revoked session, or a disabled account.<span class="r-sig"><code>{&quot;error&quot;:&quot;not signed in&quot;}</code></span></span>
+  </div>
+    </div>
+  </div>
+</details>
+
+<details class="ep" id="op-nudgeCheck">
+  <summary>
+    <span class="m get">GET</span>
+    <span class="ep-path"><code>/api/nudge-check</code></span>
+    <span class="ep-chev" aria-hidden="true"></span>
+    <span class="ep-sum">Whether a day was trained or excused (the phone's background check)</span>
+  </summary>
+  <div class="ep-body">
+<p>Asked by the phone app in the background before a missed-day nudge or a workout-day reminder it scheduled on itself fires, so a day trained on another device is not nudged. A few bytes instead of the whole document: <code>done</code> is true when a workout is dated that day or the day carries a note; <code>nudge</code> is whether the server's copy of the nudge rule would still nudge that day (false once it is done, or when the plan has no session for it); <code>rev</code> is the profile's revision. Nothing of the workouts themselves.</p>
+    <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Requires a session: the cookie set at sign-in, or <code>Authorization: Bearer &lt;token&gt;</code> from mobile-app pairing.</span></p>
+<p class="ep-h">Query parameters</p><div class="ptab">
+  <div class="prow">
+    <span class="p-name">date<em class="p-req" title="required">required</em></span>
+    <span class="p-type">string <span class="p-hint">(date)</span></span>
+    <span class="p-desc">The day, YYYY-MM-DD, in the phone's own calendar.</span>
+  </div>
+</div>
+
+    <p class="ep-h">Responses</p>
+    <div class="ptab">
+  <div class="prow rrow">
+    <span class="r-code s2">200</span>
+    <span class="p-desc">How that day stands.<span class="r-sig">{ date: string <span class="p-hint">(date)</span>, done: boolean, nudge: boolean, rev: integer }</span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">400</span>
+    <span class="p-desc"><code>date-invalid</code>: not a YYYY-MM-DD date.<span class="r-sig"><code>{&quot;error&quot;:&quot;date must be YYYY-MM-DD&quot;}</code></span></span>
   </div>
   <div class="prow rrow">
     <span class="r-code s4">401</span>
