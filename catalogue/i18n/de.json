@@ -119,7 +119,17 @@
     ]
   },
   "1012": {
-    "name": "Gedrehtes Überkopfdrücken mit Band"
+    "name": "Gedrehtes Überkopfdrücken mit Band",
+    "description": "Beim Überkopfdrücken mit Band drehst du deinen Oberkörper während des Drückens zur Seite. Das trainiert deine Schultern und deinen Rumpf.",
+    "instructions": [
+        "Stell dich schulterbreit auf das Widerstandsband.",
+        "Halte die Bandgriffe auf Schulterhöhe. Deine Handflächen zeigen nach vorn.",
+        "Spann den Bauch an und drück die Griffe nach oben, bis deine Arme gestreckt sind.",
+        "Dreh dabei deinen Oberkörper zu einer Seite, ohne die Hüfte mitzudrehen.",
+        "Halte oben kurz inne und kehr kontrolliert in die Ausgangsposition zurück.",
+        "Wiederhole die Bewegung mit einer Drehung zur anderen Seite.",
+        "Wechsle die Seiten ab, bis du deine Wiederholungen geschafft hast."
+    ]
   },
   "1014": {
     "name": "V-Up mit Band"
