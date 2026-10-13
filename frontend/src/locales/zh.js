@@ -2242,4 +2242,18 @@ export default {
   'Your sports watch, calling you back.': '你的运动手表在叫你回来。',
   'Coach wants you back on the bar.': '教练等你回到杠铃前。',
   'Gentle, for headphones or a quiet room.': '轻柔，适合耳机或安静的房间。',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': '删除我的账号',
+  'Removes your profile and everything in it from this server.': '从此服务器上删除你的档案及其中的所有内容。',
+  'Delete your account?': '删除你的账号？',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': '你的档案、训练、体重、照片和视频将从此服务器永久删除。无法撤销，连管理员也无法找回。',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': '想先留一份？导出一个备份。随时可以再导入 openGym。',
+  'Type {0} to confirm.': '输入 {0} 以确认。',
+  'Account name': '账号名称',
+  'Deleting…': '正在删除…',
+  'Delete forever': '永久删除',
+  'That is not your account name.': '这不是你的账号名称。',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': '你是这里唯一的管理员，而且还有其他档案在使用此服务器。请先让其他人成为管理员。',
+  'Couldn’t delete the account. Nothing was removed.': '无法删除账号。没有删除任何内容。',
+  'Your account is gone. Thanks for every rep.': '你的账号已删除。感谢每一次训练。',
 }

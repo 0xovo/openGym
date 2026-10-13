@@ -2235,4 +2235,18 @@ export default {
   'Your sports watch, calling you back.': '你的運動手錶在叫你回來。',
   'Coach wants you back on the bar.': '教練等你回到槓鈴前。',
   'Gentle, for headphones or a quiet room.': '輕柔，適合耳機或安靜的房間。',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': '刪除我的帳號',
+  'Removes your profile and everything in it from this server.': '從此伺服器上刪除你的個人檔案及其中的所有內容。',
+  'Delete your account?': '刪除你的帳號？',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': '你的個人檔案、訓練、體重、相片和影片將從此伺服器永久刪除。無法復原，連管理員也救不回來。',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': '想先留一份？匯出一個備份。隨時都能再匯入 openGym。',
+  'Type {0} to confirm.': '輸入 {0} 以確認。',
+  'Account name': '帳號名稱',
+  'Deleting…': '正在刪除…',
+  'Delete forever': '永久刪除',
+  'That is not your account name.': '這不是你的帳號名稱。',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': '你是這裡唯一的管理員，而且還有其他個人檔案在使用此伺服器。請先讓其他人成為管理員。',
+  'Couldn’t delete the account. Nothing was removed.': '無法刪除帳號。沒有刪除任何內容。',
+  'Your account is gone. Thanks for every rep.': '你的帳號已刪除。感謝每一次訓練。',
 }

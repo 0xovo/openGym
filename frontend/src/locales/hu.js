@@ -2245,4 +2245,18 @@ export default {
   'Your sports watch, calling you back.': 'A sportórád visszahív.',
   'Coach wants you back on the bar.': 'Az edző visszavár a rúdhoz.',
   'Gentle, for headphones or a quiet room.': 'Halk, fülhallgatóhoz vagy csendes helyre.',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': 'Fiókom törlése',
+  'Removes your profile and everything in it from this server.': 'Eltávolítja a profilodat és mindent, ami benne van, erről a szerverről.',
+  'Delete your account?': 'Törlöd a fiókodat?',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'A profilod, edzéseid, testsúlyod, fotóid és videóid végleg törlődnek erről a szerverről. Nincs visszaút, még az adminod sem tudja visszahozni őket.',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Előbb egy másolat? Exportálj egy biztonsági mentést. Bármikor visszaimportálhatod az openGymbe.',
+  'Type {0} to confirm.': 'A megerősítéshez írd be: {0}',
+  'Account name': 'Fiók neve',
+  'Deleting…': 'Törlés…',
+  'Delete forever': 'Végleges törlés',
+  'That is not your account name.': 'Ez nem a fiókod neve.',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Te vagy itt az egyetlen admin, és más profilok még használják ezt a szervert. Előbb tegyél meg valaki mást adminnak.',
+  'Couldn’t delete the account. Nothing was removed.': 'Nem sikerült törölni a fiókot. Semmi sem lett eltávolítva.',
+  'Your account is gone. Thanks for every rep.': 'A fiókod eltűnt. Köszönjük az összes ismétlést.',
 }

@@ -1823,6 +1823,29 @@ export const useStore = create((set, get) => {
       return left.owed ? owedResult(left, { stashed: true }) : { owed: false }
     },
 
+    // Settings → "Delete my account": the server removes the profile and everything of it
+    // (POST /api/account/delete, `name` typed back to confirm), then this device ends where a
+    // sign-out leaves it, and a phone goes back to local-only as a disconnect does. Nothing is
+    // kept aside: there is no account left for kept changes or a running workout to come back to.
+    // The request is not swallowed: refused (the name, the last admin) or not answered, nothing
+    // here changes and the caller says why.
+    async deleteAccount(name) {
+      const uid = get().user?.id
+      await api('/api/account/delete', { method: 'POST', body: JSON.stringify({ name }) })
+      await stopTimers()
+      const all = await readStashes()
+      const key = stashKey(serverBase(), uid)
+      if (all[key]) { delete all[key]; await writeStashes(all) }
+      await clearLocalSession()
+      if (MOBILE) {
+        await forgetRemote()
+        pairedBase = null
+        setSync({ server: null })
+        get().setGuest(true)
+        set({ ready: true })
+      }
+    },
+
     // Demo build only: drop the seeded example profile back in (Settings → "Reset demo data").
     // Dynamic import so the generator never ships in a self-hosted bundle.
     async resetDemo() {

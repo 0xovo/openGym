@@ -2321,4 +2321,18 @@ export default {
   'Your sports watch, calling you back.': 'আপনার স্পোর্টস ঘড়ি আপনাকে ফিরে ডাকছে।',
   'Coach wants you back on the bar.': 'কোচ আপনাকে আবার বারে চান।',
   'Gentle, for headphones or a quiet room.': 'মৃদু, হেডফোন বা শান্ত ঘরের জন্য।',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': 'আমার অ্যাকাউন্ট মুছুন',
+  'Removes your profile and everything in it from this server.': 'এই সার্ভার থেকে আপনার প্রোফাইল ও তার সবকিছু সরিয়ে দেয়।',
+  'Delete your account?': 'আপনার অ্যাকাউন্ট মুছবেন?',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'আপনার প্রোফাইল, ওয়ার্কআউট, শরীরের ওজন, ছবি ও ভিডিও এই সার্ভার থেকে চিরতরে মুছে যাবে। ফেরানোর উপায় নেই, এমনকি আপনার অ্যাডমিনও ফিরিয়ে আনতে পারবেন না।',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': 'আগে একটা কপি চান? একটি ব্যাকআপ এক্সপোর্ট করুন। যেকোনো সময় openGym-এ ইমপোর্ট করতে পারবেন।',
+  'Type {0} to confirm.': 'নিশ্চিত করতে {0} লিখুন।',
+  'Account name': 'অ্যাকাউন্টের নাম',
+  'Deleting…': 'মোছা হচ্ছে…',
+  'Delete forever': 'চিরতরে মুছুন',
+  'That is not your account name.': 'এটি আপনার অ্যাকাউন্টের নাম নয়।',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'আপনি এখানে একমাত্র অ্যাডমিন, আর অন্য প্রোফাইলগুলো এখনও এই সার্ভার ব্যবহার করছে। আগে অন্য কাউকে অ্যাডমিন করুন।',
+  'Couldn’t delete the account. Nothing was removed.': 'অ্যাকাউন্ট মোছা যায়নি। কিছুই সরানো হয়নি।',
+  'Your account is gone. Thanks for every rep.': 'আপনার অ্যাকাউন্ট মুছে গেছে। প্রতিটি রেপের জন্য ধন্যবাদ।',
 }

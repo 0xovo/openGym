@@ -2253,4 +2253,18 @@ export default {
   'Your sports watch, calling you back.': 'นาฬิกาสปอร์ตเรียกคุณกลับมาแล้ว',
   'Coach wants you back on the bar.': 'โค้ชอยากให้คุณกลับมาที่บาร์',
   'Gentle, for headphones or a quiet room.': 'เบา ๆ สำหรับหูฟังหรือห้องที่เงียบ',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': 'ลบบัญชีของฉัน',
+  'Removes your profile and everything in it from this server.': 'ลบโปรไฟล์ของคุณและทุกอย่างในนั้นออกจากเซิร์ฟเวอร์นี้',
+  'Delete your account?': 'ลบบัญชีของคุณใช่ไหม',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'โปรไฟล์ การออกกำลังกาย น้ำหนักตัว รูปภาพ และวิดีโอของคุณจะถูกลบออกจากเซิร์ฟเวอร์นี้อย่างถาวร ย้อนกลับไม่ได้ แม้แต่ผู้ดูแลระบบก็กู้คืนไม่ได้',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': 'อยากเก็บสำเนาไว้ก่อนไหม ส่งออกข้อมูลสำรองได้เลย แล้วนำเข้า openGym ได้ทุกเมื่อ',
+  'Type {0} to confirm.': 'พิมพ์ {0} เพื่อยืนยัน',
+  'Account name': 'ชื่อบัญชี',
+  'Deleting…': 'กำลังลบ…',
+  'Delete forever': 'ลบถาวร',
+  'That is not your account name.': 'นี่ไม่ใช่ชื่อบัญชีของคุณ',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'คุณเป็นผู้ดูแลระบบคนเดียวที่นี่ และยังมีโปรไฟล์อื่นใช้เซิร์ฟเวอร์นี้อยู่ ตั้งคนอื่นเป็นผู้ดูแลระบบก่อน',
+  'Couldn’t delete the account. Nothing was removed.': 'ลบบัญชีไม่สำเร็จ ไม่มีอะไรถูกลบ',
+  'Your account is gone. Thanks for every rep.': 'บัญชีของคุณถูกลบแล้ว ขอบคุณสำหรับทุกเรป',
 }

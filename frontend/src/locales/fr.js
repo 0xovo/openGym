@@ -2242,4 +2242,18 @@ export default {
   'Your sports watch, calling you back.': 'Ta montre de sport te rappelle.',
   'Coach wants you back on the bar.': 'Le coach te veut de retour à la barre.',
   'Gentle, for headphones or a quiet room.': 'Tout doux, pour un casque ou une pièce calme.',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': 'Supprimer mon compte',
+  'Removes your profile and everything in it from this server.': 'Efface ton profil et tout son contenu de ce serveur.',
+  'Delete your account?': 'Supprimer ton compte ?',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'Ton profil, tes séances, ton poids corporel, tes photos et tes vidéos sont effacés de ce serveur pour de bon. Pas de retour en arrière, même ton admin ne pourra rien récupérer.',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Une copie d’abord ? Exporte une sauvegarde. Tu pourras l’importer dans openGym quand tu veux.',
+  'Type {0} to confirm.': 'Tape {0} pour confirmer.',
+  'Account name': 'Nom du compte',
+  'Deleting…': 'Suppression…',
+  'Delete forever': 'Supprimer pour de bon',
+  'That is not your account name.': 'Ce n’est pas le nom de ton compte.',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Tu es le seul admin ici, et d’autres profils utilisent encore ce serveur. Nomme d’abord quelqu’un d’autre admin.',
+  'Couldn’t delete the account. Nothing was removed.': 'Impossible de supprimer le compte. Rien n’a été effacé.',
+  'Your account is gone. Thanks for every rep.': 'Ton compte n’existe plus. Merci pour chaque répétition.',
 }

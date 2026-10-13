@@ -2242,4 +2242,18 @@ export default {
   'Your sports watch, calling you back.': 'Spor saatin seni geri çağırıyor.',
   'Coach wants you back on the bar.': 'Koç seni bara geri bekliyor.',
   'Gentle, for headphones or a quiet room.': 'Sakin, kulaklık ya da sessiz bir oda için.',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': 'Hesabımı sil',
+  'Removes your profile and everything in it from this server.': 'Profilini ve içindeki her şeyi bu sunucudan kaldırır.',
+  'Delete your account?': 'Hesabın silinsin mi?',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'Profilin, antrenmanların, vücut ağırlığın, fotoğrafların ve videoların bu sunucudan kalıcı olarak silinir. Geri dönüşü yok, yöneticin bile geri getiremez.',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Önce bir kopya mı? Bir yedek dışa aktar. İstediğin zaman openGym’e geri aktarabilirsin.',
+  'Type {0} to confirm.': 'Onaylamak için {0} yaz.',
+  'Account name': 'Hesap adı',
+  'Deleting…': 'Siliniyor…',
+  'Delete forever': 'Kalıcı olarak sil',
+  'That is not your account name.': 'Bu senin hesap adın değil.',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Buradaki tek yönetici sensin ve başka profiller bu sunucuyu hâlâ kullanıyor. Önce başka birini yönetici yap.',
+  'Couldn’t delete the account. Nothing was removed.': 'Hesap silinemedi. Hiçbir şey kaldırılmadı.',
+  'Your account is gone. Thanks for every rep.': 'Hesabın silindi. Her tekrar için teşekkürler.',
 }

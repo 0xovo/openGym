@@ -2246,4 +2246,18 @@ export default {
   'Your sports watch, calling you back.': 'Ваши спортивные часы зовут вас обратно.',
   'Coach wants you back on the bar.': 'Тренер ждёт вас обратно у штанги.',
   'Gentle, for headphones or a quiet room.': 'Тихий, для наушников или спокойного зала.',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': 'Удалить мой аккаунт',
+  'Removes your profile and everything in it from this server.': 'Удаляет ваш профиль и всё, что в нём есть, с этого сервера.',
+  'Delete your account?': 'Удалить аккаунт?',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'Ваш профиль, тренировки, вес тела, фото и видео будут удалены с этого сервера навсегда. Отменить нельзя, даже администратор не сможет их вернуть.',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': 'Сначала копию? Экспортируйте резервную копию. Её можно импортировать в openGym в любой момент.',
+  'Type {0} to confirm.': 'Введите {0} для подтверждения.',
+  'Account name': 'Имя аккаунта',
+  'Deleting…': 'Удаление…',
+  'Delete forever': 'Удалить навсегда',
+  'That is not your account name.': 'Это не имя вашего аккаунта.',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'Вы здесь единственный администратор, а другие профили ещё пользуются этим сервером. Сначала назначьте администратором кого-то другого.',
+  'Couldn’t delete the account. Nothing was removed.': 'Не удалось удалить аккаунт. Ничего не удалено.',
+  'Your account is gone. Thanks for every rep.': 'Ваш аккаунт удалён. Спасибо за каждое повторение.',
 }

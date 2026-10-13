@@ -2242,4 +2242,18 @@ export default {
   'Your sports watch, calling you back.': '스포츠 시계가 다시 부르고 있어요.',
   'Coach wants you back on the bar.': '코치가 바 앞으로 돌아오래요.',
   'Gentle, for headphones or a quiet room.': '이어폰이나 조용한 곳에 어울려요.',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': '내 계정 삭제',
+  'Removes your profile and everything in it from this server.': '이 서버에서 프로필과 그 안의 모든 것을 지워요.',
+  'Delete your account?': '계정을 삭제할까요?',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': '프로필, 운동, 체중, 사진과 동영상이 이 서버에서 영구히 삭제돼요. 되돌릴 수 없고, 관리자도 복구할 수 없어요.',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': '먼저 사본을 받아 둘까요? 백업을 내보내세요. 언제든 openGym으로 다시 가져올 수 있어요.',
+  'Type {0} to confirm.': '확인하려면 {0}을(를) 입력하세요.',
+  'Account name': '계정 이름',
+  'Deleting…': '삭제 중…',
+  'Delete forever': '영구 삭제',
+  'That is not your account name.': '계정 이름이 맞지 않아요.',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': '이 서버의 유일한 관리자인데 다른 프로필이 아직 사용 중이에요. 먼저 다른 사람을 관리자로 지정하세요.',
+  'Couldn’t delete the account. Nothing was removed.': '계정을 삭제하지 못했어요. 아무것도 지워지지 않았어요.',
+  'Your account is gone. Thanks for every rep.': '계정이 삭제됐어요. 모든 반복에 감사해요.',
 }

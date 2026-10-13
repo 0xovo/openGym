@@ -43,6 +43,7 @@ import BackupFolderRow, { useBackupFolder, autoBackupSubtitle } from '../compone
 import { ServerSyncSection, KeptChangesRows, leaveServer, connectServer, passkeySignIn } from '../components/ServerSync.jsx'
 import { passwordOn, PasswordRow, openPasswordSignIn, openPasswordRegister } from '../components/PasswordAuth.jsx'
 import { usePasskeys, PasskeysRow, DeviceLinkRow, openDeviceLinkRedeem } from '../components/Passkeys.jsx'
+import { DeleteAccountRow } from '../components/DeleteAccount.jsx'
 import { Section, Row, SelectRow, Switch, Segmented, Button, TextField, SearchField } from '../components/ui.jsx'
 import { PAGES, ROOT_GROUPS, pageVisible, searchSettings, pageTrail } from './settings-pages.js'
 
@@ -898,6 +899,11 @@ export default function Settings({ page = null, find = null, via = null }) {
           <Row icon="lock" iconTint="var(--grey)" title={t('Passkeys not supported in this browser.')} />
           <KeptChangesRows />
         </>}
+      </Section>}
+      {/* Signed in or paired: the account can be deleted from here (App Store rule 5.1.1(v)). A
+          phone in local-only mode has no account; "Reset everything" in Data & backup wipes it. */}
+      {user && !DEMO && <Section>
+        <DeleteAccountRow exportBackup={doExport} exportBackupZip={doExportZip} hasMedia={hasMedia} done={() => nav('/home')} />
       </Section>}
       {/* The connection banner already says this to a guest; the line is for when it is switched
           off, or its × hid it (#454). */}

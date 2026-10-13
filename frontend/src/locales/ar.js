@@ -2297,4 +2297,18 @@ export default {
   'Your sports watch, calling you back.': 'ساعتك الرياضية تناديك للعودة.',
   'Coach wants you back on the bar.': 'المدرب يريدك أن تعود إلى البار.',
   'Gentle, for headphones or a quiet room.': 'هادئ، للسماعات أو لغرفة هادئة.',
+  // --- delete my account (App Store rule 5.1.1(v)) ---
+  'Delete my account': 'حذف حسابي',
+  'Removes your profile and everything in it from this server.': 'يزيل ملفك الشخصي وكل ما فيه من هذا الخادم.',
+  'Delete your account?': 'حذف حسابك؟',
+  'Your profile, workouts, body weight, photos and videos are deleted from this server for good. There is no undo, and not even your admin can bring them back.': 'سيُحذف ملفك الشخصي وتدريباتك ووزن جسمك وصورك ومقاطع الفيديو من هذا الخادم نهائيًا. لا تراجع، ولا حتى المسؤول يستطيع استعادتها.',
+  'Want a copy first? Export a backup. You can import it into openGym anytime.': 'تريد نسخة أولًا؟ صدّر نسخة احتياطية. يمكنك استيرادها إلى openGym في أي وقت.',
+  'Type {0} to confirm.': 'اكتب {0} للتأكيد.',
+  'Account name': 'اسم الحساب',
+  'Deleting…': 'جارٍ الحذف…',
+  'Delete forever': 'حذف نهائي',
+  'That is not your account name.': 'هذا ليس اسم حسابك.',
+  'You’re the only admin here, and other profiles still use this server. Make someone else an admin first.': 'أنت المسؤول الوحيد هنا، وملفات أخرى ما زالت تستخدم هذا الخادم. اجعل شخصًا آخر مسؤولًا أولًا.',
+  'Couldn’t delete the account. Nothing was removed.': 'تعذّر حذف الحساب. لم يُحذف أي شيء.',
+  'Your account is gone. Thanks for every rep.': 'حسابك لم يعد موجودًا. شكرًا على كل تكرار.',
 }
