@@ -2267,4 +2267,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': 'Tu plan: rutinas, ejercicios, series, repeticiones y calendario',
   'Your unit and language': 'Tu unidad e idioma',
   'Your workouts: weights, reps, times, effort and session notes': 'Tus entrenamientos: pesos, repeticiones, tiempos, esfuerzo y notas de sesión',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'No te pierdas nunca el final de un descanso',
+  'One quick thing': 'Una cosita rápida',
+  'Rest timer, right on the lock screen': 'El temporizador de descanso, en la pantalla de bloqueo',
+  'Training reminders, only if you switch them on': 'Recordatorios de entreno, solo si los activas',
+  'You can change it anytime in your phone’s settings.': 'Puedes cambiarlo cuando quieras en los ajustes del móvil.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym puede darte un toque en el hombro cuando acaba un descanso, aunque el móvil esté bloqueado en tu bolsillo.',
 }

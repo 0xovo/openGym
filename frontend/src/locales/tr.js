@@ -2267,4 +2267,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': 'Planın: rutinler, egzersizler, setler, tekrarlar ve program',
   'Your unit and language': 'Birimin ve dilin',
   'Your workouts: weights, reps, times, effort and session notes': 'Antrenmanların: ağırlıklar, tekrarlar, süreler, efor ve seans notları',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Dinlenmenin bittiğini asla kaçırma',
+  'One quick thing': 'Kısa bir şey daha',
+  'Rest timer, right on the lock screen': 'Dinlenme sayacı, doğrudan kilit ekranında',
+  'Training reminders, only if you switch them on': 'Antrenman hatırlatıcıları, sadece açarsan',
+  'You can change it anytime in your phone’s settings.': 'Bunu istediğin zaman telefonunun ayarlarından değiştirebilirsin.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'Telefon kilitli halde cebinde olsa bile, dinlenme bitince openGym omzuna dokunabilir.',
 }

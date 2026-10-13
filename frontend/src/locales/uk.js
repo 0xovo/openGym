@@ -2264,4 +2264,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': 'Твій план: програми, вправи, підходи, повтори й розклад',
   'Your unit and language': 'Твої одиниці та мова',
   'Your workouts: weights, reps, times, effort and session notes': 'Твої тренування: ваги, повтори, час, зусилля й нотатки',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Не пропусти кінець відпочинку',
+  'One quick thing': 'Ще одна швидка річ',
+  'Rest timer, right on the lock screen': 'Таймер відпочинку просто на екрані блокування',
+  'Training reminders, only if you switch them on': 'Нагадування про тренування, лише якщо ти їх увімкнеш',
+  'You can change it anytime in your phone’s settings.': 'Це можна змінити будь-коли в налаштуваннях телефона.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym може поплескати тебе по плечу, коли відпочинок скінчиться, навіть якщо телефон заблокований і лежить у кишені.',
 }

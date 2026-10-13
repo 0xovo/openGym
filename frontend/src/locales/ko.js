@@ -2267,4 +2267,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': '내 플랜: 루틴, 운동, 세트, 반복 횟수, 일정',
   'Your unit and language': '단위와 언어',
   'Your workouts: weights, reps, times, effort and session notes': '내 운동: 무게, 반복 횟수, 시간, 강도, 세션 메모',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': '휴식이 끝나는 순간을 놓치지 마세요',
+  'One quick thing': '잠깐 하나만요',
+  'Rest timer, right on the lock screen': '휴식 타이머를 잠금 화면에서 바로',
+  'Training reminders, only if you switch them on': '운동 알림은 켰을 때만',
+  'You can change it anytime in your phone’s settings.': '언제든 휴대폰 설정에서 바꿀 수 있어요.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': '휴대폰이 잠긴 채 주머니에 있어도 휴식이 끝나면 openGym이 어깨를 톡 쳐 드려요.',
 }

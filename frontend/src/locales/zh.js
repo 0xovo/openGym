@@ -2267,4 +2267,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': '你的计划：训练安排、动作、组数、次数和日程',
   'Your unit and language': '你的单位和语言',
   'Your workouts: weights, reps, times, effort and session notes': '你的训练：重量、次数、时间、强度和训练备注',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': '不再错过休息结束',
+  'One quick thing': '还有一件小事',
+  'Rest timer, right on the lock screen': '休息计时，直接显示在锁屏上',
+  'Training reminders, only if you switch them on': '训练提醒，只在你开启时',
+  'You can change it anytime in your phone’s settings.': '你随时可以在手机设置里更改。',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': '即使手机锁屏放在口袋里，休息结束时 openGym 也能拍拍你的肩膀。',
 }

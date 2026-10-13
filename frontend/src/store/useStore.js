@@ -1308,6 +1308,11 @@ export const useStore = create((set, get) => {
        always did, and a configured one is the only place any of it appears. */
     config: null,
     needsMobileOnboarding: false,   // mobile build only — set true by boot() on a genuine first launch
+    // Mobile build only: the first-start permission steps (views/PermissionSteps.jsx) are due.
+    // Set when that first launch's choice is made; never persisted, the steps keep their own
+    // once-per-device record (lib/onboarding-perms.js).
+    permSteps: false,
+    finishPermSteps() { set({ permSteps: false }) },
     // A one-time device-link code this page was opened with (?link=, #95), until it is redeemed.
     // Never persisted: the code is good for minutes and belongs to this one visit.
     linkCode: null,
@@ -1741,7 +1746,7 @@ export const useStore = create((set, get) => {
         if (typeof ask !== 'function') ask = (await import('../sheets.jsx')).askAddDeviceData
         const r = await get().adoptProfile(ask, { alwaysAsk: !!m.alwaysAsk })
         // A phone whose pairing ended here: what connectToServer does after its own adoption.
-        if (MOBILE) { await nativePersist(true); if (get().needsMobileOnboarding) set({ needsMobileOnboarding: false }) }
+        if (MOBILE) { await nativePersist(true); if (get().needsMobileOnboarding) set({ needsMobileOnboarding: false, permSteps: true }) }
         return r
       } catch { return null }
     },
@@ -1773,7 +1778,7 @@ export const useStore = create((set, get) => {
     // asks again.
     async chooseLocalMode() {
       await chooseLocal()
-      set({ needsMobileOnboarding: false })
+      set({ needsMobileOnboarding: false, permSteps: true })
     },
     // Redeems the pairing code shown in the browser (Settings → "Pair the mobile app") and
     // switches this device over to that account, same as signing in on the web does — the same
@@ -1789,7 +1794,9 @@ export const useStore = create((set, get) => {
       await get().refreshConfig()   // what this server offers (the Coach, guest mode) — see boot()
       await get().adoptProfile(ask)
       await nativePersist(true)   // the file holds this account's copy before anything else can happen
-      set({ needsMobileOnboarding: false })
+      // Paired from the first-launch screen: the permission steps come next. From Settings later
+      // on, nothing new is asked here.
+      set(st => ({ needsMobileOnboarding: false, permSteps: st.permSteps || st.needsMobileOnboarding }))
     },
     // Leaves remote mode and drops back to local-only, the way signOut does: never with changes
     // the server has not seen, unless `force` keeps them aside first. Same result as signOut;

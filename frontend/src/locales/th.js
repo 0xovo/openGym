@@ -2278,4 +2278,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': 'แผนของคุณ: รูทีน ท่าออกกำลังกาย เซ็ต จำนวนครั้ง และตาราง',
   'Your unit and language': 'หน่วยและภาษาของคุณ',
   'Your workouts: weights, reps, times, effort and session notes': 'การฝึกของคุณ: น้ำหนัก จำนวนครั้ง เวลา ความหนัก และบันทึกของเซสชัน',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'ไม่พลาดตอนพักจบอีกเลย',
+  'One quick thing': 'ขอแป๊บเดียว',
+  'Rest timer, right on the lock screen': 'ตัวจับเวลาพัก บนหน้าจอล็อกเลย',
+  'Training reminders, only if you switch them on': 'การแจ้งเตือนการฝึก เฉพาะเมื่อคุณเปิดใช้',
+  'You can change it anytime in your phone’s settings.': 'เปลี่ยนได้ทุกเมื่อในการตั้งค่าของโทรศัพท์',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'openGym สะกิดไหล่คุณได้เมื่อหมดเวลาพัก แม้โทรศัพท์จะล็อกอยู่ในกระเป๋า',
 }

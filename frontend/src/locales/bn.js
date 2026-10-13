@@ -2346,4 +2346,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': 'আপনার প্ল্যান: রুটিন, ব্যায়াম, সেট, রেপ ও সময়সূচি',
   'Your unit and language': 'আপনার একক ও ভাষা',
   'Your workouts: weights, reps, times, effort and session notes': 'আপনার ওয়ার্কআউট: ওজন, রেপ, সময়, পরিশ্রম ও সেশনের নোট',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'বিশ্রামের শেষ আর কখনো মিস করবেন না',
+  'One quick thing': 'ছোট্ট একটা কথা',
+  'Rest timer, right on the lock screen': 'বিশ্রামের টাইমার, সরাসরি লক স্ক্রিনে',
+  'Training reminders, only if you switch them on': 'ট্রেনিংয়ের রিমাইন্ডার, শুধু আপনি চালু করলে',
+  'You can change it anytime in your phone’s settings.': 'ফোনের সেটিংসে যেকোনো সময় এটি বদলাতে পারেন।',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'ফোন লক করে পকেটে রাখলেও, বিশ্রাম শেষ হলে openGym আপনার কাঁধে টোকা দিতে পারে।',
 }

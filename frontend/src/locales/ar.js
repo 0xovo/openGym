@@ -2322,4 +2322,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': 'خطتك: الروتينات والتمارين والمجموعات والتكرارات والجدول',
   'Your unit and language': 'وحدتك ولغتك',
   'Your workouts: weights, reps, times, effort and session notes': 'تمارينك: الأوزان والتكرارات والأوقات والجهد وملاحظات الجلسة',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'لا تفوّت نهاية الراحة أبدًا',
+  'One quick thing': 'شيء سريع واحد',
+  'Rest timer, right on the lock screen': 'مؤقت الراحة مباشرة على شاشة القفل',
+  'Training reminders, only if you switch them on': 'تذكيرات التمرين، فقط إذا فعّلتها',
+  'You can change it anytime in your phone’s settings.': 'يمكنك تغيير ذلك في أي وقت من إعدادات هاتفك.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'يمكن لـ openGym أن ينقر على كتفك عند انتهاء الراحة، حتى والهاتف مقفل في جيبك.',
 }

@@ -1428,6 +1428,13 @@ export const PT_BR_OVERRIDES = {
   'Your plan: routines, exercises, sets, reps and schedule': 'Seu plano: rotinas, exercícios, séries, repetições e agenda',
   'Your unit and language': 'Sua unidade e idioma',
   'Your workouts: weights, reps, times, effort and session notes': 'Seus treinos: pesos, repetições, tempos, esforço e anotações da sessão',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Nunca perca o fim de um descanso',
+  'One quick thing': 'Só uma coisa rápida',
+  'Rest timer, right on the lock screen': 'Timer de descanso, direto na tela de bloqueio',
+  'Training reminders, only if you switch them on': 'Lembretes de treino, só se você ativar',
+  'You can change it anytime in your phone’s settings.': 'Você pode mudar isso quando quiser nas configurações do celular.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'O openGym pode te dar um toque no ombro quando um descanso acaba, mesmo com o celular bloqueado no bolso.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

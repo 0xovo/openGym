@@ -2270,4 +2270,11 @@ export default {
   'Your plan: routines, exercises, sets, reps and schedule': 'A terved: rutinok, gyakorlatok, sorozatok, ismétlések és beosztás',
   'Your unit and language': 'A mértékegységed és a nyelved',
   'Your workouts: weights, reps, times, effort and session notes': 'Az edzéseid: súlyok, ismétlések, idők, erőfeszítés és jegyzetek',
+  // --- first-start permission steps ---
+  'Never miss the end of a rest': 'Ne maradj le a pihenő végéről',
+  'One quick thing': 'Még egy gyors dolog',
+  'Rest timer, right on the lock screen': 'Pihenőidőzítő, egyenesen a lezárási képernyőn',
+  'Training reminders, only if you switch them on': 'Edzésemlékeztetők, csak ha bekapcsolod',
+  'You can change it anytime in your phone’s settings.': 'Ezt bármikor megváltoztathatod a telefonod beállításaiban.',
+  'openGym can tap you on the shoulder when a rest is over, even with the phone locked in your pocket.': 'Az openGym megkoppintja a vállad, amikor letelt a pihenő, akkor is, ha a lezárt telefon a zsebedben van.',
 }
