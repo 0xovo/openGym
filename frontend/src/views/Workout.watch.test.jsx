@@ -57,4 +57,15 @@ describe('a set ticked on the watch', () => {
     act(() => { applyEvents([{ id: 'e2', type: 'setDone', wid: 'w-watch', exId: '0025', entryIdx: 0, setIdx: 0, w: 65, r: 6 }], () => useStore.getState()) })
     expect(useStore.getState().S.active.entries[0].sets[0]).toMatchObject({ w: 65, r: 6, done: true })
   })
+
+  it('keeps the watch\'s time on the set, and the watch\'s Finish saves the workout like Finish and save', () => {
+    const at = Date.now() - 60000
+    act(() => { applyEvents([{ id: 'e3', type: 'setDone', wid: 'w-watch', exId: '0025', entryIdx: 0, setIdx: 0, w: 60, r: 8, at }], () => useStore.getState()) })
+    expect(useStore.getState().S.active.entries[0].sets[0].at).toBe(at)
+    act(() => { applyEvents([{ id: 'f1', type: 'finish', wid: 'w-watch', at: at + 1000 }], () => useStore.getState()) })
+    const S = useStore.getState().S
+    expect(S.active).toBeNull()
+    expect(S.workouts.at(-1)).toMatchObject({ id: 'w-watch' })
+    expect(S.workouts.at(-1).entries[0].sets[0]).toMatchObject({ w: 60, r: 8, done: true, at })
+  })
 })

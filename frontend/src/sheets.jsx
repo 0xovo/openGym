@@ -2787,12 +2787,15 @@ export function startFlow(routineIds) {
   if (S().weighIn === false) { beginWorkout(routineIds, null); return }
   bwSheet({ required: true, onDone: bw => beginWorkout(routineIds, bw) })
 }
-export function beginWorkout(routineIds, bw) {
+// `opts` from the Apple Watch (lib/watch-sync.js): a session started there keeps the watch's id,
+// so the sets ticked on it find it, and its start time, however late the phone hears of it.
+export function beginWorkout(routineIds, bw, { id = null, start = null } = {}) {
   const st = S()
   const { entries, routineIds: rids, routines } = buildCombinedEntries(st, routineIds)
+  const startAt = Number.isFinite(start) && start > 0 ? start : Date.now()
   update(s => {
     s.active = {
-      id: uid(), d: todayISO(), start: Date.now(),
+      id: id || uid(), d: id && start ? isoOf(new Date(startAt)) : todayISO(), start: startAt,
       // A session tracks its routines as a list; per-entry `rid` carries which one each
       // exercise came from. No top-level `excludeFromProgression` — per-entry `noProg` does it.
       routineIds: rids,
@@ -3375,6 +3378,9 @@ export function finishWorkoutSheet({ onDiscard } = {}) {
     ],
   })
 }
+// Finish and save without a question: the Apple Watch's Finish (lib/watch-sync.js) runs exactly
+// what the phone's Finish and save runs.
+export const finishWorkoutNow = () => doFinishWorkout()
 function doFinishWorkout() {
   const st = S()
   const A = st.active

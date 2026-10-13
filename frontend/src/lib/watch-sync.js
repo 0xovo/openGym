@@ -17,62 +17,93 @@
 import { MOBILE, nativePlatform } from './mobile.js'
 import { EXIDX } from './exercises.js'
 import { exerciseNameFor } from './i18n.js'
-import { modeOf, setLabel, lastEntryFor } from './history.js'
+import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds } from './history.js'
 import { isWarmupRow } from './workout-model.js'
 import { sessionHistory } from './backfill.js'
+import { buildCombinedEntries, deriveSessionName } from './session-merge.js'
+import { todayISO } from './format.js'
 
 export const SNAPSHOT_VERSION = 1
 const APPLIED_KEY = 'gym_watch_applied'
 const APPLIED_MAX = 300
 const SEND_DEBOUNCE_MS = 400
+// Routines the watch can start besides today's: enough to choose from, small enough to send.
+const READY_MAX = 8
 
 const num = v => (typeof v === 'number' && Number.isFinite(v) ? v : null)
 
 /* ---------- the snapshot ---------- */
 
+// One exercise as the watch shows it.
+function watchEntry (e, H) {
+  const ex = EXIDX[e.id]
+  const target = e.target || {}
+  const mode = modeOf({ ...target, id: e.id })
+  let last = null
+  try {
+    const l = H ? lastEntryFor(H, e.id, e.rid) : null
+    if (l && Array.isArray(l.sets) && l.sets.length) last = l.sets.map(s => setLabel(e.id, s, l.target)).join(', ')
+  } catch { last = null }
+  return {
+    id: e.id,
+    name: ex ? exerciseNameFor(ex) : String(target.name || e.name || e.id),
+    mode,
+    restSec: num(target.restSec),
+    last,
+    sets: (e.sets || []).map(s => ({
+      w: num(s.w), r: num(s.r), sec: num(s.sec), done: !!s.done, warmup: !!isWarmupRow(s),
+    })),
+  }
+}
+
+/**
+ * What the watch can start by itself, the phone asleep: today's planned session and a few other
+ * routines, each with its exercises built exactly as starting it on the phone builds them
+ * (buildCombinedEntries, as sheets.jsx beginWorkout does).
+ */
+export function buildReady (S, today = todayISO()) {
+  let H = null
+  try { H = sessionHistory(S) } catch { H = null }
+  const session = ids => {
+    const { entries, routineIds, routines } = buildCombinedEntries(S, ids)
+    if (!routines.length) return null
+    return { routineIds, name: deriveSessionName(routines.map(r => r.name)) || '', entries: entries.map(e => watchEntry(e, H)) }
+  }
+  let todayIds = []
+  try { todayIds = effectiveRoutineIds({ ...S, routines: S.routines || [], week: S.week || {}, dayPlan: S.dayPlan || {} }, today, today) || [] } catch { todayIds = [] }
+  const planned = todayIds.length ? session(todayIds) : null
+  const others = (S.routines || []).filter(r => r && !todayIds.includes(r.id)).slice(0, READY_MAX).map(r => session([r.id])).filter(Boolean)
+  return { today: planned, others }
+}
+
 /** What the watch needs to run the session: plain data, no media (licence: text only). */
-export function buildSnapshot(S, { timer = null } = {}) {
+export function buildSnapshot(S, { timer = null, ready = null } = {}) {
   const A = S && S.active
-  if (!A || !Array.isArray(A.entries)) return { v: SNAPSHOT_VERSION, active: null }
+  const unit = S && S.unit === 'lb' ? 'lb' : 'kg'
+  if (!A || !Array.isArray(A.entries)) return { v: SNAPSHOT_VERSION, unit, active: null, ready }
   let H = null
   try { H = sessionHistory(S) } catch { H = null }
   return {
     v: SNAPSHOT_VERSION,
+    unit,
+    ready,
     active: {
       id: A.id || null,
       name: A.name || '',
-      unit: S.unit === 'lb' ? 'lb' : 'kg',
+      unit,
       cur: Math.max(0, Math.min(A.entries.length - 1, A.cur || 0)),
       restSec: num(S.restSec) || 0,
       // a rest running on the phone, so the watch counts down the same one
       rest: timer && !timer.paused && !timer.ready && num(timer.endsAt) ? { endsAt: timer.endsAt } : null,
-      entries: A.entries.map(e => {
-        const ex = EXIDX[e.id]
-        const target = e.target || {}
-        const mode = modeOf({ ...target, id: e.id })
-        let last = null
-        try {
-          const l = H ? lastEntryFor(H, e.id, e.rid) : null
-          if (l && Array.isArray(l.sets) && l.sets.length) last = l.sets.map(s => setLabel(e.id, s, l.target)).join(', ')
-        } catch { last = null }
-        return {
-          id: e.id,
-          name: ex ? exerciseNameFor(ex) : String(target.name || e.name || e.id),
-          mode,
-          restSec: num(target.restSec),
-          last,
-          sets: (e.sets || []).map(s => ({
-            w: num(s.w), r: num(s.r), sec: num(s.sec), done: !!s.done, warmup: !!isWarmupRow(s),
-          })),
-        }
-      }),
+      entries: A.entries.map(e => watchEntry(e, H)),
     },
   }
 }
 
 /* ---------- applying the watch's events ---------- */
 
-let handlers = null
+let handlers = null      // the workout screen's: setDone, finish
+let appHandlers = null   // the app's: start
 const readApplied = () => { try { return JSON.parse(localStorage.getItem(APPLIED_KEY)) || [] } catch { return [] } }
 const writeApplied = ids => { try { localStorage.setItem(APPLIED_KEY, JSON.stringify(ids.slice(-APPLIED_MAX))) } catch { /* the queue's ack is what counts */ } }
 
@@ -83,22 +114,38 @@ function entryIndexOf (A, ev) {
 }
 
 /**
- * Applies the events not applied yet, in order, through the bound actions. Returns the ids that
- * are done with: applied now, applied before, or about a workout that is not running any more.
- * Without bound actions (the workout screen is not there) nothing is done with and all stay queued.
+ * Applies the events not applied yet, in order. Returns the ids that are done with: applied now,
+ * applied before, or about a workout that is not running any more. An event whose actions are not
+ * there yet (a set before the workout screen is open) stops the run: it and everything after it
+ * stay queued, in order, for the next drain.
+ *
+ *   start   { routineIds, wid, at }  the app starts that session with the watch's id and start
+ *   setDone { wid, exId, entryIdx, setIdx, w, r, at }   the workout screen's own tick
+ *   finish  { wid, at }              the workout screen's own Finish and save
  */
 export function applyEvents (events, getState) {
-  if (!handlers || !Array.isArray(events)) return []
+  if (!Array.isArray(events)) return []
   const applied = readApplied()
   const done = []
   for (const ev of events) {
     if (!ev || typeof ev.id !== 'string') continue
     if (applied.includes(ev.id)) { done.push(ev.id); continue }
     const A = getState()?.S?.active
-    if (ev.type === 'setDone' && A && Array.isArray(A.entries) && (!ev.wid || ev.wid === A.id)) {
+    const ours = A && Array.isArray(A.entries) && (!ev.wid || ev.wid === A.id)
+    if (ev.type === 'start') {
+      if (!A) {
+        if (!appHandlers) break
+        appHandlers.start(Array.isArray(ev.routineIds) ? ev.routineIds : [], { id: ev.wid || null, start: num(ev.at) })
+      }
+      // A workout already running on the phone is kept; one with the watch's id is this one.
+    } else if (ev.type === 'setDone' && ours) {
+      if (!handlers) break
       const idx = entryIndexOf(A, ev)
       const set = idx >= 0 ? A.entries[idx].sets?.[ev.setIdx] : null
-      if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r) })
+      if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at) })
+    } else if (ev.type === 'finish' && ours) {
+      if (!handlers) break
+      handlers.finish()
     }
     // Applied, or meaningless now (another workout, a set that is gone): either way it is done.
     applied.push(ev.id)
@@ -106,6 +153,13 @@ export function applyEvents (events, getState) {
   }
   writeApplied(applied)
   return done
+}
+
+/** The app's own actions, for what needs no screen (starting a session). Returns the unbind. */
+export function bindWatchAppActions (h) {
+  appHandlers = h
+  drainWatchEvents()
+  return () => { if (appHandlers === h) appHandlers = null }
 }
 
 /* ---------- the native plugin ---------- */
@@ -154,19 +208,30 @@ export async function startWatchSync ({ useStore, useUI }) {
   if (!p) return () => {}
   getStateRef = () => useStore.getState()
   let lastSent = null, tm = null
+  // The ready sessions only change with the plan, the log or the day: built again only then.
+  let readyKey = null, ready = null
+  const readyFor = S => {
+    const key = [S.routines, S.week, S.dayPlan, S.workouts, S.exWeights, S.unit, todayISO()]
+    if (!readyKey || key.some((v, i) => v !== readyKey[i])) {
+      readyKey = key
+      try { ready = buildReady(S) } catch { ready = null }
+    }
+    return ready
+  }
   const send = async () => {
     tm = null
     try {
       const st = await p.WatchBridge.status()
       if (!st || !st.paired || !st.installed) return
-      const json = JSON.stringify(buildSnapshot(useStore.getState().S, { timer: useUI.getState().timer }))
+      const S = useStore.getState().S
+      const json = JSON.stringify(buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) }))
       if (json === lastSent) return
       const r = await p.WatchBridge.sendSnapshot({ json })
       if (r && r.sent) lastSent = json
     } catch { /* no watch, or not now: the next change tries again */ }
   }
   const schedule = () => { clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
-  const offStore = useStore.subscribe((s, prev) => { if (s.S.active !== prev.S.active || s.S.unit !== prev.S.unit) schedule() })
+  const offStore = useStore.subscribe((s, prev) => { if (s.S !== prev.S) schedule() })
   const offUI = useUI.subscribe((s, prev) => { if (s.timer !== prev.timer) schedule() })
   const sub = await p.WatchBridge.addListener('watchEvent', () => { drainWatchEvents() })
   const onVisible = () => { if (document.visibilityState === 'visible') { drainWatchEvents(); schedule() } }
@@ -178,4 +243,4 @@ export async function startWatchSync ({ useStore, useUI }) {
 
 // Test seams.
 export function _setWatchPluginForTest (plugin, getState) { pluginP = Promise.resolve(plugin ? { WatchBridge: plugin } : null); getStateRef = getState || null }
-export function _resetWatchSync () { handlers = null; pluginP = null; getStateRef = null; draining = null }
+export function _resetWatchSync () { handlers = null; appHandlers = null; pluginP = null; getStateRef = null; draining = null }

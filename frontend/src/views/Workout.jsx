@@ -26,7 +26,7 @@ import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
 import { workoutSettingsSheet } from '../components/WorkoutSettingsSheet.jsx'
 import { durationSheet } from '../components/DurationWheel.jsx'
 import { REST_MAX, fmtRest } from '../lib/duration.js'
-import { startFlow, exercisePicker, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet } from '../sheets.jsx'
+import { startFlow, exercisePicker, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet, finishWorkoutNow } from '../sheets.jsx'
 import { afterScrollRestore, scrollRestorePending } from '../components/Modals.jsx'
 import { effortColor } from '../lib/effort.js'
 import Elapsed from '../components/Elapsed.jsx'
@@ -1758,12 +1758,16 @@ function ActiveWorkout() {
   // end-of-workout sheet). A row already ticked only takes the numbers.
   const toggleRef = useRef(toggle)
   toggleRef.current = toggle
+  // The time is the watch's: the phone may hear of the set much later (lib/finish-workout.js
+  // sessionEnd reads the sets' times). The watch's Finish runs the phone's Finish and save.
   useEffect(() => bindWatchActions({
-    setDone: (idx, i, { w, r }) => {
+    setDone: (idx, i, { w, r, at }) => {
       if (useStore.getState().S.active?.editingWorkoutId) return   // a saved workout being edited is not the session
       mutEntry(idx, en => { const set = en.sets[i]; if (!set) return; if (w != null) set.w = w; if (r != null) set.r = r })
       if (!useStore.getState().S.active?.entries?.[idx]?.sets?.[i]?.done) toggleRef.current(idx, i)
+      if (at) mutEntry(idx, en => { const set = en.sets[i]; if (set?.done) set.at = at })
     },
+    finish: () => { if (!useStore.getState().S.active?.editingWorkoutId) finishWorkoutNow() },
   }), [])
 
   // After the finished exercise folded away (toggle, above): the new current one is the next thing

@@ -13,13 +13,13 @@ import { setNav, notePath, keyBefore } from './lib/nav.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
-import { startWatchSync } from './lib/watch-sync.js'
+import { startWatchSync, bindWatchAppActions } from './lib/watch-sync.js'
 import { useWakeLock } from './lib/wakelock.js'
 import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
 import { syncPushSubscription } from './lib/push.js'
 import { MOBILE, nativePlatform } from './lib/mobile.js'
-import { exitWorkoutEdit, startFlow } from './sheets.jsx'
+import { exitWorkoutEdit, startFlow, beginWorkout } from './sheets.jsx'
 import Icon from './components/Icon.jsx'
 import TabBar from './components/TabBar.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
@@ -328,7 +328,10 @@ export default function App() {
     if (!MOBILE) return
     let stop = null, gone = false
     startWatchSync({ useStore, useUI }).then(fn => { if (gone) fn(); else stop = fn })
-    return () => { gone = true; stop?.() }
+    // A session started on the watch starts here as the phone's Start does, with the watch's id
+    // and start time, and no weigh-in question (the lifter is at the watch, not here).
+    const unbind = bindWatchAppActions({ start: (ids, opts) => beginWorkout(ids, null, opts) })
+    return () => { gone = true; stop?.(); unbind() }
   }, [])
   return <HashRouter><Shell /></HashRouter>
 }
