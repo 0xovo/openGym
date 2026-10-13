@@ -125,11 +125,13 @@ for (const view of ['list', 'compact']) {
       await press(container.querySelector('[role="checkbox"]'))
       await rerender()
       expect(mocks.S.active.cur).toBe(1)
-      // The partner B's first row is the 3rd .setrow (A has 2, then B's first).
-      const partnerRow = container.querySelectorAll('.setrow')[2]
-      expect(seen).toContain(partnerRow)
-      // The row is scrolled to the top under the pinned header, with the header's height fed to
-      // --whdr-h so the row's scroll-margin (index.css) clears it rather than hiding behind it.
+      // The list brings the partner's exercise BLOCK (its name first) up under the header, not
+      // its set field: you want to see which exercise you are on, then the row.
+      const partnerBlock = container.querySelector('.ss-ex[data-exidx="1"]')
+      expect(partnerBlock).toBeTruthy()
+      expect(seen).toContain(partnerBlock)
+      // Landed under the pinned header, with the header's height fed to --whdr-h so the block's
+      // scroll-margin (index.css) clears it rather than hiding behind it.
       expect(container.querySelector('.workout-list').style.getPropertyValue('--whdr-h')).toBe('120px')
     })
 
@@ -140,14 +142,34 @@ for (const view of ['list', 'compact']) {
       await press(box(l => /Left/.test(l) && /Set 1/.test(l))); await rerender()
       expect(mocks.S.active.cur).toBe(0)
       expect(seen).toHaveLength(0)
-      // A set 0 Right — set done, advance to partner B, scroll to B's row
+      // A set 0 Right — set done, advance to partner B, scroll to B's exercise block (its title)
       await press(box(l => /Right/.test(l) && /Set 1/.test(l))); await rerender()
       expect(mocks.S.active.cur).toBe(1)
-      // A (one-sided) rows carry both `setrow` and `side`; B (normal) rows are a plain `.setrow`.
-      // The partner is B's first unticked plain row.
-      const partnerRow = [...container.querySelectorAll('.setrow:not(.side)')].find(el => !el.className.includes('done'))
-      expect(partnerRow).toBeTruthy()
-      expect(seen).toContain(partnerRow)
+      const partnerBlock = container.querySelector('.ss-ex[data-exidx="1"]')
+      expect(partnerBlock).toBeTruthy()
+      expect(seen).toContain(partnerBlock)
+    })
+
+    // The real-session order: rate each side (effort on), so each side tick closes the effort
+    // picker, which arms the scroll-restore window. The partner's scroll must survive the wait.
+    it('a one-sided member with effort rating still scrolls to the partner', async () => {
+      await mount([oneSided('0025', 'g'), normal('0043', 'g'), normal('0001')], 0, view)
+      mocks.S = { ...mocks.S, effort: 'rir' }; await rerender()
+      const seen = watchScrolls()
+      // Both sides ticked via their checkboxes (ticking is what advances, regardless of effort).
+      await press(box(l => /Left/.test(l) && /Set 1/.test(l))); await rerender()
+      // The restore window is open when the set completes (a sheet closed in the same tap).
+      mocks.scrollRestorePending.mockImplementation(() => true)
+      const queued = []
+      mocks.afterScrollRestore.mockImplementation(fn => { queued.push(fn); return () => {} })
+      await press(box(l => /Right/.test(l) && /Set 1/.test(l))); await rerender()
+      expect(mocks.S.active.cur).toBe(1)
+      expect(queued).toHaveLength(1)
+      // Another write lands before the wait is over (the store clones state, re-keying refs).
+      mocks.storeSnapshot().update(s => { s.active.entries[1].sets[0].w = 62.5 }); await rerender()
+      await act(async () => { queued[0]() })
+      const partnerBlock = container.querySelector('.ss-ex[data-exidx="1"]')
+      expect(seen).toContain(partnerBlock)
     })
   })
 }

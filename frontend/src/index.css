@@ -1855,7 +1855,7 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
    own row (Workout.jsx), not the unit: the row needs the same clearance under the sticky header,
    since scroll-margin does not inherit from the .wl-unit around it. Scoped to the list so Cards,
    which has no pinned header, is untouched. */
-.workout-list .setrow,.workout-list .setrow-side{scroll-margin-top:calc(var(--whdr-h, var(--sat) + var(--conn) + 80px) + 16px)}
+.workout-list .ss-ex,.workout-list .setrow,.workout-list .setrow-side{scroll-margin-top:calc(var(--whdr-h, var(--sat) + var(--conn) + 80px) + 16px)}
 .wl-unit.cur{box-shadow:inset 0 0 0 1.5px var(--acc-line)}
 .wl-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .wl-summary{display:grid;gap:8px;padding-bottom:10px}

@@ -1097,14 +1097,20 @@ function ActiveWorkout() {
     return afterScrollRestore(() => {
       const { entries, cur: at } = shown.current
       const entry = entries[at]
+      // Cards centres the actionable set row so a tall first block does not push it off; the list
+      // has the whole session stacked under a pinned header, so it brings the next member's
+      // exercise block (its name first) up under the header, not the set field — you want to see
+      // which exercise you are on, then the row. Fall back to the row/block the other way round.
       const firstIncomplete = entry?.sets.findIndex(s => !s.done) ?? -1
       const setIdx = firstIncomplete >= 0 ? firstIncomplete : (entry?.sets.length ?? 0) - 1
-      const el = (setIdx >= 0 && setRefs.current.get(entry)?.get(setIdx)) || exRefs.current.get(entry)
+      const row = setIdx >= 0 && setRefs.current.get(entry)?.get(setIdx)
+      const block = exRefs.current.get(entry)
+      const el = listMode ? (block || row) : (row || block)
       if (!el || typeof el.scrollIntoView !== 'function') return
       if (!moved && rowOnScreen(el)) return
-      // In the list the header is pinned over the page: land the row below it (block:'start',
-      // fed the header's current height like scrollToUnit) rather than centred behind it. Cards
-      // has no pinned header, so the actionable row is centred as it was.
+      // In the list the header is pinned over the page: land the block below it (block:'start',
+      // fed the header's current height like scrollToUnit) rather than behind it. Cards has no
+      // pinned header, so the actionable row is centred as it was.
       if (listMode) {
         const hdrH = hdrRef.current?.offsetHeight
         if (hdrH) listRef.current?.style.setProperty('--whdr-h', hdrH + 'px')
