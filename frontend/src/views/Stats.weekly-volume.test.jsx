@@ -7,10 +7,10 @@ import Stats from './Stats.jsx'
 
 const NOW = new Date(2026, 8, 30, 12).getTime()
 const press = { id: 'press', n: 'Press', primaries: ['chest'], secondaries: ['triceps'], custom: true }
-const mocks = vi.hoisted(() => ({ S: null, bodyMaps: [] }))
+const mocks = vi.hoisted(() => ({ S: null, bodyMaps: [], nav: null }))
 
 vi.mock('../store/useStore.js', () => ({ useStore: selector => selector({ S: mocks.S }) }))
-vi.mock('react-router-dom', () => ({ useNavigate: () => vi.fn() }))
+vi.mock('react-router-dom', () => ({ useNavigate: () => (...a) => mocks.nav?.(...a) }))
 vi.mock('../sheets.jsx', () => ({
   bwSheet: vi.fn(), goalSheet: vi.fn(), calendarSheet: vi.fn(), workoutDetailSheet: vi.fn(),
   exerciseHistorySheet: vi.fn(), WorkoutRow: () => React.createElement('div'), bwDeltaColor: () => '', weighInsSheet: vi.fn(),
@@ -274,5 +274,20 @@ describe('Stats — weekly planned vs completed volume', () => {
     expect(value('chest').textContent).toBe('2/2 · 100%')
     expect(value('triceps').textContent).toBe('0/1 · 0%')
     expect(row('biceps')).toBeNull()
+  })
+
+  // #553: an untrained muscle opens the exercises that train it.
+  it('a tap on an untrained muscle opens its exercises', () => {
+    mocks.nav = vi.fn()
+    mocks.S = state({
+      routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
+      workouts: [completed('2026-09-30', 'chest', 8)],
+    })
+    mount()
+    const chip = comparison().querySelector('.mchip.miss')
+    expect(chip.tagName).toBe('BUTTON')
+    act(() => chip.click())
+    expect(mocks.nav).toHaveBeenCalledWith('/muscles?m=' + chip.dataset.muscle, { state: { from: '/stats' } })
+    expect(MUSCLES).toContain(chip.dataset.muscle)
   })
 })

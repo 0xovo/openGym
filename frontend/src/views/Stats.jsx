@@ -125,6 +125,7 @@ function profileBodyweightKg(S) {
 }
 
 function MuscleBalance({ S }) {
+  const nav = useNavigate()
   const [view, setView] = useState('balance')
   const [win, setWin] = useState(7)
   const [weekOffset, setWeekOffset] = useState(0)
@@ -194,7 +195,9 @@ function MuscleBalance({ S }) {
   const completionSummary = <>
     {missed.length > 0 && <>
       <h4 className="sec" style={{ marginTop: 12 }}>{on ? t('No hard sets in this period') : t('Not trained in this period')}</h4>
-      <div className="mchips">{missed.map(m => <span key={m} className="mchip miss">{t(MUSCLE_NAME[m])}</span>)}</div>
+      {/* A tap opens the exercises for that muscle (#553). */}
+      <div className="mchips">{missed.map(m => <button type="button" key={m} className="mchip miss" data-muscle={m}
+        aria-label={t('Exercises for {0}', t(MUSCLE_NAME[m]))} onClick={() => nav('/muscles?m=' + encodeURIComponent(m), { state: { from: '/stats' } })}>{t(MUSCLE_NAME[m])}</button>)}</div>
     </>}
     {!missed.length && worked.length > 0 &&
       <div className="muted small" style={{ marginTop: 10 }}>{on
