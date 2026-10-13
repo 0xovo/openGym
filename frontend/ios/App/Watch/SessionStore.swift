@@ -144,6 +144,22 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         return .idle
     }
 
+    /// HealthKit opened the app for a workout started on the iPhone: the workout session starts
+    /// now (Apple expects one right away), for the workout the phone sent or is about to send.
+    func openedForWorkout() {
+        DispatchQueue.main.async {
+            self.log("opened by the phone for a workout")
+            if WCSession.isSupported(), let json = WCSession.default.receivedApplicationContext["snapshot"] as? String {
+                self.apply(json: json)
+            }
+            self.health.start(workoutId: self.state.workout?.id)
+            // Nothing came after all (the phone's workout was discarded at once): no session left running.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 60) {
+                if self.state.workout == nil { self.health.end(save: false) }
+            }
+        }
+    }
+
     /* ---------- snapshots from the phone ---------- */
 
     func apply(json: String) {

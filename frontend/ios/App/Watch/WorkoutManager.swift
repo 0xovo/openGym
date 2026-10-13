@@ -2,8 +2,8 @@ import Foundation
 import HealthKit
 
 /*
- * Apple Health on the watch, behind its switch (on the watch's start screen, and in the phone's
- * Settings → Apple Watch, which wins when it is set): a strength-training workout session as soon
+ * Apple Health on the watch, behind the phone's Apple Health switch (Settings → Data on the iPhone,
+ * sent with every snapshot as settings.health): a strength-training workout session as soon
  * as a workout starts here or is picked up from the phone, showing the live heart rate and keeping
  * the watch app running with the wrist down (so the rest still taps the wrist on time), and the
  * workout saved to Apple Health when it ends. Off, nothing of this runs and nothing is asked.
@@ -11,8 +11,9 @@ import HealthKit
  * The heart rate arrives two ways at once, whichever is first: the workout builder's statistics
  * and an anchored query on heart-rate samples, which carry their own time (the sets' and rests'
  * heart rates are worked out from those times). Until the first reading: "measuring".
- * The permission is asked when the switch is turned on (or the phone turns it on), at the start
- * screen, never in the middle of the first set.
+ * The permission is asked when the phone's switch turns it on, at the start screen, never in the
+ * middle of the first set. A workout started on the iPhone can open the app (HealthKit's
+ * startWatchApp, WatchAppDelegate): the session starts then, and gets the workout's id when it comes.
  */
 final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate, HKLiveWorkoutBuilderDelegate {
     static let enabledKey = "healthEnabled"
@@ -82,12 +83,23 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
 
     /// The workout's id, for Apple Health's sync identifier (the phone writes none of its own then).
     private var workoutId: String?
+    /// The id the running session carries already.
+    private var tagged: String?
+
+    /// One workout in Apple Health, not two: the phone skips writing one with this sync id.
+    private func tag() {
+        guard let b = builder, let wid = workoutId, tagged != wid else { return }
+        tagged = wid
+        b.addMetadata([HKMetadataKeySyncIdentifier: "opengym-w-\(wid)", HKMetadataKeySyncVersion: 1]) { _, _ in }
+    }
 
     /// A workout started here or picked up from the phone: the session starts now.
     func start(workoutId wid: String? = nil) {
         wanted = true
         if let wid = wid { workoutId = wid }
-        guard enabled, session == nil, HKHealthStore.isHealthDataAvailable() else { return }
+        // Already running (opened by the phone before its workout arrived): only the id to add.
+        if session != nil { tag(); return }
+        guard enabled, HKHealthStore.isHealthDataAvailable() else { return }
         let config = HKWorkoutConfiguration()
         config.activityType = .traditionalStrengthTraining
         config.locationType = .indoor
@@ -104,10 +116,8 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             let now = Date()
             s.startActivity(with: now)
             b.beginCollection(withStart: now) { _, _ in }
-            // One workout in Apple Health, not two: the phone skips writing one with this sync id.
-            if let wid = workoutId {
-                b.addMetadata([HKMetadataKeySyncIdentifier: "opengym-w-\(wid)", HKMetadataKeySyncVersion: 1]) { _, _ in }
-            }
+            tagged = nil
+            tag()
             startQuery(from: now)
             running = true
         } catch {

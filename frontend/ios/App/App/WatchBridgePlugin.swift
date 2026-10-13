@@ -1,6 +1,7 @@
 import AVFoundation
 import Capacitor
 import Foundation
+import HealthKit
 import ImageIO
 import UniformTypeIdentifiers
 import WatchConnectivity
@@ -28,6 +29,7 @@ import WatchConnectivity
  *   await WatchBridge.ack({ ids })
  *   WatchBridge.addListener('watchEvent', e => ...)
  *   await WatchBridge.sendClips({ wid, clips: [{ exId, path }] })   // the workout's animations
+ *   await WatchBridge.openOnWatch()       // { ok }: a workout started here opens the watch app
  *
  * Animations: only the running workout's, only as files sent with transferFile (the watch keeps
  * them while that workout runs and deletes them after). Each is what this phone shows for that
@@ -46,6 +48,7 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         CAPPluginMethod(name: "drain", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "ack", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "sendClips", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "openOnWatch", returnType: CAPPluginReturnPromise),
     ]
 
     private let queue = DispatchQueue(label: "ch.opengym.watch-events")
@@ -72,6 +75,27 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
             "reachable": s.isReachable,
         ])
     }
+
+    /// A workout started on the phone: the watch app opens with it (Settings → Apple Watch, "Open on
+    /// the watch"). HealthKit wakes the watch app with a strength-training configuration, and the
+    /// watch starts its workout session (OpenGymWatchApp's delegate). Only with a paired watch that
+    /// has the app; anything else resolves { ok: false } and nothing happens.
+    @objc func openOnWatch(_ call: CAPPluginCall) {
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated,
+              WCSession.default.isPaired, WCSession.default.isWatchAppInstalled,
+              HKHealthStore.isHealthDataAvailable() else {
+            call.resolve(["ok": false])
+            return
+        }
+        let config = HKWorkoutConfiguration()
+        config.activityType = .traditionalStrengthTraining
+        config.locationType = .indoor
+        WatchBridgePlugin.health.startWatchApp(with: config) { ok, _ in
+            call.resolve(["ok": ok])
+        }
+    }
+
+    private static let health = HKHealthStore()
 
     @objc func sendSnapshot(_ call: CAPPluginCall) {
         guard let json = call.getString("json") else {

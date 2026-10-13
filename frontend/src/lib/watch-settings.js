@@ -4,12 +4,15 @@
 // (lib/watch-sync.js, `settings`); it reports back with a watchStatus event.
 //
 //   enabled      send workouts to the watch at all (off: the watch shows nothing to do)
-//   health       Apple Health on the watch: workout session, live heart rate, saved workouts
+//   autoShow     a workout started on the phone opens the watch app too (HealthKit's startWatchApp)
 //   restHaptics  the wrist taps when a rest is over
 //   crown        what the Digital Crown turns first on a set: 'reps' or 'weight'
+// Apple Health on the watch is not a choice of its own: it follows the phone's Apple Health switch
+// (Settings → Data, lib/health-sync.js), which the watch gets as `settings.health`. An older build's
+// `health` field in the stored prefs is left alone and not read.
 export const WATCH_PREFS_KEY = 'gym_watch_v1'
 export const WATCH_STATUS_KEY = 'gym_watch_status_v1'
-export const WATCH_DEFAULTS = Object.freeze({ enabled: true, health: false, restHaptics: true, crown: 'reps' })
+export const WATCH_DEFAULTS = Object.freeze({ enabled: true, autoShow: true, restHaptics: true, crown: 'reps' })
 
 const listeners = new Set()
 export const onWatchPrefs = fn => { listeners.add(fn); return () => listeners.delete(fn) }
@@ -21,7 +24,7 @@ export function readWatchPrefs(storage = globalThis.localStorage) {
   const v = read(WATCH_PREFS_KEY, storage) || {}
   return {
     enabled: v.enabled !== false,
-    health: v.health === true,
+    autoShow: v.autoShow !== false,
     restHaptics: v.restHaptics !== false,
     crown: v.crown === 'weight' ? 'weight' : 'reps',
   }
@@ -48,5 +51,5 @@ export function writeWatchStatus(ev, storage = globalThis.localStorage) {
   return next
 }
 
-/** The choices as the watch reads them (WatchCore Model.swift WatchSettings). */
-export const settingsForWatch = (p = readWatchPrefs()) => ({ health: p.health, restHaptics: p.restHaptics, crown: p.crown })
+/** The choices as the watch reads them (WatchCore Model.swift WatchSettings); `health` is the phone's Apple Health switch. */
+export const settingsForWatch = (p = readWatchPrefs(), health = false) => ({ health: !!health, restHaptics: p.restHaptics, crown: p.crown })

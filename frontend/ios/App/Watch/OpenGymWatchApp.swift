@@ -1,4 +1,6 @@
+import HealthKit
 import SwiftUI
+import WatchKit
 import WidgetKit
 
 /*
@@ -15,15 +17,25 @@ import WidgetKit
  */
 @main
 struct OpenGymWatchApp: App {
-    @StateObject private var store = SessionStore()
+    @WKApplicationDelegateAdaptor private var delegate: WatchAppDelegate
 
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(store)
+                .environmentObject(delegate.store)
                 .tint(Theme.accent)
                 .background(Color.black)
         }
+    }
+}
+
+/// Owns the session, so HealthKit's launch for a workout started on the iPhone (WatchBridgePlugin
+/// openOnWatch → startWatchApp) reaches it even before the first view is drawn.
+final class WatchAppDelegate: NSObject, WKApplicationDelegate {
+    let store = SessionStore()
+
+    func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
+        store.openedForWorkout()
     }
 }
 
@@ -442,26 +454,6 @@ struct HeartRateBadge: View {
             }
             .foregroundStyle(.secondary)
         }
-    }
-}
-
-/// Off until switched on: then the workout runs as an Apple Health workout session (heart rate per
-/// set, the app kept awake with the wrist down) and is saved to Apple Health when it ends.
-struct HealthToggle: View {
-    @ObservedObject var health: WorkoutManager
-
-    var body: some View {
-        Toggle(isOn: Binding(
-            get: { health.enabled },
-            set: { on in
-                if on { health.requestAuthorization { ok in health.enabled = ok } } else { health.enabled = false }
-            }
-        )) {
-            Label("Apple Health", systemImage: "heart.fill")
-        }
-        .tint(Theme.accent)
-        .font(.footnote)
-        .frame(minHeight: Theme.tap)
     }
 }
 

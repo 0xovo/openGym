@@ -182,6 +182,8 @@ export function applyEvents (events, getState) {
     if (ev.type === 'start') {
       if (!A) {
         if (!appHandlers) break
+        // Started at the wrist: the watch app is open already, nothing to open there (startWatchSync).
+        if (ev.wid) startedOnWatch.add(ev.wid)
         appHandlers.start(Array.isArray(ev.routineIds) ? ev.routineIds : [], { id: ev.wid || null, start: num(ev.at) })
       }
       // A workout already running on the phone is kept; one with the watch's id is this one.
@@ -277,6 +279,23 @@ export function bindWatchActions (h) {
  * Started once by the app. Sends a snapshot whenever the workout or its rest changes (debounced,
  * and only what differs from the last one sent), drains the queue when the app comes back.
  */
+// Workouts the watch started, so the phone doesn't open the watch app for them again.
+const startedOnWatch = new Set()
+/** How long after its start a workout that turns up still opens the watch app (not one restored on launch). */
+export const OPEN_ON_WATCH_WINDOW_MS = 2 * 60 * 1000
+
+/**
+ * Whether a workout that just appeared on the phone opens the watch app (Settings → Apple Watch,
+ * "Open on the watch"): a new live session started here a moment ago, not one the watch started,
+ * not a backfilled past one, and not one that came back with the app's saved state.
+ */
+export function shouldOpenOnWatch (prev, next, { prefs = readWatchPrefs(), now = Date.now(), fromWatch = startedOnWatch } = {}) {
+  if (!next || !next.id || (prev && prev.id === next.id)) return false
+  if (!prefs.enabled || !prefs.autoShow || next.backfill || fromWatch.has(next.id)) return false
+  const start = Number(next.start)
+  return Number.isFinite(start) && start > 0 && Math.abs(now - start) <= OPEN_ON_WATCH_WINDOW_MS
+}
+
 export async function startWatchSync ({ useStore, useUI }) {
   const p = await watchPlugin()
   if (!p) return () => {}
@@ -300,6 +319,13 @@ export async function startWatchSync ({ useStore, useUI }) {
     return linked
   }
   await checkLink()
+  // Apple Health on the watch follows the phone's own Apple Health switch (Settings → Data).
+  let healthOn = false, offHealth = () => {}
+  try {
+    const hs = await import('./health-sync.js')
+    healthOn = !!(await hs.loadHealth())?.on
+    offHealth = hs.onHealthChange(h => { if (!!h?.on !== healthOn) { healthOn = !!h?.on; schedule() } })
+  } catch { /* no Apple Health here: the watch measures nothing */ }
   const send = async () => {
     tm = null
     if (!linked) return
@@ -310,7 +336,7 @@ export async function startWatchSync ({ useStore, useUI }) {
       const snap = prefs.enabled
         ? buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) })
         : { v: SNAPSHOT_VERSION, unit: S.unit === 'lb' ? 'lb' : 'kg', active: null, ready: null }
-      snap.settings = settingsForWatch(prefs)
+      snap.settings = settingsForWatch(prefs, healthOn)
       const json = JSON.stringify(snap)
       if (json !== lastSent) {
         const r = await p.WatchBridge.sendSnapshot({ json })
@@ -326,7 +352,12 @@ export async function startWatchSync ({ useStore, useUI }) {
     } catch { /* no watch, or not now: the next change tries again */ }
   }
   const schedule = () => { if (!linked) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
-  const offStore = useStore.subscribe((s, prev) => { if (s.S !== prev.S) schedule() })
+  const offStore = useStore.subscribe((s, prev) => {
+    if (s.S === prev.S) return
+    schedule()
+    // A workout started on the phone: the watch app opens with it (HealthKit's startWatchApp).
+    if (linked && shouldOpenOnWatch(prev.S?.active, s.S?.active)) Promise.resolve().then(() => p.WatchBridge.openOnWatch()).catch(() => {})
+  })
   // The rest as the watch needs it changes when it starts, stops or is paused, not every second.
   const restOf = t => (t ? `${t.endsAt}|${!!t.paused}|${!!t.ready}` : '')
   const offUI = useUI.subscribe((s, prev) => { if (s.timer !== prev.timer && restOf(s.timer) !== restOf(prev.timer)) schedule() })
@@ -336,12 +367,12 @@ export async function startWatchSync ({ useStore, useUI }) {
   document.addEventListener('visibilitychange', onVisible)
   schedule()
   drainWatchEvents()
-  return () => { offStore(); offUI(); offPrefs(); sub?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
+  return () => { offStore(); offUI(); offPrefs(); offHealth(); sub?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
 }
 
 // Test seams.
 export function _setWatchPluginForTest (plugin, getState) { pluginP = Promise.resolve(plugin ? { WatchBridge: plugin } : null); getStateRef = getState || null }
-export function _resetWatchSync () { handlers = null; appHandlers = null; pluginP = null; getStateRef = null; draining = null }
+export function _resetWatchSync () { startedOnWatch.clear(); handlers = null; appHandlers = null; pluginP = null; getStateRef = null; draining = null }
 
 /**
  * Writes `fields` (heart rate) onto one set: in the running session when it is that workout, else in
