@@ -58,7 +58,7 @@ import plistlib, sys
 p = plistlib.load(open(sys.argv[1], 'rb'))
 e = dict(p['Entitlements'])
 e['get-task-allow'] = False
-assert e['application-identifier'].endswith('.ch.duartesantos.opengym'), e['application-identifier']
+assert e['application-identifier'].endswith('.ch.opengym.app'), e['application-identifier']
 plistlib.dump(e, open(sys.argv[2], 'wb'))
 print('profile:', p['Name'], '| team', p['TeamIdentifier'][0], '| expires', p['ExpirationDate'])
 PY

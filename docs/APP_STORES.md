@@ -98,14 +98,17 @@ on the phone (Settings → Reset, or uninstall).
 
 1. Apple Developer Program (99 USD a year, as an individual; the seller name shown is your
    legal name).
-2. App Store Connect → new app, bundle id `ch.duartesantos.opengym`. If "openGym" is taken as an
-   App Store name, "openGym: Workout Tracker" keeps the brand.
+2. App Store Connect → new app "openGym: Workout Tracker" (plain "openGym" is taken as an App
+   Store name; the home screen still says openGym), bundle id `ch.opengym.app`. The iPhone app
+   has its own bundle id because `ch.duartesantos.opengym` is held by another Apple team (an
+   Xcode build of the public code reserves it); Android keeps `ch.duartesantos.opengym`.
 3. Signing material, all doable from Linux:
    - `openssl req -new -newkey rsa:2048 -nodes -keyout dist.key -out dist.csr -subj "/CN=Duarte Santos/emailAddress=…"`,
      upload the CSR under Certificates → Apple Distribution, download `distribution.cer`, then
      `openssl x509 -inform der -in distribution.cer -out dist.pem && openssl pkcs12 -export -legacy -inkey dist.key -in dist.pem -out dist.p12`.
-   - Profiles → App Store Connect profile for `ch.duartesantos.opengym` → `openGym_AppStore.mobileprovision`.
-   - Users and Access → Integrations → App Store Connect API key (App Manager) for uploads.
+   - Profiles → App Store Connect profile for `ch.opengym.app` → `openGym_AppStore.mobileprovision`.
+   - Users and Access → Integrations → App Store Connect API key (Admin) for uploads; with it the
+     bundle id, certificate and profile can also be created through the API instead of the portal.
    - Keep all of it next to the Android keystore (`/root/.config/opengym/`, never in a repo).
 4. App Privacy: "Data Not Collected". Age rating: 4+. Category: Health & Fitness.
 5. Review notes: no sign-in needed ("Use on this device"). The Coach is optional and needs the
