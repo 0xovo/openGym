@@ -92,6 +92,12 @@
 	<array>
 		<string>fetch</string>
 	</array>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Used to show your heart rate on your Apple Watch while you train, next to each set.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Used to save your finished workouts and weigh-ins to Apple Health, when you switch it on.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Used to make sure it’s really you before your account is deleted.</string>
 </dict>

@@ -11,6 +11,7 @@
 # Usage:
 #   scripts/ios/finish-ipa.sh <App-unsigned.ipa> <dist.p12> <p12-password-file> <profile.mobileprovision> [out.ipa]
 #   EXT_PROFILE=<extension.mobileprovision> ...   once the IPA carries the asset pack downloader
+#   WIDGETS_PROFILE=<widgets.mobileprovision> ...  once it carries the widget extension
 #
 # Before: the phone build with the app's animations, from the same commit as the IPA:
 #   cd frontend && VITE_CLIP_EXT=webp APP_MEDIA_DIR=/mnt/backup-hdd/opengym-media/build-appwebp npm run build:mobile
@@ -60,6 +61,10 @@ p = plistlib.load(open(sys.argv[1], 'rb'))
 e = dict(p['Entitlements'])
 e['get-task-allow'] = False
 assert e['application-identifier'].endswith('.ch.opengym.app'), e['application-identifier']
+# Apple Health (AppleHealthPlugin.swift) needs HealthKit on the app id and in the profile; without
+# it the app still works, and Settings → Apple Health reports that it could not write.
+if not e.get('com.apple.developer.healthkit'):
+    print('WARNING: the app profile has no HealthKit: Apple Health will not work in this build')
 plistlib.dump(e, open(sys.argv[2], 'wb'))
 print('profile:', p['Name'], '| team', p['TeamIdentifier'][0], '| expires', p['ExpirationDate'])
 PY
@@ -86,8 +91,29 @@ PY
   EXT_SIGN=(--entitlements-xml-file "Extensions/AnimationPacksDownloader.appex/AnimationPacksDownloader:$WORK/ext-entitlements.plist")
 fi
 
+# The widget extension (the widgets and the workout's Live Activity, ios/App/OpenGymWidgets): its
+# own App Store profile, given as WIDGETS_PROFILE, for ch.opengym.app.widgets with the App Group.
+WIDGETS="$APP/PlugIns/OpenGymWidgets.appex"
+WIDGETS_SIGN=()
+if [ -d "$WIDGETS" ]; then
+  [ -n "${WIDGETS_PROFILE:-}" ] || { echo "the IPA carries OpenGymWidgets.appex: set WIDGETS_PROFILE to its App Store profile" >&2; exit 1; }
+  cp "$WIDGETS_PROFILE" "$WIDGETS/embedded.mobileprovision"
+  openssl smime -inform der -verify -noverify -in "$WIDGETS_PROFILE" -out "$WORK/widgets-profile.plist" 2>/dev/null
+  python3 - "$WORK/widgets-profile.plist" "$WORK/widgets-entitlements.plist" <<'PY'
+import plistlib, sys
+p = plistlib.load(open(sys.argv[1], 'rb'))
+e = dict(p['Entitlements'])
+e['get-task-allow'] = False
+assert e['application-identifier'].endswith('.ch.opengym.app.widgets'), e['application-identifier']
+assert 'group.ch.opengym.app' in e.get('com.apple.security.application-groups', []), 'the widgets profile has no App Group'
+plistlib.dump(e, open(sys.argv[2], 'wb'))
+print('widgets profile:', p['Name'], '| expires', p['ExpirationDate'])
+PY
+  WIDGETS_SIGN=(--entitlements-xml-file "PlugIns/OpenGymWidgets.appex/OpenGymWidgets:$WORK/widgets-entitlements.plist")
+fi
+
 "$RCODESIGN" sign --p12-file "$P12" --p12-password-file "$P12PASS" \
-  --entitlements-xml-file "App:$WORK/entitlements.plist" "${EXT_SIGN[@]}" "$APP"
+  --entitlements-xml-file "App:$WORK/entitlements.plist" "${EXT_SIGN[@]}" "${WIDGETS_SIGN[@]}" "$APP"
 
 (cd "$WORK/ipa" && rm -f "$OUT" && python3 -m zipfile -c "$OUT" Payload)
 echo "signed: $OUT ($(du -h "$OUT" | cut -f1), $CLIPS animations)"
