@@ -81,7 +81,17 @@
     ]
   },
   "1009": {
-    "name": "Steifbeiniges Kreuzheben mit Band"
+    "name": "Steifbeiniges Kreuzheben mit Band",
+    "description": "Beim steifbeinigen Kreuzheben mit Band beugst du dich aus der Hüfte nach vorn. So trainierst du Po und hintere Oberschenkel.",
+    "instructions": [
+        "Stell dich schulterbreit hin und leg das Band um deine Knöchel.",
+        "Halte das Band mit beiden Händen vor deinen Oberschenkeln. Die Handflächen zeigen zu dir.",
+        "Spann den Bauch an, halt den Rücken gerade und beug deinen Oberkörper langsam aus der Hüfte nach vorn.",
+        "Schieb dabei den Po nach hinten und lass die Knie leicht gebeugt.",
+        "Führ das Band Richtung Boden, bis du eine Dehnung in den hinteren Oberschenkeln spürst.",
+        "Halte unten kurz inne, spann Po und Oberschenkel an und richte dich wieder auf.",
+        "Wiederhole die Bewegung so oft wie geplant."
+    ]
   },
   "1010": {
     "name": "Kreuzheben mit Band und gestreckten Beinen"
