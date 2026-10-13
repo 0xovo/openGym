@@ -2296,4 +2296,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': '입력창 크게',
   'Make the box smaller': '입력창 작게',
+  // --- progress photos: remove ---
+  'Photo removed': '사진을 지웠어요',
 }

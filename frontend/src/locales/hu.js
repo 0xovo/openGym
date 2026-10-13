@@ -2299,4 +2299,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': 'Nagyobb mező',
   'Make the box smaller': 'Kisebb mező',
+  // --- progress photos: remove ---
+  'Photo removed': 'Fotó eltávolítva',
 }

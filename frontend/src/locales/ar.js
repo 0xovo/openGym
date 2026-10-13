@@ -2351,4 +2351,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': 'تكبير مربع الكتابة',
   'Make the box smaller': 'تصغير مربع الكتابة',
+  // --- progress photos: remove ---
+  'Photo removed': 'تمت إزالة الصورة',
 }

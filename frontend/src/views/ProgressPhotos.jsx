@@ -16,7 +16,8 @@ import { useUI } from '../store/useUI.js'
 import { t, tn } from '../lib/i18n.js'
 import { fmtDate, todayISO } from '../lib/format.js'
 import { workoutMediaOf, WORKOUT_MEDIA_MAX } from '../lib/media-refs.js'
-import { addWorkoutMedia } from '../lib/workout-media.js'
+import { addWorkoutMedia, removeWorkoutMedia, restoreWorkoutMedia } from '../lib/workout-media.js'
+import { sameWorkout } from '../lib/workout-date.js'
 import { syncMedia } from '../lib/media-sync.js'
 import { useMediaPicker } from '../components/CustomMediaField.jsx'
 import { CustomThumb, MediaView, useMediaUrl } from '../components/CustomMedia.jsx'
@@ -68,17 +69,44 @@ export function daysBetween(a, b) {
   return Math.abs(Math.round(ms / 86400000))
 }
 
-function openPhotoView(p) {
-  useUI.getState().openSheet(close => (
-    <div className="mviewer" role="dialog" aria-modal="true" aria-label={t('Photo')}>
-      <div className="mviewer-bar">
-        <button type="button" className="iconbtn" aria-label={t('Close')} onClick={close}><Icon name="xmark" /></button>
-        <span className="mviewer-count">{fmtDate(p.d, true, true)}</span>
-        <span style={{ width: 36 }} />
-      </div>
-      <div className="mviewer-stage"><MediaView m={p.m} cls="exmedia viewer" /></div>
+// A photo full size, with a way to remove it (#558): it comes off the workout it belongs to,
+// exactly as the workout's own photo viewer takes it off (lib/workout-media.js), and the file is
+// left to the media clean-up like there. An Undo puts it back where it was.
+export function PhotoView({ p, close }) {
+  const [asking, setAsking] = useState(false)
+  const remove = () => {
+    const st = useStore.getState()
+    const rec = (st.S.workouts || []).find(w => w && sameWorkout(w, p.w)) || p.w
+    const at = Array.isArray(rec?.media) ? rec.media.findIndex(x => x && x.hash === p.m.hash) : -1
+    const ref = at >= 0 ? rec.media[at] : p.m
+    let removed = false
+    st.update(s => { removed = removeWorkoutMedia(s, p.w, p.m.hash) })
+    close()
+    if (!removed) return
+    useUI.getState().toast(t('Photo removed'), {
+      action: t('Undo'),
+      onAction: () => useStore.getState().update(s => { restoreWorkoutMedia(s, p.w, ref, at) }),
+    })
+  }
+  return <div className="mviewer" role="dialog" aria-modal="true" aria-label={t('Photo')}>
+    <div className="mviewer-bar">
+      <button type="button" className="iconbtn" aria-label={t('Close')} onClick={close}><Icon name="xmark" /></button>
+      <span className="mviewer-count">{fmtDate(p.d, true, true)}</span>
+      <button type="button" className="iconbtn" aria-label={t('Remove')} onClick={() => setAsking(a => !a)}><Icon name="trash" /></button>
     </div>
-  ), { kind: 'viewer' })
+    <div className="mviewer-stage"><MediaView m={p.m} cls="exmedia viewer" /></div>
+    {asking && <div className="mviewer-ask">
+      <div className="mviewer-ask-t">{t('Remove this photo or video?')}</div>
+      <div className="mviewer-ask-b">
+        <Button variant="ghost" size="sm" onClick={() => setAsking(false)}>{t('Cancel')}</Button>
+        <Button variant="danger" size="sm" onClick={remove}>{t('Remove')}</Button>
+      </div>
+    </div>}
+  </div>
+}
+
+function openPhotoView(p) {
+  useUI.getState().openSheet(close => <PhotoView p={p} close={close} />, { kind: 'viewer' })
 }
 
 /** The before/after slider between two progress photos `a` (earlier) and `b` (later). */

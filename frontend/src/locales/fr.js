@@ -2296,4 +2296,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': 'Agrandir la zone',
   'Make the box smaller': 'Réduire la zone',
+  // --- progress photos: remove ---
+  'Photo removed': 'Photo retirée',
 }

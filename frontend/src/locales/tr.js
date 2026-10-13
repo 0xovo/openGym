@@ -2296,4 +2296,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': 'Kutuyu büyüt',
   'Make the box smaller': 'Kutuyu küçült',
+  // --- progress photos: remove ---
+  'Photo removed': 'Fotoğraf kaldırıldı',
 }

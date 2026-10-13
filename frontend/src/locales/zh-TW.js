@@ -2289,4 +2289,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': '放大輸入框',
   'Make the box smaller': '縮小輸入框',
+  // --- progress photos: remove ---
+  'Photo removed': '已移除相片',
 }

@@ -2375,4 +2375,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': 'লেখার বাক্স বড় করুন',
   'Make the box smaller': 'লেখার বাক্স ছোট করুন',
+  // --- progress photos: remove ---
+  'Photo removed': 'ছবি সরানো হয়েছে',
 }

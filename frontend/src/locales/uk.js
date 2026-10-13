@@ -2293,4 +2293,6 @@ export default {
   // --- Coach message box ---
   'Make the box bigger': 'Збільшити поле',
   'Make the box smaller': 'Зменшити поле',
+  // --- progress photos: remove ---
+  'Photo removed': 'Фото видалено',
 }
