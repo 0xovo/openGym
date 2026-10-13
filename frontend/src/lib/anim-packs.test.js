@@ -4,12 +4,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 /* The animation packs on this device (lib/anim-packs.js): the per-device choice, the bridge to
    the native AnimationPacks plugin and the download a choice or a figure starts. The plugin is a
    stand-in shaped like Capacitor's: a Proxy whose `then` is a native call that never answers (#42). */
-const mocks = vi.hoisted(() => ({ MOBILE: true, available: true, ready: new Set(), calls: [], listeners: {}, downloadFails: null }))
+const mocks = vi.hoisted(() => ({ MOBILE: true, available: true, ready: new Set(), calls: [], listeners: {}, downloadFails: null, base: false, info: {}, testflight: false }))
 vi.mock('./mobile.js', () => ({ get MOBILE() { return mocks.MOBILE } }))
 vi.mock('@capacitor/core', () => {
   const impl = {
-    available: async () => ({ available: mocks.available }),
-    status: async ({ packId }) => (mocks.ready.has(packId) ? { state: 'ready', bytes: 5 * 1024 * 1024 } : { state: 'none' }),
+    available: async () => ({ available: mocks.available, testflight: mocks.testflight }),
+    status: async ({ packId }) => (mocks.ready.has(packId) ? { state: 'ready', bytes: 5 * 1024 * 1024, ...(mocks.base ? { base: 'opengym-pack://' + packId } : {}) } : { state: 'none' }),
+    info: async ({ packId }) => mocks.info[packId] || {},
+    diagnose: async ({ packId, probe }) => ({ local: mocks.ready.has(packId), probe: packId + '/' + probe + '.webp', base: 'opengym-pack://' + packId }),
     localPath: async ({ packId }) => ({ path: '/var/packs/' + packId }),
     download: async ({ packId, wifiOnly, probe }) => {
       mocks.calls.push(['download', packId, wifiOnly, probe])
@@ -34,7 +36,7 @@ import * as packs from './anim-packs.js'
 const phone = { shortSide: 390 }
 beforeEach(() => {
   localStorage.clear()
-  mocks.MOBILE = true; mocks.available = true; mocks.ready = new Set(); mocks.calls = []; mocks.listeners = {}; mocks.downloadFails = null
+  mocks.MOBILE = true; mocks.available = true; mocks.ready = new Set(); mocks.calls = []; mocks.listeners = {}; mocks.downloadFails = null; mocks.base = false; mocks.info = {}; mocks.testflight = false
   packs._resetAnimPacks()
 })
 
@@ -120,5 +122,40 @@ describe('downloads', () => {
     expect(await packs.remove('anim-1080-male')).toBe(true)
     expect(packs.installedBases()).toEqual({})
     expect(mocks.calls).toEqual([['remove', 'anim-1080-male']])
+  })
+})
+
+// Build 30: a pack Background Assets had downloaded read as "0.1 MB" and showed nothing, because
+// the page was pointed at a file path. Now the native side names the base to read it from.
+describe('reading a pack from where the app serves it', () => {
+  it('takes the base the native side gives (opengym-pack://<packId>), never a converted path', async () => {
+    mocks.base = true
+    mocks.ready.add('anim-480-female')
+    await packs.refresh()
+    expect(packs.getState().packs['anim-480-female']).toMatchObject({ state: 'ready', base: 'opengym-pack://anim-480-female' })
+    expect(packs.installedBases()).toEqual({ 'anim-480-female': 'opengym-pack://anim-480-female' })
+  })
+  it('knows what a download costs: Apple’s figure first, else the known one for 480', async () => {
+    mocks.info = { 'anim-720-male': { downloadSize: 1234567890 } }
+    await packs.refresh()
+    await new Promise(r => setTimeout(r, 0))
+    expect(packs.downloadBytes('anim-720-male')).toBe(1234567890)
+    expect(packs.downloadBytes('anim-480-male')).toBeCloseTo(749.5 * 1024 * 1024)
+    expect(packs.downloadBytes('anim-240-female')).toBeNull()
+  })
+  it('says whether this is a TestFlight build, for the details row', async () => {
+    mocks.testflight = true
+    await packs.refresh()
+    expect(packs.getState().testflight).toBe(true)
+  })
+  it('diagnose: what the native side knows and whether the sample drawing loads', async () => {
+    mocks.base = true
+    mocks.ready.add('anim-480-male')
+    await packs.refresh()
+    const tried = []
+    const d = await packs.diagnose('anim-480-male', async src => { tried.push(src); return 'ok 480×480' })
+    expect(d.native).toMatchObject({ local: true, base: 'opengym-pack://anim-480-male' })
+    expect(tried).toEqual(['opengym-pack://anim-480-male/' + packs.probeFor('anim-480-male') + '.webp'])
+    expect(d.image).toBe('ok 480×480')
   })
 })

@@ -2,16 +2,21 @@
 // and the person's choice of quality. The rules are lib/anim-quality.js; this is the state around
 // them and the bridge to the native AnimationPacks plugin:
 //
-//   available()                              → { available }   iOS 26+ with Apple-hosted packs
-//   status({ packId, probe })                → { state: 'ready'|'none', bytes?, downloadSize? }
+//   available()                              → { available, testflight }   iOS 26+ with Apple-hosted packs
+//   status({ packId, probe })                → { state: 'ready'|'none', bytes?, base? }
+//   info({ packId })                         → { downloadSize? } what the download costs, from Apple
+//   diagnose({ packId, probe })              → what the native side knows, for the details row
 //   download({ packId, wifiOnly, probe })    → resolves once installed; 'progress' events
 //                                              { packId, fraction }; rejects with a code:
 //                                              'needs-wifi', 'unavailable', 'cancelled', 'failed'
 //   remove({ packId })
-//   localPath({ packId, probe })             → { path } the folder the pack's <id>.webp sit in
+//   localPath({ packId, probe })             → { base } (older native sides: { path })
 //
-// `probe` is one drawing the pack holds, for a native side that can only find a pack's folder
-// through one of its files. iOS: ios/App/App/AnimationPacksPlugin.swift. Android answers
+// A pack's files are read from `base` + '/<drawing>.webp'. On iOS that is opengym-pack://<packId>,
+// which the app answers from Background Assets itself: a downloaded pack is not a folder a page
+// could be pointed at (build 30: "downloaded, 0.1 MB", no new animations). `probe` is one drawing
+// the pack holds, the native side's test that the pack can really be read.
+// iOS: ios/App/App/AnimationPacksPlugin.swift. Android answers
 // "unavailable" until Play Asset Delivery comes (and the sideloaded APK never has packs).
 //
 // The choice is this device's, not the profile's: kept in localStorage, never in S, so it never
@@ -24,6 +29,9 @@ import { PACK_QUALITIES, FIGURES, packId, packDrawingId, readChoice, wantedPack,
 export const PREFS_KEY = 'gym_anim_v1'
 export const ALL_PACKS = PACK_QUALITIES.flatMap(px => FIGURES.map(f => packId(px, f)))
 const PROBE_EX = '0001'
+const MB = 1024 * 1024
+// What the packs uploaded so far take to download, until Apple's own figure (info) is in.
+export const KNOWN_DOWNLOAD_BYTES = { 'anim-480-male': 749.5 * MB, 'anim-480-female': 742.0 * MB }
 export const probeFor = id => packDrawingId(EXIDX[PROBE_EX], id.endsWith('-female') ? 'female' : 'male')
 
 /* ---------------------------------------------------------------- the choice, per device */
@@ -48,8 +56,8 @@ export const deviceInfo = () => {
 }
 
 /* ---------------------------------------------------------------- state */
-// packs: { [packId]: { state: 'none'|'ready'|'downloading'|'failed'|'needs-wifi', progress, bytes, base } }
-let state = { available: false, checked: false, packs: {}, prefs: readPrefs() }
+// packs: { [packId]: { state: 'none'|'ready'|'downloading'|'failed'|'needs-wifi', progress, bytes, base, downloadSize } }
+let state = { available: false, testflight: false, checked: false, packs: {}, prefs: readPrefs() }
 const listeners = new Set()
 const emit = () => { for (const fn of listeners) fn() }
 export const subscribe = fn => { listeners.add(fn); return () => listeners.delete(fn) }
@@ -74,20 +82,39 @@ async function readPack(p, id) {
   try {
     const st = await p.Packs.status({ packId: id, probe: probeFor(id) })
     if (st?.state !== 'ready') { setPack(id, { state: state.packs[id]?.state === 'downloading' ? 'downloading' : 'none', bytes: 0, base: null }); return }
-    const { path } = await p.Packs.localPath({ packId: id, probe: probeFor(id) })
-    setPack(id, { state: 'ready', bytes: Number(st.bytes) || 0, base: path ? p.toUrl(path) : null, progress: 1 })
+    let base = typeof st.base === 'string' && st.base ? st.base : null
+    if (!base) {
+      const r = await p.Packs.localPath({ packId: id, probe: probeFor(id) })
+      base = r?.base || (r?.path ? (r.path.startsWith('/') ? p.toUrl(r.path) : r.path) : null)
+    }
+    setPack(id, { state: 'ready', bytes: Number(st.bytes) || 0, base, progress: 1 })
   } catch { setPack(id, { state: 'none', base: null }) }
 }
+
+// Apple's download size for a pack, when it says (it needs the network once).
+async function readInfo(p, id) {
+  try {
+    const r = await p.Packs.info({ packId: id })
+    const n = Number(r?.downloadSize)
+    if (n > 0) setPack(id, { downloadSize: n })
+  } catch { /* the built-in figure, or none */ }
+}
+
+/** What downloading a pack takes, in bytes: Apple's figure, else the known one, else null. */
+export const downloadBytes = (id, s = state) => s.packs[id]?.downloadSize || KNOWN_DOWNLOAD_BYTES[id] || null
 
 /** Asks the native side what it has. Once at start, and after every download or removal. */
 export async function refresh() {
   const p = await packsPlugin()
   if (!p) { state = { ...state, checked: true, available: false }; emit(); return state }
-  let available = false
-  try { available = !!(await p.Packs.available())?.available } catch { available = false }
-  state = { ...state, checked: true, available }
+  let available = false, testflight = false
+  try { const r = await p.Packs.available(); available = !!r?.available; testflight = !!r?.testflight } catch { available = false }
+  state = { ...state, checked: true, available, testflight }
   emit()
-  if (available) await Promise.all(ALL_PACKS.map(id => readPack(p, id)))
+  if (available) {
+    await Promise.all(ALL_PACKS.map(id => readPack(p, id)))
+    ALL_PACKS.forEach(id => { readInfo(p, id) })
+  }
   return state
 }
 
@@ -143,7 +170,33 @@ export function ensureWanted(figure, device = deviceInfo()) {
   return download(id)
 }
 
+/**
+ * For the details row (TestFlight builds): what the native side says about one pack, and whether
+ * its probe drawing really loads as an image from where the page reads it.
+ */
+export async function diagnose(id, loadImage = defaultLoadImage) {
+  const p = await packsPlugin()
+  const out = { packId: id, state: state.packs[id]?.state || 'none', base: state.packs[id]?.base || null }
+  if (!p) return { ...out, native: null, image: 'no plugin' }
+  try { out.native = await p.Packs.diagnose({ packId: id, probe: probeFor(id) }) } catch (e) { out.native = { error: String(e?.message || e) } }
+  const base = out.base || out.native?.base
+  out.image = base ? await loadImage(base.replace(/\/$/, '') + '/' + probeFor(id) + '.webp') : 'no base'
+  return out
+}
+
+function defaultLoadImage(src) {
+  return new Promise(resolve => {
+    try {
+      const img = new Image()
+      const t = setTimeout(() => resolve('timeout'), 8000)
+      img.onload = () => { clearTimeout(t); resolve(`ok ${img.naturalWidth}×${img.naturalHeight}`) }
+      img.onerror = () => { clearTimeout(t); resolve('error') }
+      img.src = src
+    } catch (e) { resolve('error ' + String(e?.message || e)) }
+  })
+}
+
 export function _resetAnimPacks(next = {}) {
   pluginP = null; progressHooked = false; downloads.clear()
-  state = { available: false, checked: false, packs: {}, prefs: readPrefs(), ...next }
+  state = { available: false, testflight: false, checked: false, packs: {}, prefs: readPrefs(), ...next }
 }

@@ -22,10 +22,6 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>BAAppGroupID</key>
 	<string>group.ch.opengym.app</string>
-	<key>BAHasManagedAssetPacks</key>
-	<true/>
-	<key>BAUsesAppleHosting</key>
-	<true/>
 	<key>EXAppExtensionAttributes</key>
 	<dict>
 		<key>EXExtensionPointIdentifier</key>

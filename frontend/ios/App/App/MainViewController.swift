@@ -1,6 +1,7 @@
 import Capacitor
 import UIKit
 import UserNotifications
+import WebKit
 
 /**
  * The app's own bridge view controller (Main.storyboard). Since Capacitor 6 the bridge only loads
@@ -8,6 +9,15 @@ import UserNotifications
  * that live in the app itself are registered here, or the page finds none of them.
  */
 class MainViewController: CAPBridgeViewController {
+    /// The downloaded animation packs, read through Background Assets (AnimationPacksPlugin.swift).
+    private let packFiles = AnimationPackSchemeHandler()
+
+    override open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
+        let config = super.webViewConfiguration(for: instanceConfiguration)
+        config.setURLSchemeHandler(packFiles, forURLScheme: AnimationPackSchemeHandler.scheme)
+        return config
+    }
+
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(PrintPlugin())
         bridge?.registerPluginInstance(RestAlertPlugin())
