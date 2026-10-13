@@ -74,6 +74,7 @@ struct IdleView: View {
                             }
                         }
                     }
+                    HealthToggle(health: store.health)
                 }
             }
         } else {
@@ -155,9 +156,12 @@ struct ExercisePage: View {
                         .lineLimit(2)
                         .minimumScaleFactor(0.75)
                     Spacer(minLength: 4)
-                    Text("\(index + 1)/\(w.entries.count)")
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .trailing, spacing: 0) {
+                        Text("\(index + 1)/\(w.entries.count)")
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                        HeartRateBadge(health: store.health)
+                    }
                 }
                 SetDots(entry: entry, current: si) { store.pick(set: $0, in: index) }
                 if let si = si {
@@ -326,5 +330,40 @@ struct RestView: View {
             }
             .font(.footnote)
         }
+    }
+}
+
+/* ---------- Apple Health ---------- */
+
+/// "♥ 128" while the workout session measures it; nothing otherwise.
+struct HeartRateBadge: View {
+    @ObservedObject var health: WorkoutManager
+
+    var body: some View {
+        if let hr = health.heartRate {
+            Label("\(Int(hr.rounded()))", systemImage: "heart.fill")
+                .font(.caption2.monospacedDigit())
+                .foregroundStyle(.red)
+                .labelStyle(.titleAndIcon)
+        }
+    }
+}
+
+/// Off until switched on: then the workout runs as an Apple Health workout session (heart rate per
+/// set, the app kept awake with the wrist down) and is saved to Apple Health when it ends.
+struct HealthToggle: View {
+    @ObservedObject var health: WorkoutManager
+
+    var body: some View {
+        Toggle(isOn: Binding(
+            get: { health.enabled },
+            set: { on in
+                if on { health.requestAuthorization { ok in health.enabled = ok } } else { health.enabled = false }
+            }
+        )) {
+            Label("Apple Health", systemImage: "heart.fill")
+        }
+        .tint(Theme.accent)
+        .font(.footnote)
     }
 }

@@ -76,6 +76,32 @@ const OWN = {
   },
 }
 
+// Info.plist's own (the Apple Health permission prompts), into InfoPlist.strings.
+const PLIST = {
+  NSHealthShareUsageDescription: {
+    de: 'openGym zeigt deinen Puls während des Trainings und neben jedem Satz.', fr: 'openGym affiche ton pouls pendant la séance et à côté de chaque série.',
+    es: 'openGym muestra tu pulso durante el entreno y junto a cada serie.', it: 'openGym mostra il tuo battito durante l’allenamento e accanto a ogni serie.',
+    'pt-PT': 'O openGym mostra a tua frequência cardíaca durante o treino e ao lado de cada série.', 'pt-BR': 'O openGym mostra sua frequência cardíaca durante o treino e ao lado de cada série.',
+    pl: 'openGym pokazuje tętno podczas treningu i przy każdej serii.', hu: 'Az openGym edzés közben és minden sorozat mellett mutatja a pulzusodat.',
+    tr: 'openGym antrenman sırasında ve her setin yanında nabzını gösterir.', ru: 'openGym показывает пульс во время тренировки и рядом с каждым подходом.',
+    uk: 'openGym показує пульс під час тренування і біля кожного підходу.', ar: 'يعرض openGym نبضك أثناء التمرين وبجانب كل مجموعة.',
+    hi: 'openGym वर्कआउट के दौरान और हर सेट के साथ आपकी धड़कन दिखाता है।', bn: 'openGym ওয়ার্কআউটের সময় আর প্রতিটি সেটের পাশে আপনার হার্ট রেট দেখায়।',
+    th: 'openGym แสดงอัตราการเต้นของหัวใจระหว่างฝึกและข้างแต่ละเซ็ต', ko: 'openGym이 운동 중과 각 세트 옆에 심박수를 보여줘요.',
+    'zh-Hans': 'openGym 会在训练中和每组旁显示你的心率。', 'zh-Hant': 'openGym 會在訓練中和每組旁顯示你的心率。',
+  },
+  NSHealthUpdateUsageDescription: {
+    de: 'openGym speichert deine Trainings in Apple Health, wenn du das einschaltest.', fr: 'openGym enregistre tes séances dans Apple Santé si tu l’actives.',
+    es: 'openGym guarda tus entrenos en Apple Salud si lo activas.', it: 'openGym salva i tuoi allenamenti in Apple Salute se lo attivi.',
+    'pt-PT': 'O openGym guarda os teus treinos no Apple Saúde se o ativares.', 'pt-BR': 'O openGym salva seus treinos no Apple Saúde se você ativar.',
+    pl: 'openGym zapisuje treningi w Apple Zdrowie, jeśli to włączysz.', hu: 'Az openGym az Apple Egészség appba menti az edzéseidet, ha bekapcsolod.',
+    tr: 'Açarsan openGym antrenmanlarını Apple Sağlık’a kaydeder.', ru: 'openGym сохраняет тренировки в Apple Здоровье, если вы это включите.',
+    uk: 'openGym зберігає тренування в Apple Здоров’я, якщо ти це ввімкнеш.', ar: 'يحفظ openGym تمارينك في Apple صحتي إذا فعّلت ذلك.',
+    hi: 'चालू करने पर openGym आपके वर्कआउट Apple Health में सहेजता है।', bn: 'চালু করলে openGym আপনার ওয়ার্কআউট Apple Health-এ সেভ করে।',
+    th: 'openGym บันทึกการฝึกลงใน Apple Health เมื่อคุณเปิดใช้', ko: '켜면 openGym이 운동을 Apple 건강에 저장해요.',
+    'zh-Hans': '打开后，openGym 会把训练保存到 Apple 健康。', 'zh-Hant': '開啟後，openGym 會把訓練儲存到 Apple 健康。',
+  },
+}
+
 const esc = s => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')
 let problems = 0
 for (const [pack, lproj] of Object.entries(LANGS)) {
@@ -91,6 +117,12 @@ for (const [pack, lproj] of Object.entries(LANGS)) {
   for (const [k, tr] of Object.entries(OWN)) put(k, tr[lproj])
   mkdirSync(join(out, `${lproj}.lproj`), { recursive: true })
   writeFileSync(join(out, `${lproj}.lproj`, 'Localizable.strings'), lines.join('\n') + '\n')
+  const plist = [`/* openGym on the Apple Watch, ${lproj}: Info.plist. Written by ios/ci/watch-strings.mjs. */`, '']
+  for (const [k, tr] of Object.entries(PLIST)) {
+    if (!tr[lproj] || /—/.test(tr[lproj])) { console.error(`${lproj}: ${k} missing or with an em dash`); problems++; continue }
+    plist.push(`"${k}" = "${esc(tr[lproj])}";`)
+  }
+  writeFileSync(join(out, `${lproj}.lproj`, 'InfoPlist.strings'), plist.join('\n') + '\n')
 }
 if (problems) process.exit(1)
 console.log(`wrote ${Object.keys(LANGS).length} languages`)

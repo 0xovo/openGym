@@ -74,6 +74,12 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         }
     }
     @Published private(set) var ready: Ready?
+    /// Apple Health: the workout session, its heart rate, and the switch (WorkoutManager).
+    let health = WorkoutManager()
+    /// When the set now up began: the end of the rest before it, or the start of the session.
+    private var setStartedAt = Date()
+    /// The rest running after a set, for that rest's heart rate once it is over.
+    private var restAfter: (exId: String, entryIdx: Int, setIdx: Int, wid: String, from: Date)?
     private var unitDefault = "kg"
     private var restDefault: Double = 90
     /// A session started here that the phone has not reported back yet.
@@ -178,6 +184,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             guard var next = snap.active else {
                 // A session started here that the phone has not heard of yet stays.
                 if self.workout != nil && self.workout?.id == self.startedHere { return }
+                if self.workout != nil { self.health.end(save: true) }
                 self.workout = nil
                 self.pending.removeAll()
                 self.skipRest()
@@ -193,7 +200,11 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 }
             }
             self.workout = next
-            if !sameWorkout { self.entryIndex = next.cur }
+            if !sameWorkout {
+                self.entryIndex = next.cur
+                self.setStartedAt = Date()
+                if !self.isDemo { self.health.start() }
+            }
             if let rest = next.rest {
                 self.startRest(until: Date(timeIntervalSince1970: rest.endsAt / 1000), notify: true)
             }
@@ -215,12 +226,15 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     func completeSet() {
         guard var w = workout, let e = entry, let si = setIndex else { return }
         let ei = entryIndex
+        let now = Date()
+        let setFrom = setStartedAt
+        closeRest(at: now)
         w.entries[ei].sets[si].done = true
         w.entries[ei].sets[si].w = weight
         w.entries[ei].sets[si].r = reps
         pending.insert("\(e.id)#\(si)")
         workout = w
-        send(event: [
+        var event: [String: Any] = [
             "id": UUID().uuidString,
             "type": "setDone",
             "wid": w.id ?? "",
@@ -229,12 +243,19 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             "setIdx": si,
             "w": weight,
             "r": reps,
-            "at": Date().timeIntervalSince1970 * 1000,
-        ])
+            "at": now.timeIntervalSince1970 * 1000,
+        ]
+        if let hr = health.stats(from: setFrom, to: now) { event["hr"] = hr }
+        send(event: event)
+        setStartedAt = now
         WKInterfaceDevice.current().play(.success)
         let rest = e.restSec ?? w.restSec
         picked[ei] = nil
-        if rest > 0 { startRest(until: Date().addingTimeInterval(rest), notify: true) }
+        if rest > 0 {
+            startRest(until: now.addingTimeInterval(rest), notify: true)
+            // after startRest, which closes any rest before it
+            restAfter = (e.id, ei, si, w.id ?? "", now)
+        }
         // On to the next exercise once this one is done.
         if setIndex == nil, let next = w.entries.indices.first(where: { $0 > ei && w.entries[$0].sets.contains(where: { !$0.done }) }) {
             entryIndex = next
@@ -253,6 +274,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         picked = [:]
         pending.removeAll()
         loadTargets()
+        setStartedAt = now
+        restAfter = nil
+        health.start()
         send(event: [
             "id": UUID().uuidString,
             "type": "start",
@@ -266,6 +290,8 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     /// Finishes the session: the phone saves it with its own Finish and save.
     func finish() {
         guard let w = workout else { return }
+        closeRest(at: Date())
+        health.end(save: true)
         send(event: [
             "id": UUID().uuidString,
             "type": "finish",
@@ -286,6 +312,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     }
 
     func skipRest() {
+        closeRest(at: Date())
         restTimer?.invalidate()
         restEndsAt = nil
         restStartedAt = nil
@@ -312,6 +339,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         restTimer = Timer.scheduledTimer(withTimeInterval: end.timeIntervalSinceNow, repeats: false) { [weak self] _ in
             SessionStore.restOverHaptics()
             DispatchQueue.main.async {
+                self?.closeRest(at: Date())
                 self?.restEndsAt = nil
                 self?.restStartedAt = nil
             }
@@ -326,6 +354,24 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         content.interruptionLevel = .timeSensitive
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, end.timeIntervalSinceNow), repeats: false)
         center.add(UNNotificationRequest(identifier: SessionStore.restNotificationId, content: content, trigger: trigger))
+    }
+
+    /// The rest after a set is over (it ran out, was skipped, or the next set is done): its heart
+    /// rate goes to that set, and the next set starts counting from here.
+    private func closeRest(at end: Date) {
+        guard let r = restAfter else { return }
+        restAfter = nil
+        setStartedAt = end
+        guard let hr = health.stats(from: r.from, to: end) else { return }
+        send(event: [
+            "id": UUID().uuidString,
+            "type": "setHr",
+            "wid": r.wid,
+            "exId": r.exId,
+            "entryIdx": r.entryIdx,
+            "setIdx": r.setIdx,
+            "restHr": hr,
+        ])
     }
 
     /// A short, alarm-like pattern on the wrist: three taps.
