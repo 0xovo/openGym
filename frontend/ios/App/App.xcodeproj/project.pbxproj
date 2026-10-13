@@ -21,6 +21,7 @@
 		AA0200000000000000000004 /* RestAlertPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200000000000000000003 /* RestAlertPlugin.swift */; };
 		AA0200000000000000000006 /* RestTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200000000000000000005 /* RestTone.swift */; };
 		AA0200000000000000000008 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA0200000000000000000007 /* PrivacyInfo.xcprivacy */; };
+		AA0300000000000000000002 /* DeviceAuthPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0300000000000000000001 /* DeviceAuthPlugin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		AA0200000000000000000003 /* RestAlertPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestAlertPlugin.swift; sourceTree = "<group>"; };
 		AA0200000000000000000005 /* RestTone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestTone.swift; sourceTree = "<group>"; };
 		AA0200000000000000000007 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		AA0300000000000000000001 /* DeviceAuthPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthPlugin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 				AA0200000000000000000001 /* MainViewController.swift */,
 				AA0200000000000000000003 /* RestAlertPlugin.swift */,
 				AA0200000000000000000005 /* RestTone.swift */,
+				AA0300000000000000000001 /* DeviceAuthPlugin.swift */,
 				AA0200000000000000000007 /* PrivacyInfo.xcprivacy */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
@@ -234,6 +237,7 @@
 				AA0200000000000000000002 /* MainViewController.swift in Sources */,
 				AA0200000000000000000004 /* RestAlertPlugin.swift in Sources */,
 				AA0200000000000000000006 /* RestTone.swift in Sources */,
+				AA0300000000000000000002 /* DeviceAuthPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
