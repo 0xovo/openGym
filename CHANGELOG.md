@@ -13,13 +13,16 @@ https://testflight.apple.com/join/RKATb61k
 - **Apple Watch.** Start a workout on the wrist, or on the phone and the watch app opens with it,
   then tick off sets with a big Done button and the Digital Crown for reps and weight. Rest is a
   full-screen countdown with +15 s and Skip, holds count down, sides say Left or Right, supersets
-  go in turns. Heart rate per set, a summary at the end, and a Smart Stack widget. No phone in
-  reach? Your ticks wait on the watch and catch up later.
+  go in turns. Heart rate per set, a summary at the end, a Smart Stack widget and complications
+  for your watch face. It speaks the app's language, asks for a weigh-in at the start if you like,
+  makes weights quick to change, and you pick what the set screen shows. No phone in reach? Your
+  ticks wait on the watch and catch up later.
 - **Widgets and a Live Activity.** Today's workout on the Home Screen and the Lock Screen, your
   streak too. A running workout sits on the Lock Screen and in the Dynamic Island, with a Done
   button that logs the set and starts the rest without opening the app.
 - **Apple Health.** Finished workouts and weigh-ins go to Apple Health, the same switch Android
-  has for Health Connect, offered once at the start.
+  has for Health Connect, offered once at the start. Delete a workout in openGym (on any of your
+  devices) and it leaves Apple Health too.
 - **Sharper animations, your choice.** Settings → Workout → Animation quality: Still only, built in
   (180 px), or 240, 360, 480, 720 and 1080 px, downloaded from the App Store when you pick them.
   Auto takes 360 on a phone and 720 on an iPad, over Wi-Fi. Female and male figures download
@@ -52,6 +55,13 @@ version later without losing anything.
 nudge goes out, the phone checks with your server and keeps quiet. (On the iPhone, iOS decides
 when the app may check in the background; opening the app always catches up.)
 
+**Your data, safer**
+- A running workout is saved the moment it changes and again when the app goes to the background,
+  so a crash or a dead battery costs you nothing.
+- Taps from the watch or the Lock Screen wait until your saved data is loaded, and offline changes
+  count as sent only once they're safely on disk. Saving swaps the file in one go, never half.
+- Importing a backup without an account now offers "Merge them in" instead of wiping what's there.
+
 **In the workout**
 - **Backups for an exercise** (Discord): in the routine editor, up to five exercises to do instead
   when the machine is taken. A swap lists them first.
@@ -72,6 +82,7 @@ when the app may check in the background; opening the app always catches up.)
   photo can be removed from the gallery, with Undo (#558).
 - **Muscle balance**: tap an untrained muscle to see its exercises (#553), and the Week view lines
   up. The status bar no longer covers the page on more Android phones (#573).
+- The Coach's questionnaire has a clearer days screen and the same time wheels for session length.
 - The Coach's message box grows with your text and opens into a tall editor for long ones. A
   reload on the intake no longer sends you home, and dates follow your day, not UTC's.
 - The Undo after a delete has an × to send it away, on the far side from Undo.
@@ -80,7 +91,6 @@ when the app may check in the background; opening the app always catches up.)
 - The pairing code field no longer hides behind the keyboard on iPhone.
 
 **From the community** (thanks!)
-- A Complete / Next button that stays put during a workout, in every layout (#563, @Space-Hermes).
 - Body weight for an earlier day, like measurements (#570, @smist37).
 - Warm-ups on assisted machines ramp down from more help (#581, @lntvan166).
 - Effort stats average the whole training, and your logged RIR tunes the anchor (#539, @sg41).
