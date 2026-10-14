@@ -11,6 +11,7 @@ import { effectiveLang } from './lib/default-lang.js'
 import { setPlayOnSilent, setVibrate, setAlarmBuzzer, setNativeBuzzer } from './lib/sound.js'
 import { buzzAsAlarm } from './lib/rest-alert.js'
 import { setNav, notePath, keyBefore, navToWorkout } from './lib/nav.js'
+import { onGymReminderOpen } from './lib/gym-reminder.js'
 import { workoutVolume } from './lib/history.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
@@ -367,6 +368,12 @@ export default function App() {
     startWidgetSync({ useStore }).then(keep).catch(() => {})
     startLiveActivitySync({ useStore, useUI }).then(keep).catch(() => {})
     return () => { gone.v = true; stops.forEach(fn => fn()) }
+  }, [])
+  // Phone app: a tap on the gym reminder (lib/gym-reminder.js) opens the Start screen, or the
+  // workout already running. Nothing on the web.
+  useEffect(() => {
+    if (!MOBILE) return
+    return onGymReminderOpen(() => { if (!String(window.location.hash || '').startsWith('#/workout')) navToWorkout() })
   }, [])
   return <HashRouter><Shell /></HashRouter>
 }

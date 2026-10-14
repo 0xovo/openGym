@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+**Gym reminder** (#614, phone app). Walk into your gym and openGym nudges you to hit Start. Add
+your gyms in Settings → Reminders → Gym reminder: "I'm at the gym right now" or a pin on an
+OpenStreetMap map, each with its own radius and text. Once a day at most, never after you trained,
+never mid-workout, optionally only between certain hours. Off by default, and your gyms stay on
+the phone (not on your server, not in backups). Android uses the system's own proximity alerts,
+so no Google services are needed.
+
 **Security.** Five private reports, all fixed, plus our own audit. Thanks to Boris Kurktchiev
 for the reports, each with a patch and a test. Self-hosters: please update.
 

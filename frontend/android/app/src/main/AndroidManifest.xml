@@ -86,6 +86,22 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 
+        <!-- Gym reminder (#614): the platform's proximity alert for a gym fires this (GymReminder).
+             Explicit, not exported: nothing but that alert's own PendingIntent reaches it. -->
+        <receiver
+            android:name=".GymReminderReceiver"
+            android:exported="false" />
+        <!-- Proximity alerts are gone after a restart or an app update: registered again here.
+             Only the system sends these two broadcasts. -->
+        <receiver
+            android:name=".GymReminderBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Gym check-in scanner (@capacitor-mlkit/barcode-scanning): pre-fetch the ML Kit
              barcode model at install time so the first scan doesn't wait on a download. -->
         <meta-data android:name="com.google.mlkit.vision.DEPENDENCIES" android:value="barcode_ui" />
@@ -124,6 +140,20 @@
          openGym writes finished workouts and weigh-ins and reads nothing back. -->
     <uses-permission android:name="android.permission.health.WRITE_EXERCISE" />
     <uses-permission android:name="android.permission.health.WRITE_WEIGHT" />
+
+    <!-- Gym reminder (#614), off until switched on in Settings: where the phone is, for "I'm at
+         the gym right now" and to watch the gyms the user added with the platform's proximity
+         alerts (no Google Play Services). Background location ("Allow all the time") is asked for
+         separately, after an explanation in the app, because the alert has to fire with openGym
+         closed. The places never leave the phone. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- Location is optional: a phone without GPS still installs the app (the permissions above
+         would otherwise make Google Play require the hardware). -->
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
 
     <!-- Whether the Health Connect app is there, on Android 13 and lower. -->
     <queries>

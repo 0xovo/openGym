@@ -272,6 +272,46 @@ Worth checking on a device: picking 720 px starts a download that shows its prog
 animation sharpens once it is done; Delete frees the space and the animation falls back; on
 cellular with Wi-Fi only on, it waits; Still only shows stills everywhere a workout shows media.
 
+### Gym reminder (#614)
+
+Settings → Reminders → **Gym reminder**, in the phone app only (the web build has no such page:
+a browser cannot watch where you are with the page closed). Off by default. Add gyms with "I'm at
+the gym right now" (the phone's position) or a pin on an OpenStreetMap map (Leaflet; the address
+search asks Nominatim, only on an explicit tap of Search, with a User-Agent naming the app). Each
+gym has a radius (100 m by default, 50 to 500) and an optional text. Up to 20 gyms (iOS watches at
+most 20 regions per app). Walking into one posts "Gym spotted. Ready for your workout? 💪"; a tap
+opens the Start screen (or the running workout).
+
+- **No nagging** (`src/lib/gym-reminder.js` `skipReason`, the same rule in
+  `GymReminderRules.java` and `ios/App/GymReminderCore`): at most once a day, not after a workout
+  logged today, not on a day note that excuses today, not while a session started in the last
+  12 hours runs, and only inside the optional time window (an overnight one wraps). The phone
+  decides when the gym is entered, from what the page last told it (`GymReminder.status`, sent
+  after every save of the profile and on every return to the app). A workout logged on another
+  device and not yet synced to this phone is not known there.
+- **Locations stay on the phone.** The gyms live only in the native side's own storage: Android
+  `shared_prefs/opengym_gym_reminder.xml`, left out of cloud backup and device transfer
+  (`res/xml/*_rules.xml`); iOS `Application Support/gym-reminder.json`, excluded from backups. The
+  WebView's storage keeps only an on/off flag (it is part of phone backups), the synced profile
+  and backup files never see any of it.
+- **Android:** the platform's proximity alerts (`LocationManager.addProximityAlert`), no Google
+  Play Services, so the APK and F-Droid builds have it too. Location while in use is asked when
+  you add a gym from where you stand; "Allow all the time" (`ACCESS_BACKGROUND_LOCATION`) only
+  after the in-app explainer, and from Android 11 on that is the system's settings page.
+  `GymReminderReceiver` gets the alert, `GymReminderBootReceiver` registers the alerts again after
+  a restart or an app update. An alert added while you are already inside reports an entry at once;
+  entries in the first 90 s after arming are ignored. How soon an entry is noticed is the system's
+  call (a few minutes with the screen off is normal).
+- **iOS:** region monitoring (`CLLocationManager`, `GymReminderPlugin.swift`). Needs **Always**
+  location and Precise Location; no background location mode is declared (region monitoring does
+  not need one). iOS relaunches the app in the background on arrival; `AppDelegate` makes
+  `GymReminderCenter` the location delegate at launch so the event lands. On an iPhone with an
+  Apple Watch the notification shows on the watch as usual.
+
+Testing on the Android emulator: add a gym, wait 90 s, `adb emu geo fix <lng> <lat>` somewhere
+far away, then inside the radius; the notification arrives within a minute or two
+(`scripts/android/gym-reminder-emulator.sh` does exactly that).
+
 ## Prerequisites
 
 - Node 20+

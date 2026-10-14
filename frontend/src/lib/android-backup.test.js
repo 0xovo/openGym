@@ -29,10 +29,20 @@ describe('Android backup rules', () => {
     // An <include> would turn either list into an allowlist and drop everything else.
     expect(legacy).not.toMatch(/<include/)
     expect(modern).not.toMatch(/<include/)
-    // Device transfer takes everything but the pairing.
+    // Device transfer takes everything but the pairing and the gym reminder's places.
     const transfer = modern.match(/<device-transfer>([\s\S]*?)<\/device-transfer>/)?.[1] || ''
     expect(transfer).not.toMatch(EXCLUDE)
-    expect(transfer.match(/<exclude/g)).toHaveLength(1)
+    expect(transfer.match(/<exclude/g)).toHaveLength(2)
+  })
+
+  it('the gym reminder\'s places (#614) never leave the phone: out of every backup and transfer', () => {
+    const GYMS = /<exclude\s+domain="sharedpref"\s+path="opengym_gym_reminder\.xml"\s*\/>/
+    expect(legacy).toMatch(GYMS)
+    expect(modern.match(/<cloud-backup>([\s\S]*?)<\/cloud-backup>/)?.[1]).toMatch(GYMS)
+    expect(modern.match(/<device-transfer>([\s\S]*?)<\/device-transfer>/)?.[1]).toMatch(GYMS)
+    // the file name the native side writes
+    const java = readFileSync(new URL('../../android/app/src/main/java/ch/duartesantos/opengym/GymReminder.java', import.meta.url), 'utf8')
+    expect(java).toMatch(/PREFS = "opengym_gym_reminder"/)
   })
 
   it('the pairing token is left out of every backup and transfer', () => {
