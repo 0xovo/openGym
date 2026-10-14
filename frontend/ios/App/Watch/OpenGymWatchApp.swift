@@ -361,6 +361,8 @@ struct ExercisePage: View {
             OfflineSign()
             HeartRateBadge(health: store.health)
         }
+        // The top row shares the screen's top with the clock: it grows less than the numbers do.
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
     }
 
     /// Warm-up, the side up next, superset: what kind of set this is, above the numbers.
@@ -579,6 +581,10 @@ struct FinishPage: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
             RoundButton(systemImage: "flag.checkered", label: Text("Finish workout")) { confirming = true }
+            let p = store.progress
+            if p.total > 0 {
+                Text("\(p.done) of \(p.total) sets").font(.caption2).foregroundStyle(.secondary)
+            }
             if store.offline {
                 Text("Saved on the watch, syncs later").font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }
@@ -718,6 +724,7 @@ struct SummaryView: View {
     let summary: WorkoutSummary
 
     var body: some View {
+        ScrollViewReader { reader in
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 6) {
@@ -763,8 +770,12 @@ struct SummaryView: View {
                 }
                 .tint(Theme.accent)
                 .padding(.top, 4)
+                .id("done")
             }
             .padding(.horizontal, 4)
+        }
+        // CI: the end of the summary too (heart rate, calories, records).
+        .onAppear { if SessionStore.demoScreen == "summary-end" { reader.scrollTo("done", anchor: .bottom) } }
         }
     }
 

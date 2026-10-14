@@ -44,3 +44,4 @@
 "%lld done" = "เสร็จ %lld";
 "%lld avg · %lld max" = "เฉลี่ย %lld · สูงสุด %lld";
 "Set %lld of %lld" = "เซ็ต %lld จาก %lld";
+"%lld of %lld sets" = "%lld จาก %lld เซ็ต";

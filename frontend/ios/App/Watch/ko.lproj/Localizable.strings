@@ -44,3 +44,4 @@
 "%lld done" = "%lld개 완료";
 "%lld avg · %lld max" = "평균 %lld · 최대 %lld";
 "Set %lld of %lld" = "%lld/%lld세트";
+"%lld of %lld sets" = "%lld/%lld세트";

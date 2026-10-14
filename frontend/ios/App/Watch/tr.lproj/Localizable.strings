@@ -44,3 +44,4 @@
 "%lld done" = "%lld tamam";
 "%lld avg · %lld max" = "ort. %lld · maks. %lld";
 "Set %lld of %lld" = "Set %lld / %lld";
+"%lld of %lld sets" = "%lld / %lld set";

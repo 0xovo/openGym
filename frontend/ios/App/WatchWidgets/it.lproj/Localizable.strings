@@ -44,3 +44,4 @@
 "%lld done" = "%lld fatte";
 "%lld avg · %lld max" = "media %lld · max %lld";
 "Set %lld of %lld" = "Serie %lld di %lld";
+"%lld of %lld sets" = "%lld serie su %lld";

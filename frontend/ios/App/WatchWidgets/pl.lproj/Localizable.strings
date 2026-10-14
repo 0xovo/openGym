@@ -44,3 +44,4 @@
 "%lld done" = "%lld zrobione";
 "%lld avg · %lld max" = "śr. %lld · maks. %lld";
 "Set %lld of %lld" = "Seria %lld z %lld";
+"%lld of %lld sets" = "%lld z %lld serii";

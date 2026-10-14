@@ -44,3 +44,4 @@
 "%lld done" = "%lld сделано";
 "%lld avg · %lld max" = "ср. %lld · макс. %lld";
 "Set %lld of %lld" = "Подход %lld из %lld";
+"%lld of %lld sets" = "%lld из %lld подходов";

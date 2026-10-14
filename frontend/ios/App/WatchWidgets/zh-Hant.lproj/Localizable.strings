@@ -44,3 +44,4 @@
 "%lld done" = "已完成 %lld";
 "%lld avg · %lld max" = "平均 %lld · 最高 %lld";
 "Set %lld of %lld" = "第 %lld 組，共 %lld 組";
+"%lld of %lld sets" = "%lld / %lld 組";

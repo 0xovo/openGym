@@ -146,11 +146,11 @@ jobs:
               sleep 6
               xcrun simctl io "$UDID" screenshot "build/watch/$size-$file.png" >/dev/null
             }
-            for screen in idle empty set warmup weight rest hold bodyweight side superset offline finish summary ended; do
+            for screen in idle empty set warmup weight rest hold bodyweight side superset offline finish summary summary-end ended; do
               shot "$screen" "$screen"
             done
             # The largest text size (accessibility XXXL) on the screens with the most on them.
-            for screen in set side rest hold summary; do
+            for screen in set side rest hold summary summary-end; do
               shot "ax-$screen" "$screen" -OpenGymWatchAX
             done
             # What each screen costs: the app's CPU time over 20 s once it is up (the simulator's

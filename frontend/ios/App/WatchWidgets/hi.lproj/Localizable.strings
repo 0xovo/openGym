@@ -44,3 +44,4 @@
 "%lld done" = "%lld पूरे";
 "%lld avg · %lld max" = "औसत %lld · अधिकतम %lld";
 "Set %lld of %lld" = "सेट %lld / %lld";
+"%lld of %lld sets" = "%lld / %lld सेट";

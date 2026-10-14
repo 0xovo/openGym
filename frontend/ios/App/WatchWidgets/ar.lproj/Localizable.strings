@@ -44,3 +44,4 @@
 "%lld done" = "%lld مكتملة";
 "%lld avg · %lld max" = "متوسط %lld · أقصى %lld";
 "Set %lld of %lld" = "المجموعة %lld من %lld";
+"%lld of %lld sets" = "%lld من %lld مجموعات";

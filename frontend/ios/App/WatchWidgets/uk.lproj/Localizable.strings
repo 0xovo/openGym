@@ -44,3 +44,4 @@
 "%lld done" = "%lld зроблено";
 "%lld avg · %lld max" = "сер. %lld · макс. %lld";
 "Set %lld of %lld" = "Підхід %lld з %lld";
+"%lld of %lld sets" = "%lld з %lld підходів";

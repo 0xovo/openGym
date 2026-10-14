@@ -44,3 +44,4 @@
 "%lld done" = "%lld erledigt";
 "%lld avg · %lld max" = "Ø %lld · max. %lld";
 "Set %lld of %lld" = "Satz %lld von %lld";
+"%lld of %lld sets" = "%lld von %lld Sätzen";

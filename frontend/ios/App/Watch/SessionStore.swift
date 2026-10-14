@@ -158,7 +158,11 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             }
             if let e = entry, let si = setIndex {
                 let s = e.sets[si]
-                let numbers = "\(formatNumber(s.w ?? 0)) \(w.unit) × \(formatNumber(s.r ?? 0))"
+                let added = s.w ?? 0
+                let numbers: String = e.isTimed ? "\(formatNumber(s.sec ?? 0)) s"
+                    : e.isCardio ? ""
+                    : e.isBodyweight ? (added > 0 ? "+\(formatNumber(added)) \(w.unit) × \(formatNumber(s.r ?? 0))" : "× \(formatNumber(s.r ?? 0))")
+                    : "\(formatNumber(s.w ?? 0)) \(w.unit) × \(formatNumber(s.r ?? 0))"
                 let work = e.sets.filter { !$0.warmup }.count
                 return WidgetState(mode: "set", title: e.name, detail: numbers, restEndsAt: nil, done: p.done, total: p.total,
                                    setLabel: "\(min(si + 1, max(1, work)))/\(max(1, work))")
@@ -579,7 +583,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             if screen == "rest" { self.startRest(until: Date().addingTimeInterval(83), notify: false) }
             if screen == "hold" { self.startHold() }
             if screen == "offline" { self.reachable = false; self.queued = 3 }
-            if screen == "summary" || screen == "ended" {
+            if screen == "summary" || screen == "summary-end" || screen == "ended" {
                 self.summary = WorkoutSummary(name: "Push day", unit: "kg", duration: 52 * 60 + 13, sets: 17, volume: 4320,
                                               prs: ["Bench Press", "Plank"], hrAvg: 118, hrMax: 156, calories: 312,
                                               endedOnPhone: screen == "ended")

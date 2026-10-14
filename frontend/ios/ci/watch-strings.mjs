@@ -135,6 +135,9 @@ const OWN = {
   'Set %lld of %lld': {
     de: 'Satz %lld von %lld', fr: 'Série %lld sur %lld', es: 'Serie %lld de %lld', it: 'Serie %lld di %lld', 'pt-PT': 'Série %lld de %lld', 'pt-BR': 'Série %lld de %lld', pl: 'Seria %lld z %lld', hu: '%lld. sorozat / %lld', tr: 'Set %lld / %lld', ru: 'Подход %lld из %lld', uk: 'Підхід %lld з %lld', ar: 'المجموعة %lld من %lld', hi: 'सेट %lld / %lld', bn: 'সেট %lld / %lld', th: 'เซ็ต %lld จาก %lld', ko: '%lld/%lld세트', 'zh-Hans': '第 %lld 组，共 %lld 组', 'zh-Hant': '第 %lld 組，共 %lld 組',
   },
+  '%lld of %lld sets': {
+    de: '%lld von %lld Sätzen', fr: '%lld séries sur %lld', es: '%lld de %lld series', it: '%lld serie su %lld', 'pt-PT': '%lld de %lld séries', 'pt-BR': '%lld de %lld séries', pl: '%lld z %lld serii', hu: '%lld / %lld sorozat', tr: '%lld / %lld set', ru: '%lld из %lld подходов', uk: '%lld з %lld підходів', ar: '%lld من %lld مجموعات', hi: '%lld / %lld सेट', bn: '%lld / %lld সেট', th: '%lld จาก %lld เซ็ต', ko: '%lld/%lld세트', 'zh-Hans': '%lld / %lld 组', 'zh-Hant': '%lld / %lld 組',
+  },
 }
 
 // Info.plist's own (the Apple Health permission prompts), into InfoPlist.strings.
