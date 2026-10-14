@@ -128,6 +128,6 @@ on the phone (Settings → Reset, or uninstall).
 ## Licensing
 
 The repository's `NOTICE.md` carries an app-store exception to the AGPL (an additional
-permission under AGPL §7, since July 2026). The Contributor License Agreement in preparation
-covers the rest: it lets the project keep publishing and updating the store apps long term,
-contributions included.
+permission under AGPL §7, since July 2026). The [Contributor License Agreement](../CLA.md)
+(live since October 2026) covers the rest: it lets the project keep publishing and updating the
+store apps long term, contributions included.
