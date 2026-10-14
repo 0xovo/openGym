@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { hideBoot } from './lib/boot.js'
 import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation, useNavigationType } from 'react-router-dom'
 import { useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
@@ -228,7 +229,7 @@ function Shell() {
 
   const authed = user || isGuest
   // The boot screen in index.html covers the start; it goes once there is something to show.
-  useEffect(() => { if (ready || authed) window.__hideBoot?.() }, [ready, authed])
+  useEffect(() => { if (ready || authed) hideBoot() }, [ready, authed])
   if (!ready && !authed) return (
     <div id="app">
       <div style={{ paddingTop: '44vh', display: 'flex', justifyContent: 'center', fontSize: 34, color: 'var(--label-3)' }}>
