@@ -1,0 +1,177 @@
+# App Store screenshots from the real app in the simulators, started by hand: iPhone 6.9"
+# (1320 x 2868), iPad 13" (2064 x 2752) and the Apple Watch, in English and German.
+#
+# The phone and iPad open on the demo build's example history (ios/ci/store-shots.mjs puts a
+# driver into the app's page for this run only) and the driver walks the screens; the watch app
+# shows its own demo session (text only). Two sets of phone/iPad pictures come out:
+#   store-shots-plain  without the exercise animations (placeholders), to check layout and text;
+#   store-shots-media  with the repo's 180 px animations, as the app really looks.
+# Uploading them to App Store Connect is a separate, deliberate step (scripts/asc listing).
+name: Store screenshots
+
+on:
+  # A workflow_dispatch only shows up once the file is on the default branch; until then a push
+  # to this branch runs it with the defaults.
+  push:
+    branches: [store-shots]
+    paths: ['.github/workflows/store-shots.yml', 'frontend/ios/ci/store-shots.mjs']
+  workflow_dispatch:
+    inputs:
+      langs:
+        description: 'Languages (space separated)'
+        default: 'en de'
+      watch:
+        description: 'Also the Apple Watch'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-shots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shots:
+    runs-on: macos-26
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run build:mobile
+        working-directory: frontend
+      - run: ruby ios/ci/add-asset-downloader.rb
+        working-directory: frontend
+      - run: test -f ios/ci/add-watch-app.rb && ruby ios/ci/add-watch-app.rb || echo "no watch app on this branch"
+        working-directory: frontend
+      - run: ruby ios/ci/add-widgets.rb
+        working-directory: frontend
+      - name: Build for the simulator
+        working-directory: frontend/ios/App
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO build | tee build/xcodebuild.log | grep -E "error:|BUILD" || true
+          test -d build/dd/Build/Products/Debug-iphonesimulator/App.app
+
+      # One device, one language, with or without the animations: a fresh install of a copy of the
+      # app with the driver in its page, launched with its console kept; a picture each time the
+      # driver says a screen is ready.
+      - name: iPhone and iPad
+        working-directory: frontend/ios/App
+        env:
+          LANGS: ${{ inputs.langs || 'en de' }}
+        run: |
+          APP=build/dd/Build/Products/Debug-iphonesimulator/App.app
+          pick() {
+            xcrun simctl list devices available -j | RE="$1" node -e '
+              const d = JSON.parse(require("fs").readFileSync(0)).devices
+              const all = Object.entries(d).filter(([k]) => k.includes("iOS")).flatMap(([, v]) => v)
+              const m = all.filter(x => new RegExp(process.env.RE).test(x.name)).pop()
+              process.stdout.write(m ? m.udid : "")'
+          }
+          run_one() {   # udid device lang variant
+            local UDID=$1 DEV=$2 LANG=$3 VAR=$4
+            local OUT=build/store-shots/$VAR/$DEV/$LANG
+            mkdir -p "$OUT"
+            rm -rf build/shot-app && cp -R "$APP" build/shot-app
+            if [ "$VAR" = plain ]; then rm -rf build/shot-app/public/exercise-media; fi
+            (cd ../.. && node ios/ci/store-shots.mjs "ios/App/build/shot-app/public/index.html" "$LANG")
+            xcrun simctl uninstall "$UDID" ch.opengym.app 2>/dev/null || true
+            xcrun simctl install "$UDID" build/shot-app
+            : > build/shot-console.log
+            xcrun simctl launch --console-pty "$UDID" ch.opengym.app > build/shot-console.log 2>&1 &
+            local LPID=$! taken=" " deadline=$((SECONDS + 600))
+            while [ $SECONDS -lt $deadline ]; do
+              for name in $(grep -o 'STORESHOT [0-9a-z-]*' build/shot-console.log | awk '{print $2}'); do
+                case "$taken" in *" $name "*) continue;; esac
+                sleep 1
+                xcrun simctl io "$UDID" screenshot "$OUT/$name.png" >/dev/null 2>&1 && echo "  $VAR/$DEV/$LANG/$name"
+                taken="$taken$name "
+              done
+              grep -q 'STORESHOT-DONE\|STORESHOT-FAIL' build/shot-console.log && break
+              sleep 0.5
+            done
+            grep -o 'STORESHOT-FAIL.*' build/shot-console.log && cp build/shot-console.log "$OUT/console.log"
+            kill $LPID 2>/dev/null || true
+            xcrun simctl terminate "$UDID" ch.opengym.app 2>/dev/null || true
+          }
+          for spec in "iphone:iPhone.*Pro Max" "ipad:iPad Pro.*13"; do
+            DEV=${spec%%:*}; UDID=$(pick "${spec#*:}")
+            test -n "$UDID" || { echo "::warning::no simulator for $DEV"; continue; }
+            echo "$DEV: $(xcrun simctl list devices | grep "$UDID")"
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl ui "$UDID" appearance dark || true
+            xcrun simctl status_bar "$UDID" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
+              --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100 || true
+            # Let SpringBoard finish its own first-boot work before the first launch.
+            sleep 20
+            for LANG in $LANGS; do
+              for VAR in plain media; do run_one "$UDID" "$DEV" "$LANG" "$VAR"; done
+            done
+            xcrun simctl shutdown "$UDID" || true
+          done
+          find build/store-shots -name '*.png' | sort
+          for f in $(find build/store-shots -name '*.png' | head -40); do echo "$f $(sips -g pixelWidth -g pixelHeight "$f" | awk '/pixel/{printf "%s ", $2}')"; done
+
+      # The watch app's own demo session (SessionStore.demoJSON: text only, no exercise media), on
+      # the largest watches: Ultra and a 46 or 45 mm one. No clip, so nothing stands in for an
+      # animation.
+      - name: Apple Watch
+        if: inputs.watch != false
+        continue-on-error: true
+        working-directory: frontend/ios/App
+        run: |
+          APP=build/dd/Build/Products/Debug-watchsimulator/OpenGymWatch.app
+          test -d "$APP" || { echo "::warning::no watch app was built"; exit 0; }
+          if ! xcrun simctl list runtimes | grep -q watchOS; then xcodebuild -downloadPlatform watchOS || true; fi
+          for spec in "ultra:Apple Watch Ultra" "46mm:Apple Watch Series.*\((46|45)mm\)"; do
+            DEV=${spec%%:*}
+            UDID=$(xcrun simctl list devices available -j | RE="${spec#*:}" node -e '
+              const d = JSON.parse(require("fs").readFileSync(0)).devices
+              const all = Object.entries(d).filter(([k]) => k.includes("watchOS")).flatMap(([, v]) => v)
+              const m = all.filter(x => new RegExp(process.env.RE).test(x.name)).pop()
+              process.stdout.write(m ? m.udid : "")')
+            test -n "$UDID" || { echo "::warning::no $DEV watch simulator"; continue; }
+            echo "$DEV: $(xcrun simctl list devices | grep "$UDID")"
+            OUT=build/store-shots/watch/$DEV
+            mkdir -p "$OUT"
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl status_bar "$UDID" override --time "9:41" || true
+            xcrun simctl install "$UDID" "$APP"
+            sleep 10
+            for screen in idle set rest superset side hold bodyweight summary summary-end; do
+              xcrun simctl terminate "$UDID" ch.opengym.app.watchkitapp 2>/dev/null || true
+              xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen" >/dev/null
+              sleep 7
+              xcrun simctl io "$UDID" screenshot "$OUT/$screen.png" >/dev/null && echo "  watch/$DEV/$screen"
+            done
+            xcrun simctl shutdown "$UDID" || true
+          done
+          for f in $(find build/store-shots/watch -name '*.png'); do echo "$f $(sips -g pixelWidth -g pixelHeight "$f" | awk '/pixel/{printf "%s ", $2}')"; done
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: store-shots-plain
+          path: |
+            frontend/ios/App/build/store-shots/plain
+            frontend/ios/App/build/store-shots/watch
+          if-no-files-found: warn
+          retention-days: 14
+      - uses: actions/upload-artifact@v6
+        with:
+          name: store-shots-media
+          path: frontend/ios/App/build/store-shots/media
+          if-no-files-found: warn
+          retention-days: 14
