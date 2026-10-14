@@ -290,10 +290,14 @@ export async function shareExportBlob(blob, filename) {
 // platform renders the PDF, so no PDF library rides in the bundle. The local `Print` plugin is
 // registered natively (android MainActivity, ios PrintPlugin.m); on the web build this file's
 // callers gate on MOBILE and never reach here.
-export async function printHtml(html, name) {
+// `paper` ('a4' | 'letter') is the size the sheet starts on (lib/print-doc.js paperFor); Android
+// uses it, iOS takes the printer's or the region's own default. `footer` is the bottom line the
+// iOS plugin draws itself, since WebKit has no @page margin boxes: { left, page } with {0}/{1}
+// in `page` for the page number and the page count.
+export async function printHtml(html, name, { paper = 'a4', footer } = {}) {
   const { registerPlugin } = await import('@capacitor/core')
   const Print = registerPlugin('Print')
-  await Print.printHtml({ html, name })
+  await Print.printHtml({ html, name, paper, ...(footer ? { footer } : {}) })
 }
 
 // "Auto-backup on changes" (Settings): a dated snapshot dropped into Documents/openGym/ —

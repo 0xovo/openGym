@@ -1535,6 +1535,9 @@ export const PT_BR_OVERRIDES = {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Este dispositivo tem 1 treino que não está neste backup. Substituir exclui esse treino.',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Este dispositivo tem {0} treinos que não estão neste backup. Substituir exclui esses treinos.',
+  // --- PDF exports and the performance report ---
+  'Your training on paper: totals, charts, new bests and every set. Frame it, print it or send it to your coach.': 'Seu treino no papel: totais, gráficos, novos recordes e cada série. Coloque num quadro, imprima ou envie para o seu treinador.',
+  'Save as PDF': 'Salvar como PDF',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
