@@ -954,6 +954,8 @@ struct SummaryView: View {
                 .id("done")
             }
             .padding(.horizontal, 4)
+            // The title starts under the clock, not beside it (it ran into the time on 41 mm).
+            .padding(.top, 14)
         }
         // CI: the end of the summary too (heart rate, calories, records).
         .onAppear { if SessionStore.demoScreen == "summary-end" { reader.scrollTo("done", anchor: .bottom) } }

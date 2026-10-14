@@ -177,6 +177,52 @@ jobs:
             xcrun simctl shutdown "$UDID" || true
           done
           ls -la build/watch
+      # Clean pictures for the App Store and promotion: Ultra and 46 mm, the clock at 10:09, demo data,
+      # the synthetic clip or none (never exercise media).
+      - name: Watch promo pictures
+        continue-on-error: true
+        working-directory: frontend/ios/App
+        run: |
+          APP=build/dd/Build/Products/Debug-watchsimulator/OpenGymWatch.app
+          test -d "$APP" || exit 1
+          mkdir -p build/watch-promo
+          for kind in ultra 46mm; do
+            UDID=$(xcrun simctl list devices available -j | KIND=$kind node -e '
+              const d = JSON.parse(require("fs").readFileSync(0)).devices
+              const all = Object.entries(d).filter(([k]) => k.includes("watchOS")).flatMap(([, v]) => v).filter(x => /Apple Watch/.test(x.name))
+              const pick = process.env.KIND === "ultra" ? all.filter(x => /Ultra/.test(x.name)).pop() : all.filter(x => /46mm/.test(x.name) && !/Ultra|SE/.test(x.name)).pop()
+              process.stdout.write(pick ? pick.udid + " " + pick.name.replace(/[^A-Za-z0-9]+/g, "-") : "")')
+            test -n "$UDID" || { echo "::warning::no $kind watch simulator"; continue; }
+            NAME=${UDID#* }; UDID=${UDID%% *}
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID" -b
+            # The clock at 10:09, if this simulator lets the status bar be set.
+            if xcrun simctl status_bar "$UDID" override --time "10:09" 2>build/watch-promo/status-bar-$kind.txt; then echo "$kind: status bar set" >> build/watch-promo/notes.txt; else echo "$kind: status_bar override not supported: $(cat build/watch-promo/status-bar-$kind.txt)" >> build/watch-promo/notes.txt; fi
+            xcrun simctl install "$UDID" "$APP"
+            DATA=$(xcrun simctl get_app_container "$UDID" ch.opengym.app.watchkitapp data 2>/dev/null || true)
+            CLIP=""
+            if [ -n "$DATA" ]; then mkdir -p "$DATA/tmp" && cp WatchCore/Tests/WatchCoreTests/Fixtures/synthetic-square.gif "$DATA/tmp/clip.gif" && CLIP="$DATA/tmp/clip.gif"; fi
+            mkdir -p "build/watch-promo/$kind"
+            promo() {
+              local file=$1 screen=$2; shift 2
+              xcrun simctl terminate "$UDID" ch.opengym.app.watchkitapp 2>/dev/null || true
+              xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen" "$@" >/dev/null
+              sleep 6
+              xcrun simctl io "$UDID" screenshot "build/watch-promo/$kind/$file.png" >/dev/null
+            }
+            promo 1-start idle
+            promo 2-set set -OpenGymWatchShow noclip
+            [ -n "$CLIP" ] && promo 2b-set-with-clip set -OpenGymWatchDemoClip "$CLIP"
+            promo 3-edit-weight edit-weight -OpenGymWatchShow noclip
+            promo 4-rest rest
+            promo 5-superset superset
+            promo 6-weigh-in weighin
+            promo 7-summary summary
+            promo 8-summary-end summary-end
+            echo "$kind: $NAME" >> build/watch-promo/notes.txt
+            xcrun simctl shutdown "$UDID" || true
+          done
+          find build/watch-promo -type f | sort
       - uses: actions/upload-artifact@v6
         if: always()
         with:
@@ -186,6 +232,7 @@ jobs:
             frontend/ios/App/build/console.log
             frontend/ios/App/build/first-screen.png
             frontend/ios/App/build/watch
+            frontend/ios/App/build/watch-promo
             frontend/ios/App/build/widgets
           retention-days: 7
 

@@ -740,6 +740,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 // "all": every optional thing on, for a look at the fullest screen.
                 if show == "all" { self.state.settings.show = WatchShow(clip: true, hr: true, last: true, elapsed: true, kcal: true, next: true, rest: "ring") }
                 if show == "plain" { self.state.settings.show = WatchShow(rest: "plain") }
+                if show == "noclip" { self.state.settings.show = WatchShow(clip: false) }
             }
             self.loadTargets()
             if screen == "rest" { self.startRest(until: Date().addingTimeInterval(83), notify: false) }
