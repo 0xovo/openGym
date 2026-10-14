@@ -121,6 +121,22 @@ test('the last admin cannot leave while other profiles remain, proof or not', as
   assert.equal(h.db().users.length, 2, 'nothing was removed');
 });
 
+test('the delete sheet learns of the last-admin refusal before it asks for any proof', async t => {
+  const h = await startServer(t, { users: ['admin', 'user', 'admin2'] });
+  const info = async uid => (await fetch(`${h.api}/api/account/passkeys`, { headers: as(uid) })).json();
+  assert.equal((await info(ADMIN)).deleteBlocked, undefined, 'another admin remains: nothing blocks');
+  assert.equal((await info(USER)).deleteBlocked, undefined, 'a plain profile is never blocked');
+  assert.equal((await h.del(ADMIN2, { name: h.db().users.find(u => u.id === ADMIN2).name, current: GOOD })).status, 200);
+  assert.equal((await info(ADMIN)).deleteBlocked, 'last-admin', 'now the only admin, with a profile left');
+  assert.equal((await info(USER)).deleteBlocked, undefined);
+});
+
+test('alone on the instance the last admin is not blocked', async t => {
+  const h = await startServer(t, { users: ['admin'] });
+  const r = await (await fetch(`${h.api}/api/account/passkeys`, { headers: as(ADMIN) })).json();
+  assert.equal(r.deleteBlocked, undefined);
+});
+
 test('an admin can leave while another admin remains', async t => {
   const h = await startServer(t, { users: ['admin', 'admin2', 'user'] });
   assert.equal((await h.del(ADMIN, { name: 'Adminna', current: GOOD })).status, 200);

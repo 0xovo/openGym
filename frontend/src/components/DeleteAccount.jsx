@@ -61,6 +61,9 @@ export function DeleteAccountSheet({ close, exportBackup, exportBackupZip, hasMe
   // there the password says it is you, or, with none, the pairing and the phone's own lock.
   const passkey = !MOBILE && (proofs?.passkeys?.length || 0) > 0
   const password = !!proofs?.password
+  // The server already knows the delete would be refused (the only admin, with others on the
+  // server): said up front, so nobody types their name and answers a passkey prompt for nothing.
+  const blocked = proofs?.deleteBlocked === 'last-admin' ? deleteAccountError({ data: { code: 'last-admin' } }) : null
   return <>
     <h3>{t('Delete your account?')}</h3>
     <div className="muted small" style={{ marginBottom: 14, lineHeight: 1.5 }}>
@@ -71,13 +74,13 @@ export function DeleteAccountSheet({ close, exportBackup, exportBackupZip, hasMe
       {hasMedia && exportBackupZip
         ? <Button icon="share" onClick={exportBackupZip}>{t('Export with photos & videos (.zip)')}</Button>
         : <Button icon="share" onClick={exportBackup}>{t('Export backup (JSON)')}</Button>}
-      <form onSubmit={next} noValidate style={{ marginTop: 18 }}>
+      {blocked ? <div className="small" role="alert" style={errStyle}>{blocked}</div> : <form onSubmit={next} noValidate style={{ marginTop: 18 }}>
         <label className="small" htmlFor="delete-account-name" style={{ display: 'block', marginBottom: 6 }}>{t('Type {0} to confirm.', name)}</label>
         <input ref={ref} id="delete-account-name" className="input" placeholder={t('Account name')} autoComplete="off"
           autoCapitalize="none" autoCorrect="off" spellCheck={false} value={typed} onChange={e => setTyped(e.target.value)} />
         <div style={{ height: 14 }} />
         <button type="submit" className="btn danger" disabled={!match}>{t('Continue')}</button>
-      </form>
+      </form>}
       <div style={{ height: 8 }} />
       <Button variant="ghost" className="dim" onClick={close}>{t('Cancel')}</Button>
     </> : <>

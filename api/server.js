@@ -1670,6 +1670,9 @@ const passwordRoutes = {
 // Sessions are not tied to the passkey that opened them — a session is `uid:expiry:version`,
 // nothing more — so removing a passkey stops it signing in again but does not end a session it
 // already opened. "Sign out everywhere" does that, and Settings says so where a passkey is removed.
+// The last admin may not delete their own profile while anyone else is on the instance: nobody
+// could run it from the app afterwards. Alone on it, they may go.
+const lastAdminLeaving = u => isAdmin(u) && db.users.length > 1 && db.users.filter(isAdmin).length <= 1;
 const passkeyState = u => {
   const passkeys = listPasskeys(db, u.id);
   // `password`: whether the password can confirm an addition or a removal (proveOwner) — only
@@ -1726,7 +1729,9 @@ const passkeyRoutes = {
   'GET /api/account/passkeys': async (req, res) => {
     const user = readSession(req);
     if (!user) return notSignedIn(res);
-    json(res, 200, passkeyState(user));
+    // `deleteBlocked`: the profile's own delete would be refused before any proof is looked at,
+    // so the delete sheet says so up front instead of after a passkey or password prompt.
+    json(res, 200, { ...passkeyState(user), ...(lastAdminLeaving(user) ? { deleteBlocked: 'last-admin' } : {}) });
   },
 
   // Adding one from Settings, step one: the proof, then the options. The proof is spent here; the
@@ -2300,7 +2305,7 @@ const routes = {
     if (typeof body.name !== 'string' || body.name.trim() !== user.name) {
       return json(res, 400, { error: 'type the account name to confirm', code: 'confirm-name' });
     }
-    const lastAdmin = () => isAdmin(user) && db.users.length > 1 && db.users.filter(isAdmin).length <= 1;
+    const lastAdmin = () => lastAdminLeaving(user);
     const refuseLastAdmin = () => json(res, 409, { error: 'the last admin cannot leave while other profiles remain', code: 'last-admin' });
     if (lastAdmin()) return refuseLastAdmin();
     const proof = s.bearer && !passwordWayIn(user) ? 'device' : await proveOwner(req, res, user, body, 'account-delete');

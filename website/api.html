@@ -3440,6 +3440,11 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="p-type">boolean</span>
     <span class="p-desc">Removing any one passkey would be refused (409 <code>last-way-in</code>).</span>
   </div>
+  <div class="prow">
+    <span class="p-name">deleteBlocked</span>
+    <span class="p-type">&quot;last-admin&quot;</span>
+    <span class="p-desc">Present when deleting this profile (<code>POST /api/account/delete</code>) would be refused before any proof is checked: <code>last-admin</code>, the only admin while other profiles remain. The delete sheet says so before asking for a passkey or the password; the delete itself still checks.</span>
+  </div>
 </div>
   </div>
 </details>

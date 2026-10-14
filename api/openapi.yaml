@@ -3367,6 +3367,14 @@ components:
         lastWayIn:
           type: boolean
           description: Removing any one passkey would be refused (409 `last-way-in`).
+        deleteBlocked:
+          type: string
+          enum: [last-admin]
+          description: >-
+            Present when deleting this profile (`POST /api/account/delete`) would be refused
+            before any proof is checked: `last-admin`, the only admin while other profiles
+            remain. The delete sheet says so before asking for a passkey or the password; the
+            delete itself still checks.
       example:
         passkeys: [{ id: "g3Xq…", name: "Laptop", created: "2026-09-23T10:00:00.000Z", lastUsed: "2026-09-23T10:00:00.000Z", transports: [internal] }]
         password: false
