@@ -500,9 +500,13 @@ public final class RestAlert {
         return (sec / 60) + ":" + (sec % 60 < 10 ? "0" : "") + (sec % 60);
     }
 
+    // The countdown is posted again every second; asking the system for the channel each time was
+    // a binder call per tick. Once it is known to exist (the app never deletes it), it is not asked.
+    private static volatile boolean countdownChannelReady = false;
+
     private static void ensureCountdownChannel(Context ctx, NotificationManager nm) {
-        if (Build.VERSION.SDK_INT < 26) return;
-        if (nm.getNotificationChannel(COUNTDOWN_CHANNEL_ID) != null) return;
+        if (Build.VERSION.SDK_INT < 26 || countdownChannelReady) return;
+        if (nm.getNotificationChannel(COUNTDOWN_CHANNEL_ID) != null) { countdownChannelReady = true; return; }
         NotificationChannel channel = new NotificationChannel(
                 COUNTDOWN_CHANNEL_ID,
                 ctx.getString(R.string.rest_countdown_channel_name),
@@ -512,6 +516,7 @@ public final class RestAlert {
         channel.setSound(null, null);
         channel.enableVibration(false);
         nm.createNotificationChannel(channel);
+        countdownChannelReady = true;
     }
 
     /**
