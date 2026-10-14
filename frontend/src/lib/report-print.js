@@ -17,12 +17,14 @@ import { reportData, workSetsOf } from './report.js'
 
 const nameParts = e => printedName(EXIDX[e.id], e.n || e.muscleSnapshot?.n || e.id)
 
-function nameHTML(e, { pr = false } = {}) {
+function nameHTML(e, { pr = false, short = false } = {}) {
   const ex = EXIDX[e.id]
   const { name, en, cls } = nameParts(e)
   const part = ex && ex.bp && ex.bp !== 'cardio' ? ` <span class="part">${esc(t(ex.bp))}</span>` : ''
-  return `<div class="ex-n ${cls}">${esc(name)}${part}${pr ? ` <span class="pr">${esc(t('New best'))}</span>` : ''}</div>`
-    + (en ? `<div class="ex-en">${esc(en)}</div>` : '')
+  // `short`: a row in a long list, where the English line and the spelled-out badge cost a line each.
+  const badge = pr ? ` <span class="pr">${short ? 'PR' : esc(t('New best'))}</span>` : ''
+  return `<div class="ex-n ${cls}">${esc(name)}${part}${badge}</div>`
+    + (en && !short ? `<div class="ex-en">${esc(en)}</div>` : '')
 }
 
 // Short day + date for lists: "Thu 15 Oct".
@@ -216,17 +218,22 @@ const REPORT_CSS = `
   .pr { display: inline-block; font-size: 6.5pt; letter-spacing: .06em; text-transform: uppercase; font-weight: 700;
     color: #3f6212; background: var(--lime-soft); border: 1px solid #d3eba4; border-radius: 3pt; padding: 0 3pt; vertical-align: 1pt; margin-inline-start: 3pt; }
 
+  /* a list's heading, printed as its table's first header row (repeats on the next page) */
+  th.t-h { font-size: 7.5pt; letter-spacing: .12em; color: var(--muted); padding: 16pt 0 3pt; border-bottom: 1px solid var(--rule); }
+  .panel.list { margin-top: 0; }
+
   /* one workout in the report's list */
-  .wk { margin-bottom: 6pt; }
-  .wk-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8pt; padding: 5pt 0 3pt; border-bottom: 1px solid var(--ink); }
-  .wk-h .t { font-weight: 700; overflow-wrap: anywhere; }
-  .wk-h .t span { color: var(--muted); font-weight: 500; margin-inline-end: 6pt; }
-  .wk-h .f { font-size: 8pt; color: var(--muted); white-space: nowrap; }
-  table.wk-t td { font-size: 8.5pt; padding: 2.5pt 6pt 2.5pt 0; }
-  table.wk-t td.n { width: 38%; }
-  table.wk-t td.n .ex-n { font-weight: 500; }
-  table.wk-t td.s { color: var(--ink-2); }
-  .wk-note { font-size: 8pt; color: var(--muted); font-style: italic; padding-top: 3pt; }
+  table.wk { margin-bottom: 8pt; }
+  th.wk-h { text-transform: none; letter-spacing: 0; font-size: 9.5pt; color: var(--ink); padding: 7pt 0 3pt; border-bottom: 1px solid var(--ink); }
+  th.wk-h .t { font-weight: 700; overflow-wrap: anywhere; }
+  th.wk-h .t span { color: var(--muted); font-weight: 500; margin-inline-end: 6pt; }
+  th.wk-h .f { float: right; font-size: 8pt; color: var(--muted); font-weight: 400; white-space: nowrap; margin-inline-start: 8pt; }
+  [dir="rtl"] th.wk-h .f { float: left; }
+  table.wk td { font-size: 8.5pt; padding: 2.5pt 6pt 2.5pt 0; }
+  table.wk td.n { width: 38%; }
+  table.wk td.n .ex-n { font-weight: 500; }
+  table.wk td.s { color: var(--ink-2); }
+  td.wk-note { font-size: 8pt; color: var(--muted); font-style: italic; border-bottom: 0; }
 
   /* one exercise of a single workout */
   .wx { padding: 6pt 0 7pt; border-bottom: 1px solid var(--rule-soft); }
@@ -371,11 +378,11 @@ function calendarHTML(R) {
 
 function musclesHTML(R, m) {
   const list = R.muscles.worked
-  if (!list.length) return `<p class="none">${m.s('muscles')}${m.e('muscles')}${esc(t('No muscle work in this period.'))}</p>`
+  if (!list.length) return `<div class="keep panel"><h3 class="sec-h">${esc(t('Sets per muscle'))}</h3><p class="none">${esc(t('No muscle work in this period.'))}</p></div>`
   const max = list[0].sets || 1
-  const rows = list.map((x, i) => `<tr><td class="m">${i === 0 ? m.s('muscles') + m.e('muscles') : ''}${esc(t(x.name))}</td><td><div class="hbar${i === 0 ? ' top' : ''}" style="width:${Math.max(2, Math.round(x.sets / max * 100))}%"></div></td><td class="v">${esc(t('{0} sets', fmtNum(x.sets)))}</td></tr>`).join('')
+  const rows = list.map((x, i) => `<tr><td class="m">${m.s('mus' + i)}${esc(t(x.name))}${m.e('mus' + i)}</td><td><div class="hbar${i === 0 ? ' top' : ''}" style="width:${Math.max(2, Math.round(x.sets / max * 100))}%"></div></td><td class="v">${esc(t('{0} sets', fmtNum(x.sets)))}</td></tr>`).join('')
   const missed = R.muscles.missed.length ? `<div class="note-line">${esc(t('Not trained:'))} ${esc(R.muscles.missed.map(x => t(x.name)).join(', '))}</div>` : ''
-  return `<table class="mus">${rows}</table>${missed}<div class="note-line">${esc(t('Effective sets: a set counts fully for its main muscle and partly for the ones that help.'))}</div>`
+  return `<table class="mus">${headRow(t('Sets per muscle'), 3, 'mus0', m)}<tbody>${rows}</tbody></table>${missed}<div class="note-line">${esc(t('Effective sets: a set counts fully for its main muscle and partly for the ones that help.'))}</div>`
 }
 
 function liftsHTML(R, unit, range, m) {
@@ -391,28 +398,39 @@ function liftsHTML(R, unit, range, m) {
   })
 }
 
+// A list's heading as the first row of its table header: a table's header row is printed again
+// at the top of every page the table continues on, so the heading can never be left alone at
+// the bottom of a page, and a continued list says what it is.
+function headRow(title, cols, id, m, more = '') {
+  return `<thead><tr><th colspan="${cols}" class="t-h">${m.h(id)}${esc(title)}</th></tr>${more}</thead>`
+}
+
 function prsHTML(R, unit, m) {
   const rows = R.prs.map((p, i) => {
     const e = p.entry || { id: p.id }
     const set = p.best ? `${fmtNum(p.best.w)} ${unit} × ${p.best.r}` : (p.entry ? (p.entry.sets || []).filter(s => !isWarmupRow(s) && hasCompletedWork(s)).map(s => setLabel(p.id, s, p.entry.target)).slice(-1)[0] || '' : '')
-    const mark = i === 0 ? m.s('prs') + m.e('prs') : ''
-    return `<tr><td style="white-space:nowrap">${mark}${esc(listDate(p.d))}</td><td>${nameHTML(e)}</td><td class="num">${esc(set)}</td><td class="num">${p.best ? esc(fmtNum(p.best.est) + ' ' + unit) : '–'}</td></tr>`
+    return `<tr><td style="white-space:nowrap">${m.s('pr' + i)}${esc(listDate(p.d))}${m.e('pr' + i)}</td><td>${nameHTML(e)}</td><td class="num">${esc(set)}</td><td class="num">${p.best ? esc(fmtNum(p.best.est) + ' ' + unit) : '–'}</td></tr>`
   }).join('')
-  return `<table><thead><tr><th>${esc(t('Date'))}</th><th>${esc(t('Exercise'))}</th><th class="num">${esc(t('Best set'))}</th><th class="num">${esc(t('Est. 1RM'))}</th></tr></thead><tbody>${rows}</tbody></table>`
+  return `<table>${headRow(t('New bests'), 4, 'pr0', m, `<tr><th>${esc(t('Date'))}</th><th>${esc(t('Exercise'))}</th><th class="num">${esc(t('Best set'))}</th><th class="num">${esc(t('Est. 1RM'))}</th></tr>`)}<tbody>${rows}</tbody></table>`
 }
 
 function workoutListItem(S, w, unit, speedUnit, m, id, lead = '') {
   const prs = new Set(w.prs || [])
   const ms = workoutDuration(w)
   const facts = [ms >= 60000 ? fmtDur(ms) : '', fmtVol(w.vol ?? workoutVolume(w), unit), t('{0} sets', workSetsOf(w))].filter(Boolean).join(' · ')
-  const rows = workoutUnits(w).flat().map(e => {
+  const rows = workoutUnits(w).flat().map((e, j) => {
     const sets = (e.sets || []).filter(s => !isWarmupRow(s) && hasCompletedWork(s)).map(s => setLabel(e.id, s, e.target, speedUnit))
     if (!sets.length) return ''
-    return `<tr><td class="n">${nameHTML(e, { pr: prs.has(e.id) })}</td><td class="s">${esc(sets.join(', '))}</td></tr>`
+    return `<tr><td class="n">${m.s(id + 'r' + j)}${nameHTML(e, { pr: prs.has(e.id), short: true })}</td><td class="s">${esc(sets.join(', '))}${m.e(id + 'r' + j)}</td></tr>`
   }).join('')
-  return `<div class="wk keep">${m.s(id)}${lead}<div class="wk-h"><div class="t"><span>${esc(listDate(workoutDay(w)))}</span>${esc(w.name || t('Workout'))}</div><div class="f">${esc(facts)}</div></div>`
-    + (rows ? `<table class="wk-t"><tbody>${rows}</tbody></table>` : '')
-    + (w.note ? `<div class="wk-note">${esc(w.note)}</div>` : '') + `${m.e(id)}</div>`
+  const note = w.note ? `<tr><td colspan="2" class="wk-note">${esc(w.note)}</td></tr>` : ''
+  // One table per workout: it stays on one page when it fits; a workout longer than a page
+  // breaks between exercises, and its header row (date, name, totals) comes along to the next.
+  // The probe id starts with T-: the check allows such a block to run over, but only from the
+  // top of a page, never because it was started near the bottom.
+  const end = m.e('T-' + id)
+  return `<table class="wk keep"><thead>${lead}<tr><th colspan="2" class="wk-h">${m.s('T-' + id)}<span class="f">${esc(facts)}</span><span class="t"><span>${esc(listDate(workoutDay(w)))}</span>${esc(w.name || t('Workout'))}</span></th></tr></thead>`
+    + `<tbody>${rows}${note}${end ? `<tr><td colspan="2" style="padding:0;border:0">${end}</td></tr>` : ''}</tbody></table>`
 }
 
 /**
@@ -438,7 +456,7 @@ export function reportPrintHTML(S, { range = '4w', from, to, owner = '', probe =
     parts.push(section('volume', vol.title, vol.html))
     parts.push(section('consistency', t('Consistency'), calendarHTML(R)))
     // Up to eighteen rows: a list that may run over a page, row by row, its heading kept with it.
-    parts.push(`<div class="panel">${m.h('muscles')}<h3 class="sec-h keep-next">${esc(t('Sets per muscle'))}</h3>${musclesHTML(R, m)}</div>`)
+    parts.push(`<div class="panel list">${musclesHTML(R, m)}</div>`)
     if (R.lifts.length) {
       // Two charts a row; the heading rides with the first row.
       const blocks = liftsHTML(R, unit, r, m)
@@ -454,9 +472,9 @@ export function reportPrintHTML(S, { range = '4w', from, to, owner = '', probe =
   }
   // A long list may run over a page: its rows never split and its header row repeats. The heading
   // stays with the first rows (break-after: avoid, and the probe checks it).
-  if (R.prs.length) parts.push(`<div class="panel">${m.h('prs')}<h3 class="sec-h keep-next">${esc(t('New bests'))}</h3>${prsHTML(R, unit, m)}</div>`)
+  if (R.prs.length) parts.push(`<div class="panel list">${prsHTML(R, unit, m)}</div>`)
   if (R.workouts.length) {
-    const lead = `${m.h('wk0')}<h3 class="sec-h">${esc(t('All workouts'))}</h3>`
+    const lead = `<tr><th colspan="2" class="t-h">${m.h('T-wk0')}${esc(t('All workouts'))}</th></tr>`
     R.workouts.forEach((w, i) => parts.push(workoutListItem(S, w, unit, speedUnit, m, 'wk' + i, i === 0 ? lead : '')))
   }
   const facts = [`${paperDate(r.from)} – ${paperDate(r.to)}`, tn('{0} workout', '{0} workouts', R.workouts.length)]
