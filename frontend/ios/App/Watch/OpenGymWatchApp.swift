@@ -282,7 +282,7 @@ struct ExercisePage: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .title) private var doneSizeScaled: CGFloat = 58
     /// Large enough to hit, small enough to leave room for the numbers at the largest text sizes.
-    private var doneSize: CGFloat { min(doneSizeScaled, typeSize.isAccessibilitySize ? 62 : 70) }
+    private var doneSize: CGFloat { min(doneSizeScaled, typeSize.isAccessibilitySize ? 56 : 70) }
 
     var body: some View {
         if let w = store.workout, w.entries.indices.contains(index) {
@@ -363,7 +363,8 @@ struct ExercisePage: View {
                 .font(.system(.footnote, design: .rounded).weight(.semibold))
                 // One line at the large sizes (shrunk to fit): two would push the page up into the clock.
                 .lineLimit(typeSize.isAccessibilitySize ? 1 : 2)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(typeSize.isAccessibilitySize ? 0.6 : 0.8)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
             OfflineSign()
             HeartRateBadge(health: store.health)
@@ -389,9 +390,13 @@ struct ExercisePage: View {
     @ViewBuilder private func primaryButton(_ entry: Entry, current: Bool) -> some View {
         Group {
             if entry.isTimed {
-                RoundButton(systemImage: "play.fill", label: Text("Start hold"), size: doneSize) { store.startHold() }
+                RoundButton(systemImage: "play.fill", label: Text("Start hold"), size: doneSize,
+                            caption: !typeSize.isAccessibilitySize) { store.startHold() }
             } else {
-                RoundButton(systemImage: "checkmark", label: Text("Done"), size: doneSize) { store.completeSet() }
+                // At the accessibility sizes the word under the check goes (VoiceOver still says it):
+                // the room it takes is what pushed the page up into the clock on 41 mm.
+                RoundButton(systemImage: "checkmark", label: Text("Done"), size: doneSize,
+                            caption: !typeSize.isAccessibilitySize) { store.completeSet() }
             }
         }
         .disabled(!current)
@@ -817,7 +822,8 @@ struct ClipView: View {
 
     var body: some View {
         Group {
-            if dimmed || !animating || clip.images.count < 2 {
+            // (SessionStore.demoAOD: CI's Always On, which the pager's pages don't get as an environment value)
+            if dimmed || SessionStore.demoAOD || !animating || clip.images.count < 2 {
                 // Wrist down or off screen: one still frame, no timeline at all.
                 frame(clip.images[0])
             } else {

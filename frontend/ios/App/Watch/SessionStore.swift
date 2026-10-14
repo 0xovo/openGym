@@ -61,6 +61,8 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
 
     /// When the set now up began: the end of the rest before it, or the start of the session.
     private var setStartedAt = Date()
+    /// The last Done, against a double tap.
+    private var lastTick: Date?
     /// When this watch first had the running workout (its start, for a phone that sends none).
     private var workoutSeenAt: Date?
     /// The rest running after a set, for that rest's heart rate once it is over.
@@ -258,6 +260,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     /// a per-side set, nothing for cardio), then where SessionCore.next says, with a rest when due.
     func completeSet(sec heldFor: Double? = nil) {
         guard let w = workout, let e = entry, let si = setIndex else { return }
+        // A double tap on Done (a sweaty finger) is one set, not this one and the next.
+        if heldFor == nil, let last = lastTick, Date().timeIntervalSince(last) < 0.7 { return }
+        lastTick = Date()
         ackRestOver()
         let ei = entryIndex
         let now = Date()
