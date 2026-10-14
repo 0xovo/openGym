@@ -230,6 +230,8 @@ function Shell() {
   const noTabs = (inWorkout && !hasWorkoutAction) || loc.pathname === '/coach' || needsMobileOnboarding || permSteps
 
   const authed = user || isGuest
+  // The boot screen in index.html covers the start; it goes once there is something to show.
+  useEffect(() => { if (ready || authed) window.__hideBoot?.() }, [ready, authed])
   if (!ready && !authed) return (
     <div id="app">
       <div style={{ paddingTop: '44vh', display: 'flex', justifyContent: 'center', fontSize: 34, color: 'var(--label-3)' }}>
