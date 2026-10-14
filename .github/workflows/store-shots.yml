@@ -92,13 +92,15 @@ jobs:
             xcrun simctl launch --console-pty "$UDID" ch.opengym.app > build/shot-console.log 2>&1 &
             local LPID=$! taken=" " deadline=$((SECONDS + 600))
             while [ $SECONDS -lt $deadline ]; do
+              # DONE read before the names: a screen logged just before it is still taken below
+              local done=0; grep -q 'STORESHOT-DONE\|STORESHOT-FAIL' build/shot-console.log && done=1
               for name in $(grep -o 'STORESHOT [0-9a-z-]*' build/shot-console.log | awk '{print $2}'); do
                 case "$taken" in *" $name "*) continue;; esac
                 sleep 1
                 xcrun simctl io "$UDID" screenshot "$OUT/$name.png" >/dev/null 2>&1 && echo "  $VAR/$DEV/$LANG/$name"
                 taken="$taken$name "
               done
-              grep -q 'STORESHOT-DONE\|STORESHOT-FAIL' build/shot-console.log && break
+              [ $done = 1 ] && break
               sleep 0.5
             done
             grep -o 'STORESHOT-FAIL.*' build/shot-console.log && cp build/shot-console.log "$OUT/console.log"
@@ -113,7 +115,7 @@ jobs:
             xcrun simctl bootstatus "$UDID" -b
             xcrun simctl ui "$UDID" appearance dark || true
             xcrun simctl status_bar "$UDID" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
-              --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100 || true
+              --cellularMode active --cellularBars 4 --batteryState discharging --batteryLevel 100 || true
             # Let SpringBoard finish its own first-boot work before the first launch.
             sleep 20
             for LANG in $LANGS; do
@@ -128,7 +130,7 @@ jobs:
       # the largest watches: Ultra and a 46 or 45 mm one. No clip, so nothing stands in for an
       # animation.
       - name: Apple Watch
-        if: inputs.watch != false
+        if: github.event_name == 'push' || inputs.watch
         continue-on-error: true
         working-directory: frontend/ios/App
         run: |

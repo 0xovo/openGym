@@ -25,7 +25,7 @@ const seed = { ...buildDemoState(), lang }
 const driver = `<script>
 /* store-shots driver: screenshot runs only */
 (function () {
-  var L = ${JSON.stringify(L)}, HOLD = 7000
+  var L = ${JSON.stringify(L)}, HOLD = 12000
   try {
     if (!localStorage.getItem('gym_state_v1')) localStorage.setItem('gym_state_v1', ${JSON.stringify(JSON.stringify(seed))})
     localStorage.setItem('gym_rest_notif_asked', 'denied')
@@ -38,7 +38,7 @@ const driver = `<script>
   }
   var click = function (el) { if (el) el.click(); return !!el }
   var go = function (route) { location.hash = '#' + route }
-  var snap = async function (name) { await sleep(2600); window.scrollTo(0, window.scrollY); console.log('STORESHOT ' + name); await sleep(HOLD) }
+  var snap = async function (name) { await sleep(4000); window.scrollTo(0, window.scrollY); console.log('STORESHOT ' + name); await sleep(HOLD) }
   async function run () {
     for (var i = 0; i < 120 && !document.getElementById('tabbar'); i++) await sleep(500)
     if (!document.getElementById('tabbar')) { console.log('STORESHOT-FAIL no tab bar'); return }
@@ -51,7 +51,7 @@ const driver = `<script>
     await sleep(1200)
     var t = byText(L.balance, 'button,[role=tab],h2,h3,div.h')
     var card = t && (t.closest('.card') || t.parentElement)
-    if (card) { card.scrollIntoView({ block: 'start' }); window.scrollBy(0, -90) }
+    if (card) { card.scrollIntoView({ block: 'start' }); window.scrollBy(0, -(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 60) - 80) }
     await snap('7-muscles')
     go('/library'); await sleep(1500)
     click(document.querySelector('button[aria-label="' + L.cards + '"]'))
