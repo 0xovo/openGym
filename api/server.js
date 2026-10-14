@@ -2308,7 +2308,12 @@ const routes = {
     const lastAdmin = () => lastAdminLeaving(user);
     const refuseLastAdmin = () => json(res, 409, { error: 'the last admin cannot leave while other profiles remain', code: 'last-admin' });
     if (lastAdmin()) return refuseLastAdmin();
-    const proof = s.bearer && !passwordWayIn(user) ? 'device' : await proveOwner(req, res, user, body, 'account-delete');
+    // The pairing is the proof only for a token the pairing made: a browser's cookie value
+    // replayed in an Authorization header is a Bearer too, and is told apart by its kind (`c`,
+    // makeSession). Without this a cookie someone walked off with deleted a passkey-only profile
+    // with no proof at all, the one case this route exists to refuse.
+    const paired = s.bearer && s.kind !== 'c';
+    const proof = paired && !passwordWayIn(user) ? 'device' : await proveOwner(req, res, user, body, 'account-delete');
     if (!proof) return;
     // Everything above awaited: the session may have ended, and another admin may have left.
     if (readSession(req) !== user) return json(res, 401, { error: 'not signed in' });

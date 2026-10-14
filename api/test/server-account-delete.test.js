@@ -183,6 +183,28 @@ test('a browser never gets the phone’s pass: no proof, no delete', async t => 
   assert.equal(h.db().users.length, 2);
 });
 
+test('a browser cookie replayed as a Bearer is still a cookie: no device pass', async t => {
+  const h = await startServer(t, { users: ['admin', 'nopw'] });
+  // A cookie as the server mints it for a browser: the fourth field says `c`.
+  const payload = `u_nopw:${Date.now() + 86400000}:0:c`;
+  const cookie = payload + '.' + crypto.createHmac('sha256', SECRET).update(payload).digest('base64url');
+  const r = await fetch(`${h.api}/api/account/delete`, {
+    method: 'POST', headers: { Authorization: `Bearer ${cookie}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: 'Keyonly' })
+  });
+  assert.equal(r.status, 403);
+  assert.equal((await r.json()).code, 'passkey-required');
+  assert.equal(h.db().users.length, 2, 'nothing was removed');
+  // A token the pairing made (`b`) still carries the device pass.
+  const pb = `u_nopw:${Date.now() + 86400000}:0:b`;
+  const paired = pb + '.' + crypto.createHmac('sha256', SECRET).update(pb).digest('base64url');
+  const ok = await fetch(`${h.api}/api/account/delete`, {
+    method: 'POST', headers: { Authorization: `Bearer ${paired}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: 'Keyonly' })
+  });
+  assert.equal(ok.status, 200);
+});
+
 test('needs proof that the owner is here: missing or wrong, nothing is removed', async t => {
   const h = await startServer(t, { users: ['admin', 'user', 'nopw'] });
   const none = await h.del(USER, { name: 'Mallory' });
