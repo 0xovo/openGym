@@ -19,6 +19,7 @@ import { emptyCoach, coachAvailable, hasConsent, CONSENT_VERSION, CATEGORY_TEXT,
 import { requestPlan, disclosure, JOB_ERRORS, isDeclined, coachVia } from '../lib/coach-api.js'
 import { consentTarget, allowAi } from '../lib/coach-consent.js'
 import { DEMO } from '../lib/demo.js'
+import { useCoachGate } from '../lib/use-coach-gate.js'
 import { MOBILE } from '../lib/mobile.js'
 import { activeProfile } from '../lib/equipment.js'
 import Icon from '../components/Icon.jsx'
@@ -80,7 +81,9 @@ export default function CoachIntake() {
   }))
   const set = patch => setP(v => ({ ...v, ...patch }))
 
-  if (!coachAvailable(config, user, { demo: DEMO, mobile: MOBILE, coachMode })) { nav('/home', { replace: true }); return null }
+  const gate = useCoachGate()
+  useEffect(() => { if (gate.known && !gate.ok) nav('/home', { replace: true }) }, [gate.known, gate.ok])
+  if (!gate.ok) return null
 
   const key = STEPS[step]
   const last = step === STEPS.length - 1

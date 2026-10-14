@@ -32,6 +32,7 @@ import {
 import { insightsFor, sessionInsights } from '../lib/coach-insights.js'
 import { useCoachStatus, requestReview, requestDebrief, requestPlan, refinePlan, resolvePending, cohortStats, setCohortShare, jobErrorText, awaitedJob, settleAwaited, JOB_ERRORS, ensureAiConsent, isDeclined } from '../lib/coach-api.js'
 import { AiConsentSection } from '../components/CoachConsentSheet.jsx'
+import { useCoachGate } from '../lib/use-coach-gate.js'
 import { confirmSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
 import { glyphOf } from '../lib/glyphs.js'
@@ -58,15 +59,17 @@ export default function CoachChat() {
   const prevJob = useRef(null)
   const coachMode = coachLocal?.mode
 
-  const ok = coachAvailable(config, user, { demo: DEMO, mobile: MOBILE, coachMode })
+  const gate = useCoachGate()
+  const ok = gate.ok
   const ready = ok && hasConsent(S) && !!S.coach?.profile
   // Not before the store has loaded: a cold start straight on #/coach would otherwise read an
-  // empty state, decide there is no consent, and bounce a consenting user into the intake.
+  // empty state, decide there is no consent, and bounce a consenting user into the intake. Nor
+  // before the server said for this session whether it has a Coach (lib/use-coach-gate.js).
   useEffect(() => {
-    if (!storeReady) return
+    if (!storeReady || !gate.known) return
     if (!ok) nav('/home', { replace: true })
     else if (!ready) nav('/coach/intake', { replace: true })
-  }, [storeReady, ok, ready])
+  }, [storeReady, gate.known, ok, ready])
 
   // A job that ends is either a proposal, "nothing to change", or a failure. The server tells
   // the client none of that directly — the job simply stops appearing — so the transition is
