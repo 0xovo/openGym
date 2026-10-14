@@ -18,7 +18,20 @@ export default function WatchSettingsPage() {
   const [link, setLink] = useState(null)   // { paired, installed } from the phone, or null while asking
   const [healthOn, setHealthOn] = useState(null)   // the phone's Apple Health switch, null while reading
   useEffect(() => onWatchPrefs(() => { setPrefs(readWatchPrefs()); setStatus(readWatchStatus()) }), [])
-  useEffect(() => { watchStatus().then(setLink).catch(() => setLink({ paired: false, installed: false })) }, [])
+  // Asked again while the phone's link to the watch is still starting (right after launch it knows
+  // nothing yet, and "no watch" would be wrong), for up to a few seconds.
+  useEffect(() => {
+    let gone = false, tries = 0, tm = null
+    const ask = () => watchStatus()
+      .then(st => {
+        if (gone) return
+        if (st.activated === false && tries++ < 8) { tm = setTimeout(ask, 750); return }
+        setLink(st)
+      })
+      .catch(() => { if (!gone) setLink({ paired: false, installed: false }) })
+    ask()
+    return () => { gone = true; clearTimeout(tm) }
+  }, [])
   useEffect(() => {
     let gone = false
     loadHealth().then(h => { if (!gone) setHealthOn(!!h?.on) }).catch(() => { if (!gone) setHealthOn(false) })

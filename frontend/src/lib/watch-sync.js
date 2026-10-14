@@ -506,5 +506,9 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx, side = null }, fie
 export async function watchStatus () {
   const p = await watchPlugin()
   if (!p) return { paired: false, installed: false }
-  try { const st = await p.WatchBridge.status(); return { paired: !!st?.paired, installed: !!st?.installed } } catch { return { paired: false, installed: false } }
+  try {
+    const st = await p.WatchBridge.status()
+    // `activated` false: the link is still starting (right after launch), paired/installed not known yet.
+    return { paired: !!st?.paired, installed: !!st?.installed, activated: st?.activated !== false }
+  } catch { return { paired: false, installed: false } }
 }
