@@ -2393,4 +2393,8 @@ export default {
   'Workout running': 'Edzés folyamatban',
   'Set {0} of {1}': '{0}. sorozat / {1}',
   'All sets done': 'Minden sorozat kész',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Nap hetente',
+  'Hours': 'Órák',
+  'h': 'ó',
 }

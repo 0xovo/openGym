@@ -2469,4 +2469,8 @@ export default {
   'Workout running': 'ওয়ার্কআউট চলছে',
   'Set {0} of {1}': 'সেট {0} / {1}',
   'All sets done': 'সব সেট শেষ',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'সপ্তাহে কত দিন',
+  'Hours': 'ঘণ্টা',
+  'h': 'ঘ.',
 }

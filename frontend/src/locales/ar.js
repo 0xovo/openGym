@@ -2445,4 +2445,8 @@ export default {
   'Workout running': 'تمرين جارٍ',
   'Set {0} of {1}': 'المجموعة {0} من {1}',
   'All sets done': 'اكتملت كل المجموعات',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'أيام في الأسبوع',
+  'Hours': 'الساعات',
+  'h': 'س',
 }

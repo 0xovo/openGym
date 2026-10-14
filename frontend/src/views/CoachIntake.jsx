@@ -24,6 +24,7 @@ import { MOBILE } from '../lib/mobile.js'
 import { activeProfile } from '../lib/equipment.js'
 import Icon from '../components/Icon.jsx'
 import { Button, TextArea } from '../components/ui.jsx'
+import { HourMinuteWheel } from '../components/DurationWheel.jsx'
 import '../coach.css'
 
 // Each choice's text returns [title, detail] in the current language, through literal t() calls
@@ -52,8 +53,7 @@ const EQUIPMENT = (() => {
 })()
 
 const QUICK_MIN = [30, 45, 60, 90]
-const toHHMM = min => String(Math.floor(min / 60)).padStart(2, '0') + ':' + String(min % 60).padStart(2, '0')
-const fromHHMM = v => { const [h, m] = String(v || '').split(':').map(Number); return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : null }
+const toHHMM = min => Math.floor(min / 60) + ':' + String(min % 60).padStart(2, '0')
 
 export default function CoachIntake() {
   const nav = useNavigate()
@@ -175,12 +175,19 @@ export default function CoachIntake() {
         <div className="ob-eyebrow">{t('Schedule')}</div>
         <h1 className="ob-h">{t('How many days a week?')}</h1>
         <p className="ob-p">{t('Pick what you will actually keep, not the best week you can imagine.')}</p>
-        <div className="ob-days">
-          {[1, 2, 3, 4, 5, 6, 7].map(n => <button key={n} className={'ob-day' + (p.daysPerWeek === n ? ' on' : '')} onClick={() => set({ daysPerWeek: n })}>{n}</button>)}
+        {/* Two questions, two groups: how many (a count), then which (weekdays, optional). Each
+            has its own label, so the row of numbers never reads as dates. */}
+        <div className="ob-group" role="group" aria-labelledby="ob-days-l">
+          <div className="ob-sub ob-sub-first" id="ob-days-l">{t('Days per week')}</div>
+          <div className="ob-days">
+            {[1, 2, 3, 4, 5, 6, 7].map(n => <button key={n} className={'ob-day' + (p.daysPerWeek === n ? ' on' : '')} aria-pressed={p.daysPerWeek === n} onClick={() => set({ daysPerWeek: n })}>{n}</button>)}
+          </div>
         </div>
-        <div className="ob-sub">{t('Which days suit you? (optional)')}</div>
-        <div className="ob-week">
-          {[1, 2, 3, 4, 5, 6, 0].map(d => <button key={d} className={'ob-wd' + (p.preferredDays.includes(d) ? ' on' : '')} onClick={() => toggleDay(d)}>{t(DAYN[d]).slice(0, 2)}</button>)}
+        <div className="ob-group" role="group" aria-labelledby="ob-week-l">
+          <div className="ob-sub ob-sub-first" id="ob-week-l">{t('Which days suit you? (optional)')}</div>
+          <div className="ob-week">
+            {[1, 2, 3, 4, 5, 6, 0].map(d => <button key={d} className={'ob-wd' + (p.preferredDays.includes(d) ? ' on' : '')} aria-pressed={p.preferredDays.includes(d)} onClick={() => toggleDay(d)}>{t(DAYN[d]).slice(0, 2)}</button>)}
+          </div>
         </div>
       </>}
 
@@ -188,20 +195,10 @@ export default function CoachIntake() {
         <div className="ob-eyebrow">{t('Session length')}</div>
         <h1 className="ob-h">{t('How long is a session?')}</h1>
         <p className="ob-p">{t('The Coach fits the volume to the time you actually have, including rest between sets.')}</p>
-        {/* A duration, not a clock time — so two wheels (hours, minutes in fives), never the
-            native time input, which insists on AM/PM. */}
-        <div className="ob-time" role="group" aria-label={t('How long is a session?')}>
-          <select className="ob-wheel" value={Math.floor((p.sessionMin || 60) / 60)}
-            onChange={e => set({ sessionMin: (+e.target.value) * 60 + ((p.sessionMin || 60) % 60) || 5 })}>
-            {[0, 1, 2, 3].map(h => <option key={h} value={h}>{String(h).padStart(2, '0')}</option>)}
-          </select>
-          <span className="ob-time-sep">:</span>
-          <select className="ob-wheel" value={(p.sessionMin || 60) % 60}
-            onChange={e => set({ sessionMin: Math.floor((p.sessionMin || 60) / 60) * 60 + (+e.target.value) || 5 })}>
-            {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map(m => <option key={m} value={m}>{String(m).padStart(2, '0')}</option>)}
-          </select>
-          <span className="ob-time-l">{t('h:mm')}</span>
-        </div>
+        {/* A duration, not a clock time: the app's own wheels (hours, minutes in fives), like every
+            other time picker, never the native time input, which insists on AM/PM. */}
+        <div className="dw-read" aria-hidden="true">{toHHMM(p.sessionMin || 60)}</div>
+        <HourMinuteWheel value={p.sessionMin || 60} onChange={m => set({ sessionMin: m })} min={10} />
         <div className="ob-quick">
           {QUICK_MIN.map(m => <button key={m} className={'chip' + (p.sessionMin === m ? ' on' : '')} onClick={() => set({ sessionMin: m })}>{m} {t('min')}</button>)}
         </div>

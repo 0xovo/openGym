@@ -2390,4 +2390,8 @@ export default {
   'Workout running': 'Antrenman sürüyor',
   'Set {0} of {1}': 'Set {0}/{1}',
   'All sets done': 'Tüm setler tamam',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Haftada kaç gün',
+  'Hours': 'Saat',
+  'h': 'sa',
 }

@@ -2390,4 +2390,8 @@ export default {
   'Workout running': 'Treino a decorrer',
   'Set {0} of {1}': 'Série {0} de {1}',
   'All sets done': 'Todas as séries feitas',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Dias por semana',
+  'Hours': 'Horas',
+  'h': 'h',
 }

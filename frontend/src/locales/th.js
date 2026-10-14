@@ -2401,4 +2401,8 @@ export default {
   'Workout running': 'กำลังฝึกอยู่',
   'Set {0} of {1}': 'เซ็ต {0} จาก {1}',
   'All sets done': 'ครบทุกเซ็ตแล้ว',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'วันต่อสัปดาห์',
+  'Hours': 'ชั่วโมง',
+  'h': 'ชม.',
 }

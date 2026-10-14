@@ -2383,4 +2383,8 @@ export default {
   'Workout running': '訓練進行中',
   'Set {0} of {1}': '第 {0} 組，共 {1} 組',
   'All sets done': '所有組已完成',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': '每週天數',
+  'Hours': '小時',
+  'h': '小時',
 }

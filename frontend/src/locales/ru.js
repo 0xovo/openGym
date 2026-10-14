@@ -2394,4 +2394,8 @@ export default {
   'Workout running': 'Тренировка идёт',
   'Set {0} of {1}': 'Подход {0} из {1}',
   'All sets done': 'Все подходы сделаны',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Дней в неделю',
+  'Hours': 'Часы',
+  'h': 'ч',
 }

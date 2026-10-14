@@ -2390,4 +2390,8 @@ export default {
   'Workout running': '운동 중',
   'Set {0} of {1}': '{1}세트 중 {0}세트',
   'All sets done': '모든 세트 완료',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': '주당 일수',
+  'Hours': '시간',
+  'h': '시간',
 }
