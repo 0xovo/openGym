@@ -10,6 +10,7 @@
 // against its SHA-256 by the native Install plugin and handed to the system installer.
 
 import { MOBILE } from './mobile.js'
+import { BUILTIN_PX } from './anim-quality.js'
 
 const REPO = 'DuarteSantos8/openGym'
 const LATEST_URL = `https://api.github.com/repos/${REPO}/releases/latest`
@@ -63,10 +64,29 @@ async function fetchLatest() {
   const latestVersion = String(latest.tag_name || '').replace(/^v/, '')
   if (!latestVersion) return { hasUpdate: false, latestVersion: __APP_VERSION__, apkUrl: null, hashUrl: null }
   const hasUpdate = compareSemver(latestVersion, __APP_VERSION__) > 0
-  const assets = latest.assets || []
-  const apk = assets.find(a => /\.apk$/i.test(a.name))
-  const hash = assets.find(a => /\.apk\.sha256$/i.test(a.name))
+  const { apk, hash } = pickApk(latest.assets || [])
   return { hasUpdate, latestVersion, apkUrl: apk?.browser_download_url || null, hashUrl: hash?.browser_download_url || null }
+}
+
+/**
+ * Since v1.4.2 a release carries two sideloaded APKs: the Standard one (180 px animations built in,
+ * openGym-<v>.apk) and the HD one (sharper animations, openGym-HD-<v>.apk). Each installed APK
+ * only ever updates to its own kind, so a phone that picked HD keeps HD, and nobody is handed a
+ * download twice the size they never asked for. The build says which kind it is (VITE_APK_VARIANT, set
+ * by scripts/android/build-release.sh); a build without it goes by what it has built in.
+ * The checksum is the one named after the chosen APK, never just the first .sha256 in the list.
+ * An HD build finds no HD APK in a release: no direct download (the update row then opens the
+ * releases page), rather than quietly swapping it for the Standard one.
+ */
+const ENV = import.meta.env || {}
+export const APK_VARIANT = ENV.VITE_APK_VARIANT === 'hd' || ENV.VITE_APK_VARIANT === 'standard'
+  ? ENV.VITE_APK_VARIANT
+  : (BUILTIN_PX > 180 ? 'hd' : 'standard')
+const isHdApk = name => /(^|[-_.])hd([-_.]|$)/i.test(name)
+export function pickApk(assets, variant = APK_VARIANT) {
+  const apk = assets.find(a => /\.apk$/i.test(a.name) && isHdApk(a.name) === (variant === 'hd')) || null
+  const hash = apk ? assets.find(a => a.name === `${apk.name}.sha256`) || null : null
+  return { apk, hash }
 }
 
 /**
