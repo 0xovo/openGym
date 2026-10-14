@@ -11,9 +11,9 @@ the next release is the last published one plus one patch (1.3.7 → 1.3.8), and
 reserved for a step as big as the new exercise database (v1.4.0).
 
 - Milestones: https://github.com/DuarteSantos8/openGym/milestones (every open issue sits in exactly one)
-- Tracks, in order: the new exercise database with the community round (v1.4.0) → programmes → the
-  progression engine → cardio → sharing and gyms → accounts → the iOS app → Android and health →
-  looks and social, with database storage after that
+- Tracks, in order: the new exercise database with the community round (v1.4.0) → the store apps
+  (v1.4.2) → programmes → the progression engine → cardio → sharing and gyms → accounts → Android
+  and health → looks and social, with database storage after that
 
 ---
 
@@ -149,27 +149,49 @@ server.
 - Still open from the old v1.3.12 list: the timer rework (#165), a home-screen widget (#299) and
   distance for cardio (#177), now in their own milestones below
 
-## v1.4.1: Programmes & phases  (2026-11-29)
+## v1.4.1: Bug fixes for v1.4.0  (released 2026-10-10)
+
+Smooth animations on real phones, the update check asking GitHub again, the rest bell over music,
+the Coach's own button on the Plan page, and the first round of reports on the new database.
+
+## v1.4.2: openGym in the App Store  (planned for 2026-10-18)
+
+Not on the old plan: the store apps came forward because they were ready.
+
+- The iPhone app in the App Store, with a public TestFlight beta before it
+- An Apple Watch app, Home Screen and Lock Screen widgets, a Live Activity, Apple Health
+- Sharper animations to download in the store apps; the APK in two sizes, Standard and HD
+- A Google Play build, ready for the closed test Play asks of new accounts
+- Delete your account in the app, the Coach asks before anything leaves, five reported security
+  holes closed
+
+## What comes next
+
+The blocks below were planned and given milestones before v1.4.1 and v1.4.2 became the bug-fix
+and store releases, so their milestones still carry the old numbers (v1.4.1 to v1.4.10). The order
+stands; the numbers move when the milestones are renumbered. Each heading names its milestone.
+
+## Programmes & phases  (milestone v1.4.1, 2026-11-29)
 
 - Programmes: routines grouped into a named block over weeks, with deload and rest weeks, several
   per profile (#159, GitLab !98; Discord "Programme mode", "folders", "major good ideas" 1)
 - Session phases (mobility / work / accessory / cooldown) with completion-only exercises for
   stretching that stay out of volume and PRs (#57, #140; Discord "non-typed exercises")
 
-## v1.4.2: Progression engine I  (2026-12-13)
+## Progression engine I  (milestone v1.4.2, 2026-12-13)
 
 - Rep or set ranges per set and AMRAP targets beyond the "to failure" flag (#154; Discord "More
   types of sets"); the flag itself and triple progression came early in v1.4.0 (#179)
 - Assisted exercises as negative added weight (#176); the multi-formula 1RM came in v1.4.0 (#155)
 
-## v1.4.3: Progression engine II  (2026-12-27)
+## Progression engine II  (milestone v1.4.3, 2026-12-27)
 
 - Load as %1RM or auto with a stored training max, target RPE/RIR (#153)
 - Wave / percentage progression, 5/3/1 style (#70; PR #168)
 - A warm-up generator that picks the ramp from load and lift (#156)
 - Periodisation extras on top: mesocycle blocks, auto-regulation on RPE (#120)
 
-## v1.4.4: Cardio, alternatives, groups  (2027-01-10)
+## Cardio, alternatives, groups  (milestone v1.4.4, 2027-01-10)
 
 - Cardio: intervals (rounds × work/rest), interval programmes such as C25k, rucking as distance +
   pace + load, distance for cardio (#132, #169, #177; Discord "cardio programs", "rucking");
@@ -178,7 +200,7 @@ server.
   (#110)
 - Complexes and interval groups beside supersets (Discord)
 
-## v1.4.5: Sharing, gyms, admin  (2027-01-24)
+## Sharing, gyms, admin  (milestone v1.4.5, 2027-01-24)
 
 - Search itself was rebuilt in v1.4.0 (#192); left here: searching your own history and import
   aliases by name
@@ -187,13 +209,13 @@ server.
   shared (Discord "How to deal with different gyms")
 - Admin: per-user export, invite management, audit log filters
 
-## v1.4.6: Accounts: password & OIDC  (2027-02-07)
+## Accounts: password & OIDC  (milestone v1.4.6, 2027-02-07)
 
 - Optional username + password login next to passkeys (#118; Discord "Basic login", the
   password-manager thread), shipped early in v1.3.9, behind `PASSWORD_LOGIN`
 - OIDC login for PocketID / Authelia-style setups (#130, #72; GitLab !132 is the candidate)
 
-## v1.4.7: Trainer & MCP write  (2027-02-21)
+## Trainer & MCP write  (milestone v1.4.7, 2027-02-21)
 
 - Personal-trainer role: invite students by code, open a student read-only, write their plan (#119,
   GitLab !79; Discord "Trainer & Student Management")
@@ -201,13 +223,14 @@ server.
   for hosted AI clients (GitLab !88)
 - Switching kg ↔ lb converts stored values instead of relabelling them (#22)
 
-## v1.4.8: iOS app  (2027-03-07)
+## iOS app  (milestone v1.4.8, 2027-03-07)
 
 - App Store / TestFlight build of the existing Capacitor target, HealthKit weight and workout
   export, the Home Screen icon and timer-sound issues gone for good (#90; Discord "Google Health")
-- Apple Watch rest timer later, once the app is in the store
+  (shipped in v1.4.2)
+- Apple Watch rest timer later, once the app is in the store (a full watch app shipped in v1.4.2)
 
-## v1.4.9: Android & health  (2027-03-21)
+## Android & health  (milestone v1.4.9, 2027-03-21)
 
 - Health Connect for weight and sessions (Discord "Use health connect", pulled forward into v1.3.11); Withings and other scales
   (#127)
@@ -221,7 +244,7 @@ server.
 - Firefox-on-Windows QR and third-party passkey providers stay documented, not fixed: platform
   behaviour (#103, #101)
 
-## v1.4.10: Looks, social, plugins  (2027-04-04)
+## Looks, social, plugins  (milestone v1.4.10, 2027-04-04)
 
 - Skins alongside the accent colour, backgrounds as part of a skin, a big-screen layout (#129,
   #134, #135)
