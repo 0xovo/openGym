@@ -241,7 +241,8 @@ and **Delete**.
 - **Licence first.** The animations are licensed from Gym visual. The repository, the web build
   and every self-hosted server only ever have the 180 px files. Anything larger reaches people
   only inside the official store apps: built into the package, or as an **Apple-hosted asset pack**
-  (Background Assets, iOS 26) that Apple delivers, later a Play asset pack. Never from a server of
+  (Background Assets, iOS 26) or a **Play asset pack** (Play Asset Delivery) that the store
+  delivers. Never from a server of
   ours, never at a URL anyone can fetch. No tool here opens a media file; packs are planned from
   file names alone.
 - **The packs.** One per quality and figure: `anim-<px>-male`, `anim-<px>-female` for 240, 360,
@@ -272,9 +273,13 @@ and **Delete**.
   Info.plist keys `BAAppGroupID`, `BAHasManagedAssetPacks`, `BAUsesAppleHosting`, and the App
   Group `group.ch.opengym.app` on the app and the extension. `scripts/ios/finish-ipa.sh` signs the
   extension with its own profile (`EXT_PROFILE`).
-- **Android:** the Google Play build has the same packs as Play asset packs (Play Asset Delivery,
-  on demand), behind the same interface (`AnimationPacksPlugin.java` in the `play` flavour). The
-  sideloaded APK has no packs and answers "unavailable": it only ever has its built-in animations.
+- **Android:** in the `play` flavour the same interface goes through Play Asset Delivery (status,
+  download with progress, Wi-Fi only with Play's own prompt for mobile data, remove) for the packs
+  its `assets/anim-packs.json` lists, and serves their files to the page at
+  `https://localhost/_opengym_pack/<packId>/<drawing>.webp`, never a file path. The pack modules
+  are generated on the release machine by `scripts/android/make-asset-packs.mjs` and never
+  committed. The `sideload` flavour (the APK) answers "unavailable" and only ever has its
+  built-in animations.
 
 App Store Connect, once: the App Group `group.ch.opengym.app`; the bundle id
 `ch.opengym.app.AnimationPacksDownloader` (an app extension); the App Groups capability on

@@ -23,8 +23,8 @@ on your phone, synced across your devices, behind your own passkey login.
 
 [Website](https://opengym.ch) ·
 [Live demo](https://opengym.ch/demo/) ·
-[iPhone beta](https://testflight.apple.com/join/RKATb61k) ·
 [Android APK](https://github.com/DuarteSantos8/openGym/releases/latest) ·
+[iPhone beta (TestFlight)](https://testflight.apple.com/join/RKATb61k) ·
 [Self-hosting guide](docs/SELF_HOSTING.md) ·
 [Roadmap](ROADMAP.md) ·
 [Changelog](CHANGELOG.md)
