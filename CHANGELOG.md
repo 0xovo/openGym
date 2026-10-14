@@ -55,7 +55,11 @@ when the app may check in the background; opening the app always catches up.)
 **In the workout**
 - **Backups for an exercise** (Discord): in the routine editor, up to five exercises to do instead
   when the machine is taken. A swap lists them first.
-- **Rest for warm-ups and between sides**, set per exercise (Discord): no timer, or a time of its own.
+- **Rest between warm-ups** (Discord): Settings → Workout sets it for every exercise (no timer,
+  or a time of its own). One exercise can still do its own thing, and get a rest between sides.
+- **Your bars** (Discord): Settings → Equipment sets your bar weight once per bar type, say the
+  15 kg women's Olympic bar, and every exercise on it loads plates from that. The plate editor
+  gets quick picks (20/15/10/7.5 kg, 45/35/25/15 lb).
 - **Skip finished exercises** in Cards and Focus, a new switch next to Collapse completed (#523).
 - **Timed exercises move on by themselves**: when the last rest after a plank runs out, the next
   exercise comes up (#532).
