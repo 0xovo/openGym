@@ -104,6 +104,9 @@ when the app may check in the background; opening the app always catches up.)
 - Push reminders show the routine's emoji (#548, @mzspicoli).
 - The swap icon shows on picker rows (#579, @Totopo27).
 - `.env.example`: CF_CONNECTING_IP quoted so Compose keeps it (#565, @APN-Carmine).
+- Skip finished exercises, the change plates and the untrained-muscle shortcut were first sent as
+  pull requests by @anshuman83-40 (#526, #530) and @tfdmendes (#543). The CLA wasn't signed yet,
+  so we built our own take for this release, but the ideas are theirs. Thank you!
 
 **Security.** Five private reports, all fixed, plus our own audit. Thanks to Boris Kurktchiev
 for the reports, each with a patch and a test. Self-hosters: please update.
