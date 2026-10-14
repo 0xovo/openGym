@@ -1787,17 +1787,31 @@ function ActiveWorkout({ onActionChange }) {
   // The time is the watch's: the phone may hear of the set much later (lib/finish-workout.js
   // sessionEnd reads the sets' times). The watch's Finish runs the phone's Finish and save.
   useEffect(() => bindWatchActions({
-    setDone: (idx, i, { w, r, at, hr }) => {
+    setDone: (idx, i, { w, r, sec, side, at, hr }) => {
       if (useStore.getState().S.active?.editingWorkoutId) return   // a saved workout being edited is not the session
       const now = useStore.getState().S.active?.entries?.[idx]?.sets?.[i]
+      // One side of a per-side set (a unilateral exercise): that side's numbers and its own tick.
+      const oneSide = side && isSideSet(now) ? side : null
+      const wasDone = oneSide ? now.sides[oneSide].done : now?.done
       // The same set ticked here after the watch did: the later tick wins, the heart rate still lands.
-      if (now?.done && at && Number(now.at) > at) {
+      if (wasDone && at && Number(now.at) > at) {
         if (hr) mutEntry(idx, en => { if (en.sets[i]) en.sets[i].hr = hr })
         return
       }
-      mutEntry(idx, en => { const set = en.sets[i]; if (!set) return; if (w != null) set.w = w; if (r != null) set.r = r })
-      if (!now?.done) toggleRef.current(idx, i)
-      if (at || hr) mutEntry(idx, en => { const set = en.sets[i]; if (!set?.done) return; if (at) set.at = at; if (hr) set.hr = hr })
+      mutEntry(idx, en => {
+        const set = en.sets[i]
+        if (!set) return
+        if (oneSide) {
+          if (w != null) en.sets[i] = setSideField(en.sets[i], oneSide, 'w', w)
+          if (r != null) en.sets[i] = setSideField(en.sets[i], oneSide, 'r', r)
+          return
+        }
+        if (w != null) set.w = w
+        if (r != null) set.r = r
+        if (sec != null) set.sec = sec   // a hold: the seconds it lasted on the watch
+      })
+      if (!wasDone) toggleRef.current(idx, i, oneSide || undefined)
+      if (at || hr) mutEntry(idx, en => { const set = en.sets[i]; if (!(oneSide ? set?.sides?.[oneSide]?.done : set?.done)) return; if (at) set.at = at; if (hr) set.hr = hr })
     },
     finish: () => { if (!useStore.getState().S.active?.editingWorkoutId) finishWorkoutNow() },
   }), [])

@@ -35,6 +35,8 @@ struct ActiveWorkout: Codable, Equatable {
     var restSec: Double
     var rest: RestInfo?
     var entries: [Entry]
+    /// When it started (ms since 1970), for the summary's duration.
+    var start: Double?
 }
 
 struct RestInfo: Codable, Equatable {
@@ -44,10 +46,48 @@ struct RestInfo: Codable, Equatable {
 struct Entry: Codable, Equatable {
     var id: String
     var name: String
+    /// "reps", "time" (a hold, `sec` per set) or "cardio" (logged on the phone).
     var mode: String
     var restSec: Double?
     var last: String?
     var sets: [SetRow]
+    /// No load of its own: `w` is added weight, shown only when there is some.
+    var bodyweight: Bool?
+    /// Unilateral: each set is done one side at a time (`sides`).
+    var perSide: Bool?
+    /// A superset: neighbours with the same group are done in turns, the rest after each round.
+    var group: String?
+    /// The best set before this workout, for the PRs at the finish.
+    var best: BestSet?
+    /// Assisted (a lighter weight is the better one).
+    var assisted: Bool?
+
+    var isTimed: Bool { mode == "time" }
+    var isCardio: Bool { mode == "cardio" }
+    var isBodyweight: Bool { bodyweight == true }
+}
+
+struct BestSet: Codable, Equatable {
+    var w: Double?
+    var r: Double?
+    var sec: Double?
+}
+
+/// One side of a per-side set.
+struct SideRow: Codable, Equatable {
+    var w: Double?
+    var r: Double?
+    var done: Bool
+}
+
+struct Sides: Codable, Equatable {
+    var L: SideRow
+    var R: SideRow
+
+    subscript(_ side: String) -> SideRow {
+        get { side == "R" ? R : L }
+        set { if side == "R" { R = newValue } else { L = newValue } }
+    }
 }
 
 struct SetRow: Codable, Equatable {
@@ -58,6 +98,16 @@ struct SetRow: Codable, Equatable {
     var warmup: Bool
     /// When it was ticked (ms since 1970), on whichever side ticked it: the later tick wins.
     var at: Double?
+    /// A per-side set's two sides; `done` is both of them.
+    var sides: Sides?
+
+    /// The side up next on a per-side set ("L", then "R"), or nil.
+    var sideUp: String? {
+        guard let s = sides else { return nil }
+        if !s.L.done { return "L" }
+        if !s.R.done { return "R" }
+        return nil
+    }
 }
 
 /// The phone's Settings → Apple Watch (frontend lib/watch-settings.js).

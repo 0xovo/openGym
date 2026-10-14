@@ -1,3 +1,5 @@
+// ImageIO only exists on Apple platforms; the session logic is also tested on Linux.
+#if canImport(ImageIO)
 import XCTest
 @testable import WatchCore
 
@@ -53,3 +55,4 @@ final class ClipCodecTests: XCTestCase {
         XCTAssertFalse(ClipCodec.makeGif(from: junk, to: junk.appendingPathExtension("gif")))
     }
 }
+#endif

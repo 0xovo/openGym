@@ -1,3 +1,5 @@
+// ImageIO only exists on Apple platforms; the session logic is also tested on Linux.
+#if canImport(ImageIO)
 import CoreGraphics
 import Foundation
 import ImageIO
@@ -92,3 +94,4 @@ enum ClipCodec {
         return false
     }
 }
+#endif

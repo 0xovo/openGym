@@ -15,12 +15,13 @@
 // The iPhone app only. Without a paired watch with the app on it, nothing is sent and nothing
 // arrives: the phone behaves exactly as before.
 import { MOBILE, nativePlatform } from './mobile.js'
-import { EXIDX, gifSrc, figureOf } from './exercises.js'
+import { EXIDX, gifSrc, figureOf, isAssisted } from './exercises.js'
 import { packId, packDrawingId } from './anim-quality.js'
 import { getState as animPacks } from './anim-packs.js'
 import { exerciseNameFor } from './i18n.js'
-import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds } from './history.js'
-import { isWarmupRow } from './workout-model.js'
+import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds, isBw, isPerSide } from './history.js'
+import { isWarmupRow, isSideSet, syncSideAggregate } from './workout-model.js'
+import { bestSetFor } from './exercise-history.js'
 import { sessionHistory } from './backfill.js'
 import { buildCombinedEntries, deriveSessionName } from './session-merge.js'
 import { todayISO } from './format.js'
@@ -35,30 +36,67 @@ const SEND_DEBOUNCE_MS = 400
 const READY_MAX = 8
 
 const num = v => (typeof v === 'number' && Number.isFinite(v) ? v : null)
+// One side of a per-side set, from the watch: 'L', 'R', or none (the whole set).
+const sideOf = v => (v === 'L' || v === 'R' ? v : null)
+// What a tick of a hold (`sec`) or of one side carries besides the numbers; nothing for a plain set.
+const extraOf = ev => ({ ...(num(ev.sec) != null ? { sec: num(ev.sec) } : {}), ...(sideOf(ev.side) ? { side: sideOf(ev.side) } : {}) })
 
 /* ---------- the snapshot ---------- */
 
-// One exercise as the watch shows it.
-function watchEntry (e, H) {
+// The best set before today, per exercise and mode, for the watch's PRs at the finish. Worked out
+// once per history (S.workouts), not on every tick of the running session.
+let bestCache = { workouts: null, map: new Map() }
+function bestFor (S, id, mode) {
+  if (mode !== 'reps' && mode !== 'time') return null
+  if (bestCache.workouts !== S?.workouts) bestCache = { workouts: S?.workouts, map: new Map() }
+  const key = id + '|' + mode
+  if (!bestCache.map.has(key)) {
+    let b = null
+    try { b = bestSetFor(S, id, mode)?.set || null } catch { b = null }
+    bestCache.map.set(key, b ? (mode === 'time' ? { sec: num(b.sec), w: num(b.w) } : { w: num(b.w), r: num(b.r) }) : null)
+  }
+  return bestCache.map.get(key)
+}
+
+const sideRow = v => ({ w: num(v?.w), r: num(v?.r), done: v?.done === true })
+
+// One set as the watch shows it. A per-side set (a unilateral exercise) carries its two sides,
+// each ticked on its own; `done` is both.
+function watchSet (s) {
+  return {
+    w: num(s.w), r: num(s.r), sec: num(s.sec), done: !!s.done, warmup: !!isWarmupRow(s),
+    // when it was ticked: of two ticks of the same set (phone and watch), the later wins
+    ...(num(s.at) ? { at: num(s.at) } : {}),
+    ...(isSideSet(s) ? { sides: { L: sideRow(s.sides.L), R: sideRow(s.sides.R) } } : {}),
+  }
+}
+
+// One exercise as the watch shows it. Only optional fields were added over time (bodyweight,
+// perSide, group, best, assisted), so an older watch app reads a newer phone's snapshot.
+function watchEntry (e, H, S) {
   const ex = EXIDX[e.id]
   const target = e.target || {}
-  const mode = modeOf({ ...target, id: e.id })
+  const cfg = { ...target, id: e.id }
+  const mode = modeOf(cfg)
   let last = null
   try {
     const l = H ? lastEntryFor(H, e.id, e.rid) : null
     if (l && Array.isArray(l.sets) && l.sets.length) last = l.sets.map(s => setLabel(e.id, s, l.target)).join(', ')
   } catch { last = null }
+  const best = S ? bestFor(S, e.id, mode) : null
   return {
     id: e.id,
     name: ex ? exerciseNameFor(ex) : String(target.name || e.name || e.id),
     mode,
     restSec: num(target.restSec),
     last,
-    sets: (e.sets || []).map(s => ({
-      w: num(s.w), r: num(s.r), sec: num(s.sec), done: !!s.done, warmup: !!isWarmupRow(s),
-      // when it was ticked: of two ticks of the same set (phone and watch), the later wins
-      ...(num(s.at) ? { at: num(s.at) } : {}),
-    })),
+    sets: (e.sets || []).map(watchSet),
+    ...(isBw(cfg) ? { bodyweight: true } : {}),
+    ...(isPerSide(cfg) ? { perSide: true } : {}),
+    // a superset: the exercises next to each other with the same group, done in turns
+    ...(e.sg ? { group: String(e.sg) } : {}),
+    ...(best ? { best } : {}),
+    ...(mode === 'reps' && isAssisted(e.id) ? { assisted: true } : {}),
   }
 }
 
@@ -73,7 +111,7 @@ export function buildReady (S, today = todayISO()) {
   const session = ids => {
     const { entries, routineIds, routines } = buildCombinedEntries(S, ids)
     if (!routines.length) return null
-    return { routineIds, name: deriveSessionName(routines.map(r => r.name)) || '', entries: entries.map(e => watchEntry(e, H)) }
+    return { routineIds, name: deriveSessionName(routines.map(r => r.name)) || '', entries: entries.map(e => watchEntry(e, H, S)) }
   }
   let todayIds = []
   try { todayIds = effectiveRoutineIds({ ...S, routines: S.routines || [], week: S.week || {}, dayPlan: S.dayPlan || {} }, today, today) || [] } catch { todayIds = [] }
@@ -98,12 +136,14 @@ export function buildSnapshot(S, { timer = null, ready = null } = {}) {
     active: {
       id: A.id || null,
       name: A.name || '',
+      // when it started (ms), for the watch's summary at the finish
+      ...(num(A.start) ? { start: num(A.start) } : {}),
       unit,
       cur: Math.max(0, Math.min(A.entries.length - 1, A.cur || 0)),
       restSec: num(S.restSec) || 0,
       // a rest running on the phone, so the watch counts down the same one
       rest: timer && !timer.paused && !timer.ready && num(timer.endsAt) ? { endsAt: timer.endsAt } : null,
-      entries: A.entries.map(e => watchEntry(e, H)),
+      entries: A.entries.map(e => watchEntry(e, H, S)),
     },
   }
 }
@@ -189,10 +229,10 @@ export function applyEvents (events, getState) {
       // A workout already running on the phone is kept; one with the watch's id is this one.
     } else if (ev.type === 'setDone' && saved) {
       if (!appHandlers) break
-      const fields = { done: true, ...(num(ev.w) != null ? { w: num(ev.w) } : {}), ...(num(ev.r) != null ? { r: num(ev.r) } : {}), ...(num(ev.at) ? { at: num(ev.at) } : {}) }
+      const fields = { done: true, ...(num(ev.w) != null ? { w: num(ev.w) } : {}), ...(num(ev.r) != null ? { r: num(ev.r) } : {}), ...(num(ev.sec) != null ? { sec: num(ev.sec) } : {}), ...(num(ev.at) ? { at: num(ev.at) } : {}) }
       const hr = sanitizeHr(ev.hr)
       if (hr) fields.hr = hr
-      appHandlers.patchSet({ wid: ev.wid, exId: ev.exId, entryIdx: ev.entryIdx, setIdx: ev.setIdx }, fields, { ifNewer: num(ev.at) })
+      appHandlers.patchSet({ wid: ev.wid, exId: ev.exId, entryIdx: ev.entryIdx, setIdx: ev.setIdx, ...(sideOf(ev.side) ? { side: sideOf(ev.side) } : {}) }, fields, { ifNewer: num(ev.at) })
     } else if (ev.type === 'setDone' && ours) {
       if (!handlers) {
         // The tick is the workout screen's to apply: open it, and the queue drains when it binds.
@@ -201,7 +241,7 @@ export function applyEvents (events, getState) {
       }
       const idx = entryIndexOf(A, ev)
       const set = idx >= 0 ? A.entries[idx].sets?.[ev.setIdx] : null
-      if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at), hr: sanitizeHr(ev.hr) })
+      if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at), hr: sanitizeHr(ev.hr), ...extraOf(ev) })
     } else if (ev.type === 'watchStatus') {
       // What the watch says about itself, for Settings → Apple Watch. Never queued behind anything.
       writeWatchStatus(ev)
@@ -380,7 +420,22 @@ export function _resetWatchSync () { startedOnWatch.clear(); handlers = null; ap
  * (lib/sync-merge.js: of two copies of a workout the one edited last wins). Only these optional
  * fields are ever added; nothing is removed or renamed.
  */
-export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp, { ifNewer = null, recount = null } = {}) {
+export function patchSetIn (s, { wid, exId, entryIdx, setIdx, side = null }, fields, stamp, { ifNewer = null, recount = null } = {}) {
+  // One side of a per-side set: that side takes the numbers and the tick, the row's own w/r/done
+  // follow from both sides (lib/workout-model.js syncSideAggregate).
+  const write = (set, f) => {
+    if (side && isSideSet(set)) {
+      const { w, r, done, ...rest } = f
+      const one = { ...set.sides[side] }
+      if (w != null) one.w = w
+      if (r != null) one.r = r
+      if (done) one.done = true
+      set.sides = { ...set.sides, [side]: one }
+      const agg = syncSideAggregate(set)
+      for (const k of Object.keys(set)) if (!(k in agg)) delete set[k]
+      Object.assign(set, agg, rest)
+    } else Object.assign(set, f)
+  }
   const find = w => {
     if (!w || !Array.isArray(w.entries)) return null
     const i = w.entries[entryIdx] && w.entries[entryIdx].id === exId ? entryIdx : w.entries.findIndex(e => e && e.id === exId)
@@ -388,7 +443,7 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp, {
   }
   if (s.active && s.active.id === wid) {
     const set = find(s.active)
-    if (set) Object.assign(set, fields)
+    if (set) write(set, fields)
     return !!set
   }
   const w = (s.workouts || []).find(x => x && x.id === wid)
@@ -403,7 +458,7 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx }, fields, stamp, {
     if (fields.restHr) f.restHr = fields.restHr
     if (!Object.keys(f).length) return false
   }
-  Object.assign(set, f)
+  write(set, f)
   if (recount) recount(w)
   if (stamp) stamp(w)
   return true

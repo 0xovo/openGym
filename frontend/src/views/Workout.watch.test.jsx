@@ -77,3 +77,31 @@ describe('the same set on both sides', () => {
     expect(useStore.getState().S.active.entries[0].sets[0]).toMatchObject({ w: 70, r: 5, done: true, at: 5000, hr: { avg: 120, max: 130 } })
   })
 })
+
+// Every kind of set the watch logs: one side of a per-side set at a time, a hold with its seconds.
+describe('sets of every kind from the watch', () => {
+  const sideRow = () => ({ w: 20, r: 16, done: false, sides: { L: { w: 20, r: 8, done: false }, R: { w: 20, r: 8, done: false } } })
+  const load = entries => act(() => { useStore.getState().update(s => { s.active.entries = entries }) })
+
+  it('a per-side set: each side ticked on its own, the row done with both', () => {
+    load([{ id: 'split', target: { sets: 1, reps: 16, weight: 20, side: true }, sets: [sideRow()] }])
+    act(() => { applyEvents([{ id: 'l', type: 'setDone', wid: 'w-watch', exId: 'split', entryIdx: 0, setIdx: 0, side: 'L', w: 22.5, r: 8, at: 10 }], () => useStore.getState()) })
+    let row = useStore.getState().S.active.entries[0].sets[0]
+    expect(row.sides.L).toMatchObject({ w: 22.5, r: 8, done: true })
+    expect(row.sides.R.done).toBe(false)
+    expect(row.done).toBe(false)
+    act(() => { applyEvents([{ id: 'r', type: 'setDone', wid: 'w-watch', exId: 'split', entryIdx: 0, setIdx: 0, side: 'R', w: 20, r: 7, at: 20 }], () => useStore.getState()) })
+    row = useStore.getState().S.active.entries[0].sets[0]
+    expect(row.sides.R).toMatchObject({ w: 20, r: 7, done: true })
+    expect(row).toMatchObject({ done: true, r: 15, w: 22.5 })
+    // the same side again changes nothing
+    act(() => { applyEvents([{ id: 'r2', type: 'setDone', wid: 'w-watch', exId: 'split', entryIdx: 0, setIdx: 0, side: 'R', w: 20, r: 7, at: 20 }], () => useStore.getState()) })
+    expect(useStore.getState().S.active.entries[0].sets[0].sides.R.done).toBe(true)
+  })
+
+  it('a hold: done with the seconds it lasted on the watch', () => {
+    load([{ id: 'plank', target: { sets: 1, sec: 45, mode: 'time' }, sets: [{ sec: 45, done: false }] }])
+    act(() => { applyEvents([{ id: 'h', type: 'setDone', wid: 'w-watch', exId: 'plank', entryIdx: 0, setIdx: 0, sec: 52, at: 30 }], () => useStore.getState()) })
+    expect(useStore.getState().S.active.entries[0].sets[0]).toMatchObject({ sec: 52, done: true })
+  })
+})
