@@ -30,7 +30,7 @@ import BodyMap from './components/BodyMap.jsx'
 import MuscleExplorer from './components/MuscleExplorer.jsx'
 import ExerciseViewToggle from './components/ExerciseViewToggle.jsx'
 import { sameMuscleFirst, swapMuscleOf } from './lib/similar-exercises.js'
-import { exerciseMuscleSnapshot, loadOfWorkouts, MUSCLES, MUSCLE_NAME, muscleWeightsOf, normalizeMuscleGroups, hasExplicitMuscleMetadata, inMuscleOrder } from './lib/muscles.js'
+import { exerciseMuscleSnapshot, loadOfWorkouts, MUSCLES, MUSCLE_NAME, muscleWeightsOf, muscleGroupsOf, hasExplicitMuscleMetadata, inMuscleOrder } from './lib/muscles.js'
 import { parseImport, mergeImport } from './lib/import-csv.js'
 import { importHevyData, HevyApiError, HEVY_DEV_SETTINGS, mergeHevyRoutines } from './lib/import-hevy.js'
 import { buildPlanBundle, parsePlan, mergePlan, printPlan, planPrintHTML } from './lib/plan-share.js'
@@ -1197,12 +1197,12 @@ function CustomExForm({ existing, prefill, onDone, close }) {
   const [primaries, setPrimaries] = useState(() => {
     if (existing && Array.isArray(existing.primaries) && existing.primaries.length) return [...existing.primaries]
     if (existing?.bp === 'cardio') return ['cardiovascular system']
-    const norm = hasExplicitMuscleMetadata(existing || {}) ? normalizeMuscleGroups(existing || {}) : []
+    const norm = hasExplicitMuscleMetadata(existing || {}) ? muscleGroupsOf(existing || {}) : []
     return norm.length ? [norm[0]] : []
   })
   const [secondaries, setSecondaries] = useState(() => {
     if (existing && Array.isArray(existing.primaries) && existing.primaries.length) return [...(existing.secondaries || [])]
-    const norm = hasExplicitMuscleMetadata(existing || {}) ? normalizeMuscleGroups(existing || {}) : []
+    const norm = hasExplicitMuscleMetadata(existing || {}) ? muscleGroupsOf(existing || {}) : []
     return norm.slice(1)
   })
   // Every primary chip this sheet saw a tap on, in that order. `primaries` alone cannot say what the
@@ -2293,9 +2293,7 @@ export const effortPickerSheet = (kind, value, onPick) =>
   ui().openSheet(close => <EffortPicker kind={kind} value={value} onPick={onPick} close={close} />)
 
 /* ============================ share / print / import a plan ============================ */
-export const planToolsSheet = () => ui().openSheet(close => <PlanTools close={close} />)
-
-// The three things the Plan menu and this sheet both do with a plan, so the two can never drift.
+// What the Plan menu does with a plan: export it, print it, import a friend's.
 export const planHasRoutines = st => (st.routines || []).some(r => r.ex && r.ex.length)
 export async function exportPlanFile() {
   const st = S(), user = useStore.getState().user
@@ -2324,32 +2322,6 @@ export function importPlanFile(f, onRead) {
     catch (e) { toast(e?.code === 'not-plan' ? t('Import failed: {0}', e.message) : t('Couldn’t read that file.')) }
   }
   rd.readAsText(f)
-}
-
-function PlanTools({ close }) {
-  const st = useStore(s => s.S)
-  const fileRef = useRef(null)
-  const hasRoutines = planHasRoutines(st)
-
-  const exportFile = async () => { await exportPlanFile(); close() }
-  const pickFile = ev => {
-    const f = ev.target.files[0]; ev.target.value = ''
-    importPlanFile(f, close)
-  }
-
-  return <>
-    <h3>{t('Share your plan')}</h3>
-    <div className="muted small" style={{ marginBottom: 16 }}>{t('Send your routines to a friend, or put your week on paper.')}</div>
-    <Button variant="primary" icon="share" onClick={exportFile} disabled={!hasRoutines}>{t('Export plan file')}</Button>
-    <div className="dim small" style={{ margin: '7px 2px 0', lineHeight: 1.4 }}>{t('A small file a friend can import into their own openGym. Routines only, none of your workouts or weigh-ins.')}</div>
-    <div style={{ height: 12 }} />
-    <Button variant="tinted" icon="note" onClick={() => { close(); printWholePlan() }} disabled={!hasRoutines}>{t('Print / Save as PDF')}</Button>
-    <div className="dim small" style={{ margin: '7px 2px 0', lineHeight: 1.4 }}>{t('A clean printout, one page per plan. No exercise ever gets split across pages.')}</div>
-    {!hasRoutines && <div className="dim small" style={{ margin: '12px 2px 0' }}>{t('Add an exercise to a routine first. An empty plan has nothing to share.')}</div>}
-    <h4 className="sec">{t('Got a plan from a friend?')}</h4>
-    <Button variant="ghost" icon="download" onClick={() => fileRef.current?.click()}>{t('Import a plan file')}</Button>
-    <input ref={fileRef} type="file" accept="application/json,.json" onChange={pickFile} hidden />
-  </>
 }
 
 export const planImportSheet = bundle => ui().openSheet(close => <PlanImport bundle={bundle} close={close} />)

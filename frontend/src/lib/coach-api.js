@@ -95,20 +95,6 @@ export const resolvePending = async body => DEMO ? (await demo()).demoResolve() 
 export const forgetCoach = async () => DEMO ? (await demo()).demoResolve() : LOCAL() ? (await local()).localForget() : api('/api/coach/forget', { method: 'POST', body: '{}' })
 export const disclosure = async () => DEMO ? (await demo()).demoDisclosure() : LOCAL() ? (await local()).localDisclosure() : api('/api/coach/disclosure')
 
-/* Whose provider account this profile is about to spend. Its own call because the constraint is
-   that the Coach screen states it too, not just the admin card — and because in instance mode a
-   second profile is refused outright, which is something the user has to be able to read before
-   they ask for anything rather than after a job is turned down. */
-export const coachAccount = async () =>
-  DEMO ? { mode: 'instance', provider: 'demo', providerLabel: 'Demo', account: null, connected: true, reason: null, message: null }
-    : LOCAL() ? { mode: 'device', provider: useStore.getState().coachLocal.provider, providerLabel: null, account: null, connected: true, reason: null, message: null }
-      : api('/api/coach/account')
-
-/* Admin-only. The token is write-only from the client's side: it goes up once and is never
-   read back, so there is deliberately no "show me the current credential" call to pair with it. */
-export const connectCredential = body => api('/api/admin/coach/connect', { method: 'POST', body: JSON.stringify(body) })
-export const disconnectCredential = () => api('/api/admin/coach/disconnect', { method: 'POST', body: '{}' })
-
 /**
  * Live job/proposal state.
  *
