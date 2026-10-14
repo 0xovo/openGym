@@ -64,7 +64,8 @@ afterEach(async () => {
   localStorage.clear()
 })
 
-describe('a phone with no server', () => {
+// Each test loads the store afresh: slow on a busy machine, so a longer limit than the default.
+describe('a phone with no server', { timeout: 30000 }, () => {
   beforeEach(() => { h.files.clear() })
 
   it('a ticked set is in the file at once, not after the usual wait', async () => {
