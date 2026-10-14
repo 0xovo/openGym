@@ -2375,4 +2375,7 @@ export default {
   'Workout running': '운동 중',
   'Set {0} of {1}': '{1}세트 중 {0}세트',
   'All sets done': '모든 세트 완료',
+  'A day off before the next one': '다음 운동 전에 하루 쉬기',
+  'Already in the loop: adds it again': '이미 순환에 있어요: 한 번 더 추가해요',
+  'Rest day. The loop goes on {0}.': '쉬는 날이에요. 순환은 {0}에 이어져요.',
 }

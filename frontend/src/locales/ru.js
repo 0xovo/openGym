@@ -2379,4 +2379,7 @@ export default {
   'Workout running': 'Тренировка идёт',
   'Set {0} of {1}': 'Подход {0} из {1}',
   'All sets done': 'Все подходы сделаны',
+  'A day off before the next one': 'Выходной перед следующей',
+  'Already in the loop: adds it again': 'Уже в цикле: добавится ещё раз',
+  'Rest day. The loop goes on {0}.': 'День отдыха. Цикл продолжится {0}.',
 }

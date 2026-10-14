@@ -2386,4 +2386,7 @@ export default {
   'Workout running': 'กำลังฝึกอยู่',
   'Set {0} of {1}': 'เซ็ต {0} จาก {1}',
   'All sets done': 'ครบทุกเซ็ตแล้ว',
+  'A day off before the next one': 'หยุดหนึ่งวันก่อนรายการถัดไป',
+  'Already in the loop: adds it again': 'อยู่ในรอบแล้ว: เพิ่มอีกครั้ง',
+  'Rest day. The loop goes on {0}.': 'วันพัก รอบจะเริ่มต่อ {0}',
 }

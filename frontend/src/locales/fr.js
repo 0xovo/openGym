@@ -2375,4 +2375,7 @@ export default {
   'Workout running': 'Séance en cours',
   'Set {0} of {1}': 'Série {0} sur {1}',
   'All sets done': 'Toutes les séries faites',
+  'A day off before the next one': 'Un jour off avant le suivant',
+  'Already in the loop: adds it again': 'Déjà dans la boucle : l’ajoute une fois de plus',
+  'Rest day. The loop goes on {0}.': 'Jour de repos. La boucle reprend {0}.',
 }

@@ -2454,4 +2454,7 @@ export default {
   'Workout running': 'ওয়ার্কআউট চলছে',
   'Set {0} of {1}': 'সেট {0} / {1}',
   'All sets done': 'সব সেট শেষ',
+  'A day off before the next one': 'পরেরটার আগে এক দিনের ছুটি',
+  'Already in the loop: adds it again': 'লুপে আগেই আছে: আবার যোগ হবে',
+  'Rest day. The loop goes on {0}.': 'বিশ্রামের দিন। লুপ আবার চলবে {0}।',
 }

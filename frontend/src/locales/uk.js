@@ -2372,4 +2372,7 @@ export default {
   'Workout running': 'Тренування триває',
   'Set {0} of {1}': 'Підхід {0} з {1}',
   'All sets done': 'Усі підходи зроблено',
+  'A day off before the next one': 'Вихідний перед наступним',
+  'Already in the loop: adds it again': 'Уже в циклі: додасться ще раз',
+  'Rest day. The loop goes on {0}.': 'День відпочинку. Цикл продовжиться {0}.',
 }

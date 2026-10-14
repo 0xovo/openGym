@@ -2375,4 +2375,7 @@ export default {
   'Workout running': 'Antrenman sürüyor',
   'Set {0} of {1}': 'Set {0}/{1}',
   'All sets done': 'Tüm setler tamam',
+  'A day off before the next one': 'Sıradakinden önce bir gün izin',
+  'Already in the loop: adds it again': 'Zaten döngüde: bir kez daha ekler',
+  'Rest day. The loop goes on {0}.': 'Dinlenme günü. Döngü {0} devam ediyor.',
 }

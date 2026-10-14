@@ -2375,4 +2375,7 @@ export default {
   'Workout running': 'Entreno en curso',
   'Set {0} of {1}': 'Serie {0} de {1}',
   'All sets done': 'Todas las series hechas',
+  'A day off before the next one': 'Un día libre antes del siguiente',
+  'Already in the loop: adds it again': 'Ya está en el ciclo: lo añade otra vez',
+  'Rest day. The loop goes on {0}.': 'Día de descanso. El ciclo sigue el {0}.',
 }

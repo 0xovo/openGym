@@ -2375,4 +2375,7 @@ export default {
   'Workout running': 'वर्कआउट चल रहा है',
   'Set {0} of {1}': 'सेट {0} / {1}',
   'All sets done': 'सारे सेट पूरे',
+  'A day off before the next one': 'अगले से पहले एक दिन की छुट्टी',
+  'Already in the loop: adds it again': 'लूप में पहले से है: फिर से जोड़ेगा',
+  'Rest day. The loop goes on {0}.': 'आराम का दिन। लूप {0} को आगे बढ़ेगा।',
 }

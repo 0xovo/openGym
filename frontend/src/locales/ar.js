@@ -2430,4 +2430,7 @@ export default {
   'Workout running': 'تمرين جارٍ',
   'Set {0} of {1}': 'المجموعة {0} من {1}',
   'All sets done': 'اكتملت كل المجموعات',
+  'A day off before the next one': 'يوم راحة قبل التالي',
+  'Already in the loop: adds it again': 'موجود في الدورة: يضيفه مرة أخرى',
+  'Rest day. The loop goes on {0}.': 'يوم راحة. تستمر الدورة {0}.',
 }

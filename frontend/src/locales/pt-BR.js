@@ -1500,6 +1500,7 @@ export const PT_BR_OVERRIDES = {
   'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
   'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
   'Workout running': 'Treino em andamento',
+  'Already in the loop: adds it again': 'Já está no ciclo: adiciona de novo',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

@@ -2375,4 +2375,7 @@ export default {
   'Workout running': '训练进行中',
   'Set {0} of {1}': '第 {0} 组，共 {1} 组',
   'All sets done': '所有组已完成',
+  'A day off before the next one': '下一项之前休息一天',
+  'Already in the loop: adds it again': '已在循环中：再加一次',
+  'Rest day. The loop goes on {0}.': '休息日。循环将在 {0} 继续。',
 }

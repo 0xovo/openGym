@@ -2378,4 +2378,7 @@ export default {
   'Workout running': 'Edzés folyamatban',
   'Set {0} of {1}': '{0}. sorozat / {1}',
   'All sets done': 'Minden sorozat kész',
+  'A day off before the next one': 'Egy pihenőnap a következő előtt',
+  'Already in the loop: adds it again': 'Már benne van a körben: még egyszer hozzáadja',
+  'Rest day. The loop goes on {0}.': 'Pihenőnap. A kör {0} folytatódik.',
 }
