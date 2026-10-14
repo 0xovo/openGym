@@ -1500,6 +1500,18 @@ export const PT_BR_OVERRIDES = {
   'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
   'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
   'Workout running': 'Treino em andamento',
+  'Lost access?': 'Perdeu o acesso?',
+  'No panic: your training is safe on the server. One of these gets you back in.': 'Calma: seu treino está seguro no servidor. Uma destas opções devolve seu acesso.',
+  'Your passkey may be synced': 'Sua chave de acesso pode estar sincronizada',
+  'Passkeys kept in iCloud Keychain, Google Password Manager or a password manager are on your other devices too. Try “Sign in with passkey” there.': 'Chaves de acesso salvas no Chaveiro do iCloud, no Gerenciador de Senhas do Google ou em um gerenciador de senhas também estão nos seus outros dispositivos. Tente “Entrar com chave de acesso” lá.',
+  'Another device still signed in?': 'Outro dispositivo ainda conectado?',
+  'On that one, open Settings → Account → Add another device, then enter its code here with “I have a code”.': 'Nele, abra Configurações → Conta → Adicionar outro dispositivo e digite o código aqui em “Tenho um código”.',
+  'Ask your admin': 'Peça ao seu admin',
+  'Whoever runs your openGym server can make you a recovery code in the admin dashboard. Enter it with “I have a code”, and this device gets a new passkey.': 'Quem administra seu servidor openGym pode criar um código de recuperação no painel de admin. Digite-o em “Tenho um código” e este dispositivo ganha uma nova chave de acesso.',
+  'Running the server yourself?': 'Você mesmo administra o servidor?',
+  'Get a recovery code for any profile, the owner’s too, on the server: docker compose exec api node recover.js "Your name"': 'No servidor, gere um código de recuperação para qualquer perfil, inclusive o do dono: docker compose exec api node recover.js "Seu nome"',
+  'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'Neste aplicativo: digite o código no seu site openGym em um navegador e depois pareie o aplicativo de novo em Configurações → Conta lá.',
+  'A recovery code from your admin goes here too.': 'Um código de recuperação do seu admin também vai aqui.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
