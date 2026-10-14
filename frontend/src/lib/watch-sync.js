@@ -291,16 +291,25 @@ const watchPlugin = () => pluginP || (pluginP = (async () => {
 
 let getStateRef = null
 let draining = null
+// The store has its copy back (boot's finishBoot: the file mirror, the server's pull). Before that,
+// S can be the empty copy a WebView whose storage was evicted starts with: a tick would find no
+// workout, count as meaningless and be acknowledged away, and a "start" would begin a new session
+// over it. A store without the flag (a test's) counts as ready.
+const storeReady = () => getStateRef?.()?.ready !== false
 
-/** Takes what the watch sent from the native queue, applies it, and acknowledges what is done. */
+/**
+ * Takes what the watch sent from the native queue, applies it, and acknowledges what is done, but
+ * only once the change is on disk (the store's saveNow): the queue is the event's last copy.
+ */
 export function drainWatchEvents () {
   if (draining) return draining
   draining = (async () => {
     try {
       const p = await watchPlugin()
-      if (!p || !getStateRef) return []
+      if (!p || !getStateRef || !storeReady()) return []
       const { events = [] } = (await p.WatchBridge.drain()) || {}
       const done = applyEvents(events, getStateRef)
+      if (done.length) await getStateRef()?.saveNow?.()
       if (done.length) await p.WatchBridge.ack({ ids: done })
       return done
     } catch { return [] } finally { draining = null }
@@ -399,7 +408,8 @@ export async function startWatchSync ({ useStore, useUI }) {
   } catch { /* no Apple Health here: the watch measures nothing */ }
   const send = async () => {
     tm = null
-    if (!linked) return
+    // Not before the store has its copy: an empty one would tell the watch its workout is over.
+    if (!linked || !storeReady()) return
     try {
       const S = useStore.getState().S
       const prefs = readWatchPrefs()
@@ -428,6 +438,8 @@ export async function startWatchSync ({ useStore, useUI }) {
   }
   const schedule = () => { if (!linked) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
   const offStore = useStore.subscribe((s, prev) => {
+    // Boot done: what the watch sent meanwhile is applied now, and the watch hears the real state.
+    if (s.ready && !prev.ready) { drainWatchEvents(); schedule() }
     if (s.S === prev.S) return
     schedule()
     // A workout started on the phone: the watch app opens with it (HealthKit's startWatchApp).

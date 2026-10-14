@@ -101,6 +101,32 @@ describe('the native queue', () => {
     expect(p.ack).not.toHaveBeenCalled()
   })
 
+  // Data safety (owner, 10-14): at launch S can be the empty copy of an evicted WebView until boot
+  // has the file mirror back. A tick drained then found no workout and was acknowledged away.
+  it('waits for the store to have its copy back before it applies or acknowledges anything', async () => {
+    let store = { S: { unit: 'kg', workouts: [], active: null }, ready: false }
+    const p = plugin([{ id: 'x1', type: 'setDone', wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1, w: 60, r: 8 }])
+    _setWatchPluginForTest(p, () => store)
+    const setDone = vi.fn()
+    bindWatchActions({ setDone })
+    expect(await drainWatchEvents()).toEqual([])
+    expect(p.drain).not.toHaveBeenCalled()
+    expect(p.ack).not.toHaveBeenCalled()
+    store = { S: state(), ready: true }
+    expect(await drainWatchEvents()).toEqual(['x1'])
+    expect(setDone).toHaveBeenCalledTimes(1)
+  })
+
+  it('acknowledges only once the change is saved: the queue is its last copy until then', async () => {
+    const order = []
+    const p = { drain: async () => ({ events: [{ id: 'x1', type: 'setDone', wid: 'w-1', exId: '0025', entryIdx: 0, setIdx: 1 }] }), ack: async () => { order.push('ack') } }
+    const saveNow = vi.fn(async () => { await new Promise(r => setTimeout(r, 5)); order.push('saved') })
+    _setWatchPluginForTest(p, () => ({ S: state(), ready: true, saveNow }))
+    bindWatchActions({ setDone: () => order.push('applied') })
+    await drainWatchEvents()
+    expect(order).toEqual(['applied', 'saved', 'ack'])
+  })
+
   it('off the iPhone app there is no plugin and nothing happens', async () => {
     _setWatchPluginForTest(null, () => ({ S: state() }))
     bindWatchActions({ setDone: vi.fn() })

@@ -172,16 +172,23 @@ const livePlugin = () => pluginP || (pluginP = (async () => {
 
 let getStateRef = null
 let draining = null
+// As in lib/watch-sync.js: nothing is applied, acknowledged or sent before the store has its copy
+// back (boot's finishBoot), so a tap is never dropped against an empty, not yet restored state.
+const storeReady = () => getStateRef?.()?.ready !== false
 
-/** Takes the Done taps from the native queue, applies them, and acknowledges what is done. */
+/**
+ * Takes the Done taps from the native queue, applies them, and acknowledges what is done once the
+ * change is on disk (the store's saveNow): until then the queue is the tap's only copy.
+ */
 export function drainLiveEvents () {
   if (draining) return draining
   draining = (async () => {
     try {
       const p = await livePlugin()
-      if (!p || !getStateRef) return []
+      if (!p || !getStateRef || !storeReady()) return []
       const { events = [] } = (await p.LiveActivity.drain()) || {}
       const done = applyLiveEvents(events, getStateRef)
+      if (done.length) await getStateRef()?.saveNow?.()
       if (done.length) await p.LiveActivity.ack({ ids: done })
       return done
     } catch { return [] } finally { draining = null }
@@ -210,6 +217,8 @@ export async function startLiveActivitySync ({ useStore, useUI }) {
   let last = null, tm = null
   const send = async () => {
     tm = null
+    // An empty, not yet restored copy would end the activity of a workout that is still running.
+    if (!storeReady()) return
     try {
       const live = buildLiveActivity(useStore.getState().S, useUI.getState().timer)
       const json = live ? JSON.stringify(live) : ''
@@ -220,7 +229,10 @@ export async function startLiveActivitySync ({ useStore, useUI }) {
     } catch { /* not now: the next change tries again */ }
   }
   const schedule = () => { if (!supported) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
-  const offStore = useStore.subscribe((s, prev) => { if (s.S !== prev.S) schedule() })
+  const offStore = useStore.subscribe((s, prev) => {
+    if (s.ready && !prev.ready) { drainLiveEvents(); schedule() }
+    else if (s.S !== prev.S) schedule()
+  })
   const restOf = x => (x ? `${x.endsAt}|${!!x.paused}|${!!x.ready}|${x.left}|${x.kind || ''}` : '')
   const offUI = useUI.subscribe((s, prev) => {
     if (s.timer === prev.timer) return

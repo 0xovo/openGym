@@ -337,9 +337,12 @@ export default function Settings({ page = null, find = null, via = null, entryKe
       const n = conflict.workouts
       menuSheet({
         title: t('Import backup?'),
-        subtitle: t(n === 1
-          ? 'The server has 1 workout that is not in this backup, logged since it was made or on another device. Replacing deletes it.'
-          : 'The server has {0} workouts that are not in this backup, logged since it was made or on another device. Replacing deletes them.', n),
+        subtitle: conflict.device
+          ? t(n === 1 ? 'This device has 1 workout that is not in this backup. Replacing deletes it.'
+            : 'This device has {0} workouts that are not in this backup. Replacing deletes them.', n)
+          : t(n === 1
+            ? 'The server has 1 workout that is not in this backup, logged since it was made or on another device. Replacing deletes it.'
+            : 'The server has {0} workouts that are not in this backup, logged since it was made or on another device. Replacing deletes them.', n),
         items: [
           { icon: 'trash', label: t('Replace anyway'), danger: true, onClick: () => apply(null) },
           { icon: 'merge', label: t('Merge them in'), onClick: () => apply(conflict) },

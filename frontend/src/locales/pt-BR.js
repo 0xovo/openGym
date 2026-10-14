@@ -1515,6 +1515,9 @@ export const PT_BR_OVERRIDES = {
   'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
   'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
   'Workout running': 'Treino em andamento',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Este dispositivo tem 1 treino que não está neste backup. Substituir exclui esse treino.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Este dispositivo tem {0} treinos que não estão neste backup. Substituir exclui esses treinos.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

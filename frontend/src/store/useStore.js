@@ -604,11 +604,16 @@ export const useStore = create((set, get) => {
     }
     meta.set(S, { base, owed: owed || !saved || (!!joined && storedOwed()) })
     if (!saved) saveOwed(true)
+    // The running workout changed (a set ticked, a workout started or finished): on a phone it goes
+    // to the file at once rather than after the usual wait. localStorage alone is not enough there:
+    // the WebView writes it to disk on its own schedule, and an app killed within that moment (or
+    // iOS ending it in the background before the page's timers run again) lost the last set.
+    const workoutMoved = MOBILE && JSON.stringify(get()?.S?.active ?? null) !== JSON.stringify(S.active ?? null)
     set({ S })
     // A copy that replaces the last one wholesale and keeps an older stamp — adopted from the
     // server — goes to the file at once. Until it does, the file holds the copy it replaced,
     // which looks newer, and a start in between would take that one back (restoreFromMirror).
-    if (MOBILE) nativePersist(!stamp)
+    if (MOBILE) nativePersist(!stamp || workoutMoved)
     if (push && get().user) {
       // Before boot has pulled, the copy in hand may be older than the server's: a push now
       // would carry it with a stale (or no) baseRev. It waits for finishBoot.
@@ -782,6 +787,9 @@ export const useStore = create((set, get) => {
   }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush() })
   window.addEventListener('pagehide', flush)   // Safari kills the home-screen app without a visibilitychange at times
+  // The phone app: Capacitor's own "going to the background" too, in case the WebView's
+  // visibilitychange comes late or not at all before iOS suspends the page.
+  document.addEventListener('pause', flush)
 
   // The owner check in setUser only runs in the tab that signs in. Another tab of the same
   // browser still holding the previous profile, or a guest's copy, would keep writing it over the
@@ -1325,6 +1333,13 @@ export const useStore = create((set, get) => {
 
     // Mutate a draft of S via producer fn, then persist + schedule sync. Every routine the change
     // touched carries the time of it, for a conflict to keep the version edited last.
+    // The copy as it is now, on disk: the file mirror on a phone (written at once, not after the
+    // usual wait), localStorage everywhere (persist writes it on every change). What hands a change
+    // over from somewhere that keeps its own copy until told (the watch's and the Live Activity's
+    // queues) waits for this before it lets go of it.
+    saveNow() {
+      return MOBILE ? nativePersist(true) : Promise.resolve()
+    },
     update(mut, push = true) {
       const prev = get().S
       const S = clone(prev)
@@ -1404,7 +1419,14 @@ export const useStore = create((set, get) => {
     // them in instead (importBackup). null when there are none, when nobody is signed in, or when
     // the server cannot be asked — the replace then goes as it always has.
     async importConflict(backup) {
-      if (!get().user) return null
+      // No account (a phone in local mode, a guest): this copy is the only one there is, so the
+      // workouts it holds that the backup lacks are asked about the same way, never just replaced.
+      if (!get().user) {
+        const key = w => entryKey('workouts', w)
+        const inBackup = new Set((Array.isArray(backup?.workouts) ? backup.workouts : []).filter(Boolean).map(key))
+        const here = (get().S.workouts || []).filter(w => w && !inBackup.has(key(w))).length
+        return here ? { workouts: here, state: get().S, rev: null, device: true } : null
+      }
       let res
       try { res = await api('/api/data') } catch { return null }
       const state = res?.state
@@ -1441,6 +1463,15 @@ export const useStore = create((set, get) => {
       // so the import keeps it (in the backup's unit). Only with none running does a backup taken
       // mid-workout bring its own session back. Both the replace and "Merge them in" dropped it.
       const running = carryActive(cur, next) || next.active || null
+      // No account: "Merge them in" joins this copy's own entries into the backup's.
+      if (mergeWith?.device && !uid) {
+        const merged = keepReset(cur, Object.assign(clone(DEF), mergeStates(next, cur, { prefer: 'a' })))
+        stampRestore(merged, [cur, next], now)
+        merged._ts = now
+        merged.active = carryActive({ unit: next.unit, active: running }, merged)
+        persist(merged, false)
+        return
+      }
       if (!mergeWith?.state || !uid) {
         stampRestore(next, [cur, server], now)
         // …and like a reset of what it replaces: an unsent change of another device from before it
