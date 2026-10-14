@@ -156,9 +156,13 @@ jobs:
             # What each screen costs: the app's CPU time over 20 s once it is up (the simulator's
             # process, on the Mac). Always On (wrist down) should cost next to nothing.
             cpu() { ps -o time= -p "$1" 2>/dev/null | awk -F'[:.]' '{ if (NF==3) print $1*60+$2+$3/100; else print 0 }'; }
-            for spec in idle:idle set:set rest:rest hold:hold set-aod:set:-OpenGymWatchAOD rest-aod:rest:-OpenGymWatchAOD; do
-              IFS=: read -r file screen flag <<< "$spec"
+            # set-noclip: the same screen without the animation, to tell what the animation costs.
+            for spec in idle:idle set:set set-noclip:set:noclip rest:rest hold:hold set-aod:set:-OpenGymWatchAOD set-aod-noclip:set:-OpenGymWatchAOD:noclip rest-aod:rest:-OpenGymWatchAOD; do
+              IFS=: read -r file screen flag noclip <<< "$spec"
+              if [ "$flag" = noclip ]; then flag=""; noclip=noclip; fi
+              KEEP=$CLIP; if [ -n "$noclip" ]; then CLIP=""; fi
               if [ -n "$flag" ]; then shot "perf-$file" "$screen" "$flag"; else shot "perf-$file" "$screen"; fi
+              CLIP=$KEEP
               a=$(cpu "$PID"); sleep 20; b=$(cpu "$PID")
               echo "$size $file: $(node -e "console.log(((+process.argv[1]-+process.argv[2])/20*100).toFixed(1))" "$b" "$a")% CPU over 20 s" | tee -a build/watch/perf.txt
               rm -f "build/watch/$size-perf-$file.png"

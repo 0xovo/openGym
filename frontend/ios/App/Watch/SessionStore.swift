@@ -96,7 +96,16 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             // Relaunched (mid-workout or not): the session as it was, then the latest from the phone.
             state = saved
             loadTargets()
-            if let w = saved.workout { health.start(workoutId: w.id) }
+            // The Apple Health session of a workout that was running when the app was killed is
+            // recovered (WatchAppDelegate.handleActiveWorkoutRecovery); a new one starts only if
+            // none came back by then, so one workout never becomes two.
+            if let w = saved.workout {
+                workoutSeenAt = w.start.map { Date(timeIntervalSince1970: $0 / 1000) }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                    guard let self = self, self.state.workout?.id == w.id else { return }
+                    self.health.start(workoutId: w.id)
+                }
+            }
         }
         health.onStatus = { [weak self] in self?.sendStatus() }
         let center = UNUserNotificationCenter.current()
@@ -266,8 +275,10 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         }
         let (next, event) = SessionCore.tick(state, entry: ei, set: si, side: side, w: tw, r: tr, sec: tsec,
                                              at: now.timeIntervalSince1970 * 1000, id: UUID().uuidString, hr: hr)
-        state = next
+        // Sent first, saved second: killed in between, the phone still has the tick (and the next
+        // snapshot brings it back here); the other way round the tick would be lost on the phone.
         if let event = event { send(event: event) }
+        state = next
         setStartedAt = now
         picked[ei] = nil
         let (to, rest) = SessionCore.next(after: state, entry: ei, set: si)
@@ -354,6 +365,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         let now = Date()
         let (next, event) = SessionCore.start(state, session, wid: "watch-" + UUID().uuidString,
                                               at: now.timeIntervalSince1970 * 1000, id: UUID().uuidString)
+        send(event: event)
         state = next
         picked = [:]
         setStartedAt = now
@@ -361,7 +373,6 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         restAfter = nil
         loadTargets()
         health.start(workoutId: next.workout?.id)
-        send(event: event)
         summary = nil
         Haptics.start()
     }
@@ -378,8 +389,8 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         stopHold()
         skipRest()
         dropClips()
-        state = next
         send(event: ev)
+        state = next
         Haptics.finished()
     }
 
@@ -469,9 +480,33 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         guard !isDemo, WCSession.isSupported(),
               let data = try? JSONSerialization.data(withJSONObject: event),
               let json = String(data: data, encoding: .utf8) else { return }
+        transfer(json)
+    }
+
+    /// Events made before the session was up (a tap right after launch) wait here, saved, and go out
+    /// once it is: transferUserInfo before activation would lose them.
+    private static let outboxKey = "outbox"
+    private var outbox: [String] {
+        get { UserDefaults.standard.stringArray(forKey: SessionStore.outboxKey) ?? [] }
+        set { UserDefaults.standard.set(newValue, forKey: SessionStore.outboxKey) }
+    }
+
+    private func transfer(_ json: String, tries: Int = 0) {
+        let session = WCSession.default
+        guard session.activationState == .activated else {
+            outbox = Array((outbox + [json]).suffix(500))
+            return
+        }
         // Queued by the system and delivered, in order, even when the phone app is not running.
-        WCSession.default.transferUserInfo(["event": json])
+        session.transferUserInfo(["event": json, "tries": tries])
         updateLink()
+    }
+
+    private func flushOutbox() {
+        let waiting = outbox
+        guard !waiting.isEmpty, WCSession.default.activationState == .activated else { return }
+        outbox = []
+        waiting.forEach { transfer($0) }
     }
 
     /// The phone in reach or not, and the events still on their way: the small "syncs later" sign.
@@ -489,7 +524,12 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     func sessionReachabilityDidChange(_ session: WCSession) { updateLink() }
 
     func session(_ session: WCSession, didFinish userInfoTransfer: WCSessionUserInfoTransfer, error: Error?) {
-        // A transfer that failed is queued again by the system; either way the count is new.
+        // A transfer that failed is not tried again by the system: sent again from here, a few
+        // times (the phone applies each event once, by its id, so a second copy does no harm).
+        if error != nil, let json = userInfoTransfer.userInfo["event"] as? String {
+            let tries = (userInfoTransfer.userInfo["tries"] as? Int) ?? 0
+            if tries < 3 { DispatchQueue.main.asyncAfter(deadline: .now() + 5) { self.transfer(json, tries: tries + 1) } }
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { self.updateLink() }
     }
 
@@ -539,6 +579,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         // The phone's latest snapshot: also what a watch app opened mid-workout picks the session up from.
         if let json = session.receivedApplicationContext["snapshot"] as? String { apply(json: json) }
+        DispatchQueue.main.async { self.flushOutbox() }
         sendStatus()
         updateLink()
     }

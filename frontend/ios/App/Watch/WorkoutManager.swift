@@ -128,6 +128,35 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         }
     }
 
+    /// The app was killed (or crashed) with a workout session running: watchOS kept the session and
+    /// hands it back here, with everything it measured. Taken up as if never gone; a session this
+    /// launch started meanwhile is dropped (one workout in Apple Health, not two).
+    func recover(workoutId wid: String?) {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+        store.recoverActiveWorkoutSession { recovered, _ in
+            DispatchQueue.main.async {
+                guard let s = recovered else { return }
+                if let other = self.session, other !== s {
+                    other.end()
+                    self.builder?.discardWorkout()
+                }
+                let b = s.associatedWorkoutBuilder()
+                b.dataSource = HKLiveWorkoutDataSource(healthStore: self.store, workoutConfiguration: s.workoutConfiguration)
+                s.delegate = self
+                b.delegate = self
+                self.session = s
+                self.builder = b
+                self.wanted = true
+                if let wid = wid { self.workoutId = wid }
+                self.tagged = nil
+                self.tag()
+                if let q = self.query { self.store.stop(q) }
+                self.startQuery(from: s.startDate ?? Date())
+                self.running = true
+            }
+        }
+    }
+
     private func startQuery(from start: Date) {
         guard let type = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: nil, options: .strictStartDate)

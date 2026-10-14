@@ -46,6 +46,11 @@ final class WatchAppDelegate: NSObject, WKApplicationDelegate {
     func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
         store.openedForWorkout()
     }
+
+    /// Relaunched after being killed mid-workout: the Apple Health session watchOS kept running.
+    func handleActiveWorkoutRecovery() {
+        store.health.recover(workoutId: store.state.workout?.id)
+    }
 }
 
 /// CI's screenshots: the largest text size, or the screen as in Always On, when asked for.
@@ -274,9 +279,10 @@ struct ExercisePage: View {
     @State private var target: CrownTarget = .reps
     @State private var confirmSkip = false
     @FocusState private var crownFocus: Bool
+    @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .title) private var doneSizeScaled: CGFloat = 58
     /// Large enough to hit, small enough to leave room for the numbers at the largest text sizes.
-    private var doneSize: CGFloat { min(doneSizeScaled, 70) }
+    private var doneSize: CGFloat { min(doneSizeScaled, typeSize.isAccessibilitySize ? 62 : 70) }
 
     var body: some View {
         if let w = store.workout, w.entries.indices.contains(index) {
@@ -333,8 +339,8 @@ struct ExercisePage: View {
             }
             .padding(.horizontal, 4)
             // The set's layout is fixed (crown, Done, dots on one screen): text grows up to a size
-            // that still fits; the start screen and the summary scroll and grow all the way.
-            .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+            // that still fits on 41 mm; the start screen and the summary scroll and grow all the way.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .onAppear {
                 if SessionStore.demoScreen == "weight" || store.crownStartsOnWeight { target = .weight }
                 if entry.isBodyweight && !store.crownStartsOnWeight { target = .reps }
@@ -351,18 +357,19 @@ struct ExercisePage: View {
     @ViewBuilder private func header(_ entry: Entry) -> some View {
         HStack(alignment: .top, spacing: 6) {
             if let clip = store.clips[entry.id] {
-                ClipView(clip: clip).frame(width: 30, height: 30)
+                ClipView(clip: clip, animating: index == store.entryIndex).frame(width: 30, height: 30)
             }
             Text(entry.name)
                 .font(.system(.footnote, design: .rounded).weight(.semibold))
-                .lineLimit(2)
-                .minimumScaleFactor(0.75)
+                // One line at the large sizes (shrunk to fit): two would push the page up into the clock.
+                .lineLimit(typeSize.isAccessibilitySize ? 1 : 2)
+                .minimumScaleFactor(0.6)
                 .frame(maxWidth: .infinity, alignment: .leading)
             OfflineSign()
             HeartRateBadge(health: store.health)
         }
-        // The top row shares the screen's top with the clock: it grows less than the numbers do.
-        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
+        // The top row sits just under the clock: it grows less than the numbers do.
+        .dynamicTypeSize(...DynamicTypeSize.xLarge)
     }
 
     /// Warm-up, the side up next, superset: what kind of set this is, above the numbers.
@@ -375,6 +382,7 @@ struct ExercisePage: View {
                 if side == "R" { Tag(text: Text("Right"), color: .cyan) }
                 if entry.group != nil { Tag(text: Text("Superset"), color: .purple) }
             }
+            .dynamicTypeSize(...DynamicTypeSize.xLarge)
         }
     }
 
@@ -803,18 +811,31 @@ struct SummaryView: View {
 /// with the wrist down.
 struct ClipView: View {
     let clip: ClipFrames
+    /// Only the exercise on screen moves; the pages next to it (kept alive by the pager) stand still.
+    var animating = true
     @Environment(\.isLuminanceReduced) private var dimmed
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 12, paused: dimmed)) { ctx in
-            let t = ctx.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: max(0.1, clip.duration))
-            let i = dimmed ? 0 : min(clip.images.count - 1, Int(t / max(0.1, clip.duration) * Double(clip.images.count)))
-            Image(uiImage: clip.images[i])
-                .resizable()
-                .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+        Group {
+            if dimmed || !animating || clip.images.count < 2 {
+                // Wrist down or off screen: one still frame, no timeline at all.
+                frame(clip.images[0])
+            } else {
+                TimelineView(.animation(minimumInterval: max(1.0 / 12, clip.duration / Double(clip.images.count)))) { ctx in
+                    let t = ctx.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: max(0.1, clip.duration))
+                    let i = min(clip.images.count - 1, Int(t / max(0.1, clip.duration) * Double(clip.images.count)))
+                    frame(clip.images[i])
+                }
+            }
         }
         .accessibilityHidden(true)
+    }
+
+    private func frame(_ image: UIImage) -> some View {
+        Image(uiImage: image)
+            .resizable()
+            .scaledToFit()
+            .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
 
