@@ -36,10 +36,14 @@ https://testflight.apple.com/join/RKATb61k
   plain http, like on Android (#428).
 - **A logo instead of a black screen** while the app starts, loading its plates.
 
-**Android.** The app now targets Android 16 and needs Android 7.0 or newer (6.0 is out). A Google
-Play version is ready for the store: it updates through Play and gets the sharper animations as
-Play downloads, like the iPhone. The APK you know stays, updates itself, and can move to the Play
-version later without losing anything.
+**Android.** The app now targets Android 16 and needs Android 7.0 or newer (6.0 is out). The APK
+you know stays and updates itself, now in two sizes: **Standard** (`openGym-1.4.2.apk`, animations
+built in at 180 px, the small one) and **HD** (`openGym-HD-1.4.2.apk`, 360 px, sharper and
+heavier). Each one updates to its own kind, so nobody gets a surprise download twice the size.
+Phones on v1.4.1 update to Standard; want HD? Install it on top, your data stays (same goes for
+going back). A Google Play version is ready for the store too: it updates through Play and gets
+the sharper animations as Play downloads, like the iPhone, and an APK phone can move to it later
+without losing anything.
 
 **Your account, your call.**
 - **Delete your account** from Settings → Account. It offers your backup first, asks you to type
