@@ -1287,8 +1287,8 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
   const isSwap = !!like || title === t('Swap exercise') || title === t('Replace exercise') || title === 'Swap exercise' || title === 'Replace exercise'
   const quickIcon = actionIcon || (isSwap ? 'swap' : 'plus')
   const quickLabel = e => isSwap
-    ? (title ? `${title}: ${exerciseNameFor(e)}` : `${t('Swap exercise')}: ${exerciseNameFor(e)}`)
-    : t('Add “{0}”', exerciseNameFor(e))
+    ? (title ? `${title}: ${exerciseNameText(e)}` : `${t('Swap exercise')}: ${exerciseNameText(e)}`)
+    : t('Add “{0}”', exerciseNameText(e))
   const usage = usageMap(st)
   const [q, setQ] = useState('')
   const backupList = (Array.isArray(backups) ? backups : []).map(id => EXIDX[id]).filter(Boolean)
@@ -1683,11 +1683,11 @@ function BackupsSheet({ ex, subs: initial, onChange, close }) {
     }, { title: t('Add a backup'), like: ex.id })
   }
   return <>
-    <h3>{t('Backups for {0}', exerciseNameFor(ex))}</h3>
+    <h3>{t('Backups for {0}', exerciseNameText(ex))}</h3>
     <div className="muted small" style={{ marginBottom: 12 }}>{t('Machine taken? Pick what you’d do instead, and a swap mid-workout offers these first.')}</div>
     {subs.length > 0 && <div className="sect-b" style={{ marginBottom: 12 }}>
-      {subs.map(id => EXIDX[id]).filter(Boolean).map(b => <Row key={b.id} title={exerciseNameFor(b)} subtitle={t(b.eq)}>
-        <button type="button" className="iconbtn" aria-label={t('Remove “{0}”', exerciseNameFor(b))} onClick={() => set(subs.filter(x => x !== b.id))}><Icon name="xmark" /></button>
+      {subs.map(id => EXIDX[id]).filter(Boolean).map(b => <Row key={b.id} title={exerciseNameText(b)} subtitle={t(b.eq)}>
+        <button type="button" className="iconbtn" aria-label={t('Remove “{0}”', exerciseNameText(b))} onClick={() => set(subs.filter(x => x !== b.id))}><Icon name="xmark" /></button>
       </Row>)}
     </div>}
     {subs.length < MAX_BACKUPS
