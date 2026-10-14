@@ -2398,4 +2398,13 @@ export default {
   'Next exercise during the rest': 'Próximo exercício no descanso',
   'Ring': 'Anel',
   'Countdown only': 'Só contagem',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'As tuas barras',
+  'Set the bar once for every exercise of a type.': 'Define a barra uma vez para todos os exercícios de um tipo.',
+  'Your bar for this type, set in Your bars.': 'A tua barra para este tipo, definida em As tuas barras.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'O que pesam as barras do teu ginásio. Cada exercício com essa barra conta os discos a partir dela, a não ser que lhe tenhas dado uma própria. Os pesos registados continuam a ser totais.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'A maioria dos exercícios da biblioteca usa «{0}», alguns usam «{1}». Para uma barra curta em todos, define as duas.',
+  'Back to the standard bars': 'Voltar às barras padrão',
+  'Standard bars. Tap if yours are lighter.': 'Barras padrão. Toca se as tuas forem mais leves.',
+  'The last warm-up still gets the full rest before your first work set.': 'O último aquecimento continua a ter o descanso completo antes da tua primeira série de trabalho.',
 }

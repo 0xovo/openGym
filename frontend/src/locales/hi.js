@@ -2398,4 +2398,13 @@ export default {
   'Next exercise during the rest': 'आराम में अगला व्यायाम',
   'Ring': 'रिंग',
   'Countdown only': 'सिर्फ़ उलटी गिनती',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'आपकी बार',
+  'Set the bar once for every exercise of a type.': 'एक तरह की सभी एक्सरसाइज़ के लिए बार एक बार सेट करें।',
+  'Your bar for this type, set in Your bars.': 'इस तरह के लिए आपकी बार, आपकी बार में सेट की गई।',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'आपके जिम की बार का वज़न। उस बार वाली हर एक्सरसाइज़ प्लेटें इसी से गिनती है, जब तक आपने उसे अपनी अलग बार न दी हो। लॉग किए वज़न कुल वज़न ही रहते हैं।',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'लाइब्रेरी की ज़्यादातर एक्सरसाइज़ “{0}” इस्तेमाल करती हैं, कुछ “{1}”। हर जगह छोटी बार के लिए दोनों सेट करें।',
+  'Back to the standard bars': 'स्टैंडर्ड बार पर वापस जाएँ',
+  'Standard bars. Tap if yours are lighter.': 'स्टैंडर्ड बार। आपकी हल्की हैं तो टैप करें।',
+  'The last warm-up still gets the full rest before your first work set.': 'आख़िरी वार्म-अप सेट को फिर भी पहले वर्क सेट से पहले पूरा आराम मिलता है।',
 }

@@ -2398,4 +2398,13 @@ export default {
   'Next exercise during the rest': 'Esercizio successivo durante il recupero',
   'Ring': 'Anello',
   'Countdown only': 'Solo conto alla rovescia',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'I tuoi bilancieri',
+  'Set the bar once for every exercise of a type.': 'Imposta il bilanciere una volta per tutti gli esercizi di un tipo.',
+  'Your bar for this type, set in Your bars.': 'Il tuo bilanciere per questo tipo, impostato in I tuoi bilancieri.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'Quanto pesano i bilancieri della tua palestra. Ogni esercizio con quel bilanciere conta i dischi da lì, a meno che tu non gliene abbia dato uno suo. I pesi registrati restano totali.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'La maggior parte degli esercizi della libreria usa «{0}», alcuni «{1}». Per un bilanciere corto ovunque, imposta entrambi.',
+  'Back to the standard bars': 'Torna ai bilancieri standard',
+  'Standard bars. Tap if yours are lighter.': 'Bilancieri standard. Tocca se i tuoi sono più leggeri.',
+  'The last warm-up still gets the full rest before your first work set.': 'L’ultima serie di riscaldamento ha comunque il recupero pieno prima della tua prima serie allenante.',
 }

@@ -191,6 +191,23 @@ describe('warmupRestSecFor', () => {
     expect(warmupRestSecFor(ramp(45, [true, true, false, false]), 0, 150)).toBe(150)
   })
 
+  // Discord (seals187): one warm-up rest for the whole profile, S.warmupRestSec.
+  it('without its own, a ramp set rests the profile\'s warm-up rest; 0 is no timer', () => {
+    expect(warmupRestSecFor(ramp(null), 0, 150, 30)).toBe(30)
+    expect(warmupRestSecFor(ramp(null), 0, 150, 0)).toBe(0)
+    for (const v of [undefined, null, '30', NaN]) expect(warmupRestSecFor(ramp(null), 0, 150, v), String(v)).toBe(150)
+  })
+
+  it('the exercise\'s own wins over the profile\'s, its "no timer" too', () => {
+    expect(warmupRestSecFor(ramp(45), 0, 150, 30)).toBe(45)
+    expect(warmupRestSecFor({ target: { warmupRestOff: true }, sets: ramp(null).sets }, 0, 150, 30)).toBe(0)
+  })
+
+  it('the profile\'s never touches the last ramp set or a work set', () => {
+    expect(warmupRestSecFor(ramp(null), 1, 150, 0)).toBe(150)
+    expect(warmupRestSecFor(ramp(null), 2, 150, 30)).toBe(150)
+  })
+
   it('is safe on a legacy warmup boolean and on missing entries', () => {
     const legacy = { target: { warmupRestSec: 45 }, sets: [{ warmup: true, done: false }, { warmup: true, done: false }, { done: false }] }
     expect(warmupRestSecFor(legacy, 0, 120)).toBe(45)

@@ -2409,4 +2409,13 @@ export default {
   'Next exercise during the rest': 'ท่าถัดไประหว่างพัก',
   'Ring': 'วงแหวน',
   'Countdown only': 'นับถอยหลังอย่างเดียว',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'บาร์ของคุณ',
+  'Set the bar once for every exercise of a type.': 'ตั้งบาร์ครั้งเดียวสำหรับทุกท่าของบาร์ชนิดนั้น',
+  'Your bar for this type, set in Your bars.': 'บาร์ของคุณสำหรับชนิดนี้ ตั้งไว้ในบาร์ของคุณ',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'น้ำหนักบาร์ที่ยิมของคุณ ทุกท่าที่ใช้บาร์นั้นจะนับแผ่นน้ำหนักจากค่านี้ เว้นแต่คุณตั้งบาร์ให้ท่านั้นเอง น้ำหนักที่บันทึกยังเป็นน้ำหนักรวม',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'ท่าส่วนใหญ่ในคลังใช้ “{0}” บางท่าใช้ “{1}” ถ้าจะใช้บาร์สั้นทุกท่า ให้ตั้งทั้งสองอย่าง',
+  'Back to the standard bars': 'กลับไปใช้บาร์มาตรฐาน',
+  'Standard bars. Tap if yours are lighter.': 'บาร์มาตรฐาน แตะถ้าบาร์ของคุณเบากว่า',
+  'The last warm-up still gets the full rest before your first work set.': 'เซ็ตวอร์มอัพสุดท้ายยังได้พักเต็มก่อนเซ็ตหลักเซ็ตแรก',
 }

@@ -2398,4 +2398,13 @@ export default {
   'Next exercise during the rest': 'Dinlenmede sıradaki egzersiz',
   'Ring': 'Halka',
   'Countdown only': 'Yalnızca geri sayım',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'Barların',
+  'Set the bar once for every exercise of a type.': 'Barı bir türdeki tüm egzersizler için bir kez ayarla.',
+  'Your bar for this type, set in Your bars.': 'Bu tür için barın, Barların bölümünde ayarlandı.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'Salonundaki barların ağırlığı. O barla yapılan her egzersiz, kendine ait bir bar vermediysen diskleri buradan hesaplar. Kaydedilen ağırlıklar toplam olarak kalır.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'Kütüphanedeki çoğu egzersiz “{0}”, birkaçı “{1}” kullanır. Her yerde kısa bar için ikisini de ayarla.',
+  'Back to the standard bars': 'Standart barlara dön',
+  'Standard bars. Tap if yours are lighter.': 'Standart barlar. Seninkiler daha hafifse dokun.',
+  'The last warm-up still gets the full rest before your first work set.': 'Son ısınma seti yine de ilk çalışma setinden önce tam dinlenmeyi alır.',
 }

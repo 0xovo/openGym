@@ -31,8 +31,8 @@
 <body>
 <!-- The boot screen: painted with the HTML, before any script runs, so the gap between the
      native splash and the first real screen is the logo loading its plates instead of a black
-     page. Same dark and lime as the native splash. App.jsx takes it away (window.__hideBoot)
-     the moment it can draw, so it never adds a wait. -->
+     page. Same dark and lime as the native splash. lib/boot.js takes it away the moment the
+     app can draw, so it never adds a wait. -->
 <style>
   #boot{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:#0c0e12;transition:opacity .22s ease-out}
   #boot.out{opacity:0;pointer-events:none}
@@ -68,16 +68,6 @@
     </g>
   </svg>
 </div>
-<script>
-  window.__hideBoot = function () {
-    var b = document.getElementById('boot')
-    if (!b || b.className) return
-    b.className = 'out'
-    setTimeout(function () { b.remove() }, 260)
-  }
-  // A script that dies before the app draws would otherwise leave the logo lifting forever.
-  window.addEventListener('error', window.__hideBoot, { once: true })
-</script>
 <div id="root"></div>
 <script type="module" src="/src/main.jsx"></script>
 </body>

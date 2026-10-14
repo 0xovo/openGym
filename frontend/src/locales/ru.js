@@ -2402,4 +2402,13 @@ export default {
   'Next exercise during the rest': 'Следующее упражнение во время отдыха',
   'Ring': 'Кольцо',
   'Countdown only': 'Только отсчёт',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'Твои грифы',
+  'Set the bar once for every exercise of a type.': 'Задай гриф один раз для всех упражнений одного типа.',
+  'Your bar for this type, set in Your bars.': 'Твой гриф для этого типа, задан в «Твои грифы».',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'Сколько весят грифы в твоём зале. Каждое упражнение с этим грифом считает блины от него, если ты не задал ему свой. Записанные веса остаются общими.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'Большинство упражнений в библиотеке используют «{0}», некоторые «{1}». Чтобы короткий гриф был везде, задай оба.',
+  'Back to the standard bars': 'Вернуть стандартные грифы',
+  'Standard bars. Tap if yours are lighter.': 'Стандартные грифы. Нажми, если твои легче.',
+  'The last warm-up still gets the full rest before your first work set.': 'Последний разминочный подход всё равно получает полный отдых перед первым рабочим.',
 }

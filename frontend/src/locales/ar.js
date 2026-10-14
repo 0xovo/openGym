@@ -2453,4 +2453,13 @@ export default {
   'Next exercise during the rest': 'التمرين التالي أثناء الراحة',
   'Ring': 'حلقة',
   'Countdown only': 'العد التنازلي فقط',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'البارات الخاصة بك',
+  'Set the bar once for every exercise of a type.': 'اضبط البار مرة واحدة لكل تمارين النوع نفسه.',
+  'Your bar for this type, set in Your bars.': 'البار الخاص بك لهذا النوع، مضبوط في البارات الخاصة بك.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'كم تزن البارات في ناديك. كل تمرين بهذا البار يحسب الأقراص منه، إلا إذا أعطيت التمرين بارًا خاصًا به. الأوزان المسجلة تبقى أوزانًا إجمالية.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'معظم تمارين المكتبة تستخدم «{0}»، وبعضها «{1}». لبار قصير في كل مكان، اضبط الاثنين.',
+  'Back to the standard bars': 'العودة إلى البارات القياسية',
+  'Standard bars. Tap if yours are lighter.': 'بارات قياسية. اضغط إذا كانت باراتك أخف.',
+  'The last warm-up still gets the full rest before your first work set.': 'آخر مجموعة إحماء تحصل مع ذلك على الراحة الكاملة قبل أول مجموعة عمل.',
 }
