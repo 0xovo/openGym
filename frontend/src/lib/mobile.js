@@ -48,18 +48,37 @@ export async function nativePlatform() {
 
 const FILE = 'opengym-state.json'
 
+// Written whole to a second file first and then moved over the first, so a write cut short (the
+// app killed mid-write, the battery gone) never leaves a half file where the last good copy was.
+// A move that did not finish leaves the new copy under FILE_NEW: whichever of the two parses and
+// is the later one (`_ts`) is the copy.
+const FILE_NEW = 'opengym-state.next.json'
+
 export async function nativeLoad() {
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
-    const r = await Filesystem.readFile({ path: FILE, directory: Directory.Data, encoding: Encoding.UTF8 })
-    return JSON.parse(r.data)
+    const read = async path => {
+      try { return JSON.parse((await Filesystem.readFile({ path, directory: Directory.Data, encoding: Encoding.UTF8 })).data) } catch { return null }
+    }
+    const main = await read(FILE)
+    const next = typeof Filesystem.rename === 'function' ? await read(FILE_NEW) : null
+    if (next && typeof next === 'object' && (!main || (Number(next._ts) || 0) > (Number(main._ts) || 0))) return next
+    return main
   } catch (e) { return null }   // first launch, or unreadable — localStorage copy takes over
 }
 
 export async function nativeSave(state) {
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
-    await Filesystem.writeFile({ path: FILE, directory: Directory.Data, data: JSON.stringify(state), encoding: Encoding.UTF8 })
+    const data = JSON.stringify(state)
+    if (typeof Filesystem.rename === 'function') {
+      try {
+        await Filesystem.writeFile({ path: FILE_NEW, directory: Directory.Data, data, encoding: Encoding.UTF8 })
+        await Filesystem.rename({ from: FILE_NEW, to: FILE, directory: Directory.Data, toDirectory: Directory.Data })
+        return
+      } catch { /* the plain write below */ }
+    }
+    await Filesystem.writeFile({ path: FILE, directory: Directory.Data, data, encoding: Encoding.UTF8 })
   } catch (e) { /* keep the localStorage copy */ }
 }
 

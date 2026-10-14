@@ -2407,4 +2407,11 @@ export default {
   'Back to the standard bars': 'Wróć do standardowych gryfów',
   'Standard bars. Tap if yours are lighter.': 'Standardowe gryfy. Stuknij, jeśli twoje są lżejsze.',
   'The last warm-up still gets the full rest before your first work set.': 'Ostatnia seria rozgrzewkowa i tak dostaje pełną przerwę przed pierwszą serią roboczą.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Dni w tygodniu',
+  'Hours': 'Godziny',
+  'h': 'godz.',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Na tym urządzeniu jest 1 trening, którego nie ma w tej kopii. Zastąpienie danych go usunie.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Na tym urządzeniu są treningi, których nie ma w tej kopii ({0}). Zastąpienie danych je usunie.',
 }

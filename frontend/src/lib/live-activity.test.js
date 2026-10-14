@@ -97,6 +97,18 @@ describe('the Done taps', () => {
     expect(L.applyLiveEvents([ev('e1'), ev('e2', { setIdx: 1 })], getState)).toEqual(['e1', 'e2'])
     expect(calls.map(c => c[1])).toEqual([0, 1])
   })
+  it('applies nothing before the store has its copy back, and acknowledges only after the save', async () => {
+    const order = []
+    let ready = false
+    const saveNow = async () => { order.push('saved') }
+    L._setLivePluginForTest({ drain: async () => ({ events: [ev('e1')] }), ack: async ({ ids }) => { order.push('ack:' + ids) } }, () => ({ S: ready ? state : { active: null }, ready, saveNow }))
+    unbind = L.bindLiveActions({ setDone: (idx, i) => { order.push('applied'); state.active.entries[idx].sets[i].done = true } })
+    expect(await L.drainLiveEvents()).toEqual([])
+    expect(order).toEqual([])
+    ready = true
+    expect(await L.drainLiveEvents()).toEqual(['e1'])
+    expect(order).toEqual(['applied', 'saved', 'ack:e1'])
+  })
   it('drains the native queue and acknowledges what it applied', async () => {
     const acked = []
     const queue = [ev('e1')]
@@ -124,6 +136,20 @@ describe('startLiveActivitySync', () => {
   beforeEach(() => { vi.useFakeTimers(); localStorage.clear(); L._resetLiveActivity(); state = S(active()); timer = null; storeSubs = []; uiSubs = []; calls = [] })
   afterEach(() => { vi.useRealTimers(); L._resetLiveActivity() })
 
+  it('at launch, an empty copy not restored yet does not end the running workout\'s activity', async () => {
+    let ready = false
+    const blank = { ...state, active: null }
+    const store = { getState: () => ({ S: ready ? state : blank, ready }), subscribe: useStore.subscribe }
+    L._setLivePluginForTest(plugin())
+    const stop = await L.startLiveActivitySync({ useStore: store, useUI })
+    await vi.runAllTimersAsync()
+    expect(calls).toEqual([])
+    ready = true
+    storeSubs.forEach(fn => fn({ S: state, ready: true }, { S: blank, ready: false }))
+    await vi.runAllTimersAsync()
+    expect(calls).toEqual([['update', 'w1', expect.objectContaining({ name: 'Push' })]])
+    stop()
+  })
   it('shows the workout, updates it on a change, and ends it with the workout', async () => {
     L._setLivePluginForTest(plugin())
     const stop = await L.startLiveActivitySync({ useStore, useUI })

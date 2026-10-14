@@ -262,14 +262,17 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
               let data = json.data(using: .utf8),
               let event = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
               event["id"] is String else { return }
-        queue.async {
+        // On disk before this returns: once it has, WatchConnectivity counts the transfer as
+        // delivered, and an app woken in the background for it may be suspended right after. An
+        // async write could then never run, and the watch would not send the set again.
+        queue.sync {
             var events = self.readEvents()
             if !events.contains(where: { ($0["id"] as? String) == (event["id"] as? String) }) {
                 events.append(event)
                 self.writeEvents(events)
             }
-            DispatchQueue.main.async { self.notifyListeners("watchEvent", data: event) }
         }
+        DispatchQueue.main.async { self.notifyListeners("watchEvent", data: event) }
     }
 
     /// The page asked for the status before the session was up (right after launch): it is told now.

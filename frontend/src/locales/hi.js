@@ -2407,4 +2407,11 @@ export default {
   'Back to the standard bars': 'स्टैंडर्ड बार पर वापस जाएँ',
   'Standard bars. Tap if yours are lighter.': 'स्टैंडर्ड बार। आपकी हल्की हैं तो टैप करें।',
   'The last warm-up still gets the full rest before your first work set.': 'आख़िरी वार्म-अप सेट को फिर भी पहले वर्क सेट से पहले पूरा आराम मिलता है।',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'हफ़्ते में दिन',
+  'Hours': 'घंटे',
+  'h': 'घं.',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'इस डिवाइस पर 1 वर्कआउट है जो इस बैकअप में नहीं है। बदलने से यह मिट जाएगा।',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'इस डिवाइस पर {0} वर्कआउट हैं जो इस बैकअप में नहीं हैं। बदलने से ये मिट जाएँगे।',
 }

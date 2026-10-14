@@ -2404,4 +2404,11 @@ export default {
   'Back to the standard bars': 'Повернути стандартні грифи',
   'Standard bars. Tap if yours are lighter.': 'Стандартні грифи. Торкнися, якщо твої легші.',
   'The last warm-up still gets the full rest before your first work set.': 'Останній розминковий підхід усе одно отримує повний відпочинок перед першим робочим.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Днів на тиждень',
+  'Hours': 'Години',
+  'h': 'год',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'На цьому пристрої є 1 тренування, якого немає в цій копії. Заміна його видалить.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'На цьому пристрої є тренування, яких немає в цій копії ({0}). Заміна їх видалить.',
 }

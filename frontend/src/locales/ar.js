@@ -2462,4 +2462,11 @@ export default {
   'Back to the standard bars': 'العودة إلى البارات القياسية',
   'Standard bars. Tap if yours are lighter.': 'بارات قياسية. اضغط إذا كانت باراتك أخف.',
   'The last warm-up still gets the full rest before your first work set.': 'آخر مجموعة إحماء تحصل مع ذلك على الراحة الكاملة قبل أول مجموعة عمل.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'أيام في الأسبوع',
+  'Hours': 'الساعات',
+  'h': 'س',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'على هذا الجهاز تمرين واحد ليس في هذه النسخة الاحتياطية. الاستبدال يحذفه.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'على هذا الجهاز {0} تمارين ليست في هذه النسخة الاحتياطية. الاستبدال يحذفها.',
 }

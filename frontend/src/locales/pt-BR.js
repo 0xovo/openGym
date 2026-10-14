@@ -1532,6 +1532,9 @@ export const PT_BR_OVERRIDES = {
   'Back to the standard bars': 'Voltar às barras padrão',
   'Standard bars. Tap if yours are lighter.': 'Barras padrão. Toque se as suas forem mais leves.',
   'The last warm-up still gets the full rest before your first work set.': 'O último aquecimento continua tendo o descanso completo antes da sua primeira série de trabalho.',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Este dispositivo tem 1 treino que não está neste backup. Substituir exclui esse treino.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Este dispositivo tem {0} treinos que não estão neste backup. Substituir exclui esses treinos.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

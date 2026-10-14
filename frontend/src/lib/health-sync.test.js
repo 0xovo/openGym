@@ -28,7 +28,11 @@ vi.mock('@capacitor/core', () => ({
       h.calls.push(['write', arg])
       if (h.fail) throw Object.assign(new Error('refused'), { code: h.fail })
     },
-    remove: async arg => { h.calls.push(['remove', arg]) },
+    remove: async arg => {
+      h.calls.push(['remove', arg])
+      if (h.removeFail) throw Object.assign(new Error('refused'), { code: h.removeFail })
+      return h.left ? { left: h.left } : undefined
+    },
     openSettings: async () => {},
     setEnabled: async ({ on }) => { h.calls.push(['setEnabled', on]) },
   }),
@@ -45,7 +49,7 @@ const file = () => JSON.parse(h.files.get('opengym-health.json') || 'null')
 let hs
 beforeEach(async () => {
   vi.resetModules()
-  h.files.clear(); h.calls = []; h.status = { status: 'available', granted: false }; h.grant = true; h.fail = null; h.platform = 'android'; h.plugins = []
+  h.files.clear(); h.calls = []; h.status = { status: 'available', granted: false }; h.grant = true; h.fail = null; h.removeFail = null; h.left = null; h.platform = 'android'; h.plugins = []
   hs = await import('./health-sync.js')
 })
 
@@ -98,7 +102,7 @@ describe('keeping in step', () => {
     expect(writes().map(w => w.sessions.map(s => s.id))).toEqual([['opengym-w-w2']])
 
     h.calls = []
-    await hs.syncHealth(state([workout('w2', 18)]))
+    await hs.syncHealth({ ...state([workout('w2', 18)]), deleted: { workouts: { w1: at(20, 9) } } })
     expect(writes()).toEqual([])
     expect(removes()).toEqual([{ sessions: ['opengym-w-w1'], weights: [] }])
     expect(Object.keys(file().written)).toEqual(['opengym-w-w2'])
@@ -124,6 +128,87 @@ describe('keeping in step', () => {
     await Promise.all([a, b, c])
     // The second call is overtaken by the third before it runs: two writes, not three.
     expect(writes().map(w => w.sessions.map(s => s.id))).toEqual([['opengym-w-w1'], ['opengym-w-w2', 'opengym-w-w3']])
+  })
+})
+
+// The owner, TestFlight: a workout or a weigh-in deleted in openGym goes from Apple Health too,
+// wherever the deletion was made, and nothing else ever does.
+describe('deleting in openGym', () => {
+  const bw = (d, w) => ({ d: `2026-09-${d}`, w, t: at(d, 7) })
+  it('takes a deleted workout and a removed weigh-in out, and rewrites an edited one', async () => {
+    await hs.enableHealth(state([workout('w1', 17), workout('w2', 18)], [bw(17, 80), bw(18, 79)]))
+    h.calls = []
+    const edited = { ...workout('w2', 18), name: 'Push, heavier' }
+    await hs.syncHealth({ ...state([edited], [bw(18, 79)]), deleted: { workouts: { w1: at(20, 9) }, bodyweight: { '2026-09-17': at(20, 9) } } })
+    expect(writes().map(w => w.sessions.map(s => s.title))).toEqual([['Push, heavier']])
+    expect(removes()).toEqual([{ sessions: ['opengym-w-w1'], weights: ['opengym-bw-2026-09-17'] }])
+    expect(Object.keys(file().written).sort()).toEqual(['opengym-bw-2026-09-18', 'opengym-w-w2'])
+  })
+
+  it('a copy that merely lacks them (signed out, not loaded yet) removes nothing', async () => {
+    await hs.enableHealth(state([workout('w1', 17)], [bw(17, 80)]))
+    h.calls = []
+    await hs.syncHealth(state([], []))
+    expect(removes()).toEqual([])
+    expect(Object.keys(file().written).sort()).toEqual(['opengym-bw-2026-09-17', 'opengym-w-w1'])
+    // …and back with them, nothing is written twice.
+    await hs.syncHealth(state([workout('w1', 17)], [bw(17, 80)]))
+    expect(h.calls).toEqual([])
+  })
+
+  it('a deletion made on another device goes when it syncs in, even after a copy without the workout', async () => {
+    await hs.enableHealth(state([workout('w1', 17), workout('w2', 18)]))
+    await hs.syncHealth(state([workout('w2', 18)]))              // the merge has not brought the record yet
+    expect(removes()).toEqual([])
+    await hs.syncHealth({ ...state([workout('w2', 18)]), deleted: { workouts: { w1: at(21, 9) } } })
+    expect(removes()).toEqual([{ sessions: ['opengym-w-w1'], weights: [] }])
+  })
+
+  it('a deletion while it was off goes once it is on again', async () => {
+    await hs.enableHealth(state([workout('w1', 17)]))
+    await hs.disableHealth({ removeWritten: false })
+    h.calls = []
+    const after = { ...state([]), deleted: { workouts: { w1: at(21, 9) } } }
+    await hs.syncHealth(after)
+    expect(h.calls.filter(c => c[0] === 'remove')).toEqual([])
+    await hs.enableHealth(after)
+    expect(removes()).toEqual([{ sessions: ['opengym-w-w1'], weights: [] }])
+    expect(file().written).toEqual({})
+  })
+
+  it('an add-back (a negative stamp) is not a deletion, and an entry this phone never wrote is skipped', async () => {
+    await hs.enableHealth(state([workout('w1', 17)]))
+    h.calls = []
+    await hs.syncHealth({ ...state([]), deleted: { workouts: { w1: -at(21, 9), old: at(21, 9) } } })
+    expect(removes()).toEqual([])
+  })
+
+  it('"Reset everything" takes out what it wiped', async () => {
+    await hs.enableHealth(state([workout('w1', 17)], [bw(17, 80)]))
+    h.calls = []
+    await hs.syncHealth({ ...state([]), resetAt: at(22, 9), resetIds: { workouts: ['w1'], bodyweight: ['2026-09-17|' + at(17, 7)] } })
+    expect(removes()).toEqual([{ sessions: ['opengym-w-w1'], weights: ['opengym-bw-2026-09-17'] }])
+  })
+
+  it('a refused removal is tried again on the next sync, and one Apple Health kept is not forgotten', async () => {
+    await hs.enableHealth(state([workout('w1', 17), workout('w2', 18)]))
+    const gone = { ...state([]), deleted: { workouts: { w1: at(21, 9), w2: at(21, 9) } } }
+    h.removeFail = 'permission'
+    await hs.syncHealth(gone)
+    expect(file().error).toBe('permission')
+    expect(Object.keys(file().written).sort()).toEqual(['opengym-w-w1', 'opengym-w-w2'])
+    h.removeFail = null
+    h.left = ['opengym-w-w2']                                   // say the watch's copy stayed
+    h.calls = []
+    await hs.syncHealth(gone)
+    expect(removes()).toEqual([{ sessions: ['opengym-w-w1', 'opengym-w-w2'], weights: [] }])
+    expect(Object.keys(file().written)).toEqual(['opengym-w-w2'])
+    expect(file().error).toBeNull()
+    h.left = null
+    h.calls = []
+    await hs.syncHealth(gone)
+    expect(removes()).toEqual([{ sessions: ['opengym-w-w2'], weights: [] }])
+    expect(file().written).toEqual({})
   })
 })
 

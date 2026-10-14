@@ -2407,4 +2407,11 @@ export default {
   'Back to the standard bars': 'Voltar às barras padrão',
   'Standard bars. Tap if yours are lighter.': 'Barras padrão. Toca se as tuas forem mais leves.',
   'The last warm-up still gets the full rest before your first work set.': 'O último aquecimento continua a ter o descanso completo antes da tua primeira série de trabalho.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Dias por semana',
+  'Hours': 'Horas',
+  'h': 'h',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Este dispositivo tem 1 treino que não está nesta cópia. Substituir elimina-o.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Este dispositivo tem {0} treinos que não estão nesta cópia. Substituir elimina-os.',
 }

@@ -2400,4 +2400,11 @@ export default {
   'Back to the standard bars': '恢復標準槓鈴桿',
   'Standard bars. Tap if yours are lighter.': '標準槓鈴桿。如果你的比較輕，點這裡。',
   'The last warm-up still gets the full rest before your first work set.': '最後一組熱身仍會在第一組正式組前完整休息。',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': '每週天數',
+  'Hours': '小時',
+  'h': '小時',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': '此裝置上有 1 筆訓練紀錄不在此備份中。覆蓋將會刪除它。',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': '此裝置上有 {0} 筆訓練紀錄不在此備份中。覆蓋將會將其全數刪除。',
 }

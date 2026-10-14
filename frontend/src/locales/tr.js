@@ -2407,4 +2407,11 @@ export default {
   'Back to the standard bars': 'Standart barlara dön',
   'Standard bars. Tap if yours are lighter.': 'Standart barlar. Seninkiler daha hafifse dokun.',
   'The last warm-up still gets the full rest before your first work set.': 'Son ısınma seti yine de ilk çalışma setinden önce tam dinlenmeyi alır.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Haftada kaç gün',
+  'Hours': 'Saat',
+  'h': 'sa',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Bu cihazda bu yedekte olmayan 1 antrenman var. Değiştirmek onu siler.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Bu cihazda bu yedekte olmayan {0} antrenman var. Değiştirmek onları siler.',
 }

@@ -2410,4 +2410,11 @@ export default {
   'Back to the standard bars': 'Vissza a szabványos rudakhoz',
   'Standard bars. Tap if yours are lighter.': 'Szabványos rudak. Koppints, ha a tieid könnyebbek.',
   'The last warm-up still gets the full rest before your first work set.': 'Az utolsó bemelegítő sorozat így is teljes pihenőt kap az első munkasorozatod előtt.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Nap hetente',
+  'Hours': 'Órák',
+  'h': 'ó',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Ezen az eszközön 1 edzés van, amely nincs ebben a mentésben. A csere törli.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Ezen az eszközön {0} edzés van, amely nincs ebben a mentésben. A csere törli őket.',
 }

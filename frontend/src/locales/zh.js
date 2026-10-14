@@ -2407,4 +2407,11 @@ export default {
   'Back to the standard bars': '恢复标准杠铃杆',
   'Standard bars. Tap if yours are lighter.': '标准杠铃杆。如果你的更轻，点这里。',
   'The last warm-up still gets the full rest before your first work set.': '最后一组热身仍会在第一组正式组前完整休息。',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': '每周天数',
+  'Hours': '小时',
+  'h': '小时',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': '此设备上有 1 次训练不在此备份中。替换会删除它。',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': '此设备上有 {0} 次训练不在此备份中。替换会删除它们。',
 }

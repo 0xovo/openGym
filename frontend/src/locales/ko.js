@@ -2407,4 +2407,11 @@ export default {
   'Back to the standard bars': '기본 바로 되돌리기',
   'Standard bars. Tap if yours are lighter.': '기본 바. 내 바가 더 가벼우면 탭하세요.',
   'The last warm-up still gets the full rest before your first work set.': '마지막 워밍업 세트는 그래도 첫 본 세트 전에 전체 휴식을 받아요.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': '주당 일수',
+  'Hours': '시간',
+  'h': '시간',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': '이 기기에 이 백업에 없는 운동이 1개 있습니다. 바꾸면 삭제됩니다.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': '이 기기에 이 백업에 없는 운동이 {0}개 있습니다. 바꾸면 삭제됩니다.',
 }

@@ -42,24 +42,21 @@ afterEach(() => {
   localStorage.clear()
 })
 
-it('shows only the action during a workout and restores navigation when minimized', async () => {
+// The owner, 2026-10-14: no extra bottom button to complete or finish during a workout (#563 is
+// undone). The running workout has the whole screen again; Finish lives in its header.
+it('a running workout has no tab bar and no bottom action; minimized, the tabs and Resume are back', async () => {
   await act(async () => root.render(<App />))
-  expect(host.querySelectorAll('#tabbar button')).toHaveLength(1)
-  expect(document.body.classList.contains('no-tabbar')).toBe(false)
-  const action = host.querySelector('#tabbar button')
-  expect(action.getAttribute('aria-label')).toBe('Complete set')
-  await act(async () => action.click())
-  expect(useStore.getState().S.active.entries[0].sets.map(s => s.done)).toEqual([true, false])
-  expect(host.querySelector('#timer')).not.toBeNull()
+  expect(host.querySelector('#tabbar')).toBeNull()
+  expect(document.body.classList.contains('no-tabbar')).toBe(true)
   await act(async () => host.querySelector('.whdr button[aria-label="Minimize"]').click())
   expect(host.querySelectorAll('#tabbar button')).toHaveLength(5)
   expect(host.querySelector('#tabbar .start').getAttribute('aria-label')).toBe('Resume')
   await act(async () => host.querySelector('#tabbar .start').click())
-  expect(host.querySelectorAll('#tabbar button')).toHaveLength(1)
-  expect(useStore.getState().S.active.entries[0].sets.map(s => s.done)).toEqual([true, false])
+  expect(host.querySelector('#tabbar')).toBeNull()
+  expect(useStore.getState().S.active.entries[0].sets.map(s => s.done)).toEqual([false, false])
 })
 
-it.each([{ editingWorkoutId: 'saved' }, { backfill: true }])('does not offer a live action for past workouts: %j', async flags => {
+it.each([{ editingWorkoutId: 'saved' }, { backfill: true }])('past workouts have no tab bar either: %j', async flags => {
   useStore.getState().update(s => Object.assign(s.active, flags), false)
   await act(async () => root.render(<App />))
   expect(host.querySelector('#tabbar')).toBeNull()

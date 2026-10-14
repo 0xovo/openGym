@@ -13,7 +13,8 @@ import UIKit
  *
  * A workout the Apple Watch app already saved for the same session (same sync identifier, the
  * watch as its source) is left as it is: it has the heart rate in it, and a second copy would count
- * the session twice.
+ * the session twice. Removing takes that copy out too, and says which ids Apple Health still holds
+ * afterwards, so lib/health-sync.js keeps them and tries again rather than forgetting them.
  */
 @objc(AppleHealthPlugin)
 public class AppleHealthPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -92,9 +93,10 @@ public class AppleHealthPlugin: CAPPlugin, CAPBridgedPlugin {
         let weights = (call.getArray("weights") as? [String]) ?? []
         Task {
             do {
-                if !sessions.isEmpty { try await self.delete(HKObjectType.workoutType(), ids: sessions) }
-                if !weights.isEmpty { try await self.delete(self.bodyMass, ids: weights) }
-                call.resolve()
+                var left: [String] = []
+                if !sessions.isEmpty { left += try await self.delete(HKObjectType.workoutType(), ids: sessions) }
+                if !weights.isEmpty { left += try await self.delete(self.bodyMass, ids: weights) }
+                call.resolve(["left": left])
             } catch {
                 self.fail(call, error)
             }
@@ -161,12 +163,24 @@ public class AppleHealthPlugin: CAPPlugin, CAPBridgedPlugin {
                                 start: at, end: at, metadata: syncMetadata(id))
     }
 
-    private func delete(_ type: HKObjectType, ids: [String]) async throws {
+    /// Deletes every sample with one of these sync identifiers, the Apple Watch app's copy of a
+    /// workout included, and answers the ids Apple Health still holds afterwards (one it would not
+    /// let this app delete), so the next sync tries them again instead of forgetting them.
+    private func delete(_ type: HKObjectType, ids: [String]) async throws -> [String] {
         let predicate = HKQuery.predicateForObjects(withMetadataKey: HKMetadataKeySyncIdentifier, allowedValues: ids)
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
             store.deleteObjects(of: type, predicate: predicate) { _, _, error in
                 if let error = error { cont.resume(throwing: error) } else { cont.resume() }
             }
         }
+        guard let sampleType = type as? HKSampleType else { return [] }
+        let still: [HKSample] = await withCheckedContinuation { cont in
+            let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, found, error in
+                // Not allowed to read: nothing to check against, the delete above is all there is.
+                cont.resume(returning: error == nil ? (found ?? []) : [])
+            }
+            store.execute(q)
+        }
+        return Array(Set(still.compactMap { $0.metadata?[HKMetadataKeySyncIdentifier] as? String }))
     }
 }

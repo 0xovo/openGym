@@ -2411,4 +2411,11 @@ export default {
   'Back to the standard bars': 'Вернуть стандартные грифы',
   'Standard bars. Tap if yours are lighter.': 'Стандартные грифы. Нажми, если твои легче.',
   'The last warm-up still gets the full rest before your first work set.': 'Последний разминочный подход всё равно получает полный отдых перед первым рабочим.',
+  // --- Coach intake: days and session wheels ---
+  'Days per week': 'Дней в неделю',
+  'Hours': 'Часы',
+  'h': 'ч',
+  // --- import with no account: workouts on this device ---
+  'This device has 1 workout that is not in this backup. Replacing deletes it.': 'На этом устройстве есть 1 тренировка, которой нет в этой копии. Замена её удалит.',
+  'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'На этом устройстве есть тренировки, которых нет в этой копии ({0}). Замена их удалит.',
 }

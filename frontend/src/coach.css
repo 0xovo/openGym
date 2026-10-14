@@ -42,20 +42,11 @@
 }
 .ob-wd.on{color:var(--acc);border-color:var(--acc);background:var(--acc-soft)}
 .ob-sub{font-size:15px;color:var(--label-2);margin:22px 0 10px;letter-spacing:-.006em}
-.ob-time{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  background:var(--surface);border-radius:var(--r-xl);padding:26px 18px;margin-top:4px
-}
-.ob-time input[type=time]{
-  font-size:44px;font-weight:600;letter-spacing:-.03em;background:none;border:none;color:var(--label);
-  font-variant-numeric:tabular-nums;padding:0;outline:none;text-align:center;width:auto;min-width:180px;
-  -webkit-appearance:none;appearance:none;color-scheme:dark
-}
-:root[data-theme="light"] .ob-time input[type=time]{color-scheme:light}
-.ob-time input[type=time]::-webkit-calendar-picker-indicator{display:none}
-.ob-time .ob-wheel{appearance:none;-webkit-appearance:none;background:transparent;border:0;color:var(--label);font-size:56px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;padding:0 4px;text-align:center;min-width:1.6em}
-.ob-time .ob-time-sep{font-size:56px;font-weight:700;color:var(--label);margin:0 -2px;transform:translateY(-4px)}
-.ob-time .ob-time-l{font-size:15px;color:var(--label-2)}
+/* The days screen: the count and the weekdays each in their own box, with their own label. */
+.ob-group{background:var(--surface);border-radius:14px;padding:12px 12px 14px;margin-top:14px}
+.ob-group .ob-sub-first{margin:0 0 10px;font-weight:600;color:var(--label)}
+.ob-group .ob-days,.ob-group .ob-week{margin:0}
+.ob-group .ob-day:not(.on),.ob-group .ob-wd:not(.on){background:var(--surface-2)}
 .ob-quick{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .ob-chips{display:flex;flex-wrap:wrap;gap:8px}
 .ob-chips .chip{padding:10px 16px;font-size:15px;border:1.5px solid transparent}

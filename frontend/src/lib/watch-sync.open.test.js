@@ -105,6 +105,27 @@ describe('startWatchSync', () => {
     stop2()
   })
 
+  // Data safety: an empty copy at launch (storage evicted, the file mirror not read back yet) must
+  // not tell the watch its workout is over, nor drain its queue against nothing.
+  it('sends nothing and drains nothing before the store has its copy back', async () => {
+    vi.useFakeTimers()
+    try {
+      const b = bridge()
+      _setWatchPluginForTest(b)
+      const st = store({ S: S0, ready: false })
+      _setWatchPluginForTest(b, () => st.getState())
+      const stop = await startWatchSync({ useStore: st, useUI: ui })
+      await vi.runAllTimersAsync()
+      expect(b.sendSnapshot).not.toHaveBeenCalled()
+      expect(b.drain).not.toHaveBeenCalled()
+      st.setState({ S: { ...S0, active: live({ start: Date.now() - 3600e3 }) }, ready: true })
+      await vi.runAllTimersAsync()
+      expect(b.drain).toHaveBeenCalled()
+      expect(JSON.parse(b.sendSnapshot.mock.calls.at(-1)[0].json).active.id).toBe('w-9')
+      stop()
+    } finally { vi.useRealTimers() }
+  })
+
   it('tells the watch the phone\'s Apple Health switch, and again when it changes', async () => {
     vi.useFakeTimers()
     try {
