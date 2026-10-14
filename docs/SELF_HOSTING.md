@@ -789,13 +789,53 @@ only on one phone (or on a hardware key) goes with that phone.
 **I lost my passkey.** If the profile has another passkey, sign in with that one and remove the
 lost one under **Settings → Account → Passkeys**, confirming with the passkey you signed in
 with (then **Sign out everywhere**). A browser that is still signed in can give a new device a
-passkey with **Add another device** only if the profile also has a password and
-`PASSWORD_LOGIN=1`: making the code asks for a passkey or the current password first,
-because a session on its own may be a stolen cookie. Otherwise there is no self-service recovery: with `PASSWORD_LOGIN=1` an admin can issue a reset code, and without
-it the only way back is a backup (**Settings → Data & backup → Export backup (JSON)**, from any device still
-signed in) imported into a new profile. When you ask your admin for help, the id under
-**Settings → Account → Account ID** tells them exactly which account is yours. Adding a second
-passkey early is what keeps one lost phone from being a lost profile.
+passkey with **Add another device** (making the code asks for a passkey, or the current password
+where that counts, because a session on its own may be a stolen cookie). The sign-in screen's
+**Lost access?** walks through these. If none of them is left, ask for a recovery code (below).
+When you ask your admin for help, the id under **Settings → Account → Account ID** tells them
+exactly which account is yours. Adding a second passkey early is what keeps one lost phone from
+being a lost profile.
+
+#### Recovery codes: when every way in is gone
+
+For someone who lost every device and passkey and has no password, on any instance, with or
+without `PASSWORD_LOGIN`:
+
+- **An admin** opens the profile in the admin dashboard and taps **Recovery code**. Any admin can
+  make one for a profile that is not an admin; only the owner for an admin; nobody for the owner
+  (see below), and nobody for themselves.
+- **The person** taps **Lost access? → I have a code** on the sign-in screen (or **Use a code from
+  your other device**) and enters it. The device they use gets a new passkey for their profile
+  and is signed in. In the phone app: redeem the code in a browser, then pair the app again.
+  Once back in, they can remove the lost device's passkey under **Settings → Account → Passkeys**
+  and, where `PASSWORD_LOGIN=1`, set a password there too.
+
+A recovery code is 12 characters (60 bits), works once, for 24 hours, and is stored only as a
+hash, like a password reset code. Making one signs the profile out everywhere at once (a lost
+phone should not stay signed in for that day) and voids any device link or pairing code; the
+profile's passkeys and password stay. Wrong codes count toward the same per-address pause as
+wrong reset and device codes, and a wrong code looks the same whoever it was meant for. A
+profile already holding the maximum number of passkeys still gets back in: the passkey used
+longest ago makes room. The activity log records each code made (`admin.recovery.create`,
+`server.recovery.create`) and used (`auth.recovery.ok`).
+
+**The owner, or anyone, from the server itself.** No one in the app may take over the owner's
+login, so the owner's way back is a command on the server, which works for any profile:
+
+```sh
+docker compose exec api node recover.js "Their name"
+# several profiles with that name? it lists them; pick one:
+docker compose exec api node recover.js --id <profile id>
+```
+
+It prints a one-time code to use as above. The command asks the running server for the code over
+a local Unix socket that only the server's own user can open (in the image: root, which is who
+`docker compose exec` runs as; the AI Coach's sandboxed jobs cannot reach it). It never edits
+`db.json` itself, because the server keeps its data in memory and would overwrite such a change
+on its next save. So the server has to be running: `docker compose up -d` first. On Kubernetes:
+`kubectl exec deploy/<deployment> -c api -- node recover.js "Their name"`. Outside Docker, run
+`node recover.js` from the api directory as the same user and with the same `DATA_DIR` as the
+server (or set `ADMIN_SOCKET_DIR` for both).
 
 The phone app never uses a passkey at all: it pairs with a one-time code from a signed-in
 browser (see section 2).
