@@ -2375,4 +2375,13 @@ export default {
   'Workout running': '训练进行中',
   'Set {0} of {1}': '第 {0} 组，共 {1} 组',
   'All sets done': '所有组已完成',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': '你的杠铃杆',
+  'Set the bar once for every exercise of a type.': '按类型设置一次，该类型的所有动作都用它。',
+  'Your bar for this type, set in Your bars.': '你为这类杆设置的重量，来自「你的杠铃杆」。',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': '你健身房里杠铃杆的重量。用这根杆的每个动作都从它开始算杠铃片，除非你给动作单独设了杆。记录的重量仍是总重。',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': '动作库里大多数动作用「{0}」，少数用「{1}」。想全部用短杆，两个都要设。',
+  'Back to the standard bars': '恢复标准杠铃杆',
+  'Standard bars. Tap if yours are lighter.': '标准杠铃杆。如果你的更轻，点这里。',
+  'The last warm-up still gets the full rest before your first work set.': '最后一组热身仍会在第一组正式组前完整休息。',
 }
