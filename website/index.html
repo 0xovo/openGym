@@ -28,7 +28,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preload" as="image" type="image/webp" imagesrcset="img/home-480.webp 480w, img/home-600.webp 600w, img/home-1170.webp 1170w" imagesizes="(max-width: 700px) 62vw, 300px" fetchpriority="high">
-<link rel="stylesheet" href="styles.css?v=26">
+<link rel="stylesheet" href="styles.css?v=27">
 <!-- Marks that JS is alive before first paint, so the scroll-reveal styles never
      hide content from a browser that will not run them. -->
 <script>
@@ -53,9 +53,9 @@ try {
  "url":"https://opengym.ch/",
  "image":"https://opengym.ch/img/social.jpg",
  "screenshot":["https://opengym.ch/img/home.png","https://opengym.ch/img/workout.png","https://opengym.ch/img/stats.png"],
- "softwareVersion":"1.4.2","datePublished":"2026-07-18","dateModified":"2026-10-10","isAccessibleForFree":true,
+ "softwareVersion":"1.4.2","datePublished":"2026-07-18","dateModified":"2026-10-18","isAccessibleForFree":true,
  "featureList":["Weekly plan with a routine per weekday, or a rotation","Guided workouts with rest timer, supersets, warm-up and timed sets","Progression rules: linear, Greyskull LP, double progression","Estimated 1RM, activity heatmap, muscle balance and fatigue maps","Body-weight tracking with a goal line","Edit saved workouts, with photos and videos","Structural Balance between your lifts","Import from Hevy, Strong, FitNotes and Apple Health","Passkey login and multi-device sync when self-hosted","Standalone Android APK with no account","19 languages, including Arabic right-to-left","Optional AI coach on your own API key"],
- "downloadUrl":"https://opengym.ch/openGym.apk",
+ "downloadUrl":"https://github.com/DuarteSantos8/openGym/releases/latest/download/openGym-1.4.2.apk",
  "author":{"@type":"Person","name":"Duarte Santos","url":"https://duarte-santos.ch"},
  "sameAs":["https://github.com/DuarteSantos8/openGym","https://gitlab.com/DuarteSantos8/opengym","https://discord.gg/e62jY6fwVb"]}
 </script>
@@ -438,15 +438,29 @@ try {
           <li class="no">No sync across devices</li>
         </ul>
         <div class="push">
-          <a class="btn" href="openGym.apk" download>Download for Android</a>
-          <p class="meta">v1.4.1 · 305 MB (every animation is inside) · Android 6.0+ · signed APK. Your browser will ask
-             before installing; that is normal outside the Play Store.</p>
-          <p class="meta">Every release is signed and attached to the
+          <!-- Two APKs per release, same app, same key, same data. Each one updates itself and
+               stays the kind it is (lib/update.js pickApk). Bump the file names, sizes and the
+               version on every release: releases/latest/download/<name> only finds the newest one. -->
+          <div class="dl-row">
+            <a class="btn" href="https://github.com/DuarteSantos8/openGym/releases/latest/download/openGym-1.4.2.apk">Android APK</a>
+            <a class="btn ghost" href="https://github.com/DuarteSantos8/openGym/releases/latest/download/openGym-HD-1.4.2.apk">Android APK, HD</a>
+          </div>
+          <p class="meta">v1.4.2 · Standard __STD_MB__ MB · HD __HD_MB__ MB · Android 6.0+ · signed APKs.
+             Same app, same data. HD has sharper exercise animations built in and eats more storage for it.
+             Not sure? Standard. You can switch later by installing the other one on top.</p>
+          <p class="meta">Your browser will ask before installing; that is normal outside the Play Store.
+             Every release is signed and attached to the
              <a href="https://github.com/DuarteSantos8/openGym/releases" rel="noopener">GitHub
              releases page</a>, checksums and all.</p>
-          <p class="meta"><b>On iPhone?</b> Apple does not allow installs outside the App Store.
-             Use the self-hosted version as a home-screen app instead, or see
-             <a href="docs.html#iphone">the docs</a>.</p>
+          <p class="meta"><b>Google Play?</b> Coming soon. We are rounding up testers first, Google insists.</p>
+          <!-- App Store toggle: set data-appstore="live" once the app is out (and "soon" until then). -->
+          <div class="ios" data-appstore="soon">
+            <p class="meta ios-soon"><b>On iPhone?</b> The App Store app is waiting for Apple's thumbs up.
+               Until then, use the self-hosted version as a home-screen app, or see
+               <a href="docs.html#iphone">the docs</a>.</p>
+            <a class="ios-live store-badge" href="https://apps.apple.com/app/id6822275400" rel="noopener">
+              <img src="app-store-badge.svg" width="150" height="50" alt="Download on the App Store"></a>
+          </div>
         </div>
       </div>
       <div class="card rv">
@@ -600,6 +614,6 @@ try {
   </div>
 </div></footer>
 
-<script src="site.js?v=26" defer></script>
+<script src="site.js?v=27" defer></script>
 </body>
 </html>

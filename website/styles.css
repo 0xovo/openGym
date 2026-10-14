@@ -565,6 +565,12 @@ section { padding: var(--sec) 0 0; }
 .card .meta a { color: var(--fg-2); text-decoration: underline; text-underline-offset: 2px; }
 .card .meta + .meta { margin-top: 8px; }
 .card .push { margin-top: auto; }
+/* Two APKs side by side (Standard, HD); they stack on a narrow card. */
+.card .dl-row { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+/* App Store toggle: data-appstore="soon" shows the waiting line, "live" shows the badge. */
+.ios[data-appstore="soon"] .ios-live, .ios[data-appstore="live"] .ios-soon { display: none; }
+.card .store-badge { display: inline-block; margin-top: 14px; line-height: 0; }
+.card .store-badge img { height: 50px; width: auto; }
 
 /* ---------------------------------------------------------------- the story */
 
