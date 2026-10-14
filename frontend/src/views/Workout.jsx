@@ -918,7 +918,7 @@ const coveredTop = () => {
   return inset
 }
 
-function ActiveWorkout({ onActionChange }) {
+function ActiveWorkout() {
   const nav = useNavigate()
   const S = useStore(s => s.S)
   const update = useStore(s => s.update)
@@ -994,7 +994,6 @@ function ActiveWorkout({ onActionChange }) {
   const exRefs = useRef(new Map())
   const setRefs = useRef(new Map())
   const focusPointerEpoch = useRef(0)
-  const [focusSet, setFocusSet] = useState(null)
   const bindExRef = (entry, el) => {
     if (el) exRefs.current.set(entry, el)
     else {
@@ -1901,7 +1900,7 @@ function ActiveWorkout({ onActionChange }) {
     if (window.requestAnimationFrame) window.requestAnimationFrame(scroll)
     else window.setTimeout(scroll, 0)
   }
-  const tickNext = (keepLayout = false) => {
+  const tickNext = () => {
     // A hold being timed: the key is its "Done", which logs what was actually held, once the
     // hold has run past its first moments (HOLD_KEY_GRACE_MS).
     const work = useUI.getState().work
@@ -1914,12 +1913,7 @@ function ActiveWorkout({ onActionChange }) {
     if (!next) return true
     // The exercise on screen is finished: this press brings up the next one, and the one after
     // ticks its set. A key never logs a set for an exercise that was not in front of you.
-    if (!next.current) {
-      if (keepLayout) update(s => { if (s.active) s.active.cur = next.idx })
-      else focusUnit(next.idx)
-      showCurrent()
-      return true
-    }
+    if (!next.current) { focusUnit(next.idx); showCurrent(); return true }
     // A timed set is started rather than ticked, as its play button does; the timer ticks it.
     if (!next.side && modeAt(next.idx) === 'time') startTimed(next.idx, next.i)
     else toggle(next.idx, next.i, next.side)
@@ -1934,42 +1928,6 @@ function ActiveWorkout({ onActionChange }) {
     if (action !== 'tick') { navigateUnit(action === 'next' ? 1 : -1); showCurrent(); return true }
     return tickNext()
   }
-  const nextActionSet = nextOpenSet(A.entries, cur)
-  const focusNeedsReveal = focusMode && nextActionSet?.current && focusSet
-    && (focusSet.idx !== nextActionSet.idx || focusSet.i !== nextActionSet.i)
-  const actionKind = editing || A.backfill || !A.entries.length ? null
-    : work ? 'done' : !nextActionSet ? 'finish' : !nextActionSet.current || focusNeedsReveal ? 'next'
-    : !nextActionSet.side && modeAt(nextActionSet.idx) === 'time' ? 'start'
-    : nextActionSet.side || 'complete'
-  const actionLabel = actionKind === 'done' ? t('Done') : actionKind === 'finish' ? t('Finish')
-    : actionKind === 'next' ? t('Next') : actionKind === 'start' ? t('Start')
-    : actionKind === 'L' ? t('Complete left side') : actionKind === 'R' ? t('Complete right side') : t('Complete')
-  const actionAria = actionKind === 'finish' ? t('Finish workout')
-    : actionKind === 'L' ? t('Complete left side') : actionKind === 'R' ? t('Complete right side')
-    : actionKind === 'complete' ? t('Complete set') : actionLabel
-  const primaryAction = useRef(null)
-  primaryAction.current = () => {
-    const fresh = useStore.getState().S.active
-    if (!fresh || fresh.id !== A.id || fresh.editingWorkoutId || fresh.backfill || useUI.getState().sheets.length) return
-    if (!useUI.getState().work && focusNeedsReveal) {
-      focusPointerEpoch.current++
-      update(s => { if (s.active) s.active.cur = nextActionSet.idx })
-      return
-    }
-    if (!useUI.getState().work && !nextOpenSet(fresh.entries, fresh.cur)) {
-      if (fresh.entries.length) finishWorkoutSheet({ onDiscard: discardWorkout })
-      return
-    }
-    tickNext(true)
-  }
-  useEffect(() => {
-    onActionChange?.(actionKind ? {
-      sessionId: A.id, label: actionLabel, ariaLabel: actionAria,
-      icon: actionKind === 'start' ? 'play' : actionKind === 'next' ? 'chevronRight' : actionKind === 'finish' ? 'flag' : 'check',
-      run: () => primaryAction.current?.(),
-    } : null)
-    return () => onActionChange?.(null)
-  }, [onActionChange, A.id, actionKind, actionLabel, actionAria])
   useEffect(() => {
     // A Space that ticked must not also press the button a click left focus on. Preventing the
     // keydown is enough for Chrome; Firefox presses a button on the keyup, so that goes too.
@@ -2155,7 +2113,7 @@ function ActiveWorkout({ onActionChange }) {
         }}>
       {focusMode ? (
         <FocusView entryIdx={cur} unit={unit}
-          onSelectEntry={selectFocusEntry} onAdvanceUnit={advanceFocusUnit} pointerEpoch={focusPointerEpoch.current} onSetChange={setFocusSet}
+          onSelectEntry={selectFocusEntry} onAdvanceUnit={advanceFocusUnit} pointerEpoch={focusPointerEpoch.current}
           onPairPrev={onPairPrev} onPairNext={onPairNext} onUnpair={() => unpairAt(cur)}
           {...blockProps(cur)} />
       ) : isSuperset ? (
@@ -2232,7 +2190,7 @@ if (typeof document !== 'undefined') document.addEventListener('pointerdown', ()
 // Test seam: a fresh launch, nobody has touched anything yet.
 export function _resetHintQuiet() { lastTouchAt = 0 }
 
-export default function Workout({ onActionChange }) {
+export default function Workout() {
   const active = useStore(s => s.S.active)
-  return active ? <ActiveWorkout onActionChange={onActionChange} /> : <StartChooser />
+  return active ? <ActiveWorkout /> : <StartChooser />
 }
