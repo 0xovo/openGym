@@ -13,7 +13,7 @@
 //
 // The web build never gets here (MOBILE is a build-time flag).
 import { MOBILE, nativePlatform, readJsonFile, writeJsonFile } from './mobile.js'
-import { healthRecords, planSync, writtenIds } from './health-connect.js'
+import { healthRecords, planSync, writtenIds, goneIds } from './health-connect.js'
 import { exerciseNameFor } from './i18n-core.js'
 import { EXIDX } from './exercises.js'
 import { speedUnitOf } from './speed.js'
@@ -105,7 +105,7 @@ export function syncHealth(S) {
 async function syncOnce(S, h) {
   const p = await plugin()
   if (!p) return h
-  const plan = planSync(healthRecords(S, { nameOf, speedUnit: speedUnitOf(S) }), h.written)
+  const plan = planSync(healthRecords(S, { nameOf, speedUnit: speedUnitOf(S) }), h.written, goneIds(S))
   const nothing = !plan.sessions.length && !plan.weights.length && !plan.remove.sessions.length && !plan.remove.weights.length
   if (nothing) {
     if (!h.error) return h
@@ -125,8 +125,15 @@ async function syncOnce(S, h) {
       const kept = Object.fromEntries(Object.entries(h.written).filter(([id]) => !plan.written[id]))
       out.written = { ...kept, ...plan.written }
     }
-    if (plan.remove.sessions.length || plan.remove.weights.length) await p.HC.remove(plan.remove)
-    out = { ...out, written: plan.written, at: Date.now(), error: null }
+    let written = plan.written
+    if (plan.remove.sessions.length || plan.remove.weights.length) {
+      // Apple Health answers what it could not take out (`left`: one the watch saved that the
+      // phone may not delete): kept as written, so the next sync tries again.
+      const res = await p.HC.remove(plan.remove)
+      const left = Array.isArray(res?.left) ? res.left : []
+      if (left.length) written = { ...written, ...Object.fromEntries(left.filter(id => h.written[id]).map(id => [id, h.written[id]])) }
+    }
+    out = { ...out, written, at: Date.now(), error: null }
   } catch (e) {
     out.error = e?.code === 'permission' ? 'permission' : e?.code === 'unavailable' ? 'unavailable' : 'failed'
   }
