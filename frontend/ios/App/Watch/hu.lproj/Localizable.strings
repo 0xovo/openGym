@@ -22,6 +22,12 @@
 "Time" = "Idő";
 "Skip set" = "Sorozat kihagyása";
 "Personal records" = "Rekordok";
+"Quick check-in" = "Gyors bejelentkezés";
+"Save & start workout" = "Mentés és edzés indítása";
+"Start without weighing in" = "Indítás mérés nélkül";
+"Body weight" = "Testsúly";
+"Less" = "Kevesebb";
+"More" = "Több";
 "Last time: %@" = "Legutóbb: %@";
 "No workout running" = "Nincs folyamatban edzés";
 "Start one on your iPhone and it shows up here." = "Indíts egyet az iPhone-on, és itt megjelenik.";
@@ -45,3 +51,7 @@
 "%lld avg · %lld max" = "átl. %lld · max. %lld";
 "Set %lld of %lld" = "%lld. sorozat / %lld";
 "%lld of %lld sets" = "%lld / %lld sorozat";
+"Tap to change it." = "Koppints a módosításhoz.";
+"Added weight" = "Plusz súly";
+"Your rest, your next set, or today's workout." = "A pihenőd, a következő sorozat vagy a mai edzés.";
+"Opens openGym." = "Megnyitja az openGymet.";

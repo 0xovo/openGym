@@ -22,6 +22,12 @@
 "Time" = "Время";
 "Skip set" = "Пропустить подход";
 "Personal records" = "Рекорды";
+"Quick check-in" = "Быстрое взвешивание";
+"Save & start workout" = "Сохранить и начать тренировку";
+"Start without weighing in" = "Начать без взвешивания";
+"Body weight" = "Вес тела";
+"Less" = "Меньше";
+"More" = "Больше";
 "Last time: %@" = "В прошлый раз: %@";
 "No workout running" = "Тренировка не идёт";
 "Start one on your iPhone and it shows up here." = "Начните её на iPhone, и она появится здесь.";
@@ -45,3 +51,7 @@
 "%lld avg · %lld max" = "ср. %lld · макс. %lld";
 "Set %lld of %lld" = "Подход %lld из %lld";
 "%lld of %lld sets" = "%lld из %lld подходов";
+"Tap to change it." = "Нажмите, чтобы изменить.";
+"Added weight" = "Доп. вес";
+"Your rest, your next set, or today's workout." = "Отдых, следующий подход или сегодняшняя тренировка.";
+"Opens openGym." = "Открывает openGym.";

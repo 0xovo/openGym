@@ -115,6 +115,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             builder = b
             samples = []
             heartRate = nil
+            calories = nil
             let now = Date()
             s.startActivity(with: now)
             b.beginCollection(withStart: now) { _, _ in }
@@ -238,7 +239,21 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
 
     func workoutBuilderDidCollectEvent(_ workoutBuilder: HKLiveWorkoutBuilder) {}
 
+    /// Active calories so far, for the workout screen when it shows them (at most every 10 s).
+    @Published private(set) var calories: Double?
+    private var caloriesAt = Date.distantPast
+
     func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
+        if let kcalType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned), collectedTypes.contains(kcalType),
+           let kcal = workoutBuilder.statistics(for: kcalType)?.sumQuantity()?.doubleValue(for: .kilocalorie()) {
+            DispatchQueue.main.async {
+                let now = Date()
+                guard now.timeIntervalSince(self.caloriesAt) >= 10 || self.calories == nil else { return }
+                self.caloriesAt = now
+                let rounded = kcal.rounded()
+                if self.calories != rounded { self.calories = rounded }
+            }
+        }
         guard let hrType = HKQuantityType.quantityType(forIdentifier: .heartRate),
               collectedTypes.contains(hrType),
               let stats = workoutBuilder.statistics(for: hrType),

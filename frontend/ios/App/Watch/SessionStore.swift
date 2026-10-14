@@ -34,6 +34,36 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     var unit: String { workout?.unit ?? state.unit }
     var weightStep: Double { unit == "lb" ? 5 : 2.5 }
     var restHaptics: Bool { state.settings.restHaptics ?? true }
+    /// What a workout screen shows (the phone's Settings → Apple Watch).
+    var show: WatchShow { state.settings.show ?? WatchShow() }
+
+    /* ---------- the app's language, not the watch's ---------- */
+
+    /// The .lproj the watch has for the app's language ("pt" is pt-PT here, "zh" Simplified), or
+    /// nil for English and for a language the watch has no words for.
+    static func lproj(for lang: String?) -> String? {
+        guard let l = lang, !l.isEmpty, l != "en" else { return nil }
+        let map = ["pt": "pt-PT", "zh": "zh-Hans", "zh-TW": "zh-Hant"]
+        let name = map[l] ?? l
+        return Bundle.main.path(forResource: name, ofType: "lproj") != nil ? name : nil
+    }
+
+    /// The locale the views use (SwiftUI looks its strings up by it): the app's language from the
+    /// phone; until the phone has said, the watch's own.
+    var locale: Locale {
+        guard let lang = state.settings.lang else { return .current }
+        return Locale(identifier: SessionStore.lproj(for: lang) ?? "en")
+    }
+
+    /// A string in the app's language, for what is not a view (the rest notification).
+    func L(_ key: String) -> String {
+        guard let name = SessionStore.lproj(for: state.settings.lang),
+              let path = Bundle.main.path(forResource: name, ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            return state.settings.lang == nil ? NSLocalizedString(key, comment: "") : key
+        }
+        return bundle.localizedString(forKey: key, value: key, table: nil)
+    }
     var crownStartsOnWeight: Bool { state.settings.crown == "weight" }
 
     /// Apple Health: the workout session, its heart rate, and the switch (WorkoutManager).
@@ -82,7 +112,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     static var demoScreen: String? { argument("-OpenGymWatchScreen") }
     /// CI: a synthetic clip (not exercise media) shown on the demo's first exercise.
     static var demoClip: String? { argument("-OpenGymWatchDemoClip") }
-    private static func argument(_ name: String) -> String? {
+    static func argument(_ name: String) -> String? {
         let a = ProcessInfo.processInfo.arguments
         guard let i = a.firstIndex(of: name), i + 1 < a.count else { return nil }
         return a[i + 1]
@@ -135,6 +165,12 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
 
     var progress: (done: Int, total: Int) { SessionCore.progress(state) }
 
+    /// When the running workout started: the phone's start, else when this watch first had it.
+    var workoutStart: Date? {
+        if let ms = workout?.start, ms > 0 { return Date(timeIntervalSince1970: ms / 1000) }
+        return workout == nil ? nil : workoutSeenAt
+    }
+
     /// Events wait on the watch for a phone out of reach: "Saved on the watch, syncs later".
     var offline: Bool { queued > 0 && !reachable }
 
@@ -160,8 +196,14 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         loadTargets()
     }
 
-    /// What the complications and the Smart Stack widget show (WidgetState).
+    /// What the complications and the Smart Stack widget show (WidgetState), in the app's language.
     var widgetState: WidgetState {
+        var w = widgetStateWithoutLang
+        w.lang = state.settings.lang
+        return w
+    }
+
+    private var widgetStateWithoutLang: WidgetState {
         if let w = workout {
             let p = progress
             if let end = restEndsAt, end > Date() {
@@ -365,11 +407,41 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         summary = nil
     }
 
-    /// Starts a ready session here, the phone asleep or not.
+    /// The weigh-in before a workout started here (the phone's check-in), when the phone asks for one.
+    @Published private(set) var weighInFor: ReadySession?
+    /// The body weight on the weigh-in's crown.
+    @Published var bodyWeight: Double = 70
+
+    /// Starts a ready session here, the phone asleep or not: first the weigh-in, as on the phone,
+    /// unless it is switched off there (Settings → During a workout).
     func start(_ session: ReadySession) {
+        if state.settings.weighIn != false && !isDemo {
+            bodyWeight = state.settings.lastBw ?? (unit == "lb" ? 160 : 70)
+            weighInFor = session
+            return
+        }
+        begin(session, bw: nil)
+    }
+
+    /// The weigh-in answered: saved (a weigh-in for the phone, and the session's body weight) or
+    /// skipped; the workout starts either way. `nil` session: cancelled, nothing starts.
+    func finishWeighIn(save: Bool) {
+        guard let session = weighInFor else { return }
+        weighInFor = nil
+        var bw: Double? = nil
+        if save, let ev = SessionCore.weighIn(bodyWeight, at: Date().timeIntervalSince1970 * 1000, id: UUID().uuidString) {
+            send(event: ev)
+            bw = bodyWeight
+        }
+        begin(session, bw: bw)
+    }
+
+    func cancelWeighIn() { weighInFor = nil }
+
+    private func begin(_ session: ReadySession, bw: Double?) {
         let now = Date()
         let (next, event) = SessionCore.start(state, session, wid: "watch-" + UUID().uuidString,
-                                              at: now.timeIntervalSince1970 * 1000, id: UUID().uuidString)
+                                              at: now.timeIntervalSince1970 * 1000, id: UUID().uuidString, bw: bw)
         send(event: event)
         state = next
         picked = [:]
@@ -436,9 +508,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         }
         guard notify, !isDemo else { return }
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "Rest’s over. Next set!")
+        content.title = L("Rest’s over. Next set!")
         if let e = entry, let si = setIndex {
-            content.body = String(localized: "\(e.name), set \(si + 1)")
+            content.body = String(format: L("%@, set %lld"), e.name, Int64(si + 1))
         }
         content.sound = restHaptics ? .default : nil
         content.interruptionLevel = .timeSensitive
@@ -623,7 +695,17 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             case "side": self.state.entryIndex = 3
             case "superset": self.state.entryIndex = 4
             case "finish": self.state.entryIndex = self.workout?.entries.count ?? 0
+            case "weighin":
+                self.bodyWeight = 81.4
+                self.weighInFor = ReadySession(routineIds: ["r1"], name: "Push day", entries: [])
             default: break
+            }
+            // CI: the watch in another language than its own (the app's, as the phone sends it).
+            if let lang = SessionStore.argument("-OpenGymWatchLang") { self.state.settings.lang = lang }
+            if let show = SessionStore.argument("-OpenGymWatchShow") {
+                // "all": every optional thing on, for a look at the fullest screen.
+                if show == "all" { self.state.settings.show = WatchShow(clip: true, hr: true, last: true, elapsed: true, kcal: true, next: true, rest: "ring") }
+                if show == "plain" { self.state.settings.show = WatchShow(rest: "plain") }
             }
             self.loadTargets()
             if screen == "rest" { self.startRest(until: Date().addingTimeInterval(83), notify: false) }
@@ -649,7 +731,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
 
     static let demoJSON = """
     {"v":1,"unit":"kg","restSec":90,"ready":null,"active":{"id":"demo","name":"Push day","unit":"kg","cur":0,"restSec":90,"rest":null,"start":0,"entries":[
-    {"id":"0025","name":"Bench Press","mode":"reps","restSec":120,"last":"60 kg × 8, 60 kg × 8, 60 kg × 7","best":{"w":62.5,"r":8},"sets":[
+    {"id":"0025","name":"Bench Press","mode":"reps","restSec":120,"last":"60 kg × 8, 60 kg × 8, 60 kg × 7","best":{"w":62.5,"r":8},"step":2.5,"sets":[
     {"w":40,"r":10,"sec":null,"done":false,"warmup":true},{"w":60,"r":8,"sec":null,"done":true,"warmup":false,"at":1},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false},{"w":62.5,"r":8,"sec":null,"done":false,"warmup":false}]},
     {"id":"plank","name":"Plank","mode":"time","restSec":60,"last":null,"best":{"sec":60},"sets":[
     {"w":null,"r":null,"sec":45,"done":false,"warmup":false},{"w":null,"r":null,"sec":45,"done":false,"warmup":false}]},

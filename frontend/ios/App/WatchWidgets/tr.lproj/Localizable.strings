@@ -22,6 +22,12 @@
 "Time" = "Süre";
 "Skip set" = "Seti atla";
 "Personal records" = "Rekorlar";
+"Quick check-in" = "Hızlı tartı";
+"Save & start workout" = "Kaydet ve antrenmana başla";
+"Start without weighing in" = "Tartılmadan başla";
+"Body weight" = "Vücut ağırlığı";
+"Less" = "Az";
+"More" = "Çok";
 "Last time: %@" = "Geçen sefer: %@";
 "No workout running" = "Devam eden antrenman yok";
 "Start one on your iPhone and it shows up here." = "iPhone’unda bir tane başlat, burada görünür.";
@@ -45,3 +51,7 @@
 "%lld avg · %lld max" = "ort. %lld · maks. %lld";
 "Set %lld of %lld" = "Set %lld / %lld";
 "%lld of %lld sets" = "%lld / %lld set";
+"Tap to change it." = "Değiştirmek için dokun.";
+"Added weight" = "Ek ağırlık";
+"Your rest, your next set, or today's workout." = "Dinlenmen, sıradaki setin ya da bugünkü antrenman.";
+"Opens openGym." = "openGym’i açar.";

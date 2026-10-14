@@ -85,7 +85,9 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if let summary = store.summary {
+            if store.weighInFor != nil {
+                WeighInView()
+            } else if let summary = store.summary {
                 SummaryView(summary: summary)
             } else if store.workout == nil {
                 IdleView()
@@ -97,6 +99,9 @@ struct RootView: View {
                 ExercisePager()
             }
         }
+        // The app's language, as the phone sends it, not the watch's own (SwiftUI looks every
+        // Text's words up by this locale).
+        .environment(\.locale, store.locale)
         // Any touch: the rest-over alarm was noticed (it would tap once more otherwise).
         .simultaneousGesture(TapGesture().onEnded { store.ackRestOver() })
         // The complication's Start: today's workout, when none runs yet.
@@ -238,9 +243,10 @@ struct IdleView: View {
             }
         } else {
             VStack(spacing: 10) {
-                Image(systemName: "dumbbell.fill")
-                    .font(.system(size: 34, weight: .semibold))
-                    .foregroundStyle(.secondary)
+                OpenGymLogo()
+                    .fill(Theme.accent)
+                    .frame(width: 60, height: 30)
+                    .accessibilityHidden(true)
                 Text("No workout running")
                     .font(.headline)
                     .multilineTextAlignment(.center)
@@ -271,18 +277,27 @@ struct ExercisePager: View {
     }
 }
 
-enum CrownTarget { case reps, weight }
+/// What a tap on a number opens for editing.
+enum EditField: String, Identifiable {
+    case weight, reps, seconds
+    var id: String { rawValue }
+}
 
+/*
+ * One exercise, one set up next. The numbers are two big tiles (weight, reps); a tap on one opens
+ * it on a screen of its own, where the Digital Crown turns only that value, in the exercise's own
+ * steps with a tap of the crown at each, and − and + do the same by hand. On this page the crown
+ * belongs to the pages (the next exercise), as in Apple's Workout app.
+ */
 struct ExercisePage: View {
     @EnvironmentObject var store: SessionStore
     let index: Int
-    @State private var target: CrownTarget = .reps
+    @State private var editing: EditField?
     @State private var confirmSkip = false
-    @FocusState private var crownFocus: Bool
     @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .title) private var doneSizeScaled: CGFloat = 58
     /// Large enough to hit, small enough to leave room for the numbers at the largest text sizes.
-    private var doneSize: CGFloat { min(doneSizeScaled, typeSize.isAccessibilitySize ? 56 : 70) }
+    private var doneSize: CGFloat { min(doneSizeScaled, typeSize.isAccessibilitySize ? 56 : 66) }
 
     var body: some View {
         if let w = store.workout, w.entries.indices.contains(index) {
@@ -302,25 +317,23 @@ struct ExercisePage: View {
                             .multilineTextAlignment(.center)
                             .minimumScaleFactor(0.7)
                     } else if entry.isTimed {
-                        SecondsView(seconds: current ? store.seconds : (row.sec ?? 0))
-                            .focusable(current)
-                            .focused($crownFocus)
-                            .digitalCrownRotation(secondsBinding, from: 5, through: 600, by: 5, sensitivity: .low,
-                                                  isContinuous: false, isHapticFeedbackEnabled: true)
+                        ValueTile(value: formatNumber(current ? store.seconds : (row.sec ?? 0)), unit: "s", label: Text("Hold"),
+                                  tint: .white, large: true) { if current { editing = .seconds } }
                     } else {
-                        let side = row.sideUp.flatMap { row.sides?[$0] }
-                        NumbersView(weight: current ? store.weight : (side?.w ?? row.w ?? 0),
-                                    reps: current ? store.reps : (side?.r ?? row.r ?? 0),
-                                    unit: w.unit, warmup: row.warmup, bodyweight: entry.isBodyweight, target: $target)
-                            .focusable(current)
-                            .focused($crownFocus)
-                            .digitalCrownRotation(crownBinding, from: 0, through: target == .weight ? 500 : 100,
-                                                  by: target == .weight ? store.weightStep : 1, sensitivity: .low,
-                                                  isContinuous: false, isHapticFeedbackEnabled: true)
+                        numbers(entry, row, unit: w.unit, current: current)
+                    }
+                    if store.show.showLast, let last = entry.last, !last.isEmpty {
+                        Text("Last time: \(last)")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .padding(.top, 1)
+                            .dynamicTypeSize(...DynamicTypeSize.large)
                     }
                     Spacer(minLength: 2)
                     primaryButton(entry, current: current)
-                    Spacer(minLength: 4)
+                    Spacer(minLength: 3)
                     SetDots(entry: entry, current: si, skipped: { store.isSkipped(entry.id, $0) }) { store.pick(set: $0, in: index) }
                 } else {
                     let left = entry.sets.contains { !$0.done }
@@ -338,15 +351,16 @@ struct ExercisePage: View {
                 }
             }
             .padding(.horizontal, 4)
-            // The set's layout is fixed (crown, Done, dots on one screen): text grows up to a size
+            // The set's layout is fixed (numbers, Done, dots on one screen): text grows up to a size
             // that still fits on 41 mm; the start screen and the summary scroll and grow all the way.
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .onAppear {
-                if SessionStore.demoScreen == "weight" || store.crownStartsOnWeight { target = .weight }
-                if entry.isBodyweight && !store.crownStartsOnWeight { target = .reps }
-                if current { crownFocus = true }
+                if current, SessionStore.demoScreen == "edit-weight" { editing = .weight }
+                if current, SessionStore.demoScreen == "edit-reps" { editing = .reps }
             }
-            .onChange(of: store.entryIndex) { ei in if ei == index { crownFocus = true } }
+            .sheet(item: $editing) { field in
+                ValueEditor(field: field, entry: entry, unit: w.unit)
+            }
             .confirmationDialog(Text("Skip this set?"), isPresented: $confirmSkip) {
                 Button("Skip set") { store.skipSet() }
                 Button("Cancel", role: .cancel) {}
@@ -354,20 +368,54 @@ struct ExercisePage: View {
         }
     }
 
+    /// Weight × reps as two tiles; a bodyweight set: the reps big, the added weight small.
+    @ViewBuilder private func numbers(_ entry: Entry, _ row: SetRow, unit: String, current: Bool) -> some View {
+        let side = row.sideUp.flatMap { row.sides?[$0] }
+        let weight = current ? store.weight : (side?.w ?? row.w ?? 0)
+        let reps = current ? store.reps : (side?.r ?? row.r ?? 0)
+        let tint = row.warmup ? Theme.warmup : Color.white
+        if entry.isBodyweight {
+            VStack(spacing: 3) {
+                ValueTile(value: formatNumber(reps), unit: nil, label: Text("Reps"), tint: tint, large: true) { if current { editing = .reps } }
+                Button { if current { editing = .weight } } label: {
+                    Group {
+                        if weight > 0 { Text(verbatim: "+\(formatNumber(weight)) \(unit)") } else { Text("Bodyweight") }
+                    }
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 8)
+                    .frame(minHeight: 22)
+                    .background(Capsule().fill(Theme.dim))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(weight > 0 ? Text(verbatim: "+\(formatNumber(weight)) \(unit)") : Text("Bodyweight"))
+                .accessibilityHint(Text("Tap to change it."))
+            }
+        } else {
+            HStack(spacing: 5) {
+                ValueTile(value: formatNumber(weight), unit: unit, label: Text("Weight"), tint: tint) { if current { editing = .weight } }
+                ValueTile(value: formatNumber(reps), unit: nil, label: Text("Reps"), tint: tint) { if current { editing = .reps } }
+            }
+        }
+    }
+
     @ViewBuilder private func header(_ entry: Entry) -> some View {
         HStack(alignment: .top, spacing: 6) {
-            if let clip = store.clips[entry.id] {
+            if store.show.showClip, let clip = store.clips[entry.id] {
                 ClipView(clip: clip, animating: index == store.entryIndex).frame(width: 30, height: 30)
             }
-            Text(entry.name)
-                .font(.system(.footnote, design: .rounded).weight(.semibold))
-                // One line at the large sizes (shrunk to fit): two would push the page up into the clock.
-                .lineLimit(typeSize.isAccessibilitySize ? 1 : 2)
-                .minimumScaleFactor(typeSize.isAccessibilitySize ? 0.6 : 0.8)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(entry.name)
+                    .font(.system(.footnote, design: .rounded).weight(.semibold))
+                    // One line at the large sizes (shrunk to fit): two would push the page up into the clock.
+                    .lineLimit(typeSize.isAccessibilitySize ? 1 : 2)
+                    .minimumScaleFactor(typeSize.isAccessibilitySize ? 0.6 : 0.8)
+                    .fixedSize(horizontal: false, vertical: true)
+                WorkoutExtras()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             OfflineSign()
-            HeartRateBadge(health: store.health)
+            if store.show.showHr { HeartRateBadge(health: store.health) }
         }
         // The top row sits just under the clock: it grows less than the numbers do.
         .dynamicTypeSize(...DynamicTypeSize.xLarge)
@@ -383,6 +431,7 @@ struct ExercisePage: View {
                 if side == "R" { Tag(text: Text("Right"), color: .cyan) }
                 if entry.group != nil { Tag(text: Text("Superset"), color: .purple) }
             }
+            .padding(.bottom, 2)
             .dynamicTypeSize(...DynamicTypeSize.xLarge)
         }
     }
@@ -404,140 +453,256 @@ struct ExercisePage: View {
         .simultaneousGesture(LongPressGesture(minimumDuration: 0.8).onEnded { _ in if current { confirmSkip = true } })
         .accessibilityAction(named: Text("Skip set")) { store.skipSet() }
     }
+}
 
-    private var crownBinding: Binding<Double> {
-        Binding(
-            get: { target == .weight ? store.weight : store.reps },
-            set: { v in
-                guard index == store.entryIndex else { return }
-                if target == .weight { store.weight = max(0, v) } else { store.reps = max(0, v.rounded()) }
-            }
-        )
-    }
+/// The time so far and the calories, under the exercise's name, when the phone says to show them.
+struct WorkoutExtras: View {
+    @EnvironmentObject var store: SessionStore
 
-    private var secondsBinding: Binding<Double> {
-        Binding(
-            get: { store.seconds },
-            set: { v in
-                guard index == store.entryIndex else { return }
-                store.seconds = max(5, (v / 5).rounded() * 5)
+    var body: some View {
+        let show = store.show
+        if show.showElapsed || show.showKcal {
+            HStack(spacing: 6) {
+                if show.showElapsed, let start = store.workoutStart {
+                    Text(timerInterval: start...Date.distantFuture, countsDown: false)
+                        .monospacedDigit()
+                }
+                if show.showKcal { CaloriesText(health: store.health) }
             }
-        )
+            .font(.system(size: 11, weight: .medium, design: .rounded))
+            .foregroundStyle(Theme.warmup)
+            .lineLimit(1)
+        }
     }
 }
 
-/// Weight × reps in big rounded numerals. The one the crown turns carries the crown symbol under
-/// it; a tap on the other hands the crown to that one. A bodyweight set shows the reps, and the
-/// added weight small ("+5 kg") or "Bodyweight". A warm-up is in orange.
-struct NumbersView: View {
-    @EnvironmentObject var store: SessionStore
-    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 32
-    let weight: Double
-    let reps: Double
-    let unit: String
-    let warmup: Bool
-    var bodyweight = false
-    @Binding var target: CrownTarget
+/// The workout's active calories so far, redrawn only when they change (WorkoutManager throttles).
+struct CaloriesText: View {
+    @ObservedObject var health: WorkoutManager
 
     var body: some View {
-        Group {
-            if bodyweight {
-                VStack(spacing: 0) {
-                    value(formatNumber(reps), suffix: nil, active: target == .reps, label: Text("Reps")) { target = .reps }
-                    Button { target = .weight } label: {
-                        HStack(spacing: 2) {
-                            if weight > 0 {
-                                Text(verbatim: "+\(formatNumber(weight)) \(unit)")
-                            } else {
-                                Text("Bodyweight")
-                            }
-                            Image(systemName: "digitalcrown.arrow.clockwise.fill").font(.system(size: 8)).opacity(target == .weight ? 1 : 0)
-                        }
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(.secondary)
-                        .frame(minHeight: 24)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(weight > 0 ? Text(verbatim: "+\(formatNumber(weight)) \(unit)") : Text("Bodyweight"))
-                    .accessibilityHint(Text("Turn the Digital Crown to change it."))
-                }
-            } else {
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    value(formatNumber(weight), suffix: unit, active: target == .weight, label: Text("Weight")) { target = .weight }
-                    Text(verbatim: "×").font(.system(size: 18, weight: .medium, design: .rounded)).foregroundStyle(.secondary)
-                        .accessibilityHidden(true)
-                    value(formatNumber(reps), suffix: nil, active: target == .reps, label: Text("Reps")) { target = .reps }
-                }
-            }
-        }
-        .lineLimit(1)
-        .minimumScaleFactor(0.5)
-        .foregroundStyle(warmup ? Theme.warmup : Color.white)
+        if let kcal = health.calories { Text(verbatim: "\(Int(kcal)) kcal") }
     }
+}
 
-    private func value(_ text: String, suffix: String?, active: Bool, label: Text, tap: @escaping () -> Void) -> some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(verbatim: text).font(.system(size: size, weight: .semibold, design: .rounded).monospacedDigit())
-                if let s = suffix { Text(verbatim: s).font(.system(size: 12, weight: .medium, design: .rounded)).foregroundStyle(.secondary) }
+/// A number you can tap to change: big, in a soft rounded tile so it reads as a control, its unit
+/// small beside it and what it is in words under it.
+struct ValueTile: View {
+    let value: String
+    let unit: String?
+    let label: Text
+    var tint: Color = .white
+    var large = false
+    let tap: () -> Void
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 30
+    @ScaledMetric(relativeTo: .largeTitle) private var largeSize: CGFloat = 38
+
+    var body: some View {
+        Button(action: tap) {
+            VStack(spacing: 0) {
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text(verbatim: value)
+                        .font(.system(size: large ? largeSize : size, weight: .semibold, design: .rounded).monospacedDigit())
+                    if let u = unit {
+                        Text(verbatim: u).font(.system(size: 12, weight: .medium, design: .rounded)).foregroundStyle(.secondary)
+                    }
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                label.font(.system(size: 10, weight: .medium)).foregroundStyle(.secondary).lineLimit(1)
+                    .dynamicTypeSize(...DynamicTypeSize.large)
             }
-            Image(systemName: "digitalcrown.arrow.clockwise.fill")
-                .font(.system(size: 9))
-                .foregroundStyle(.secondary)
-                .opacity(active ? 1 : 0)
+            .foregroundStyle(tint)
+            .frame(maxWidth: .infinity, minHeight: Theme.tap)
+            .padding(.vertical, 3)
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Theme.dim))
         }
-        .padding(.horizontal, 4)
-        .frame(minHeight: Theme.tap)
-        .contentShape(Rectangle())
-        .onTapGesture(perform: tap)
-        // VoiceOver: "Weight, 62.5 kg", swipe up or down to change it, as the crown does.
+        .buttonStyle(.plain)
+        // VoiceOver: "Weight, 62.5 kg, button: tap to change it".
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
-        .accessibilityValue(Text(verbatim: suffix.map { "\(text) \($0)" } ?? text))
-        .accessibilityHint(Text("Turn the Digital Crown to change it."))
-        .accessibilityAddTraits(active ? .isSelected : [])
-        .accessibilityAdjustableAction { direction in
-            let isWeight = suffix != nil
-            let step = isWeight ? store.weightStep : 1
-            let d: Double
-            switch direction {
-            case .increment: d = step
-            case .decrement: d = -step
-            @unknown default: d = 0
-            }
-            if isWeight { store.weight = max(0, store.weight + d) } else { store.reps = max(0, store.reps + d) }
-        }
+        .accessibilityValue(Text(verbatim: unit.map { "\(value) \($0)" } ?? value))
+        .accessibilityHint(Text("Tap to change it."))
+        .accessibilityAddTraits(.isButton)
     }
 }
 
-/// A hold's seconds, before it starts: big, the crown turns them in fives.
-struct SecondsView: View {
+/*
+ * One value on a screen of its own, like setting a timer in Apple's apps: the value huge in the
+ * middle in the accent colour (so it is clear what changes), − and + either side, the Digital
+ * Crown turning it in the exercise's own steps (a tap of the crown at each), Done at the bottom.
+ */
+struct ValueEditor: View {
     @EnvironmentObject var store: SessionStore
-    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 36
-    let seconds: Double
+    @Environment(\.dismiss) private var dismiss
+    let field: EditField
+    let entry: Entry
+    let unit: String
+    @State private var value: Double = 0
+    @FocusState private var focused: Bool
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 46
+
+    private var step: Double {
+        switch field {
+        case .weight: return entry.step.flatMap { $0 > 0 ? $0 : nil } ?? store.weightStep
+        case .reps: return 1
+        case .seconds: return 5
+        }
+    }
+    private var range: ClosedRange<Double> {
+        switch field {
+        case .weight: return 0...(unit == "lb" ? 1500 : 700)
+        case .reps: return 0...200
+        case .seconds: return 5...3600
+        }
+    }
+    private var title: Text {
+        switch field {
+        case .weight: return entry.isBodyweight ? Text("Added weight") : Text("Weight")
+        case .reps: return Text("Reps")
+        case .seconds: return Text("Hold")
+        }
+    }
+    private var suffix: String? {
+        switch field {
+        case .weight: return unit
+        case .reps: return nil
+        case .seconds: return "s"
+        }
+    }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(verbatim: formatNumber(seconds)).font(.system(size: size, weight: .semibold, design: .rounded).monospacedDigit())
-                Text(verbatim: "s").font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(.secondary)
+        VStack(spacing: 4) {
+            title.font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+            HStack(spacing: 6) {
+                stepButton("minus", Text("Less")) { nudge(-step) }
+                VStack(spacing: 0) {
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                        Text(verbatim: formatNumber(value))
+                            .font(.system(size: size, weight: .semibold, design: .rounded).monospacedDigit())
+                            .foregroundStyle(Theme.accent)
+                            .contentTransition(.numericText())
+                        if let s = suffix { Text(verbatim: s).font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(.secondary) }
+                    }
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
+                    Image(systemName: "digitalcrown.arrow.clockwise.fill").font(.system(size: 10)).foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                }
+                .frame(maxWidth: .infinity)
+                .focusable()
+                .focused($focused)
+                .digitalCrownRotation($value, from: range.lowerBound, through: range.upperBound, by: step,
+                                      sensitivity: field == .weight ? DigitalCrownRotationalSensitivity.medium : DigitalCrownRotationalSensitivity.low, isContinuous: false, isHapticFeedbackEnabled: true)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(title)
+                .accessibilityValue(Text(verbatim: suffix.map { "\(formatNumber(value)) \($0)" } ?? formatNumber(value)))
+                .accessibilityAdjustableAction { d in
+                    switch d {
+                    case .increment: nudge(step)
+                    case .decrement: nudge(-step)
+                    @unknown default: break
+                    }
+                }
+                stepButton("plus", Text("More")) { nudge(step) }
             }
-            .lineLimit(1)
-            .minimumScaleFactor(0.5)
-            Image(systemName: "digitalcrown.arrow.clockwise.fill").font(.system(size: 9)).foregroundStyle(.secondary)
-        }
-        .frame(minHeight: Theme.tap)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("Hold"))
-        .accessibilityValue(Text(Duration.seconds(seconds), format: .units(allowed: [.minutes, .seconds], width: .wide)))
-        .accessibilityHint(Text("Turn the Digital Crown to change it."))
-        .accessibilityAdjustableAction { direction in
-            switch direction {
-            case .increment: store.seconds = min(600, store.seconds + 5)
-            case .decrement: store.seconds = max(5, store.seconds - 5)
-            @unknown default: break
+            if field == .weight {
+                Text(verbatim: "± \(formatNumber(step)) \(unit)").font(.system(size: 10)).foregroundStyle(.secondary)
             }
+            Spacer(minLength: 2)
+            Button { save(); dismiss() } label: {
+                Text("Done").font(.body.weight(.semibold)).frame(maxWidth: .infinity, minHeight: Theme.tap)
+            }
+            .tint(Theme.accent)
         }
+        .padding(.horizontal, 2)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+        .onAppear {
+            switch field {
+            case .weight: value = store.weight
+            case .reps: value = store.reps
+            case .seconds: value = store.seconds
+            }
+            focused = true
+        }
+        .onDisappear { save() }
+    }
+
+    private func nudge(_ d: Double) {
+        // On the step's grid, so + and − land on the same numbers the crown does.
+        let next = ((value + d) / step).rounded() * step
+        value = min(range.upperBound, max(range.lowerBound, next))
+        WKInterfaceDevice.current().play(.click)
+    }
+
+    private func save() {
+        switch field {
+        case .weight: store.weight = max(0, value)
+        case .reps: store.reps = max(0, value.rounded())
+        case .seconds: store.seconds = max(5, value)
+        }
+    }
+
+    private func stepButton(_ symbol: String, _ label: Text, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 40, height: 40)
+                .background(Circle().fill(Theme.dim))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+}
+
+/// The weigh-in before a workout started here, as the phone asks for it: the body weight on the
+/// crown (in tenths), Save and start, or start without.
+struct WeighInView: View {
+    @EnvironmentObject var store: SessionStore
+    @FocusState private var focused: Bool
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 40
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 6) {
+                Text("Quick check-in").font(.system(.headline, design: .rounded))
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text(verbatim: String(format: "%.1f", store.bodyWeight))
+                        .font(.system(size: size, weight: .semibold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(Theme.accent)
+                        .contentTransition(.numericText())
+                    Text(verbatim: store.unit).font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(.secondary)
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .frame(maxWidth: .infinity, minHeight: Theme.tap)
+                .focusable()
+                .focused($focused)
+                .digitalCrownRotation($store.bodyWeight, from: 20, through: store.unit == "lb" ? 700 : 320, by: 0.1,
+                                      sensitivity: .low, isContinuous: false, isHapticFeedbackEnabled: true)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text("Body weight"))
+                .accessibilityValue(Text(verbatim: String(format: "%.1f %@", store.bodyWeight, store.unit)))
+                .accessibilityHint(Text("Turn the Digital Crown to change it."))
+                Button { store.finishWeighIn(save: true) } label: {
+                    Text("Save & start workout").font(.body.weight(.semibold)).frame(maxWidth: .infinity, minHeight: Theme.tap)
+                }
+                .tint(Theme.accent)
+                Button { store.finishWeighIn(save: false) } label: {
+                    Text("Start without weighing in").font(.footnote).frame(maxWidth: .infinity, minHeight: Theme.tap)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                Button(role: .cancel) { store.cancelWeighIn() } label: {
+                    Text("Cancel").font(.footnote).frame(maxWidth: .infinity, minHeight: 32)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 4)
+        }
+        .onAppear { focused = true }
     }
 }
 
@@ -648,15 +813,17 @@ struct RestView: View {
         // overlaps on any size (it did on 46 mm when the ring filled the whole screen).
         VStack(spacing: 2) {
             ZStack {
-                CountdownRing(start: store.restStartedAt ?? end.addingTimeInterval(-90), end: end)
+                if store.show.restRing {
+                    CountdownRing(start: store.restStartedAt ?? end.addingTimeInterval(-90), end: end)
+                }
                 VStack(spacing: 1) {
                     Text("Rest").font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
                     Text(timerInterval: Date()...end, countsDown: true)
-                        .font(.system(size: countdownSize, weight: .semibold, design: .rounded).monospacedDigit())
+                        .font(.system(size: store.show.restRing ? countdownSize : countdownSize * 1.35, weight: .semibold, design: .rounded).monospacedDigit())
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                         .multilineTextAlignment(.center)
-                    if let e = store.entry, let si = store.setIndex {
+                    if store.show.showNext, let e = store.entry, let si = store.setIndex {
                         Group {
                             if let side = store.sideUp {
                                 Text("Next: \(e.name), set \(si + 1)") + Text(verbatim: " · ") + Text(side == "L" ? LocalizedStringKey("Left") : LocalizedStringKey("Right"))
@@ -734,6 +901,7 @@ struct HoldView: View {
 
 struct SummaryView: View {
     @EnvironmentObject var store: SessionStore
+    @Environment(\.locale) private var locale
     let summary: WorkoutSummary
 
     var body: some View {
@@ -749,7 +917,7 @@ struct SummaryView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Text(verbatim: summary.name).font(.footnote).foregroundStyle(.secondary)
-                if let d = summary.duration { stat(Text("Time"), Text(verbatim: SummaryView.duration(d))) }
+                if let d = summary.duration { stat(Text("Time"), Text(verbatim: SummaryView.duration(d, locale: locale))) }
                 stat(Text("Sets"), Text(verbatim: "\(summary.sets)"))
                 if summary.volume > 0 {
                     stat(Text("Volume"), Text(verbatim: "\(summary.volume.formatted(.number.precision(.fractionLength(0)))) \(summary.unit)"))
@@ -760,7 +928,7 @@ struct SummaryView: View {
                 if let kcal = summary.calories {
                     stat(Text("Calories"), Text(Measurement(value: kcal, unit: UnitEnergy.kilocalories),
                                                 format: .measurement(width: .abbreviated, usage: .asProvided,
-                                                                     numberFormatStyle: .number.precision(.fractionLength(0)))))
+                                                                     numberFormatStyle: .number.precision(.fractionLength(0))).locale(locale)))
                 }
                 if !summary.prs.isEmpty {
                     VStack(alignment: .leading, spacing: 2) {
@@ -802,8 +970,11 @@ struct SummaryView: View {
     }
 
     /// "52 min", "1 h 5 min", in the watch's language.
-    static func duration(_ seconds: Double) -> String {
+    static func duration(_ seconds: Double, locale: Locale = .current) -> String {
         let f = DateComponentsFormatter()
+        var calendar = Calendar.current
+        calendar.locale = locale
+        f.calendar = calendar
         f.allowedUnits = seconds >= 3600 ? [.hour, .minute] : [.minute]
         f.unitsStyle = .short
         return f.string(from: max(60, seconds)) ?? ""

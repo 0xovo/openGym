@@ -222,15 +222,23 @@ enum SessionCore {
         return (count, true)
     }
 
-    /// A ready session started here.
-    static func start(_ s0: SessionState, _ session: ReadySession, wid: String, at: Double, id: String) -> (SessionState, Event) {
+    /// The weigh-in before a workout started here, for the phone's body weight list.
+    static func weighIn(_ w: Double, at: Double, id: String) -> Event? {
+        guard w > 0, w < 700 else { return nil }
+        return ["id": id, "type": "weighIn", "w": (w * 10).rounded() / 10, "at": at]
+    }
+
+    /// A ready session started here, with the body weight just weighed in (or none).
+    static func start(_ s0: SessionState, _ session: ReadySession, wid: String, at: Double, id: String, bw: Double? = nil) -> (SessionState, Event) {
         var s = s0
         s.workout = ActiveWorkout(id: wid, name: session.name, unit: s.unit, cur: 0, restSec: s.restSec, rest: nil, entries: session.entries, start: at)
         s.startedHere = wid
         s.pending = [:]
         s.skipped = nil
         s.entryIndex = 0
-        return (s, ["id": id, "type": "start", "routineIds": session.routineIds, "wid": wid, "at": at])
+        var event: Event = ["id": id, "type": "start", "routineIds": session.routineIds, "wid": wid, "at": at]
+        if let bw = bw, bw > 0 { event["bw"] = (bw * 10).rounded() / 10 }
+        return (s, event)
     }
 
     /// The session finished here.

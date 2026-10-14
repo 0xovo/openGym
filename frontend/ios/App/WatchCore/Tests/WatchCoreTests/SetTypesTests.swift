@@ -177,3 +177,38 @@ final class SetTypesTests: XCTestCase {
         XCTAssertNil(s.pending["x#0"]?.sec)
     }
 }
+
+/// The weigh-in, the app's language and the display choices the phone sends.
+final class SettingsAndWeighInTests: XCTestCase {
+    func testTheWeighInGoesOutAndRidesOnTheStart() {
+        let ev = SessionCore.weighIn(81.44, at: 5, id: "b")
+        XCTAssertEqual(ev?["type"] as? String, "weighIn")
+        XCTAssertEqual(ev?["w"] as? Double, 81.4)
+        XCTAssertNil(SessionCore.weighIn(0, at: 5, id: "x"))
+        let ready = ReadySession(routineIds: ["r"], name: "Push", entries: [])
+        let (_, start) = SessionCore.start(SessionState(), ready, wid: "watch-1", at: 5, id: "s", bw: 81.44)
+        XCTAssertEqual(start["bw"] as? Double, 81.4)
+        let (_, noBw) = SessionCore.start(SessionState(), ready, wid: "watch-2", at: 5, id: "s2")
+        XCTAssertNil(noBw["bw"])
+    }
+
+    func testTheSettingsReadWithAndWithoutTheNewFields() throws {
+        let json = #"{"v":1,"settings":{"health":true,"lang":"pt-BR","weighIn":false,"lastBw":80.5,"show":{"clip":false,"elapsed":true,"rest":"plain"}},"active":{"id":"w","name":"A","unit":"kg","cur":0,"restSec":90,"entries":[{"id":"x","name":"X","mode":"reps","step":1.25,"sets":[]}]}}"#
+        let snap = try JSONDecoder().decode(Snapshot.self, from: Data(json.utf8))
+        let s = SessionCore.applySnapshot(SessionState(), snap)
+        XCTAssertEqual(s.settings.lang, "pt-BR")
+        XCTAssertEqual(s.settings.weighIn, false)
+        XCTAssertEqual(s.settings.lastBw, 80.5)
+        let show = s.settings.show ?? WatchShow()
+        XCTAssertFalse(show.showClip)
+        XCTAssertTrue(show.showHr)
+        XCTAssertTrue(show.showElapsed)
+        XCTAssertFalse(show.restRing)
+        XCTAssertEqual(s.workout?.entries[0].step, 1.25)
+        let old = try JSONDecoder().decode(Snapshot.self, from: Data(#"{"v":1,"settings":{"health":false}}"#.utf8))
+        let d = old.settings?.show ?? WatchShow()
+        XCTAssertTrue(d.showClip && d.showHr && d.showLast && d.showNext && d.restRing)
+        XCTAssertFalse(d.showElapsed || d.showKcal)
+        XCTAssertNil(old.settings?.lang)
+    }
+}

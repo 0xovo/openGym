@@ -22,6 +22,12 @@
 "Time" = "समय";
 "Skip set" = "सेट छोड़ें";
 "Personal records" = "रिकॉर्ड";
+"Quick check-in" = "झटपट वज़न चेक";
+"Save & start workout" = "सहेजें और वर्कआउट शुरू करें";
+"Start without weighing in" = "बिना तौले शुरू करें";
+"Body weight" = "शरीर का वज़न";
+"Less" = "कम";
+"More" = "अधिक";
 "Last time: %@" = "पिछली बार: %@";
 "No workout running" = "कोई वर्कआउट नहीं चल रहा";
 "Start one on your iPhone and it shows up here." = "iPhone पर एक शुरू करें, यह यहाँ दिखेगा।";
@@ -45,3 +51,7 @@
 "%lld avg · %lld max" = "औसत %lld · अधिकतम %lld";
 "Set %lld of %lld" = "सेट %lld / %lld";
 "%lld of %lld sets" = "%lld / %lld सेट";
+"Tap to change it." = "बदलने के लिए टैप करें।";
+"Added weight" = "अतिरिक्त वज़न";
+"Your rest, your next set, or today's workout." = "आपका आराम, अगला सेट, या आज का वर्कआउट।";
+"Opens openGym." = "openGym खोलता है।";

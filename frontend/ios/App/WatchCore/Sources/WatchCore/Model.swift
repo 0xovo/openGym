@@ -61,6 +61,8 @@ struct Entry: Codable, Equatable {
     var best: BestSet?
     /// Assisted (a lighter weight is the better one).
     var assisted: Bool?
+    /// The weight step this exercise moves in on the phone (its plates or machine stack).
+    var step: Double?
 
     var isTimed: Bool { mode == "time" }
     var isCardio: Bool { mode == "cardio" }
@@ -116,6 +118,40 @@ struct WatchSettings: Codable, Equatable {
     var health: Bool?
     /// The wrist taps when a rest is over.
     var restHaptics: Bool?
-    /// What the Digital Crown turns first on a set: "reps" or "weight".
+    /// What the Digital Crown turns first on a set: "reps" or "weight" (older phones).
     var crown: String?
+    /// The app's language ("en", "de", "pt-BR", …): the watch shows its words in it.
+    var lang: String?
+    /// Whether a workout started here asks for the body weight first (the phone's check-in).
+    var weighIn: Bool?
+    /// The last body weight logged, where the weigh-in's crown starts.
+    var lastBw: Double?
+    /// What the watch shows during a workout (Settings → Apple Watch); nil is the default.
+    var show: WatchShow?
+}
+
+/// What a workout screen shows. Each nil means its default.
+struct WatchShow: Codable, Equatable {
+    /// The exercise's animation (on).
+    var clip: Bool?
+    /// The heart rate (on).
+    var hr: Bool?
+    /// What was lifted last time (on).
+    var last: Bool?
+    /// The time since the start (off).
+    var elapsed: Bool?
+    /// Calories so far (off).
+    var kcal: Bool?
+    /// The next exercise on the rest screen (on).
+    var next: Bool?
+    /// The rest as a ring with the countdown ("ring", default) or the countdown alone ("plain").
+    var rest: String?
+
+    var showClip: Bool { clip ?? true }
+    var showHr: Bool { hr ?? true }
+    var showLast: Bool { last ?? true }
+    var showElapsed: Bool { elapsed ?? false }
+    var showKcal: Bool { kcal ?? false }
+    var showNext: Bool { next ?? true }
+    var restRing: Bool { rest != "plain" }
 }

@@ -22,6 +22,12 @@
 "Time" = "Czas";
 "Skip set" = "Pomiń serię";
 "Personal records" = "Rekordy";
+"Quick check-in" = "Szybkie ważenie";
+"Save & start workout" = "Zapisz i zacznij trening";
+"Start without weighing in" = "Zacznij bez ważenia";
+"Body weight" = "Masa ciała";
+"Less" = "Mniej";
+"More" = "Więcej";
 "Last time: %@" = "Ostatnio: %@";
 "No workout running" = "Żaden trening nie trwa";
 "Start one on your iPhone and it shows up here." = "Zacznij trening na iPhonie, a pojawi się tutaj.";
@@ -45,3 +51,7 @@
 "%lld avg · %lld max" = "śr. %lld · maks. %lld";
 "Set %lld of %lld" = "Seria %lld z %lld";
 "%lld of %lld sets" = "%lld z %lld serii";
+"Tap to change it." = "Stuknij, by zmienić.";
+"Added weight" = "Dodatkowy ciężar";
+"Your rest, your next set, or today's workout." = "Twoja przerwa, następna seria albo dzisiejszy trening.";
+"Opens openGym." = "Otwiera openGym.";

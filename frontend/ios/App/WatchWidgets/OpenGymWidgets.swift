@@ -93,7 +93,7 @@ struct WidgetView: View {
             } else {
                 ZStack {
                     AccessoryWidgetBackground()
-                    Image(systemName: "dumbbell.fill").font(.title3)
+                    OpenGymLogo().padding(10)
                 }
             }
         case .accessoryInline:
@@ -143,7 +143,10 @@ struct WidgetView: View {
                             .gaugeStyle(.accessoryLinearCapacity)
                     }
                 } else {
-                    Label("openGym", systemImage: "dumbbell.fill").font(.headline)
+                    HStack(spacing: 6) {
+                        OpenGymLogo().frame(width: 26, height: 16)
+                        Text(verbatim: "openGym").font(.headline)
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -152,10 +155,18 @@ struct WidgetView: View {
 }
 
 @main
+struct OpenGymWidgets: WidgetBundle {
+    var body: some Widget {
+        OpenGymWidget()
+        OpenGymLauncher()
+    }
+}
+
 struct OpenGymWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "OpenGymWorkout", provider: Provider()) { entry in
             WidgetView(entry: entry)
+                .environment(\.locale, entry.state.locale)
                 .containerBackground(.black, for: .widget)
                 // A tap on "Start" opens the watch app and starts today's workout.
                 .widgetURL(entry.state.mode == "today" ? URL(string: "opengym-watch://start") : URL(string: "opengym-watch://open"))
@@ -165,3 +176,62 @@ struct OpenGymWidget: Widget {
         .supportedFamilies([.accessoryRectangular, .accessoryCircular, .accessoryInline, .accessoryCorner])
     }
 }
+
+/*
+ * The plain one: openGym's logo on the watch face, a tap opens the app. For a face that should
+ * always have the way in, whatever is going on (the other widget changes with the workout).
+ */
+struct LauncherProvider: TimelineProvider {
+    func placeholder(in context: Context) -> Entry { Entry(date: Date(), state: .idle) }
+    func getSnapshot(in context: Context, completion: @escaping (Entry) -> Void) { completion(Entry(date: Date(), state: WidgetState.read())) }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
+        completion(Timeline(entries: [Entry(date: Date(), state: WidgetState.read())], policy: .never))
+    }
+}
+
+struct LauncherView: View {
+    @Environment(\.widgetFamily) var family
+    let entry: Entry
+
+    var body: some View {
+        switch family {
+        case .accessoryCircular:
+            ZStack {
+                AccessoryWidgetBackground()
+                OpenGymLogo().padding(9)
+            }
+        case .accessoryCorner:
+            OpenGymLogo()
+                .padding(4)
+                .widgetLabel { Text(verbatim: "openGym") }
+        case .accessoryInline:
+            Text(verbatim: "openGym")
+        default:
+            HStack(spacing: 8) {
+                OpenGymLogo().frame(width: 30, height: 20)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(verbatim: "openGym").font(.headline)
+                    if entry.state.mode == "today" {
+                        Text(verbatim: entry.state.title).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+struct OpenGymLauncher: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "OpenGymLauncher", provider: LauncherProvider()) { entry in
+            LauncherView(entry: entry)
+                .environment(\.locale, entry.state.locale)
+                .containerBackground(.black, for: .widget)
+                .widgetURL(URL(string: "opengym-watch://open"))
+        }
+        .configurationDisplayName("openGym")
+        .description("Opens openGym.")
+        .supportedFamilies([.accessoryCircular, .accessoryCorner, .accessoryInline, .accessoryRectangular])
+    }
+}
+

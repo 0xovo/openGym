@@ -43,6 +43,12 @@ const FROM_APP = {
   'Time': 'Time',
   'Skip set': 'Skip set',
   'Personal records': 'PRs',
+  'Quick check-in': 'Quick check-in',
+  'Save & start workout': 'Save & start workout',
+  'Start without weighing in': 'Start without weighing in',
+  'Body weight': 'Body weight',
+  'Less': 'Less',
+  'More': 'More',
 }
 // Built from an app word: "Last time: %@".
 const COMPOSED = { 'Last time: %@': ['Last time', w => `${w}: %@`] }
@@ -138,6 +144,18 @@ const OWN = {
   '%lld of %lld sets': {
     de: '%lld von %lld Sätzen', fr: '%lld séries sur %lld', es: '%lld de %lld series', it: '%lld serie su %lld', 'pt-PT': '%lld de %lld séries', 'pt-BR': '%lld de %lld séries', pl: '%lld z %lld serii', hu: '%lld / %lld sorozat', tr: '%lld / %lld set', ru: '%lld из %lld подходов', uk: '%lld з %lld підходів', ar: '%lld من %lld مجموعات', hi: '%lld / %lld सेट', bn: '%lld / %lld সেট', th: '%lld จาก %lld เซ็ต', ko: '%lld/%lld세트', 'zh-Hans': '%lld / %lld 组', 'zh-Hant': '%lld / %lld 組',
   },
+  'Tap to change it.': {
+    de: 'Tippe, um es zu ändern.', fr: 'Touche pour le changer.', es: 'Toca para cambiarlo.', it: 'Tocca per cambiarlo.', 'pt-PT': 'Toca para mudar.', 'pt-BR': 'Toque para mudar.', pl: 'Stuknij, by zmienić.', hu: 'Koppints a módosításhoz.', tr: 'Değiştirmek için dokun.', ru: 'Нажмите, чтобы изменить.', uk: 'Торкнись, щоб змінити.', ar: 'اضغط للتغيير.', hi: 'बदलने के लिए टैप करें।', bn: 'বদলাতে ট্যাপ করুন।', th: 'แตะเพื่อเปลี่ยน', ko: '탭해서 바꾸세요.', 'zh-Hans': '轻点以更改。', 'zh-Hant': '輕點以更改。',
+  },
+  'Added weight': {
+    de: 'Zusatzgewicht', fr: 'Poids ajouté', es: 'Peso añadido', it: 'Peso aggiunto', 'pt-PT': 'Peso adicional', 'pt-BR': 'Peso adicional', pl: 'Dodatkowy ciężar', hu: 'Plusz súly', tr: 'Ek ağırlık', ru: 'Доп. вес', uk: 'Додаткова вага', ar: 'وزن إضافي', hi: 'अतिरिक्त वज़न', bn: 'অতিরিক্ত ওজন', th: 'น้ำหนักเพิ่ม', ko: '추가 무게', 'zh-Hans': '附加重量', 'zh-Hant': '附加重量',
+  },
+  'Your rest, your next set, or today\'s workout.': {
+    de: 'Deine Pause, dein nächster Satz oder das Training von heute.', fr: 'Ton repos, ta prochaine série ou la séance du jour.', es: 'Tu descanso, tu próxima serie o el entreno de hoy.', it: 'Il tuo recupero, la prossima serie o l’allenamento di oggi.', 'pt-PT': 'O teu descanso, a próxima série ou o treino de hoje.', 'pt-BR': 'Seu descanso, a próxima série ou o treino de hoje.', pl: 'Twoja przerwa, następna seria albo dzisiejszy trening.', hu: 'A pihenőd, a következő sorozat vagy a mai edzés.', tr: 'Dinlenmen, sıradaki setin ya da bugünkü antrenman.', ru: 'Отдых, следующий подход или сегодняшняя тренировка.', uk: 'Відпочинок, наступний підхід або сьогоднішнє тренування.', ar: 'راحتك، أو مجموعتك التالية، أو تمرين اليوم.', hi: 'आपका आराम, अगला सेट, या आज का वर्कआउट।', bn: 'আপনার বিশ্রাম, পরের সেট, বা আজকের ওয়ার্কআউট।', th: 'ช่วงพัก เซ็ตถัดไป หรือการฝึกวันนี้', ko: '휴식, 다음 세트, 또는 오늘의 운동.', 'zh-Hans': '你的休息、下一组或今天的训练。', 'zh-Hant': '你的休息、下一組或今天的訓練。',
+  },
+  'Opens openGym.': {
+    de: 'Öffnet openGym.', fr: 'Ouvre openGym.', es: 'Abre openGym.', it: 'Apre openGym.', 'pt-PT': 'Abre o openGym.', 'pt-BR': 'Abre o openGym.', pl: 'Otwiera openGym.', hu: 'Megnyitja az openGymet.', tr: 'openGym’i açar.', ru: 'Открывает openGym.', uk: 'Відкриває openGym.', ar: 'يفتح openGym.', hi: 'openGym खोलता है।', bn: 'openGym খোলে।', th: 'เปิด openGym', ko: 'openGym을 열어요.', 'zh-Hans': '打开 openGym。', 'zh-Hant': '打開 openGym。',
+  },
 }
 
 // Info.plist's own (the Apple Health permission prompts), into InfoPlist.strings.
@@ -190,6 +208,17 @@ for (const [pack, lproj] of Object.entries(LANGS)) {
     plist.push(`"${k}" = "${esc(tr[lproj])}";`)
   }
   writeFileSync(join(out, `${lproj}.lproj`, 'InfoPlist.strings'), plist.join('\n') + '\n')
+}
+// English: every key as itself. Without an en.lproj a watch set to another language could show
+// that language's words to an app in English.
+{
+  const keys = [...Object.keys(FROM_APP), ...Object.keys(COMPOSED), ...Object.keys(OWN)]
+  const lines = ['/* openGym on the Apple Watch, en. Written by ios/ci/watch-strings.mjs: change that, not this. */', '']
+  for (const k of keys) lines.push(`"${esc(k)}" = "${esc(k)}";`)
+  for (const dir of [out, widgets]) {
+    mkdirSync(join(dir, 'en.lproj'), { recursive: true })
+    writeFileSync(join(dir, 'en.lproj', 'Localizable.strings'), lines.join('\n') + '\n')
+  }
 }
 if (problems) process.exit(1)
 console.log(`wrote ${Object.keys(LANGS).length} languages`)

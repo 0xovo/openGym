@@ -22,6 +22,12 @@
 "Time" = "時間";
 "Skip set" = "略過這一組";
 "Personal records" = "個人紀錄";
+"Quick check-in" = "快速記錄體重";
+"Save & start workout" = "儲存並開始訓練";
+"Start without weighing in" = "不量體重直接開始";
+"Body weight" = "體重";
+"Less" = "較少";
+"More" = "較多";
 "Last time: %@" = "上次: %@";
 "No workout running" = "沒有進行中的訓練";
 "Start one on your iPhone and it shows up here." = "在 iPhone 上開始，它就會出現在這裡。";
@@ -45,3 +51,7 @@
 "%lld avg · %lld max" = "平均 %lld · 最高 %lld";
 "Set %lld of %lld" = "第 %lld 組，共 %lld 組";
 "%lld of %lld sets" = "%lld / %lld 組";
+"Tap to change it." = "輕點以更改。";
+"Added weight" = "附加重量";
+"Your rest, your next set, or today's workout." = "你的休息、下一組或今天的訓練。";
+"Opens openGym." = "打開 openGym。";
