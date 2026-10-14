@@ -47,9 +47,11 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
     /// Asks for what the session needs: saving workouts, reading the heart rate.
     func requestAuthorization(_ done: @escaping (Bool) -> Void) {
         guard HKHealthStore.isHealthDataAvailable() else { done(false); return }
-        let share: Set<HKSampleType> = [HKObjectType.workoutType()]
+        var share: Set<HKSampleType> = [HKObjectType.workoutType()]
         var read: Set<HKObjectType> = [HKObjectType.workoutType()]
         if let hr = HKObjectType.quantityType(forIdentifier: .heartRate) { read.insert(hr) }
+        // The calories the workout burned, for the summary at its end (and in Apple Health).
+        if let kcal = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) { share.insert(kcal); read.insert(kcal) }
         store.requestAuthorization(toShare: share, read: read) { ok, _ in
             DispatchQueue.main.async { done(ok) }
         }
@@ -141,20 +143,48 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         store.execute(q)
     }
 
+    /// When the badge last changed: it follows the readings at most every few seconds (a redraw of
+    /// the page each time costs battery), sooner when the number really moves.
+    private var shownAt = Date.distantPast
+
     private func add(_ readings: [(Date, Double)]) {
         for r in readings where !samples.contains(where: { abs($0.0.timeIntervalSince(r.0)) < 0.5 }) { samples.append(r) }
         samples.sort { $0.0 < $1.0 }
-        if let last = samples.last { heartRate = last.1 }
+        guard let last = samples.last?.1 else { return }
+        let now = Date()
+        if heartRate == nil || abs((heartRate ?? 0) - last) >= 5 || now.timeIntervalSince(shownAt) >= 4 {
+            if heartRate != last { heartRate = last }
+            shownAt = now
+        }
     }
 
-    /// The workout ended: saved to Apple Health, or dropped when `save` is false.
-    func end(save: Bool) {
+    /// The whole session's heart rate and calories, for the summary.
+    struct Totals {
+        var hrAvg: Double?
+        var hrMax: Double?
+        var calories: Double?
+    }
+
+    /// The workout ended: saved to Apple Health, or dropped when `save` is false. `totals` gets the
+    /// session's heart rate and calories (nothing when no session ran).
+    func end(save: Bool, totals: ((Totals) -> Void)? = nil) {
         wanted = false
         workoutId = nil
         if let q = query { store.stop(q); query = nil }
-        guard let s = session, let b = builder else { return }
+        let all = samples.map { $0.1 }
+        let hr = Totals(hrAvg: all.isEmpty ? nil : (all.reduce(0, +) / Double(all.count)).rounded(), hrMax: all.max()?.rounded(), calories: nil)
+        guard let s = session, let b = builder else {
+            if let totals = totals { DispatchQueue.main.async { totals(Totals()) } }
+            return
+        }
         s.end()
         b.endCollection(withEnd: Date()) { _, _ in
+            var out = hr
+            if let kcalType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned),
+               let kcal = b.statistics(for: kcalType)?.sumQuantity()?.doubleValue(for: .kilocalorie()), kcal > 0 {
+                out.calories = kcal.rounded()
+            }
+            if let totals = totals { DispatchQueue.main.async { totals(out) } }
             if save {
                 b.finishWorkout { _, _ in }
             } else {

@@ -33,6 +33,16 @@ const FROM_APP = {
   'Finish and save': 'Finish and save',
   'Cancel': 'Cancel',
   'Rest’s over. Next set!': 'Rest’s over. Next set!',
+  'Left': 'Left',
+  'Right': 'Right',
+  'Bodyweight': 'Bodyweight',
+  'Superset': 'Superset',
+  'Weight': 'Weight',
+  'Sets': 'Sets',
+  'Volume': 'Volume',
+  'Time': 'Time',
+  'Skip set': 'Skip set',
+  'Personal records': 'PRs',
 }
 // Built from an app word: "Last time: %@".
 const COMPOSED = { 'Last time: %@': ['Last time', w => `${w}: %@`] }
@@ -79,6 +89,51 @@ const OWN = {
     de: '%@, Satz %lld', fr: '%@, série %lld', es: '%@, serie %lld', it: '%@, serie %lld', 'pt-PT': '%@, série %lld', 'pt-BR': '%@, série %lld',
     pl: '%@, seria %lld', hu: '%@, %lld. sorozat', tr: '%@, set %lld', ru: '%@, подход %lld', uk: '%@, підхід %lld', ar: '%@، المجموعة %lld',
     hi: '%@, सेट %lld', bn: '%@, সেট %lld', th: '%@ เซ็ต %lld', ko: '%@, %lld세트', 'zh-Hans': '%@，第 %lld 组', 'zh-Hant': '%@，第 %lld 組',
+  },
+  'Calories': {
+    de: 'Kalorien', fr: 'Calories', es: 'Calorías', it: 'Calorie', 'pt-PT': 'Calorias', 'pt-BR': 'Calorias', pl: 'Kalorie', hu: 'Kalória', tr: 'Kalori', ru: 'Калории', uk: 'Калорії', ar: 'السعرات', hi: 'कैलोरी', bn: 'ক্যালোরি', th: 'แคลอรี', ko: '칼로리', 'zh-Hans': '卡路里', 'zh-Hant': '卡路里',
+  },
+  'Heart rate': {
+    de: 'Puls', fr: 'Pouls', es: 'Pulso', it: 'Battito', 'pt-PT': 'Frequência cardíaca', 'pt-BR': 'Frequência cardíaca', pl: 'Tętno', hu: 'Pulzus', tr: 'Nabız', ru: 'Пульс', uk: 'Пульс', ar: 'النبض', hi: 'धड़कन', bn: 'হার্ট রেট', th: 'ชีพจร', ko: '심박수', 'zh-Hans': '心率', 'zh-Hant': '心率',
+  },
+  'Hold': {
+    de: 'Halten', fr: 'Tenue', es: 'Aguanta', it: 'Tenuta', 'pt-PT': 'Aguenta', 'pt-BR': 'Segure', pl: 'Utrzymaj', hu: 'Tartás', tr: 'Tut', ru: 'Удержание', uk: 'Утримання', ar: 'ثبات', hi: 'होल्ड', bn: 'ধরে রাখুন', th: 'ค้างไว้', ko: '버티기', 'zh-Hans': '保持', 'zh-Hant': '保持',
+  },
+  'Stop': {
+    de: 'Stopp', fr: 'Stop', es: 'Parar', it: 'Stop', 'pt-PT': 'Parar', 'pt-BR': 'Parar', pl: 'Stop', hu: 'Stop', tr: 'Durdur', ru: 'Стоп', uk: 'Стоп', ar: 'إيقاف', hi: 'रोकें', bn: 'থামুন', th: 'หยุด', ko: '정지', 'zh-Hans': '停止', 'zh-Hant': '停止',
+  },
+  'Start hold': {
+    de: 'Halten starten', fr: 'Lancer la tenue', es: 'Empezar', it: 'Inizia la tenuta', 'pt-PT': 'Começar', 'pt-BR': 'Começar', pl: 'Start', hu: 'Indítás', tr: 'Başlat', ru: 'Начать', uk: 'Почати', ar: 'ابدأ', hi: 'शुरू करें', bn: 'শুরু করুন', th: 'เริ่ม', ko: '시작', 'zh-Hans': '开始', 'zh-Hant': '開始',
+  },
+  'Workout saved': {
+    de: 'Training gespeichert', fr: 'Séance enregistrée', es: 'Entreno guardado', it: 'Allenamento salvato', 'pt-PT': 'Treino guardado', 'pt-BR': 'Treino salvo', pl: 'Trening zapisany', hu: 'Edzés mentve', tr: 'Antrenman kaydedildi', ru: 'Тренировка сохранена', uk: 'Тренування збережено', ar: 'تم حفظ التمرين', hi: 'वर्कआउट सहेजा गया', bn: 'ওয়ার্কআউট সেভ হয়েছে', th: 'บันทึกการฝึกแล้ว', ko: '운동 저장됨', 'zh-Hans': '训练已保存', 'zh-Hant': '訓練已儲存',
+  },
+  'Ended on your iPhone': {
+    de: 'Am iPhone beendet', fr: 'Terminée sur ton iPhone', es: 'Terminado en tu iPhone', it: 'Finito sull’iPhone', 'pt-PT': 'Terminado no iPhone', 'pt-BR': 'Encerrado no iPhone', pl: 'Zakończono na iPhonie', hu: 'Az iPhone-on befejezve', tr: 'iPhone’da bitirildi', ru: 'Завершено на iPhone', uk: 'Завершено на iPhone', ar: 'انتهى على iPhone', hi: 'iPhone पर खत्म हुआ', bn: 'iPhone-এ শেষ হয়েছে', th: 'จบบน iPhone แล้ว', ko: 'iPhone에서 끝났어요', 'zh-Hans': '已在 iPhone 上结束', 'zh-Hant': '已在 iPhone 上結束',
+  },
+  'Tap a dot to do a skipped set.': {
+    de: 'Tippe auf einen Punkt, um einen übersprungenen Satz zu machen.', fr: 'Touche un point pour faire une série sautée.', es: 'Toca un punto para hacer una serie saltada.', it: 'Tocca un punto per fare una serie saltata.', 'pt-PT': 'Toca num ponto para fazer uma série saltada.', 'pt-BR': 'Toque num ponto para fazer uma série pulada.', pl: 'Stuknij kropkę, by zrobić pominiętą serię.', hu: 'Koppints egy pöttyre egy kihagyott sorozathoz.', tr: 'Atlanan bir set için bir noktaya dokun.', ru: 'Нажмите на точку, чтобы сделать пропущенный подход.', uk: 'Торкнись точки, щоб зробити пропущений підхід.', ar: 'اضغط نقطة لأداء مجموعة متخطاة.', hi: 'छूटा सेट करने के लिए एक बिंदु टैप करें।', bn: 'বাদ দেওয়া সেট করতে একটি বিন্দুতে ট্যাপ করুন।', th: 'แตะจุดเพื่อทำเซ็ตที่ข้ามไป', ko: '건너뛴 세트를 하려면 점을 탭하세요.', 'zh-Hans': '轻点圆点来做跳过的组。', 'zh-Hant': '輕點圓點來做跳過的組。',
+  },
+  'Log this one on your iPhone.': {
+    de: 'Das hier trägst du am iPhone ein.', fr: 'Celui-ci se note sur ton iPhone.', es: 'Este se registra en tu iPhone.', it: 'Questo si registra sull’iPhone.', 'pt-PT': 'Este regista-se no iPhone.', 'pt-BR': 'Este você registra no iPhone.', pl: 'To zapisz na iPhonie.', hu: 'Ezt az iPhone-on rögzítsd.', tr: 'Bunu iPhone’da kaydet.', ru: 'Это записывается на iPhone.', uk: 'Це записуй на iPhone.', ar: 'سجّل هذا على iPhone.', hi: 'इसे iPhone पर दर्ज करें।', bn: 'এটা iPhone-এ লিখুন।', th: 'อันนี้บันทึกบน iPhone', ko: '이건 iPhone에서 기록하세요.', 'zh-Hans': '这个请在 iPhone 上记录。', 'zh-Hant': '這個請在 iPhone 上記錄。',
+  },
+  'Saved on the watch, syncs later': {
+    de: 'Auf der Watch gespeichert, synct später', fr: 'Gardé sur la montre, synchro plus tard', es: 'Guardado en el reloj, se sincroniza luego', it: 'Salvato sull’orologio, si sincronizza dopo', 'pt-PT': 'Guardado no relógio, sincroniza depois', 'pt-BR': 'Salvo no relógio, sincroniza depois', pl: 'Zapisano na zegarku, zsynchronizuje się później', hu: 'Az órán mentve, később szinkronizál', tr: 'Saatte kaydedildi, sonra eşitlenir', ru: 'Сохранено на часах, синхронизируется позже', uk: 'Збережено на годиннику, синхронізується пізніше', ar: 'حُفظ على الساعة، تتم المزامنة لاحقًا', hi: 'वॉच पर सहेजा, बाद में सिंक होगा', bn: 'ঘড়িতে সেভ হয়েছে, পরে সিঙ্ক হবে', th: 'บันทึกบนนาฬิกาแล้ว จะซิงค์ทีหลัง', ko: '워치에 저장됨, 나중에 동기화돼요', 'zh-Hans': '已存在手表上，稍后同步', 'zh-Hant': '已存在手錶上，稍後同步',
+  },
+  'Skip this set?': {
+    de: 'Diesen Satz überspringen?', fr: 'Sauter cette série ?', es: '¿Saltar esta serie?', it: 'Saltare questa serie?', 'pt-PT': 'Saltar esta série?', 'pt-BR': 'Pular esta série?', pl: 'Pominąć tę serię?', hu: 'Kihagyod ezt a sorozatot?', tr: 'Bu set atlansın mı?', ru: 'Пропустить этот подход?', uk: 'Пропустити цей підхід?', ar: 'تخطي هذه المجموعة؟', hi: 'यह सेट छोड़ें?', bn: 'এই সেটটি বাদ দেবেন?', th: 'ข้ามเซ็ตนี้ไหม', ko: '이 세트를 건너뛸까요?', 'zh-Hans': '跳过这一组？', 'zh-Hant': '跳過這一組？',
+  },
+  'Turn the Digital Crown to change it.': {
+    de: 'Dreh an der Digital Crown, um es zu ändern.', fr: 'Tourne la Digital Crown pour le changer.', es: 'Gira la Digital Crown para cambiarlo.', it: 'Ruota la Digital Crown per cambiarlo.', 'pt-PT': 'Roda a Digital Crown para mudar.', 'pt-BR': 'Gire a Digital Crown para mudar.', pl: 'Obróć Digital Crown, by zmienić.', hu: 'Forgasd a Digital Crownt a módosításhoz.', tr: 'Değiştirmek için Digital Crown’u çevir.', ru: 'Поверните Digital Crown, чтобы изменить.', uk: 'Поверни Digital Crown, щоб змінити.', ar: 'أدر Digital Crown للتغيير.', hi: 'बदलने के लिए Digital Crown घुमाएँ।', bn: 'বদলাতে Digital Crown ঘোরান।', th: 'หมุน Digital Crown เพื่อเปลี่ยน', ko: '바꾸려면 Digital Crown을 돌리세요.', 'zh-Hans': '转动数码表冠来更改。', 'zh-Hant': '轉動數位錶冠來更改。',
+  },
+  '%lld done': {
+    de: '%lld erledigt', fr: '%lld faites', es: '%lld hechas', it: '%lld fatte', 'pt-PT': '%lld feitas', 'pt-BR': '%lld feitas', pl: '%lld zrobione', hu: '%lld kész', tr: '%lld tamam', ru: '%lld сделано', uk: '%lld зроблено', ar: '%lld مكتملة', hi: '%lld पूरे', bn: '%lldটি শেষ', th: 'เสร็จ %lld', ko: '%lld개 완료', 'zh-Hans': '已完成 %lld', 'zh-Hant': '已完成 %lld',
+  },
+  '%lld avg · %lld max': {
+    de: 'Ø %lld · max. %lld', fr: 'moy. %lld · max %lld', es: 'media %lld · máx. %lld', it: 'media %lld · max %lld', 'pt-PT': 'média %lld · máx. %lld', 'pt-BR': 'média %lld · máx. %lld', pl: 'śr. %lld · maks. %lld', hu: 'átl. %lld · max. %lld', tr: 'ort. %lld · maks. %lld', ru: 'ср. %lld · макс. %lld', uk: 'сер. %lld · макс. %lld', ar: 'متوسط %lld · أقصى %lld', hi: 'औसत %lld · अधिकतम %lld', bn: 'গড় %lld · সর্বোচ্চ %lld', th: 'เฉลี่ย %lld · สูงสุด %lld', ko: '평균 %lld · 최대 %lld', 'zh-Hans': '平均 %lld · 最高 %lld', 'zh-Hant': '平均 %lld · 最高 %lld',
+  },
+  'Set %lld of %lld': {
+    de: 'Satz %lld von %lld', fr: 'Série %lld sur %lld', es: 'Serie %lld de %lld', it: 'Serie %lld di %lld', 'pt-PT': 'Série %lld de %lld', 'pt-BR': 'Série %lld de %lld', pl: 'Seria %lld z %lld', hu: '%lld. sorozat / %lld', tr: 'Set %lld / %lld', ru: 'Подход %lld из %lld', uk: 'Підхід %lld з %lld', ar: 'المجموعة %lld من %lld', hi: 'सेट %lld / %lld', bn: 'সেট %lld / %lld', th: 'เซ็ต %lld จาก %lld', ko: '%lld/%lld세트', 'zh-Hans': '第 %lld 组，共 %lld 组', 'zh-Hant': '第 %lld 組，共 %lld 組',
   },
 }
 

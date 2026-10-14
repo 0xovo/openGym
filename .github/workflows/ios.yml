@@ -135,15 +135,33 @@ jobs:
             DATA=$(xcrun simctl get_app_container "$UDID" ch.opengym.app.watchkitapp data 2>/dev/null || true)
             CLIP=""
             if [ -n "$DATA" ]; then mkdir -p "$DATA/tmp" && cp WatchCore/Tests/WatchCoreTests/Fixtures/synthetic-square.gif "$DATA/tmp/clip.gif" && CLIP="$DATA/tmp/clip.gif"; fi
-            for screen in idle empty set weight rest finish; do
+            # shot <file> <screen> [-OpenGymWatchAX | -OpenGymWatchAOD]: one demo screen (SessionStore
+            # startDemo: every kind of set, text only), the clip on the first exercise. Prints the pid.
+            shot() {
+              local file=$1 screen=$2; shift 2
               xcrun simctl terminate "$UDID" ch.opengym.app.watchkitapp 2>/dev/null || true
-              if [ "$screen" = set ] && [ -n "$CLIP" ]; then
-                xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen" -OpenGymWatchDemoClip "$CLIP"
-              else
-                xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp -OpenGymWatchDemo -OpenGymWatchScreen "$screen"
-              fi
+              local args=(-OpenGymWatchDemo -OpenGymWatchScreen "$screen" "$@")
+              if [ -n "$CLIP" ]; then args+=(-OpenGymWatchDemoClip "$CLIP"); fi
+              PID=$(xcrun simctl launch "$UDID" ch.opengym.app.watchkitapp "${args[@]}" | awk '{print $NF}')
               sleep 6
-              xcrun simctl io "$UDID" screenshot "build/watch/$size-$screen.png"
+              xcrun simctl io "$UDID" screenshot "build/watch/$size-$file.png" >/dev/null
+            }
+            for screen in idle empty set warmup weight rest hold bodyweight side superset offline finish summary ended; do
+              shot "$screen" "$screen"
+            done
+            # The largest text size (accessibility XXXL) on the screens with the most on them.
+            for screen in set side rest hold summary; do
+              shot "ax-$screen" "$screen" -OpenGymWatchAX
+            done
+            # What each screen costs: the app's CPU time over 20 s once it is up (the simulator's
+            # process, on the Mac). Always On (wrist down) should cost next to nothing.
+            cpu() { ps -o time= -p "$1" 2>/dev/null | awk -F'[:.]' '{ if (NF==3) print $1*60+$2+$3/100; else print 0 }'; }
+            for spec in idle:idle set:set rest:rest hold:hold set-aod:set:-OpenGymWatchAOD rest-aod:rest:-OpenGymWatchAOD; do
+              IFS=: read -r file screen flag <<< "$spec"
+              if [ -n "$flag" ]; then shot "perf-$file" "$screen" "$flag"; else shot "perf-$file" "$screen"; fi
+              a=$(cpu "$PID"); sleep 20; b=$(cpu "$PID")
+              echo "$size $file: $(node -e "console.log(((+process.argv[1]-+process.argv[2])/20*100).toFixed(1))" "$b" "$a")% CPU over 20 s" | tee -a build/watch/perf.txt
+              rm -f "build/watch/$size-perf-$file.png"
             done
             echo "$size: $NAME" >> build/watch/devices.txt
             xcrun simctl shutdown "$UDID" || true
