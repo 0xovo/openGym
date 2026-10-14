@@ -29,9 +29,8 @@
 // Only lib/exercises.js is imported, so history.js, progression.js and plates.js can all use
 // this file without a cycle.
 
-import { EXIDX, isBodyweightEq } from './exercises.js'
+import { exerciseOf as exOf, isBodyweightEq } from './exercises.js'
 
-const exOf = exOrId => (typeof exOrId === 'string' ? EXIDX[exOrId] : exOrId)
 const unitOf = S => (S?.unit === 'lb' ? 'lb' : 'kg')
 const isMap = v => !!v && typeof v === 'object' && !Array.isArray(v)
 const tidy = w => Math.round(w * 1000) / 1000

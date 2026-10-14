@@ -200,8 +200,11 @@ export const gifSrc = (ex, figure) => GIF_BASE + clipFile(drawing(ex, figure) ? 
 // The catalogue's animations are short MP4 loops; a fork's or an older build's may still be GIFs.
 export const isVideoSrc = src => /\.(mp4|webm)(\?|$)/i.test(src || '')
 
+// An exercise from either its id or itself: most helpers below take both.
+export const exerciseOf = idOrEx => (typeof idOrEx === 'string' ? EXIDX[idOrEx] : idOrEx)
+
 // Cardio exercises log time + speed instead of weight × reps.
-export const isCardio = idOrEx => (typeof idOrEx === 'string' ? EXIDX[idOrEx] : idOrEx)?.bp === 'cardio'
+export const isCardio = idOrEx => exerciseOf(idOrEx)?.bp === 'cardio'
 
 // Exercises the dataset already knows carry no external load (issue #32) — a quarter of the
 // catalogue. This seeds the `bw` flag on a fresh config so a push-up never asks for a weight
@@ -212,7 +215,7 @@ export const isCardio = idOrEx => (typeof idOrEx === 'string' ? EXIDX[idOrEx] : 
 // per-exercise Bodyweight switch still overrides it either way (issue #39).
 const BODYWEIGHT_EQ = new Set(['body weight', 'band', 'resistance band'])
 export const isBodyweightEq = idOrEx =>
-  BODYWEIGHT_EQ.has((typeof idOrEx === 'string' ? EXIDX[idOrEx] : idOrEx)?.eq)
+  BODYWEIGHT_EQ.has(exerciseOf(idOrEx)?.eq)
 
 // Equipment that is a load in its own right: a bar, a bell, a stack, a sled, a weight. A set on
 // one of these logged at 0 kg is a number nobody typed in. The rest of the catalogue that is not
@@ -221,7 +224,7 @@ export const isBodyweightEq = idOrEx =>
 // reps instead (lib/progression.js).
 const LOADED_EQ = new Set(['barbell', 'ez barbell', 'olympic barbell', 'trap bar', 'dumbbell', 'kettlebell', 'clubbell', 'macebell', 'cable', 'leverage machine', 'smith machine', 'sled machine', 'weighted'])
 export const isLoadedEq = idOrEx =>
-  LOADED_EQ.has((typeof idOrEx === 'string' ? EXIDX[idOrEx] : idOrEx)?.eq)
+  LOADED_EQ.has(exerciseOf(idOrEx)?.eq)
 
 /* Assistance machines run the other way round: the stack carries part of your body weight, so
  * a smaller number is the harder set and the record (issue #232). Getting the set wrong is
