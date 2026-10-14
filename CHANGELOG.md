@@ -29,7 +29,7 @@ https://testflight.apple.com/join/RKATb61k
   separately, so you only get the one you use.
 - **No more boxes.** The animations in the app showed faint rectangles around the moving parts.
   They are re-made from the original files, frame by frame, and look like the originals now. The
-  APK gets the same fix, at 240 px built in.
+  APKs get the same fix (180 px built in, or 360 px in the HD one).
 - **Swipe from the left edge to go back**, with the page you came from sliding in underneath.
 - **Notifications are asked for at the start**, not in the middle of your first rest.
 - The Vibrate switch works on the iPhone, and a server or Coach on your home network works over
