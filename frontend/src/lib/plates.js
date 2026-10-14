@@ -10,7 +10,7 @@
 // Logged weights stay the total on the bar (or the added load). Everything here is display.
 
 import { EXIDX } from './exercises.js'
-import { usesBar, defaultBarWeight } from './bar.js'
+import { usesBar, barTypeWeight } from './bar.js'
 import { isBw } from './history.js'
 import { weightIncrement } from './progression.js'
 import { ownedWeightsFor, ownedFloor } from './dumbbells.js'
@@ -203,15 +203,15 @@ export function loadKindFor(S, cfgOrId) {
 
 /**
  * The weight that is there before any plate goes on, in the profile unit: the bar for bar
- * exercises (S.barWeights override, 0 = "no bar", else the type's default), the explicit
- * override for anything else (a sled's own weight), 0 otherwise.
+ * exercises (S.barWeights override, 0 = "no bar", else your bar for the type in S.barDefaults,
+ * else the built-in), the explicit override for anything else (a sled's own weight), 0 otherwise.
  */
 export function baseWeightFor(S, exOrId) {
   const ex = exOf(exOrId)
   if (!ex) return 0
   const own = S?.barWeights?.[ex.id]
   if (typeof own === 'number' && own >= 0) return own
-  return defaultBarWeight(ex.eq, S?.unit) ?? 0
+  return barTypeWeight(S, ex.eq) ?? 0
 }
 
 /**

@@ -1500,6 +1500,15 @@ export const PT_BR_OVERRIDES = {
   'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
   'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
   'Workout running': 'Treino em andamento',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'Suas barras',
+  'Set the bar once for every exercise of a type.': 'Defina a barra uma vez para todos os exercícios de um tipo.',
+  'Your bar for this type, set in Your bars.': 'Sua barra para este tipo, definida em Suas barras.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'O quanto pesam as barras da sua academia. Cada exercício com essa barra conta as anilhas a partir dela, a menos que você tenha dado uma própria a ele. Os pesos registrados continuam sendo totais.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'A maioria dos exercícios da biblioteca usa “{0}”, alguns usam “{1}”. Para uma barra curta em todos, defina as duas.',
+  'Back to the standard bars': 'Voltar às barras padrão',
+  'Standard bars. Tap if yours are lighter.': 'Barras padrão. Toque se as suas forem mais leves.',
+  'The last warm-up still gets the full rest before your first work set.': 'O último aquecimento continua tendo o descanso completo antes da sua primeira série de trabalho.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

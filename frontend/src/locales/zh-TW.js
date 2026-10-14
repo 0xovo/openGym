@@ -2368,4 +2368,13 @@ export default {
   'Workout running': '訓練進行中',
   'Set {0} of {1}': '第 {0} 組，共 {1} 組',
   'All sets done': '所有組已完成',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': '你的槓鈴桿',
+  'Set the bar once for every exercise of a type.': '依類型設定一次，該類型的所有動作都會套用。',
+  'Your bar for this type, set in Your bars.': '你為這類槓設定的重量，來自「你的槓鈴桿」。',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': '你健身房裡槓鈴桿的重量。用這根槓的每個動作都從它開始算槓片，除非你替動作另外設了槓。記錄的重量仍是總重。',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': '動作庫裡大多數動作用「{0}」，少數用「{1}」。想全部用短槓，兩個都要設。',
+  'Back to the standard bars': '恢復標準槓鈴桿',
+  'Standard bars. Tap if yours are lighter.': '標準槓鈴桿。如果你的比較輕，點這裡。',
+  'The last warm-up still gets the full rest before your first work set.': '最後一組熱身仍會在第一組正式組前完整休息。',
 }

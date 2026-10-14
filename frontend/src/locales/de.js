@@ -2341,7 +2341,7 @@ export default {
   'No timer': 'Kein Timer',
   'Pick a time': 'Zeit wählen',
   'Rest between sides': 'Pause zwischen den Seiten',
-  'Rest between warm-ups': 'Pause zwischen Aufwärmsätzen',
+  'Rest between warm-ups': 'Aufwärmpausen',
   'Warm-ups are light, so they can rest less, or not at all. The last one still gets the full rest before your first work set.': 'Aufwärmsätze sind leicht, da reicht weniger Pause oder gar keine. Der letzte bekommt trotzdem die volle Pause vor dem ersten Arbeitssatz.',
   // --- progress photos for any day (#557) ---
   'Add photos': 'Fotos hinzufügen',
@@ -2395,4 +2395,13 @@ export default {
   'Workout running': 'Training läuft',
   'Set {0} of {1}': 'Satz {0} von {1}',
   'All sets done': 'Alle Sätze erledigt',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'Deine Stangen',
+  'Set the bar once for every exercise of a type.': 'Stell die Stange einmal für alle Übungen eines Typs ein.',
+  'Your bar for this type, set in Your bars.': 'Deine Stange für diesen Typ, eingestellt unter Deine Stangen.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'Was die Stangen in deinem Gym wiegen. Jede Übung mit dieser Stange rechnet die Scheiben davon aus, außer du hast der Übung eine eigene gegeben. Eingetragene Gewichte bleiben Gesamtgewichte.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'Die meisten Übungen in der Bibliothek nutzen „{0}“, ein paar „{1}“. Für eine kurze Stange überall stellst du beide ein.',
+  'Back to the standard bars': 'Zurück zu den Standardstangen',
+  'Standard bars. Tap if yours are lighter.': 'Standardstangen. Tippe, wenn deine leichter sind.',
+  'The last warm-up still gets the full rest before your first work set.': 'Der letzte Aufwärmsatz bekommt trotzdem die volle Pause vor deinem ersten Arbeitssatz.',
 }

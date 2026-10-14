@@ -88,6 +88,21 @@ describe('exercise settings: rest for warm-ups and between sides', () => {
     expect('warmupRestOff' in out || 'warmupRestSec' in out || 'sideRestSec' in out).toBe(false)
   })
 
+  it('without its own, the row names the profile\'s warm-up rest and still writes nothing', () => {
+    useStore.setState(s => ({ S: { ...s.S, warmupRestSec: 30 } }))
+    const onSave = vi.fn()
+    exConfigSheet(ex, { sets: 3, reps: 10, weight: 40, mode: 'reps', warmupSets: 2 }, onSave)
+    let host = render(useUI.getState().sheets.at(-1))
+    expect(row(host, 'Rest between warm-ups').querySelector('.lrow-v').textContent).toBe('Default (30s)')
+    act(() => save(host))
+    expect('warmupRestOff' in onSave.mock.calls[0][0] || 'warmupRestSec' in onSave.mock.calls[0][0]).toBe(false)
+    useStore.setState(s => ({ S: { ...s.S, warmupRestSec: 0 } }))
+    exConfigSheet(ex, { sets: 3, reps: 10, weight: 40, mode: 'reps', warmupSets: 2 }, vi.fn())
+    host = render(useUI.getState().sheets.at(-1))
+    expect(row(host, 'Rest between warm-ups').querySelector('.lrow-v').textContent).toBe('Default (No timer)')
+    useStore.setState(s => { const { warmupRestSec, ...rest } = s.S; return { S: rest } })
+  })
+
   it('keeps what it was given: a warm-up rest from the Coach, "no timer", a break between sides', () => {
     const onSave = vi.fn()
     exConfigSheet(ex, { sets: 3, reps: 10, weight: 40, mode: 'reps', side: true, warmupRestSec: 45, sideRestSec: 20 }, onSave)

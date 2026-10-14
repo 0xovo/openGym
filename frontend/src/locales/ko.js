@@ -2375,4 +2375,13 @@ export default {
   'Workout running': '운동 중',
   'Set {0} of {1}': '{1}세트 중 {0}세트',
   'All sets done': '모든 세트 완료',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': '내 바',
+  'Set the bar once for every exercise of a type.': '종류별로 바를 한 번만 설정하면 모든 운동에 적용돼요.',
+  'Your bar for this type, set in Your bars.': '이 종류의 내 바, 내 바에서 설정했어요.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': '내 헬스장 바의 무게예요. 그 바를 쓰는 모든 운동은 따로 바를 정해 주지 않는 한 여기서부터 플레이트를 계산해요. 기록한 무게는 그대로 총무게예요.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': '라이브러리의 운동 대부분은 “{0}”, 일부는 “{1}”을 써요. 모든 곳에 짧은 바를 쓰려면 둘 다 설정하세요.',
+  'Back to the standard bars': '기본 바로 되돌리기',
+  'Standard bars. Tap if yours are lighter.': '기본 바. 내 바가 더 가벼우면 탭하세요.',
+  'The last warm-up still gets the full rest before your first work set.': '마지막 워밍업 세트는 그래도 첫 본 세트 전에 전체 휴식을 받아요.',
 }

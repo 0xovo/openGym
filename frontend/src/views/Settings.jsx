@@ -9,6 +9,7 @@ import { copyText } from '../lib/clipboard.js'
 import { useUI } from '../store/useUI.js'
 import { ACCENTS, ACCENT_NAMES, todayISO, localTZ, weekStartOf, MONDAY, SUNDAY, fmtPlate } from '../lib/format.js'
 import { inventoryFor, ownsPlates } from '../lib/plates.js'
+import { BAR_TYPES, ownBarDefault } from '../lib/bar.js'
 import { dumbbellsOf } from '../lib/dumbbells.js'
 import { effortOf } from '../lib/history.js'
 import { figureOf } from '../lib/exercises.js'
@@ -35,7 +36,7 @@ import { checkForUpdate, downloadAndInstall, fetchChecksum, RELEASES_PAGE } from
 import { selfUpdates } from '../lib/channel.js'
 import { forgetCoach } from '../lib/coach-api.js'
 import { REST_MAX, REST_PAUSE_MIN, REST_PAUSE_MAX, fmtRest, fmtDuration } from '../lib/duration.js'
-import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmentProfileSheet, plateInventorySheet, dumbbellInventorySheet, menuSheet } from '../sheets.jsx'
+import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmentProfileSheet, plateInventorySheet, dumbbellInventorySheet, barDefaultsSheet, menuSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
 import { durationSheet } from '../components/DurationWheel.jsx'
 import { showsConnection, showsLocalLine } from '../components/SyncBanner.jsx'
@@ -457,10 +458,30 @@ export default function Settings({ page = null, find = null, via = null, entryKe
       onDone: v => update(s => { s.restPauseSec = v }),
     })} />
 
+  // The rest between warm-up sets for every exercise without its own (Discord: seals' "separate
+  // warm-up rest"). Absent is like the work sets, 0 no timer (lib/supersetFlow.js warmupRestSecFor).
+  const warmAll = typeof S.warmupRestSec === 'number' ? S.warmupRestSec : null
+  const setWarm = v => update(s => { if (v === null) delete s.warmupRestSec; else s.warmupRestSec = v })
+  const warmupRestRow = <Row icon="timer" iconTint="var(--yellow)" title={t('Rest between warm-ups')} accessory="chevron"
+    subtitle={t('The last warm-up still gets the full rest before your first work set.')}
+    value={warmAll === null ? t('Like the work sets') : warmAll > 0 ? fmtRest(warmAll) : t('No timer')}
+    onClick={() => menuSheet({
+      title: t('Rest between warm-ups'),
+      items: [
+        { icon: 'timer', label: t('Like the work sets'), on: warmAll === null, onClick: () => setWarm(null) },
+        { icon: 'pause', label: t('No timer'), on: warmAll === 0, onClick: () => setWarm(0) },
+        { icon: 'clock', label: t('Pick a time'), on: warmAll > 0, onClick: () => durationSheet({
+          title: t('Rest between warm-ups'), value: warmAll > 0 ? warmAll : 30, max: REST_MAX, off: t('No timer'),
+          onDone: v => setWarm(v > 0 ? v : 0),
+        }) },
+      ],
+    })} />
+
   const pages = {
     workout: () => <>
       <Section title={t('Rest')} footer={t('Each exercise can have its own rest too. Set it in the exercise settings of a routine.')}>
         {restRow}
+        {warmupRestRow}
         {restPauseRow}
       </Section>
       <Section title={t('Logging')}>
@@ -1337,9 +1358,16 @@ function EquipmentCard({ S, update }) {
   const dumbbellSummary = bells.length
     ? bells.map(fmtPlate).join(' · ')
     : t('Any weight. Tap to list the ones you own.')
+  // Your bars (lib/bar.js ownBarDefault): the types you set a weight for, in the profile unit.
+  const unit = S.unit === 'lb' ? 'lb' : 'kg'
+  const ownBars = BAR_TYPES.filter(eq => ownBarDefault(S, eq) !== null)
+  const barSummary = ownBars.length
+    ? ownBars.map(eq => { const n = t(eq); return n.charAt(0).toLocaleUpperCase() + n.slice(1) + ' ' + fmtPlate(ownBarDefault(S, eq)) + ' ' + unit }).join(' · ')
+    : t('Standard bars. Tap if yours are lighter.')
   return <Section title={t('Equipment')} footer={t('Filters the exercise library and picker, and flags routine exercises that need something you don’t have in the active profile.')}>
     <Row icon="plate" iconTint="var(--orange)" title={t('Plates')} subtitle={plateSummary} accessory="chevron" onClick={() => plateInventorySheet()} />
     <Row icon="dumbbell" iconTint="var(--teal)" title={t('Dumbbells')} subtitle={dumbbellSummary} accessory="chevron" onClick={() => dumbbellInventorySheet()} />
+    <Row icon="barbell" iconTint="var(--blue)" title={t('Your bars')} subtitle={barSummary} accessory="chevron" onClick={() => barDefaultsSheet()} />
     {profiles.length > 0 && <Row icon="kettlebell" iconTint="var(--acc)" title={t('Filter by equipment')}>
       <Switch checked={!!S.equipFilterOn} onChange={v => update(s => { s.equipFilterOn = v })} />
     </Row>}

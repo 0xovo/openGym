@@ -2378,4 +2378,13 @@ export default {
   'Workout running': 'Edzés folyamatban',
   'Set {0} of {1}': '{0}. sorozat / {1}',
   'All sets done': 'Minden sorozat kész',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'Saját rudaid',
+  'Set the bar once for every exercise of a type.': 'Állítsd be a rudat egyszer egy típus összes gyakorlatához.',
+  'Your bar for this type, set in Your bars.': 'A rudad ehhez a típushoz, a Saját rudaid alatt beállítva.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'Mennyit nyomnak a rudak a termedben. Minden gyakorlat ezzel a rúddal ebből számolja a tárcsákat, hacsak nem adtál neki sajátot. A rögzített súlyok összsúlyok maradnak.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'A könyvtár legtöbb gyakorlata „{0}”, néhány „{1}”. Ha mindenhol rövid rudat akarsz, állítsd be mindkettőt.',
+  'Back to the standard bars': 'Vissza a szabványos rudakhoz',
+  'Standard bars. Tap if yours are lighter.': 'Szabványos rudak. Koppints, ha a tieid könnyebbek.',
+  'The last warm-up still gets the full rest before your first work set.': 'Az utolsó bemelegítő sorozat így is teljes pihenőt kap az első munkasorozatod előtt.',
 }

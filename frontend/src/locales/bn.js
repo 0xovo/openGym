@@ -2454,4 +2454,13 @@ export default {
   'Workout running': 'ওয়ার্কআউট চলছে',
   'Set {0} of {1}': 'সেট {0} / {1}',
   'All sets done': 'সব সেট শেষ',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'আপনার বার',
+  'Set the bar once for every exercise of a type.': 'একই ধরনের সব ব্যায়ামের জন্য বার একবারই সেট করুন।',
+  'Your bar for this type, set in Your bars.': 'এই ধরনের জন্য আপনার বার, আপনার বার-এ সেট করা।',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'আপনার জিমের বারগুলোর ওজন কত। ওই বারের প্রতিটি ব্যায়াম এখান থেকে প্লেট গোনে, যদি না ব্যায়ামটিকে আলাদা বার দিয়ে থাকেন। লেখা ওজন মোট ওজনই থাকে।',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'লাইব্রেরির বেশিরভাগ ব্যায়াম “{0}” ব্যবহার করে, কয়েকটি “{1}”। সবখানে ছোট বারের জন্য দুটোই সেট করুন।',
+  'Back to the standard bars': 'স্ট্যান্ডার্ড বারে ফিরে যান',
+  'Standard bars. Tap if yours are lighter.': 'স্ট্যান্ডার্ড বার। আপনারগুলো হালকা হলে ট্যাপ করুন।',
+  'The last warm-up still gets the full rest before your first work set.': 'শেষ ওয়ার্ম-আপ সেট তবুও প্রথম কাজের সেটের আগে পুরো বিশ্রাম পায়।',
 }

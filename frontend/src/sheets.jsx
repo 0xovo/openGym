@@ -5,7 +5,7 @@ import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipme
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
 import { fmtDate, fmtDateRange, fmtNum, fmtPlate, exerciseNameText, fmtVol, fmtDur, durPart, todayISO, isoOf, uid, exCount, routineCount, setsWorkCount, DAYN, DAYS, weekOrder, weekStartOf, weekDayOffset, MONTHS_LONG, ACCENTS } from './lib/format.js'
 import { lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, defaultConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, sideReps, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
-import { usesBar, defaultBarWeight, hasBarOverride, isNoBar } from './lib/bar.js'
+import { usesBar, hasBarOverride, isNoBar, barTypeWeight, ownBarDefault, barPicks, withBarDefault, withStandardBars, defaultBarWeight, BAR_TYPES } from './lib/bar.js'
 import { PLATE_SIZES, pairsOf, ownsPlates, withPlatePairs, withStandardPlates, withLoadKind, loadKindFor, baseWeightFor, dropGrid } from './lib/plates.js'
 import { toScale, rirOf, EFFORT_PRESETS, effortColor } from './lib/effort.js'
 import { beep, vibrate } from './lib/sound.js'
@@ -761,7 +761,10 @@ function BarWeightEditor({ ex, cfg, extra }) {
   const kind = loadKindFor(st, ctx)
   const explicit = hasBarOverride(st, ex.id)
   const noBar = bar && isNoBar(st, ex.id)
-  const def = defaultBarWeight(ex.eq, st.unit)
+  // What "default" means for this bar: your bar for the type (Settings > Equipment > Your bars),
+  // else the built-in one.
+  const def = barTypeWeight(st, ex.eq)
+  const mine = bar && ownBarDefault(st, ex.eq) !== null
   const base = baseWeightFor(st, ex)
   // The kinds a pick would only be restating. With a `cfg` there is one: the same default the
   // rows derive. Without one the equipment decides — and for body-weight equipment that answer
@@ -785,6 +788,9 @@ function BarWeightEditor({ ex, cfg, extra }) {
     const n = Math.max(0, Math.round((v || 0) * 100) / 100)
     if (n > 0) s.barWeights[ex.id] = n; else delete s.barWeights[ex.id]
   })
+  // A quick pick of the type's own weight takes the override off, so the exercise keeps following
+  // your bars instead of freezing today's number onto it.
+  const pickBar = v => (v === def ? setBar(0) : setBar(v))
   // "No bar" is a stored 0, which is a different thing from no entry at all: a counterbalanced
   // Smith carriage weighs nothing in your hands, so the plate math and the drop-set steps must
   // start from what you logged (issue #138). Clearing it goes back to the bar type's default.
@@ -809,12 +815,20 @@ function BarWeightEditor({ ex, cfg, extra }) {
       {!noBar && <div className="row cfgrow" style={{ marginBottom: 6 }}>
         <Stepper label={bar ? t('Bar ({0})', st.unit) : t('Base weight ({0})', st.unit)} value={base} step={2.5} onChange={setBar} />
       </div>}
-      <div className="small dim" style={{ marginBottom: 18 }}>
+      {bar && !noBar && <div className="chips" style={{ flexWrap: 'wrap', overflow: 'visible', touchAction: 'auto', marginBottom: 6 }}>
+        {[...new Set([def, ...barPicks(st.unit)])].map(w => <button key={w} className={'chip nocap' + (base === w ? ' on' : '')}
+          aria-pressed={base === w} onClick={() => pickBar(w)}>{fmtNum(w) + ' ' + st.unit}</button>)}
+      </div>}
+      <div className="small dim" style={{ marginBottom: bar ? 10 : 18 }}>
         {noBar ? t('Plates are counted from 0. Turn this off for the default ({0}).', fmtNum(def) + ' ' + st.unit)
-          : bar ? (explicit ? t('Set to 0 to go back to the default ({0}).', fmtNum(def) + ' ' + st.unit) : t('Default for this bar type.'))
+          : bar ? (explicit ? t('Set to 0 to go back to the default ({0}).', fmtNum(def) + ' ' + st.unit) : mine ? t('Your bar for this type, set in Your bars.') : t('Default for this bar type.'))
             : t('The machine or sled itself, before any plate goes on. 0 if it is all plates.')}
         {extra ? ' ' + extra : ''}
       </div>
+      {/* The profile-wide side of it: one bar weight per type, for every exercise without its own. */}
+      {bar && <div className="list menu-list" style={{ marginBottom: 18 }}>
+        <Row icon="barbell" title={t('Your bars')} subtitle={t('Set the bar once for every exercise of a type.')} accessory="chevron" onClick={() => barDefaultsSheet()} />
+      </div>}
     </>}
   </>
 }
@@ -919,6 +933,43 @@ function DumbbellInventorySheet({ close }) {
   </>
 }
 export const dumbbellInventorySheet = () => ui().openSheet(close => <DumbbellInventorySheet close={close} />)
+
+// Your bars (Settings > Equipment, and the plate-loading editor): one weight per bar type for the
+// profile's unit (S.barDefaults, lib/bar.js), for every exercise of that type without a bar of its
+// own. A short 15 kg olympic bar is set here once instead of on every lift. Logged weights stay
+// totals, so history keeps its meaning; only the plate math and the drop steps move.
+function BarDefaultsSheet({ close }) {
+  const st = useStore(s => s.S)
+  const unit = st.unit === 'lb' ? 'lb' : 'kg'
+  const set = (eq, w) => update(s => { s.barDefaults = withBarDefault(s, eq, w) })
+  const any = BAR_TYPES.some(eq => ownBarDefault(st, eq) !== null)
+  const name = eq => { const n = t(eq); return n.charAt(0).toLocaleUpperCase() + n.slice(1) }
+  return <>
+    <h3>{t('Your bars')}</h3>
+    <div className="muted small" style={{ marginBottom: 14 }}>
+      {t('What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.')}
+    </div>
+    {BAR_TYPES.map(eq => {
+      const w = barTypeWeight(st, eq)
+      const builtIn = defaultBarWeight(eq, unit)
+      return <div key={eq} style={{ marginBottom: 12 }}>
+        <div className="row cfgrow" style={{ marginBottom: 6 }}>
+          <Stepper label={name(eq) + ' (' + unit + ')'} value={w} step={unit === 'lb' ? 5 : 2.5} onChange={v => set(eq, v)} />
+        </div>
+        <div className="chips" style={{ flexWrap: 'wrap', overflow: 'visible', touchAction: 'auto' }}>
+          {[...new Set([builtIn, ...barPicks(unit)])].map(p => <button key={p} className={'chip nocap' + (w === p ? ' on' : '')}
+            aria-pressed={w === p} onClick={() => set(eq, p)}>{fmtNum(p) + ' ' + unit}</button>)}
+        </div>
+      </div>
+    })}
+    <div className="small dim" style={{ margin: '4px 0 14px' }}>
+      {t('Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.', name('barbell'), name('olympic barbell'))}
+    </div>
+    {any && <Button onClick={() => update(s => { s.barDefaults = withStandardBars(s); if (!Object.keys(s.barDefaults).length) delete s.barDefaults })} style={{ marginBottom: 8 }}>{t('Back to the standard bars')}</Button>}
+    <Button variant="primary" onClick={close}>{t('Done')}</Button>
+  </>
+}
+export const barDefaultsSheet = () => ui().openSheet(close => <BarDefaultsSheet close={close} />)
 
 /* ============================ exercise detail ============================ */
 // Estimated 1RM for one exercise (issue #18): what the log already implies, plus a calculator
@@ -1700,6 +1751,9 @@ function BackupsSheet({ ex, subs: initial, onChange, close }) {
 
 function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, initial, saveLabel, backupsEditable }) {
   const st = useStore(s => s.S)
+  // No warm-up rest of its own: the profile's (Settings > Workout) when it has one, else the work rest.
+  const warmAll = typeof st.warmupRestSec === 'number' ? st.warmupRestSec : null
+  const warmLikeAll = warmAll === null ? t('Like the work sets') : t('Default ({0})', warmAll > 0 ? fmtRest(warmAll) : t('No timer'))
   const cardio = isCardio(ex.id)
   const speedUnit = speedUnitOf(st)
   const seed = existing || initial || defaultConfig(ex.id)
@@ -1954,16 +2008,16 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     <div className="small dim" style={{ marginBottom: 18 }}>
       {t('Rest after each set of this exercise. 0:00 means your default rest.')}
     </div>
-    {/* The warm-ups' own rest: like the work sets (no field, as always), no timer, or a time of
-        their own. The last warm-up still rests the full work rest before the first work set. */}
+    {/* The warm-ups' own rest: the profile's or like the work sets (no field, as always), no timer,
+        or a time of their own. The last warm-up still rests the full work rest before the first work set. */}
     {!cardio && <>
       <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
         <Row icon="timer" iconTint="var(--yellow)" title={t('Rest between warm-ups')} accessory="chevron"
-          value={c.warmupRestOff === true ? t('No timer') : c.warmupRestSec > 0 ? fmtRest(c.warmupRestSec) : t('Like the work sets')}
+          value={c.warmupRestOff === true ? t('No timer') : c.warmupRestSec > 0 ? fmtRest(c.warmupRestSec) : warmLikeAll}
           onClick={() => menuSheet({
             title: t('Rest between warm-ups'),
             items: [
-              { icon: 'timer', label: t('Like the work sets'), on: !(c.warmupRestOff === true) && !(c.warmupRestSec > 0), onClick: () => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return rest }) },
+              { icon: 'timer', label: warmLikeAll, on: !(c.warmupRestOff === true) && !(c.warmupRestSec > 0), onClick: () => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return rest }) },
               { icon: 'pause', label: t('No timer'), on: c.warmupRestOff === true, onClick: () => setC(x => { const { warmupRestSec, ...rest } = x; return { ...rest, warmupRestOff: true } }) },
               { icon: 'clock', label: t('Pick a time'), on: c.warmupRestOff !== true && c.warmupRestSec > 0, onClick: () => durationSheet({
                 title: t('Rest between warm-ups'), value: c.warmupRestSec > 0 ? c.warmupRestSec : 30, max: REST_MAX, off: t('No timer'),

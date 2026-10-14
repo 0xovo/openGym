@@ -119,10 +119,11 @@ export function restSecFor(entries, unit, defaultRestSec, setRest = null) {
  * Ramp sets are light and short, so an exercise may carry its own `warmupRestSec` in its target
  * next to `restSec`. It applies between ramp sets only: the break after the LAST ramp set, into
  * the first work set, is `workRestSec` (the value restSecFor resolved), because that is the rest
- * the first heavy set actually needs. An exercise without the field, or a work set, rests
- * `workRestSec` — exactly what every routine did before the field existed.
+ * the first heavy set actually needs. An exercise without the field falls back to `profileSec`,
+ * the profile's warm-up rest (0 = no timer), and without that, like a work set, rests
+ * `workRestSec` — exactly what every routine did before either existed.
  */
-export function warmupRestSecFor(entry, setIdx, workRestSec) {
+export function warmupRestSecFor(entry, setIdx, workRestSec, profileSec) {
   const sets = Array.isArray(entry?.sets) ? entry.sets : []
   const set = sets[setIdx]
   if (!set || !isWarmupRow(set)) return workRestSec
@@ -131,7 +132,12 @@ export function warmupRestSecFor(entry, setIdx, workRestSec) {
   // "No timer" between ramp sets: an optional `warmupRestOff` (set in the exercise's settings).
   if (entry?.target?.warmupRestOff === true) return 0
   const own = Number(entry?.target?.warmupRestSec)
-  return own > 0 ? own : workRestSec
+  if (own > 0) return own
+  // Then the profile's (Settings > Workout, S.warmupRestSec): 0 is "no timer", absent is like
+  // the work sets.
+  const all = typeof profileSec === 'number' && Number.isFinite(profileSec) ? Math.round(profileSec) : null
+  if (all === 0) return 0
+  return all > 0 ? all : workRestSec
 }
 
 /**

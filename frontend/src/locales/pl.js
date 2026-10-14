@@ -2375,4 +2375,13 @@ export default {
   'Workout running': 'Trening trwa',
   'Set {0} of {1}': 'Seria {0} z {1}',
   'All sets done': 'Wszystkie serie zrobione',
+  // --- your bars + warm-up rest default (Discord) ---
+  'Your bars': 'Twoje gryfy',
+  'Set the bar once for every exercise of a type.': 'Ustaw gryf raz dla wszystkich ćwiczeń danego typu.',
+  'Your bar for this type, set in Your bars.': 'Twój gryf dla tego typu, ustawiony w Twoje gryfy.',
+  'What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.': 'Ile ważą gryfy na twojej siłowni. Każde ćwiczenie z tym gryfem liczy talerze od niego, chyba że dałeś mu własny. Zapisane ciężary pozostają sumami.',
+  'Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.': 'Większość ćwiczeń w bibliotece używa „{0}”, kilka „{1}”. Krótki gryf wszędzie to ustawienie obu.',
+  'Back to the standard bars': 'Wróć do standardowych gryfów',
+  'Standard bars. Tap if yours are lighter.': 'Standardowe gryfy. Stuknij, jeśli twoje są lżejsze.',
+  'The last warm-up still gets the full rest before your first work set.': 'Ostatnia seria rozgrzewkowa i tak dostaje pełną przerwę przed pierwszą serią roboczą.',
 }
