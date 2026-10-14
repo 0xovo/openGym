@@ -24,6 +24,7 @@ on your phone, synced across your devices, behind your own passkey login.
 [Website](https://opengym.ch) ·
 [Live demo](https://opengym.ch/demo/) ·
 [Android APK](https://github.com/DuarteSantos8/openGym/releases/latest) ·
+[iPhone beta (TestFlight)](https://testflight.apple.com/join/RKATb61k) ·
 [Self-hosting guide](docs/SELF_HOSTING.md) ·
 [Roadmap](ROADMAP.md) ·
 [Changelog](CHANGELOG.md)
@@ -190,9 +191,10 @@ on the phone, with native reminders and a rest countdown in the notification sha
 
 - **Android:** download the signed APK from the [latest release](https://github.com/DuarteSantos8/openGym/releases/latest)
   or the [website](https://opengym.ch). Each build sits next to its `.sha256`, and
-  the app checks for updates itself. openGym is deliberately not on the Play Store.
-- **iPhone:** Apple doesn't allow installs outside the App Store. Self-host and add the PWA to your
-  home screen from Safari, or build the native app onto your own device with Xcode.
+  the app checks for updates itself. A Google Play version is on its way.
+- **iPhone and Apple Watch:** the App Store app, with a public
+  [TestFlight beta](https://testflight.apple.com/join/RKATb61k) until it is out. Or self-host and
+  add the PWA to your home screen from Safari.
 
 Details and build instructions: [docs/MOBILE.md](docs/MOBILE.md).
 

@@ -6,7 +6,7 @@ openGym ships to phones three ways, all from the same code and the same version 
 |---|---|---|---|
 | Android APK | GitHub release, opengym.ch | the app itself (Settings → About) | release machine |
 | Android, Google Play | Play Store | Google Play | release machine |
-| iPhone | App Store | the App Store | Mac runner (compile) + release machine (finish, sign) |
+| iPhone (+ Apple Watch) | App Store, TestFlight beta | the App Store | Mac runner (compile) + release machine (finish, sign, upload) |
 
 The two Android builds are flavours of one Gradle project (`frontend/android/app/build.gradle`):
 `sideload` keeps the updater (InstallPlugin, `REQUEST_INSTALL_PACKAGES`), `play` leaves both out,
@@ -37,9 +37,11 @@ ever sees the repo's 180 px media.
 
 ## Every release
 
-Bump the version in the usual places, plus the iPhone app's
-`MARKETING_VERSION` (= `versionName`) and `CURRENT_PROJECT_VERSION` (= `versionCode`) in
-`frontend/ios/App/App.xcodeproj/project.pbxproj`.
+Bump the version in the usual places, plus the iPhone app's `MARKETING_VERSION` (= `versionName`)
+and `CURRENT_PROJECT_VERSION` in `frontend/ios/App/App.xcodeproj/project.pbxproj`. The iPhone build
+number counts on its own (every TestFlight build takes the next one, App Store Connect refuses a
+number it has seen), so it runs ahead of the Android `versionCode`. The extensions and the watch
+app take both numbers from the app target.
 
 ### Android
 
@@ -64,16 +66,61 @@ with the release notes from the changelog.
 
 ### iPhone
 
-1. Push the tag; the `iOS` workflow (`.github/workflows/ios.yml`) builds `ios-unsigned-ipa` for it.
-   Download that artifact (`gh run download <run> -n ios-unsigned-ipa`).
-2. Build the phone bundle with the app's animations, from the same commit:
+The IPA carries the app, the asset pack downloader extension (`AnimationPacksDownloader`), the
+widget extension (`OpenGymWidgets`: widgets and the Live Activity) and the Apple Watch app with its
+own widget. Each is a separate bundle id with its own App Store provisioning profile.
+
+1. **Compile (CI).** The `iOS` workflow (`.github/workflows/ios.yml`, job `device-archive`) runs
+   on every push to `main` and `stores` and archives the app for devices, unsigned, without the
+   exercise media, and stamps the commit into the zip (`ci-commit.txt`). Download the
+   `ios-unsigned-ipa` artifact of the release commit (`gh run download <run> -n ios-unsigned-ipa`).
+2. **Phone bundle with the animations**, from the same commit, on the release machine:
    `cd frontend && VITE_CLIP_EXT=webp APP_MEDIA_DIR=/mnt/backup-hdd/opengym-media/build-appwebp npm run build:mobile`
-3. Finish and sign it:
-   `scripts/ios/finish-ipa.sh App-unsigned.ipa dist.p12 dist.pass openGym_AppStore.mobileprovision`
-   It refuses an IPA from another commit or a bundle without the animations.
-4. Upload: `iTMSTransporter -m upload -assetFile openGym-X.Y.Z.ipa -apiKey <KEY_ID> -apiIssuer <ISSUER_ID>`
-   (Apple's Transporter for Linux, with an App Store Connect API key in `~/.appstoreconnect/private_keys/`).
-   The build shows up in TestFlight after Apple's processing; submit it for review from there.
+3. **Finish and sign** (`scripts/ios/finish-ipa.sh`, no Mac needed, `rcodesign` signs on Linux):
+   ```sh
+   EXT_PROFILE=downloader.mobileprovision WIDGETS_PROFILE=widgets.mobileprovision \
+   WATCH_PROFILE=watch.mobileprovision WATCH_WIDGET_PROFILE=watch-widget.mobileprovision \
+   scripts/ios/finish-ipa.sh App-unsigned.ipa dist.p12 dist.pass openGym_AppStore.mobileprovision
+   ```
+   It puts the phone bundle into the app, signs every bundle with its own profile's entitlements
+   (App Group, HealthKit where the profile and the app ask for it), and refuses an IPA from
+   another commit, a version that differs from `frontend/package.json`, a bundle without the
+   animations, or an extension in the IPA without its profile.
+4. **Upload** through the App Store Connect API (Build Uploads), with an App Store Connect API key
+   (a JWT signed with the key, kept next to the signing material, never in the repo). No Mac and
+   no Transporter needed:
+   1. `POST /v1/buildUploads` with the version, the build number, platform `IOS` and the app;
+   2. `POST /v1/buildUploadFiles` for the IPA (file name, size, `uti` `com.apple.ipa`): the answer
+      lists `uploadOperations` (URL, method, headers, offset, length);
+   3. send each part of the file to its operation;
+   4. `PATCH /v1/buildUploadFiles/{id}` with `uploaded: true` and the file's MD5;
+   5. poll `GET /v1/buildUploads/{id}` until its state is complete (or failed, with the reason).
+
+   The build shows up in TestFlight after Apple's processing. Internal testers get it at once; the
+   public beta (https://testflight.apple.com/join/RKATb61k) after Beta App Review. Submit it for
+   App Store review from there.
+
+#### Animation packs (Background Assets)
+
+The sharper animation qualities are Apple-hosted asset packs (iOS 26), one per quality and
+figure (`anim-<px>-male`, `anim-<px>-female`), on demand. They change only when the animations
+do, not with every release, and are uploaded once per change, separate from the build.
+
+1. `node scripts/media/make-pack-manifests.mjs <out>` writes per pack the drawing ids and the
+   manifest (`fileSource` `<px>/<id>.webp`, `fileDestination` `<packId>/<id>.webp`), from the
+   catalogue's names only; it never opens a media file.
+2. `xcrun ba-package package <packId>/manifest.json -o <packId>.aar` turns each manifest plus the
+   private quality folders (its `sourceRoot`, one folder per quality) into the pack's archive.
+   This needs Xcode 26 or later: the one release step that needs a Mac of our own.
+3. Upload through the App Store Connect API, per pack: find or create it
+   (`GET /v1/apps/{id}/backgroundAssets?filter[assetPackIdentifier]=…`, `POST /v1/backgroundAssets`),
+   `POST /v1/backgroundAssetVersions` (Apple numbers it), `POST /v1/backgroundAssetUploadFiles`
+   (name, size) for the `uploadOperations`, send the parts, `PATCH` it with `uploaded: true` and
+   the MD5, then poll the version until it is `COMPLETE`. A complete version is available to
+   internal TestFlight by itself; external TestFlight and the App Store take it with their review
+   submission.
+
+The full-quality files only ever travel from the release machine to Apple, like the IPA (licence).
 
 ## One-time setup (owner)
 
@@ -117,7 +164,11 @@ on the phone (Settings → Reset, or uninstall).
    - `openssl req -new -newkey rsa:2048 -nodes -keyout dist.key -out dist.csr -subj "/CN=Duarte Santos/emailAddress=…"`,
      upload the CSR under Certificates → Apple Distribution, download `distribution.cer`, then
      `openssl x509 -inform der -in distribution.cer -out dist.pem && openssl pkcs12 -export -legacy -inkey dist.key -in dist.pem -out dist.p12`.
-   - Profiles → App Store Connect profile for `ch.opengym.app` → `openGym_AppStore.mobileprovision`.
+   - Profiles → an App Store Connect profile for `ch.opengym.app` → `openGym_AppStore.mobileprovision`,
+     and one each for `ch.opengym.app.AnimationPacksDownloader`, `ch.opengym.app.widgets`,
+     `ch.opengym.app.watchkitapp` and `ch.opengym.app.watchkitapp.widgets`. The app, the downloader,
+     the widgets and the watch widget share the App Group `group.ch.opengym.app`; the app and the
+     watch app have HealthKit.
    - Users and Access → Integrations → App Store Connect API key (Admin) for uploads; with it the
      bundle id, certificate and profile can also be created through the API instead of the portal.
    - Keep all of it next to the Android keystore (`/root/.config/opengym/`, never in a repo).

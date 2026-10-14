@@ -207,8 +207,8 @@ that.
   data, or to remove exactly those records.
 - **Where it shows:** Android 14 and later have Health Connect built in. On Android 9–13 it is an
   app of its own, and the card offers its store page until it is installed. Below Android 9 (the
-  app supports Android 6) Health Connect does not exist and the card is not shown.
-- **The library:** `androidx.health.connect:connect-client` 1.1.0-alpha12, called from Java
+  app supports Android 7) Health Connect does not exist and the card is not shown.
+- **The library:** `androidx.health.connect:connect-client` 1.1.0, called from Java
   (`HealthConnectPlugin.java`) through `runBlocking` on a worker thread, so the Android project stays
   Java-only. 1.1.0 stable needs compileSdk 36 and AGP 8.9.1, a toolchain bump left for its own
   change. The library asks for minSdk 26; `tools:overrideLibrary` keeps the app at 23 and the plugin
@@ -229,7 +229,8 @@ and **Delete**.
 - **Licence first.** The animations are licensed from Gym visual. The repository, the web build
   and every self-hosted server only ever have the 180 px files. Anything larger reaches people
   only inside the official store apps: built into the package, or as an **Apple-hosted asset pack**
-  (Background Assets, iOS 26) that Apple delivers, later a Play asset pack. Never from a server of
+  (Background Assets, iOS 26) or a **Play asset pack** (Play Asset Delivery) that the store
+  delivers. Never from a server of
   ours, never at a URL anyone can fetch. No tool here opens a media file; packs are planned from
   file names alone.
 - **The packs.** One per quality and figure: `anim-<px>-male`, `anim-<px>-female` for 240, 360,
@@ -260,8 +261,13 @@ and **Delete**.
   Info.plist keys `BAAppGroupID`, `BAHasManagedAssetPacks`, `BAUsesAppleHosting`, and the App
   Group `group.ch.opengym.app` on the app and the extension. `scripts/ios/finish-ipa.sh` signs the
   extension with its own profile (`EXT_PROFILE`).
-- **Android:** the same interface answers "unavailable" until Play Asset Delivery comes; the
-  sideloaded APK only ever has its built-in animations.
+- **Android:** in the `play` flavour the same interface goes through Play Asset Delivery (status,
+  download with progress, Wi-Fi only with Play's own prompt for mobile data, remove) for the packs
+  its `assets/anim-packs.json` lists, and serves their files to the page at
+  `https://localhost/_opengym_pack/<packId>/<drawing>.webp`, never a file path. The pack modules
+  are generated on the release machine by `scripts/android/make-asset-packs.mjs` and never
+  committed. The `sideload` flavour (the APK) answers "unavailable" and only ever has its
+  built-in animations (240 px).
 
 App Store Connect, once: the App Group `group.ch.opengym.app`; the bundle id
 `ch.opengym.app.AnimationPacksDownloader` (an app extension); the App Groups capability on
@@ -278,7 +284,7 @@ cellular with Wi-Fi only on, it waits; Still only shows stills everywhere a work
 - **Android:** Android Studio (bundles the SDK). Java 21 for Gradle.
 - **iOS:** a Mac with Xcode 15+ and CocoaPods (`brew install cocoapods`). A free Apple ID
   is enough to run the app on your own iPhone (see below); paid membership is only needed
-  for App Store distribution, which openGym doesn't do.
+  for App Store and TestFlight distribution ([APP_STORES.md](APP_STORES.md)).
 
 ## Build & run
 
@@ -310,10 +316,12 @@ npx @capacitor/assets generate --iconBackgroundColor '#0c0e12' --splashBackgroun
 (If the generator won't take the SVG directly, export it to `resources/icon.png` at
 1024×1024 first — any image tool can do it.)
 
-## Distribution — deliberately no app stores
+## Distribution
 
-openGym's mobile app is not on the Play Store or App Store, and that's a choice: no store
-accounts, no store rules, no yearly fees between you and an open-source app.
+The signed APK stays the way to get openGym on Android without a store, and it updates itself.
+The App Store app (public TestFlight beta: https://testflight.apple.com/join/RKATb61k) and the
+Google Play build come from the same code; how they are built and uploaded is in
+[APP_STORES.md](APP_STORES.md).
 
 ### Android — sideload the APK
 
@@ -366,8 +374,10 @@ apksigner sign --ks my.keystore --ks-key-alias opengym --out openGym.apk aligned
 
 > The App Store and Google Play builds, and how a release gets there: [APP_STORES.md](APP_STORES.md).
 
-Apple does not allow installing apps outside the App Store, so there is no `.ipa` download
-that would simply install. Your free options:
+The App Store app, or before it is out the public TestFlight beta
+(https://testflight.apple.com/join/RKATb61k), is the easy way. Apple does not allow installing
+apps outside the App Store, so there is no `.ipa` download that would simply install. Without the
+store, your free options:
 
 - **Self-host + PWA** (recommended): open your instance in Safari → Share → *Add to Home
   Screen*. Full-screen app, no expiry, plus sync and passkeys.
@@ -384,9 +394,9 @@ free tier. To switch it on, register a Mac as a project runner (shell executor; 
 and Node installed; give it a tag such as `macos`) and set the CI/CD variable `IOS_RUNNER_TAG`
 to that tag — the job then appears in every `main` and tag pipeline. Until that variable exists
 the job is not part of any pipeline, and it has not run yet, so expect a first round of fixes.
-A signed build (TestFlight, App Store) would additionally need an Apple Developer Program
-membership, the distribution certificate and profile as protected file variables, and an
-`-exportArchive` step — none of that is set up.
+The signed App Store and TestFlight builds don't come from this job: GitHub's `iOS` workflow
+archives them unsigned and the release machine finishes, signs and uploads them
+([APP_STORES.md](APP_STORES.md)).
 
 ### Release notes for maintainers
 
