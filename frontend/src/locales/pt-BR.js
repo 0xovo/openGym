@@ -1497,7 +1497,6 @@ export const PT_BR_OVERRIDES = {
   'Not allowed': 'Não permitido',
   'Turn on Apple Health and the watch measures your heart rate for every set.': 'Ative o Apple Saúde e o relógio mede sua frequência cardíaca em cada série.',
   'Tap the wrist when a rest is over': 'Toque no pulso no fim do descanso',
-  'The Digital Crown turns first': 'A Digital Crown ajusta primeiro',
   'No Apple Watch paired with this iPhone': 'Nenhum Apple Watch pareado com este iPhone',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'O openGym ainda não está no seu Apple Watch. Instale pelo app Watch.',
   'openGym is on your Apple Watch': 'O openGym está no seu Apple Watch',
@@ -1515,6 +1514,15 @@ export const PT_BR_OVERRIDES = {
   'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
   'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
   'Workout running': 'Treino em andamento',
+  'On the watch': 'No relógio',
+  'Fewer things, bigger numbers. Pick what helps you mid-set.': 'Menos coisas, números maiores. Escolha o que te ajuda no meio da série.',
+  'Exercise animation': 'Animação do exercício',
+  'Heart rate': 'Frequência cardíaca',
+  'Time so far': 'Tempo decorrido',
+  'Calories': 'Calorias',
+  'Next exercise during the rest': 'Próximo exercício no descanso',
+  'Ring': 'Anel',
+  'Countdown only': 'Só contagem regressiva',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

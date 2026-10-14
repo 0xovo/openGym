@@ -18,10 +18,11 @@ import { MOBILE, nativePlatform } from './mobile.js'
 import { EXIDX, gifSrc, figureOf, isAssisted } from './exercises.js'
 import { packId, packDrawingId } from './anim-quality.js'
 import { getState as animPacks } from './anim-packs.js'
-import { exerciseNameFor } from './i18n.js'
+import { exerciseNameFor, getLang, baseLang, onLangChange } from './i18n.js'
 import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds, isBw, isPerSide } from './history.js'
 import { isWarmupRow, isSideSet, syncSideAggregate } from './workout-model.js'
 import { bestSetFor } from './exercise-history.js'
+import { weightIncrement } from './progression.js'
 import { sessionHistory } from './backfill.js'
 import { buildCombinedEntries, deriveSessionName } from './session-merge.js'
 import { todayISO } from './format.js'
@@ -36,6 +37,8 @@ const SEND_DEBOUNCE_MS = 400
 const READY_MAX = 8
 
 const num = v => (typeof v === 'number' && Number.isFinite(v) ? v : null)
+// A body weight from the watch that holds up (kg or lb, whatever the profile uses).
+const okBw = v => { const n = num(v); return n != null && n > 0 && n < 700 }
 // One side of a per-side set, from the watch: 'L', 'R', or none (the whole set).
 const sideOf = v => (v === 'L' || v === 'R' ? v : null)
 // What a tick of a hold (`sec`) or of one side carries besides the numbers; nothing for a plain set.
@@ -57,6 +60,8 @@ function bestFor (S, id, mode) {
   }
   return bestCache.map.get(key)
 }
+
+const stepOf = (cfg, S) => { try { return num(weightIncrement(cfg, S?.unit === 'lb' ? 'lb' : 'kg')) } catch { return null } }
 
 const sideRow = v => ({ w: num(v?.w), r: num(v?.r), done: v?.done === true })
 
@@ -97,6 +102,8 @@ function watchEntry (e, H, S) {
     ...(e.sg ? { group: String(e.sg) } : {}),
     ...(best ? { best } : {}),
     ...(mode === 'reps' && isAssisted(e.id) ? { assisted: true } : {}),
+    // the step the weight moves in, as on the phone (this exercise's own, else its plates' default)
+    ...(mode === 'reps' && stepOf(cfg, S) ? { step: stepOf(cfg, S) } : {}),
   }
 }
 
@@ -224,7 +231,7 @@ export function applyEvents (events, getState) {
         if (!appHandlers) break
         // Started at the wrist: the watch app is open already, nothing to open there (startWatchSync).
         if (ev.wid) startedOnWatch.add(ev.wid)
-        appHandlers.start(Array.isArray(ev.routineIds) ? ev.routineIds : [], { id: ev.wid || null, start: num(ev.at) })
+        appHandlers.start(Array.isArray(ev.routineIds) ? ev.routineIds : [], { id: ev.wid || null, start: num(ev.at), ...(okBw(ev.bw) ? { bw: num(ev.bw) } : {}) })
       }
       // A workout already running on the phone is kept; one with the watch's id is this one.
     } else if (ev.type === 'setDone' && saved) {
@@ -242,6 +249,13 @@ export function applyEvents (events, getState) {
       const idx = entryIndexOf(A, ev)
       const set = idx >= 0 ? A.entries[idx].sets?.[ev.setIdx] : null
       if (set) handlers.setDone(idx, ev.setIdx, { w: num(ev.w), r: num(ev.r), at: num(ev.at), hr: sanitizeHr(ev.hr), ...extraOf(ev) })
+    } else if (ev.type === 'weighIn') {
+      // The weigh-in the watch asks for before a workout it starts: a body weight entry on its
+      // day, as the phone's own check-in makes one (today's replaces today's).
+      if (okBw(ev.w)) {
+        if (!appHandlers?.weighIn) break
+        appHandlers.weighIn({ w: num(ev.w), at: num(ev.at) || Date.now() })
+      }
     } else if (ev.type === 'watchStatus') {
       // What the watch says about itself, for Settings → Apple Watch. Never queued behind anything.
       writeWatchStatus(ev)
@@ -367,6 +381,22 @@ export function fitSnapshot (snap, max = SNAPSHOT_MAX_BYTES) {
   return out
 }
 
+/**
+ * What the watch takes from the app beyond its own settings: the app's language (the watch shows
+ * its words in it, whatever the watch itself is set to), and whether a workout starts with the
+ * weigh-in (Settings → During a workout) with the last body weight to start the crown from.
+ */
+export function watchExtras (S) {
+  let lang = 'en'
+  try { lang = baseLang(getLang()) || 'en' } catch { lang = 'en' }
+  const bw = Array.isArray(S?.bodyweight) && S.bodyweight.length ? S.bodyweight[S.bodyweight.length - 1] : null
+  return {
+    lang,
+    weighIn: S?.weighIn !== false,
+    ...(bw && num(bw.w) ? { lastBw: num(bw.w) } : {}),
+  }
+}
+
 export async function startWatchSync ({ useStore, useUI }) {
   const p = await watchPlugin()
   if (!p) return () => {}
@@ -407,7 +437,7 @@ export async function startWatchSync ({ useStore, useUI }) {
       const snap = prefs.enabled
         ? buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) })
         : { v: SNAPSHOT_VERSION, unit: S.unit === 'lb' ? 'lb' : 'kg', active: null, ready: null }
-      snap.settings = settingsForWatch(prefs, healthOn)
+      snap.settings = { ...settingsForWatch(prefs, healthOn), ...watchExtras(S) }
       const json = JSON.stringify(fitSnapshot(snap))
       if (json !== lastSent) {
         const r = await p.WatchBridge.sendSnapshot({ json })
@@ -437,6 +467,10 @@ export async function startWatchSync ({ useStore, useUI }) {
   const restOf = t => (t ? `${t.endsAt}|${!!t.paused}|${!!t.ready}` : '')
   const offUI = useUI.subscribe((s, prev) => { if (s.timer !== prev.timer && restOf(s.timer) !== restOf(prev.timer)) schedule() })
   const offPrefs = onWatchPrefs(() => schedule())
+  // The watch speaks the app's language, not its own system's: told again when it changes (the
+  // exercise names in the snapshot change with it too).
+  let offLang = () => {}
+  try { offLang = onLangChange(() => schedule()) } catch { /* a test without i18n */ }
   const sub = await p.WatchBridge.addListener('watchEvent', () => { drainWatchEvents() })
   // The link itself changed (the session finished activating after launch, a watch was paired, the
   // app was installed on it): asked again, and the snapshot sent when there is a watch now.
@@ -445,7 +479,7 @@ export async function startWatchSync ({ useStore, useUI }) {
   document.addEventListener('visibilitychange', onVisible)
   schedule()
   drainWatchEvents()
-  return () => { offStore(); offUI(); offPrefs(); offHealth(); sub?.remove?.(); subLink?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
+  return () => { offStore(); offUI(); offPrefs(); offHealth(); offLang(); sub?.remove?.(); subLink?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
 }
 
 // Test seams.

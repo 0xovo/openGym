@@ -60,6 +60,13 @@ describe('the snapshot carries every kind of set', () => {
     expect(bench.assisted).toBeUndefined()
   })
   it('no best for an exercise never done before', () => { expect(curl.best).toBeUndefined() })
+  it('the weight step each exercise moves in, as on the phone (its own, else the default)', () => {
+    expect(bench.step).toBeGreaterThan(0)
+    expect(plank.step).toBeUndefined()
+    const S2 = S()
+    S2.active.entries[0].target.inc = 1.25
+    expect(buildSnapshot(S2).active.entries[0].step).toBe(1.25)
+  })
 })
 
 describe('ticks of every kind', () => {
@@ -123,5 +130,39 @@ describe('a snapshot too big for the application context', () => {
     const fit = fitSnapshot(snap, size({ ...snap, ready: { today: snap.ready.today, others: [] } }) + 10)
     expect(fit.ready.today.entries).toHaveLength(12)
     expect(fit.active.entries[0].last).toBeTruthy()
+  })
+})
+
+describe('the weigh-in from the watch', () => {
+  it('goes to the app as a weigh-in, and rides on the start as the session\'s body weight', () => {
+    const weighIn = vi.fn(), start = vi.fn()
+    bindWatchAppActions({ start, patchSet: vi.fn(), weighIn })
+    applyEvents([
+      { id: 'b1', type: 'weighIn', w: 81.4, at: 1000 },
+      { id: 's1', type: 'start', wid: 'watch-1', routineIds: ['r1'], at: 1000, bw: 81.4 },
+      { id: 'b2', type: 'weighIn', w: -3, at: 1000 },
+    ], () => ({ S: { active: null } }))
+    expect(weighIn).toHaveBeenCalledTimes(1)
+    expect(weighIn).toHaveBeenCalledWith({ w: 81.4, at: 1000 })
+    expect(start).toHaveBeenCalledWith(['r1'], { id: 'watch-1', start: 1000, bw: 81.4 })
+    // once each
+    applyEvents([{ id: 'b1', type: 'weighIn', w: 81.4, at: 1000 }], () => ({ S: { active: null } }))
+    expect(weighIn).toHaveBeenCalledTimes(1)
+  })
+
+  it('is logged on its day, replacing that day\'s', async () => {
+    const { logWeighIn } = await import('./bodyweight.js')
+    const at = new Date('2026-10-14T08:00:00').getTime()
+    const s = { bodyweight: [{ d: '2026-10-13', w: 82, t: 1 }, { d: '2026-10-14', w: 81, t: 2 }] }
+    expect(logWeighIn(s, 80.96, at)).toBe(true)
+    expect(s.bodyweight).toEqual([{ d: '2026-10-13', w: 82, t: 1 }, { d: '2026-10-14', w: 81, t: at }])
+    expect(logWeighIn(s, 0, at)).toBe(false)
+  })
+
+  it('the watch is told the app\'s language, whether to ask, and the last weight', async () => {
+    const { watchExtras } = await import('./watch-sync.js')
+    expect(watchExtras({ weighIn: false, bodyweight: [{ d: '2026-10-01', w: 80 }, { d: '2026-10-10', w: 79.5 }] }))
+      .toEqual({ lang: 'en', weighIn: false, lastBw: 79.5 })
+    expect(watchExtras({})).toEqual({ lang: 'en', weighIn: true })
   })
 })

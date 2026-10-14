@@ -58,4 +58,18 @@ describe('Settings → Apple Watch', () => {
     await act(async () => { sw.click() })
     expect(readWatchPrefs().autoShow).toBe(false)
   })
+
+  it('lets you pick what the watch shows, one switch at a time, clean to begin with', async () => {
+    const el = await mount()
+    const sw = title => row(el, title).querySelector('[role="switch"]')
+    expect(sw('Exercise animation').getAttribute('aria-checked')).toBe('true')
+    expect(sw('Calories').getAttribute('aria-checked')).toBe('false')
+    expect(sw('Time so far').getAttribute('aria-checked')).toBe('false')
+    await act(async () => { sw('Calories').click() })
+    await act(async () => { sw('Exercise animation').click() })
+    expect(readWatchPrefs().show).toMatchObject({ kcal: true, clip: false, hr: true, rest: 'ring' })
+    expect(row(el, 'Rest timer')).toBeTruthy()
+    expect(row(el, 'The Digital Crown turns first')).toBeUndefined()
+  })
 })
+

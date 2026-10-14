@@ -36,3 +36,19 @@ export function weighInAt(b) {
   const t = Number(b?.t)
   return t > 0 && isoOf(new Date(t)) === b.d ? t : new Date(b.d + 'T12:00:00').getTime()
 }
+
+/**
+ * A weigh-in logged into the profile's list, the way the check-in before a workout does it: on the
+ * day it was made, replacing that day's (a second weigh-in the same day is a correction), sorted.
+ * Used for the Apple Watch's weigh-in (lib/watch-sync.js). `at` is when it was made (ms).
+ */
+export function logWeighIn(s, w, at = Date.now()) {
+  const n = Math.round(Number(w) * 10) / 10
+  if (!(n > 0)) return false
+  if (!Array.isArray(s.bodyweight)) s.bodyweight = []
+  const d = isoOf(new Date(at))
+  const ex = s.bodyweight.find(b => b.d === d)
+  if (ex) { ex.w = n; ex.t = at } else s.bodyweight.push({ d, w: n, t: at })
+  s.bodyweight.sort((a, b) => (a.d < b.d ? -1 : 1))
+  return true
+}

@@ -67,13 +67,22 @@ export default function WatchSettingsPage() {
       <Section footer={healthLine}>
         <Row icon="heart" iconTint="var(--red)" title={t('Apple Health')} value={healthValue} accessory="chevron" onClick={openHealth} />
       </Section>
+      {/* What a workout screen shows on the watch: clean by default, the rest one switch away. */}
+      <Section title={t('On the watch')} footer={t('Fewer things, bigger numbers. Pick what helps you mid-set.')}>
+        {[['clip', 'Exercise animation', 'image'], ['hr', 'Heart rate', 'heart'], ['last', 'Last time', 'history'],
+          ['elapsed', 'Time so far', 'clock'], ['kcal', 'Calories', 'flame'], ['next', 'Next exercise during the rest', 'list']].map(([k, title, icon]) => (
+          <Row key={k} icon={icon} iconTint="var(--grey)" title={t(title)}>
+            <Switch checked={!!prefs.show[k]} onChange={v => set({ show: { [k]: v } })} aria-label={t(title)} />
+          </Row>
+        ))}
+        <SelectRow icon="timer" iconTint="var(--orange)" title={t('Rest timer')} value={prefs.show.rest}
+          onChange={v => set({ show: { rest: v } })}
+          options={[{ value: 'ring', label: t('Ring') }, { value: 'plain', label: t('Countdown only') }]} />
+      </Section>
       <Section>
         <Row icon="vibrate" iconTint="var(--indigo)" title={t('Tap the wrist when a rest is over')}>
           <Switch checked={prefs.restHaptics} onChange={v => set({ restHaptics: v })} aria-label={t('Tap the wrist when a rest is over')} />
         </Row>
-        <SelectRow icon="stopwatch" iconTint="var(--orange)" title={t('The Digital Crown turns first')} value={prefs.crown}
-          onChange={v => set({ crown: v })}
-          options={[{ value: 'reps', label: t('Reps') }, { value: 'weight', label: t('Weight') }]} />
       </Section>
     </>}
   </>

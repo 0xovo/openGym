@@ -16,6 +16,7 @@ import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
 import { startWatchSync, bindWatchAppActions, patchSetIn } from './lib/watch-sync.js'
 import { stampWorkout } from './lib/sync-merge.js'
+import { logWeighIn } from './lib/bodyweight.js'
 import { startWidgetSync } from './lib/widgets.js'
 import { startLiveActivitySync } from './lib/live-activity.js'
 import { useWakeLock } from './lib/wakelock.js'
@@ -342,7 +343,9 @@ export default function App() {
     // A session started on the watch starts here as the phone's Start does, with the watch's id
     // and start time, and no weigh-in question (the lifter is at the watch, not here).
     const unbind = bindWatchAppActions({
-      start: (ids, opts) => beginWorkout(ids, null, opts),
+      start: (ids, { bw = null, ...opts } = {}) => beginWorkout(ids, bw, opts),
+      // The watch's weigh-in: logged as the phone's check-in logs one (today's replaces today's).
+      weighIn: ({ w, at }) => useStore.getState().update(s => { logWeighIn(s, w, at) }),
       patchSet: (where, fields, opts = {}) => useStore.getState().update(s => {
         patchSetIn(s, where, fields, stampWorkout, { ...opts, recount: w => { w.vol = workoutVolume(w) } })
       }),
