@@ -23,9 +23,9 @@ ever sees the repo's 180 px media.
 
 - **Google Play:** targets Android 16 (API 36), required for new apps and updates since
   31 August 2026 (Capacitor 8). Native libraries are 16 KB page aligned. The base module carries
-  the 240 px animations (about 400 MB, under Play's 500 MB; build-release.sh checks it). The
-  sharper qualities are on-demand **Play asset packs** (Play Asset Delivery), one per quality and
-  figure like the iPhone's, each under Play's 1.5 GB per pack (a bigger one is split into parts),
+  the 180 px animations like the App Store app (well under Play's 500 MB; build-release.sh checks
+  it). The sharper qualities, 240 included, are on-demand **Play asset packs** (Play Asset
+  Delivery), one per quality and figure like the iPhone's, each under Play's 1.5 GB per pack (a bigger one is split into parts),
   far under the 30 GB for all on-demand packs together. Google Play delivers them; the sideloaded
   APK has none and keeps its 240 px.
 - **App Store:** built with Xcode 26 (the `macos-26` runner). Privacy manifest
@@ -51,8 +51,9 @@ scripts/android/build-release.sh $K/opengym-release.keystore $K/keystore.pass $K
 #  → openGym-X.Y.Z.apk (+ .sha256) for the GitHub release, openGym-X.Y.Z.aab for Google Play
 ```
 
-Both have the box-free 240 px animations built in (`quality/240`). The bundle also gets an asset
-pack for every quality above 240 that has a folder in `/mnt/backup-hdd/opengym-media/quality/`
+Each is built from its own phone build: the APK with the box-free 240 px animations built in
+(`quality/240`), the bundle with 180 px (`quality/180`, like the App Store app) and an asset
+pack for every quality above 180 that has a folder in `/mnt/backup-hdd/opengym-media/quality/`
 (`scripts/android/make-asset-packs.mjs`, the same drawings per pack as the iPhone's); the pack
 modules are generated into `frontend/android/` for the build and removed after, never committed.
 To try packs on an emulator: `make-asset-packs.mjs --px 240 --builtin 180 --limit 30`, then

@@ -170,6 +170,18 @@ describe('DeleteAccountSheet', () => {
     expect(p.close).not.toHaveBeenCalled()
   })
 
+  it('the last admin hears why before typing the name or answering a prompt (QA v1.4.2)', async () => {
+    mocks.proofs = { passkeys: [{ id: 'k1' }], password: true, deleteBlocked: 'last-admin' }
+    const { p, host } = sheet()
+    await act(async () => { await Promise.resolve(); await Promise.resolve() })
+    expect(alertText(host)).toBe('You’re the only admin here, and other profiles still use this server. Make someone else an admin first.')
+    expect(host.querySelector('#delete-account-name')).toBeNull()
+    expect([...host.querySelectorAll('button')].map(b => b.textContent)).not.toContain('Continue')
+    expect(mocks.passkeyAssertion).not.toHaveBeenCalled()
+    expect(mocks.deleteAccount).not.toHaveBeenCalled()
+    expect(p.close).not.toHaveBeenCalled()
+  })
+
   it('the phone app offers no passkey, which it cannot hold for the server, only the password', async () => {
     mocks.MOBILE = true
     const { host } = sheet()

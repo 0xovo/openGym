@@ -28,6 +28,8 @@ const mocks = vi.hoisted(() => {
     user: state.user,
     config: state.config,
     coachLocal: null,
+    ready: true,
+    refreshConfig: async () => state.config,
     update: mut => mut(state.S),
   })
   return state
@@ -125,6 +127,17 @@ describe('CoachIntake — who gets in', () => {
     mocks.user = null
     mount()
     expect(mocks.nav).toHaveBeenCalledWith('/home', { replace: true })
+  })
+})
+
+// A cold start (a reload on #/coach/intake): the boot's /api/config was read before the session
+// and has no `coach` key yet. The screen waits for the answer for this session, not home.
+describe('CoachIntake — a cold start', () => {
+  it('asks again and stays while the config is the one from before the session', async () => {
+    mocks.config = { allow_guest: true }
+    mount()
+    expect(mocks.nav).not.toHaveBeenCalledWith('/home', { replace: true })
+    expect(host.textContent).toBe('')
   })
 })
 

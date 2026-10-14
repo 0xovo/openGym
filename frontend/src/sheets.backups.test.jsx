@@ -7,6 +7,7 @@ import { useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
 import { exConfigSheet, exercisePicker } from './sheets.jsx'
 import { exerciseNameFor } from './lib/i18n.js'
+import { exerciseNameText } from './lib/format.js'
 
 /* Planned substitutes (Discord "Substitutions for a routine"): picked in the routine editor's
    exercise sheet, offered first by the swap picker, kept by every sheet that saves the slot. */
@@ -54,7 +55,9 @@ describe('the routine editor\'s exercise sheet', () => {
     const host = render(useUI.getState().sheets.at(-1))
     act(() => row(host, 'Backups').click())
     const sheet = render(useUI.getState().sheets.at(-1))
-    expect(sheet.querySelector('h3').textContent).toBe('Backups for ' + exerciseNameFor(ex))
+    // The name in a sentence is title-cased like everywhere else it is shown (QA v1.4.2).
+    expect(sheet.querySelector('h3').textContent).toBe('Backups for ' + exerciseNameText(ex))
+    expect(sheet.querySelector('h3').textContent).toBe('Backups for Barbell Bench Press')
     act(() => [...sheet.querySelectorAll('button')].find(b => b.textContent === 'Add a backup').click())
     const picker = render(useUI.getState().sheets.at(-1))
     const name = exerciseNameFor(EXIDX['0289'])
@@ -66,7 +69,7 @@ describe('the routine editor\'s exercise sheet', () => {
     })
     const pick = [...picker.querySelectorAll('.item')].find(el => el.querySelector('.tt')?.textContent === name)
     act(() => pick.click())
-    act(() => [...sheet.querySelectorAll('button')].find(b => b.getAttribute('aria-label') === 'Remove “' + exerciseNameFor(EXIDX['0047']) + '”').click())
+    act(() => [...sheet.querySelectorAll('button')].find(b => b.getAttribute('aria-label') === 'Remove “' + exerciseNameText(EXIDX['0047']) + '”').click())
     act(() => save(host))
     expect(onSave.mock.calls[0][0].subs).toEqual(['0289'])
   })

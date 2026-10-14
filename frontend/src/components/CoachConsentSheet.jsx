@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useUI } from '../store/useUI.js'
 import { useStore } from '../store/useStore.js'
 import { t } from '../lib/i18n.js'
-import { fmtDate } from '../lib/format.js'
+import { fmtDate, isoOf } from '../lib/format.js'
 import { DATA_CATEGORIES } from '../../../api/coach/core/categories.js'
 import { aiConsents, withdrawAi, onAiConsentChange } from '../lib/coach-consent.js'
 import { emptyCoach } from '../lib/coach.js'
@@ -85,7 +85,7 @@ export function AiConsentSection() {
     footer={t('Who the Coach may send your training to from this device. Withdraw it and the Coach asks again next time. A model on your own network never needs asking.')}>
     {!list.length && <Row icon="lock" iconTint="var(--green)" title={t('Nothing allowed yet')} subtitle={t('The Coach asks before anything leaves.')} />}
     {list.map(c => <Row key={c.key} icon="shield" iconTint="var(--acc)" title={c.name}
-      subtitle={(c.via === 'server' ? t('Through your server') : t('With your API key')) + ' · ' + t('Allowed {0}', fmtDate(String(c.at).slice(0, 10), false, true))}>
+      subtitle={(c.via === 'server' ? t('Through your server') : t('With your API key')) + ' · ' + t('Allowed {0}', fmtDate(isoOf(new Date(c.at)), false, true))}>
       <Button size="sm" onClick={() => withdraw(c)}>{t('Withdraw')}</Button>
     </Row>)}
   </Section>

@@ -1,45 +1,66 @@
 #!/usr/bin/env bash
-# Builds and signs both Android releases on the release machine, from one phone build:
+# Builds and signs both Android releases on the release machine:
 #   openGym-<version>.apk   the sideloaded APK (GitHub, opengym.ch): updates itself
 #   openGym-<version>.aab   the Google Play bundle: Play updates it
-# Both carry the 240 px animations built in (the box-free set, quality/240); the Play bundle also
-# carries the sharper ones as on-demand Play asset packs (scripts/android/make-asset-packs.mjs:
-# every quality above 240 whose folder exists), which Google Play delivers when someone picks
-# them. These animations go into the packages and nowhere else (Gym visual licence, Part B), which
-# is why this runs here and not in CI; the pack modules are taken out of the project again at the
-# end. Same key for both: a phone can move from the APK to Google Play and keep its data, as long
-# as Play App Signing uses this key too (docs/APP_STORES.md).
+# Each from its own phone build (owner, v1.4.2): the APK carries the box-free 240 px animations
+# built in (quality/240) and has no packs; the Play bundle carries 180 px built in, like the App
+# Store app, and every sharper quality whose folder exists as an on-demand Play asset pack
+# (scripts/android/make-asset-packs.mjs), which Google Play delivers when someone picks it. These
+# animations go into the packages and nowhere else (Gym visual licence, Part B), which is why this
+# runs here and not in CI; the pack modules are taken out of the project again at the end. Same
+# key for both: a phone can move from the APK to Google Play and keep its data, as long as Play App
+# Signing uses this key too (docs/APP_STORES.md).
 #
 # Usage: scripts/android/build-release.sh <keystore> <password-file> <alias-file> [out-dir]
-#   APP_MEDIA_DIR        the built-in animations, default /mnt/backup-hdd/opengym-media/quality/240
-#   VITE_BUILTIN_CLIP_PX their size, default 240
-#   PACK_SRC_ROOT        the quality folders the packs come from, default .../opengym-media/quality
-#   NO_PACKS=1           a Play bundle without asset packs
+#   QUALITY_ROOT  the private quality folders, default /mnt/backup-hdd/opengym-media/quality
+#   APK_PX        the APK's built-in size, default 240;  PLAY_PX  the bundle's, default 180
+#   NO_PACKS=1    a Play bundle without asset packs
 set -euo pipefail
 
 KS=${1:?keystore}; PASS=${2:?file with the keystore password}; ALIAS=$(cat "${3:?file with the key alias}")
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 OUT=${4:-$PWD}
-export APP_MEDIA_DIR=${APP_MEDIA_DIR:-/mnt/backup-hdd/opengym-media/quality/240}
-export VITE_BUILTIN_CLIP_PX=${VITE_BUILTIN_CLIP_PX:-240}
+QUALITY_ROOT=${QUALITY_ROOT:-/mnt/backup-hdd/opengym-media/quality}
+APK_PX=${APK_PX:-240}
+PLAY_PX=${PLAY_PX:-180}
 export VITE_CLIP_EXT=webp
-PACK_SRC_ROOT=${PACK_SRC_ROOT:-/mnt/backup-hdd/opengym-media/quality}
 : "${ANDROID_HOME:?set ANDROID_HOME}"
 BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+for px in "$APK_PX" "$PLAY_PX"; do
+  [ -d "$QUALITY_ROOT/$px" ] || { echo "no $QUALITY_ROOT/$px" >&2; exit 1; }
+done
 
 cd "$ROOT/frontend"
 VER=$(node -p "require('./package.json').version")
 GRADLE_VER=$(sed -n 's/.*versionName "\(.*\)"/\1/p' android/app/build.gradle)
 [ "$VER" = "$GRADLE_VER" ] || { echo "package.json says $VER, build.gradle says $GRADLE_VER" >&2; exit 1; }
 
-npm run build:mobile
-if [ -z "${NO_PACKS:-}" ]; then
-  trap 'node "$ROOT/scripts/android/make-asset-packs.mjs" --clean' EXIT
-  node "$ROOT/scripts/android/make-asset-packs.mjs" --builtin "$VITE_BUILTIN_CLIP_PX" --src-root "$PACK_SRC_ROOT"
-fi
-(cd android && ./gradlew --no-daemon clean assembleSideloadRelease bundlePlayRelease)
+# The phone build with one size of animations built in: the files and the size the page assumes.
+phone_build() {
+  APP_MEDIA_DIR="$QUALITY_ROOT/$1" VITE_BUILTIN_CLIP_PX="$1" npm run build:mobile
+  local n
+  n=$(find android/app/src/main/assets/public/exercise-media/clip -name '*.webp' | wc -l)
+  [ "$n" -gt 6000 ] || { echo "the $1 px phone build has only $n animations" >&2; exit 1; }
+}
 
-APK_IN=android/app/build/outputs/apk/sideload/release/app-sideload-release-unsigned.apk
+# 1. The APK: 240 px built in, no packs.
+node "$ROOT/scripts/android/make-asset-packs.mjs" --clean
+phone_build "$APK_PX"
+(cd android && ./gradlew --no-daemon clean assembleSideloadRelease)
+APK_BUILT="$OUT/.openGym-$VER-sideload-unsigned.apk"   # beside the outputs: the root disk has no room
+cp android/app/build/outputs/apk/sideload/release/app-sideload-release-unsigned.apk "$APK_BUILT"
+
+# 2. The Play bundle: 180 px built in, the sharper ones as asset packs.
+phone_build "$PLAY_PX"
+if [ -z "${NO_PACKS:-}" ]; then
+  trap 'node "$ROOT/scripts/android/make-asset-packs.mjs" --clean; rm -f "$APK_BUILT"' EXIT
+  node "$ROOT/scripts/android/make-asset-packs.mjs" --builtin "$PLAY_PX" --src-root "$QUALITY_ROOT"
+else
+  trap 'rm -f "$APK_BUILT"' EXIT
+fi
+(cd android && ./gradlew --no-daemon bundlePlayRelease)
+
+APK_IN=$APK_BUILT
 AAB_IN=android/app/build/outputs/bundle/playRelease/app-play-release.aab
 
 "$BT/zipalign" -f -p 4 "$APK_IN" "$OUT/aligned.apk"
