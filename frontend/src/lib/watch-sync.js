@@ -336,6 +336,37 @@ export function shouldOpenOnWatch (prev, next, { prefs = readWatchPrefs(), now =
   return Number.isFinite(start) && start > 0 && Math.abs(now - start) <= OPEN_ON_WATCH_WINDOW_MS
 }
 
+// The application context has a size limit (about 65 KB); a snapshot over it is refused, and then
+// the watch would never hear of the workout. Kept well under it, with room for the settings.
+export const SNAPSHOT_MAX_BYTES = 48 * 1024
+const bytesOf = v => new TextEncoder().encode(typeof v === 'string' ? v : JSON.stringify(v)).length
+
+/**
+ * The snapshot made small enough to send, dropping first what matters least: the "last time" lines
+ * of the routines the watch could start, then those routines but today's, then today's own "last
+ * time" lines and records, then the "last time" of the running workout, then what is ready
+ * altogether. The running workout's sets are never cut: without them the watch has nothing to do.
+ */
+export function fitSnapshot (snap, max = SNAPSHOT_MAX_BYTES) {
+  if (bytesOf(snap) <= max) return snap
+  const out = JSON.parse(JSON.stringify(snap))
+  const strip = (entries, ...keys) => { for (const e of entries || []) for (const k of keys) delete e[k] }
+  const steps = [
+    () => { for (const r of out.ready?.others || []) strip(r.entries, 'last', 'best') },
+    () => { if (out.ready) out.ready.others = (out.ready.others || []).slice(0, 3) },
+    () => { if (out.ready) out.ready.others = [] },
+    () => { if (out.ready?.today) strip(out.ready.today.entries, 'last', 'best') },
+    () => { if (out.active) strip(out.active.entries, 'last') },
+    () => { out.ready = null },
+    () => { if (out.active) strip(out.active.entries, 'best') },
+  ]
+  for (const step of steps) {
+    step()
+    if (bytesOf(out) <= max) return out
+  }
+  return out
+}
+
 export async function startWatchSync ({ useStore, useUI }) {
   const p = await watchPlugin()
   if (!p) return () => {}
@@ -377,7 +408,7 @@ export async function startWatchSync ({ useStore, useUI }) {
         ? buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) })
         : { v: SNAPSHOT_VERSION, unit: S.unit === 'lb' ? 'lb' : 'kg', active: null, ready: null }
       snap.settings = settingsForWatch(prefs, healthOn)
-      const json = JSON.stringify(snap)
+      const json = JSON.stringify(fitSnapshot(snap))
       if (json !== lastSent) {
         const r = await p.WatchBridge.sendSnapshot({ json })
         if (r && r.sent) lastSent = json
@@ -388,6 +419,10 @@ export async function startWatchSync ({ useStore, useUI }) {
       if (clips.length && key !== lastClips) {
         await p.WatchBridge.sendClips({ wid: S.active.id, clips })
         lastClips = key
+      } else if (!S.active && lastClips) {
+        // The workout is over: animations still on their way to the watch are not wanted any more.
+        lastClips = null
+        await p.WatchBridge.dropClips?.()
       }
     } catch { /* no watch, or not now: the next change tries again */ }
   }
@@ -403,11 +438,14 @@ export async function startWatchSync ({ useStore, useUI }) {
   const offUI = useUI.subscribe((s, prev) => { if (s.timer !== prev.timer && restOf(s.timer) !== restOf(prev.timer)) schedule() })
   const offPrefs = onWatchPrefs(() => schedule())
   const sub = await p.WatchBridge.addListener('watchEvent', () => { drainWatchEvents() })
+  // The link itself changed (the session finished activating after launch, a watch was paired, the
+  // app was installed on it): asked again, and the snapshot sent when there is a watch now.
+  const subLink = await Promise.resolve(p.WatchBridge.addListener('watchState', () => { checkLink().then(() => schedule()) })).catch(() => null)
   const onVisible = () => { if (document.visibilityState === 'visible') { drainWatchEvents(); checkLink().then(() => schedule()) } }
   document.addEventListener('visibilitychange', onVisible)
   schedule()
   drainWatchEvents()
-  return () => { offStore(); offUI(); offPrefs(); offHealth(); sub?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
+  return () => { offStore(); offUI(); offPrefs(); offHealth(); sub?.remove?.(); subLink?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }
 }
 
 // Test seams.

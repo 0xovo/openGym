@@ -89,3 +89,39 @@ describe('ticks of every kind', () => {
     expect(patchSet.mock.calls[2][0].side).toBeUndefined()
   })
 })
+
+describe('a snapshot too big for the application context', () => {
+  const entry = (i, sets = 4) => ({ id: 'e' + i, name: 'Exercise ' + i, mode: 'reps', restSec: 90, last: 'x'.repeat(300), best: { w: 100, r: 5 },
+    sets: Array.from({ length: sets }, () => ({ w: 60, r: 8, sec: null, done: false, warmup: false })) })
+  const session = n => ({ routineIds: ['r'], name: 'Routine', entries: Array.from({ length: n }, (_, i) => entry(i)) })
+  const big = () => ({ v: 1, unit: 'kg', restSec: 90, settings: { health: true },
+    active: { id: 'w', name: 'Big', unit: 'kg', cur: 0, restSec: 90, entries: Array.from({ length: 12 }, (_, i) => entry(i)) },
+    ready: { today: session(12), others: Array.from({ length: 8 }, () => session(12)) } })
+  const size = v => new TextEncoder().encode(JSON.stringify(v)).length
+
+  it('is left alone when it fits', async () => {
+    const { fitSnapshot } = await import('./watch-sync.js')
+    const small = { v: 1, active: null, ready: null }
+    expect(fitSnapshot(small)).toBe(small)
+  })
+
+  it('loses what matters least first, never the running sets, and fits', async () => {
+    const { fitSnapshot, SNAPSHOT_MAX_BYTES } = await import('./watch-sync.js')
+    const snap = big()
+    expect(size(snap)).toBeGreaterThan(SNAPSHOT_MAX_BYTES)
+    const fit = fitSnapshot(snap)
+    expect(size(fit)).toBeLessThanOrEqual(SNAPSHOT_MAX_BYTES)
+    expect(fit.active.entries).toHaveLength(12)
+    expect(fit.active.entries.every(e => e.sets.length === 4)).toBe(true)
+    expect(fit.settings).toEqual({ health: true })
+    expect(snap.ready.others).toHaveLength(8)   // the original is not touched
+  })
+
+  it('keeps today\'s routine when cutting the others is enough', async () => {
+    const { fitSnapshot } = await import('./watch-sync.js')
+    const snap = big()
+    const fit = fitSnapshot(snap, size({ ...snap, ready: { today: snap.ready.today, others: [] } }) + 10)
+    expect(fit.ready.today.entries).toHaveLength(12)
+    expect(fit.active.entries[0].last).toBeTruthy()
+  })
+})

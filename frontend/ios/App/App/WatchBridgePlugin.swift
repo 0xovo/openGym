@@ -30,6 +30,8 @@ import WatchConnectivity
  *   WatchBridge.addListener('watchEvent', e => ...)
  *   await WatchBridge.sendClips({ wid, clips: [{ exId, path }] })   // the workout's animations
  *   await WatchBridge.openOnWatch()       // { ok }: a workout started here opens the watch app
+ *   await WatchBridge.dropClips()         // the workout is over: clips still on their way are cancelled
+ *   WatchBridge.addListener('watchState', ...)   // activated, paired, installed changed: ask status again
  *
  * Animations: only the running workout's, only as files sent with transferFile (the watch keeps
  * them while that workout runs and deletes them after). Each is what this phone shows for that
@@ -49,6 +51,7 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         CAPPluginMethod(name: "ack", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "sendClips", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "openOnWatch", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "dropClips", returnType: CAPPluginReturnPromise),
     ]
 
     private let queue = DispatchQueue(label: "ch.opengym.watch-events")
@@ -70,6 +73,7 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         let s = WCSession.default
         call.resolve([
             "supported": true,
+            "activated": s.activationState == .activated,
             "paired": s.isPaired,
             "installed": s.isWatchAppInstalled,
             "reachable": s.isReachable,
@@ -139,6 +143,25 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         }
     }
 
+    /// The workout is over: its clips still waiting to go to the watch are cancelled (they would
+    /// pile up in the queue while the watch is away, and the watch drops them on arrival anyway).
+    @objc func dropClips(_ call: CAPPluginCall) {
+        if WCSession.isSupported(), WCSession.default.activationState == .activated {
+            WCSession.default.outstandingFileTransfers.forEach { $0.cancel() }
+        }
+        clipQueue.async { self.clipsSent = [:] }
+        call.resolve()
+    }
+
+    /// The phone's GIF cache (Caches/watch-clips): the most recently used few dozen are kept.
+    static func pruneClipCache(keep: Int = 60) {
+        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("watch-clips")
+        let keys: [URLResourceKey] = [.contentModificationDateKey]
+        guard let files = try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: keys), files.count > keep else { return }
+        let dated = files.map { ($0, (try? $0.resourceValues(forKeys: Set(keys)).contentModificationDate) ?? .distantPast) }
+        for (url, _) in dated.sorted(by: { $0.1 > $1.1 }).dropFirst(keep) { try? FileManager.default.removeItem(at: url) }
+    }
+
     /// The clips already on their way for each workout, by exercise.
     private var clipsSent: [String: Set<String>] = [:]
     private let clipQueue = DispatchQueue(label: "ch.opengym.watch-clips", qos: .utility)
@@ -149,9 +172,12 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         guard s.activationState == .activated, s.isPaired, s.isWatchAppInstalled else { call.resolve(["sent": 0]); return }
         let clips = (call.getArray("clips") ?? []).compactMap { $0 as? [String: Any] }
         call.resolve(["queued": clips.count])
+        // Another workout's clips still queued (the watch was away): cancelled, this one's go first.
+        for t in s.outstandingFileTransfers where (t.file.metadata?["wid"] as? String) != wid { t.cancel() }
         clipQueue.async {
             var sent = self.clipsSent[wid] ?? []
             if self.clipsSent.count > 4 { self.clipsSent = self.clipsSent.filter { $0.key == wid } }
+            defer { WatchBridgePlugin.pruneClipCache() }
             for clip in clips {
                 guard let exId = clip["exId"] as? String, !sent.contains(exId),
                       let gif = WatchBridgePlugin.gifFor(clip, named: exId) else { continue }
@@ -170,7 +196,7 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         if let pack = clip["packId"] as? String, let drawing = clip["drawing"] as? String {
             let out = dir.appendingPathComponent("\(pack)-\(drawing).gif")
-            if FileManager.default.fileExists(atPath: out.path) { return out }
+            if FileManager.default.fileExists(atPath: out.path) { touch(out); return out }
             guard let data = AnimationPacksPlugin.packData(pack, drawing) else { return nil }
             return ClipCodec.makeGif(data: data, to: out, maxPixels: 160) ? out : nil
         }
@@ -188,7 +214,7 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let safe = name.replacingOccurrences(of: "/", with: "_")
         let out = dir.appendingPathComponent(safe + ".gif")
-        if FileManager.default.fileExists(atPath: out.path) { return out }
+        if FileManager.default.fileExists(atPath: out.path) { touch(out); return out }
         if source.pathExtension.lowercased() != "mp4" { return gifFromImage(source, to: out) }
         let asset = AVURLAsset(url: source)
         let seconds = CMTimeGetSeconds(asset.duration)
@@ -218,6 +244,11 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         return out
     }
 
+    /// Used now: kept longest by the cache's pruning.
+    private static func touch(_ url: URL) {
+        try? FileManager.default.setAttributes([.modificationDate: Date()], ofItemAtPath: url.path)
+    }
+
     /// An animated WebP or GIF, frame by frame with its delays (WatchCore ClipCodec, the same code
     /// CI tests on a synthetic clip).
     private static func gifFromImage(_ source: URL, to out: URL) -> URL? {
@@ -241,7 +272,15 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
         }
     }
 
-    public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {}
+    /// The page asked for the status before the session was up (right after launch): it is told now.
+    public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        DispatchQueue.main.async { self.notifyListeners("watchState", data: ["activated": activationState == .activated]) }
+    }
+
+    /// A watch paired or unpaired, the app installed on it or removed.
+    public func sessionWatchStateDidChange(_ session: WCSession) {
+        DispatchQueue.main.async { self.notifyListeners("watchState", data: ["paired": session.isPaired, "installed": session.isWatchAppInstalled]) }
+    }
     public func sessionDidBecomeInactive(_ session: WCSession) {}
     public func sessionDidDeactivate(_ session: WCSession) {
         // A different watch was paired: start a session with that one.
