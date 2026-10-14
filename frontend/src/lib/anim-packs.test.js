@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({ MOBILE: true, available: true, ready: new Set(
 vi.mock('./mobile.js', () => ({ get MOBILE() { return mocks.MOBILE } }))
 vi.mock('@capacitor/core', () => {
   const impl = {
-    available: async () => ({ available: mocks.available, testflight: mocks.testflight }),
+    available: async () => ({ available: mocks.available, testflight: mocks.testflight, ...(mocks.offered ? { packs: mocks.offered } : {}) }),
     status: async ({ packId }) => (mocks.ready.has(packId) ? { state: 'ready', bytes: 5 * 1024 * 1024, ...(mocks.base ? { base: 'opengym-pack://' + packId } : {}) } : { state: 'none' }),
     info: async ({ packId }) => mocks.info[packId] || {},
     diagnose: async ({ packId, probe }) => ({ local: mocks.ready.has(packId), probe: packId + '/' + probe + '.webp', base: 'opengym-pack://' + packId }),
@@ -36,7 +36,7 @@ import * as packs from './anim-packs.js'
 const phone = { shortSide: 390 }
 beforeEach(() => {
   localStorage.clear()
-  mocks.MOBILE = true; mocks.available = true; mocks.ready = new Set(); mocks.calls = []; mocks.listeners = {}; mocks.downloadFails = null; mocks.base = false; mocks.info = {}; mocks.testflight = false
+  mocks.MOBILE = true; mocks.available = true; mocks.ready = new Set(); mocks.calls = []; mocks.listeners = {}; mocks.downloadFails = null; mocks.base = false; mocks.info = {}; mocks.testflight = false; mocks.offered = null
   packs._resetAnimPacks()
 })
 
@@ -157,5 +157,30 @@ describe('reading a pack from where the app serves it', () => {
     expect(d.native).toMatchObject({ local: true, base: 'opengym-pack://anim-480-male' })
     expect(tried).toEqual(['opengym-pack://anim-480-male/' + packs.probeFor('anim-480-male') + '.webp'])
     expect(d.image).toBe('ok 480×480')
+  })
+})
+
+// Android's Play build names the packs it has: only those are offered, sized by the store, and
+// Auto takes the sharpest one it has below what it wants.
+describe('a build that names its packs', () => {
+  it('offers only those, and Auto settles for the sharpest smaller one', async () => {
+    mocks.offered = ['anim-240-male', 'anim-240-female', 'anim-480-male', 'anim-480-female']
+    await packs.refresh()
+    const s = packs.getState()
+    expect(s.offered).toEqual(mocks.offered)
+    expect(packs.offeredQualities('male')).toEqual([240, 480])
+    expect(packs.targetPack('auto', 'male', { shortSide: 390 })).toBe('anim-240-male')
+    expect(packs.targetPack('auto', 'male', { shortSide: 800 })).toBe('anim-480-male')
+    expect(packs.targetPack(1080, 'female', {})).toBe('anim-480-female')
+    expect(packs.downloadBytes('anim-480-male')).toBeNull()
+    packs.ensureWanted('male', { shortSide: 390 })
+    await new Promise(r => setTimeout(r, 0))
+    expect(mocks.calls.find(c => c[0] === 'download')?.[1]).toBe('anim-240-male')
+  })
+  it('none it has under the wanted size: the built-in files, nothing downloaded', async () => {
+    mocks.offered = ['anim-720-male']
+    await packs.refresh()
+    expect(packs.targetPack('auto', 'male', { shortSide: 390 })).toBeNull()
+    expect(packs.ensureWanted('male', { shortSide: 390 })).toBeNull()
   })
 })

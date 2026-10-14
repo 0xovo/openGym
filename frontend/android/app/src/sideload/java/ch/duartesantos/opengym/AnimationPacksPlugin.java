@@ -7,11 +7,11 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 /**
- * The sharper exercise animations as asset packs (frontend lib/anim-packs.js). On Android they
- * will come through Play Asset Delivery; until then, and always in the sideloaded APK (no Play
- * Store behind it), there are none: every call answers "unavailable" and the app shows the
- * animations built into it. The interface is the iOS plugin's (AnimationPacksPlugin.swift), so
- * the page needs no Android branch.
+ * The sharper exercise animations as asset packs (frontend lib/anim-packs.js), in the sideloaded
+ * APK: it has no Play Store behind it to deliver them, so there are none. Every call answers
+ * "unavailable" and the app shows the animations built into it (240 px in the release APK). The
+ * Google Play build has the real one (src/play, Play Asset Delivery); the interface is the iOS
+ * plugin's, so the page needs no Android branch.
  */
 @CapacitorPlugin(name = "AnimationPacks")
 public class AnimationPacksPlugin extends Plugin {
