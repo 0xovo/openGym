@@ -347,6 +347,9 @@ export default function App() {
       start: (ids, { bw = null, ...opts } = {}) => beginWorkout(ids, bw, opts),
       // The watch's weigh-in: logged as the phone's check-in logs one (today's replaces today's).
       weighIn: ({ w, at }) => useStore.getState().update(s => { logWeighIn(s, w, at) }),
+      // The watch removed its copies of deleted workouts from Apple Health: the phone's removal
+      // runs again, finds them gone and stops retrying them.
+      healthDeleted: () => { import('./lib/health-sync.js').then(m => m.syncHealth(useStore.getState().S)).catch(() => {}) },
       patchSet: (where, fields, opts = {}) => useStore.getState().update(s => {
         patchSetIn(s, where, fields, stampWorkout, { ...opts, recount: w => { w.vol = workoutVolume(w) } })
       }),

@@ -256,6 +256,10 @@ export function applyEvents (events, getState) {
         if (!appHandlers?.weighIn) break
         appHandlers.weighIn({ w: num(ev.w), at: num(ev.at) || Date.now() })
       }
+    } else if (ev.type === 'healthDeleted') {
+      // The watch took its copies of deleted workouts out of Apple Health: the phone's own removal
+      // (which kept retrying the ones it could not delete) runs again and now finds them gone.
+      if (appHandlers?.healthDeleted) appHandlers.healthDeleted(Array.isArray(ev.ids) ? ev.ids.filter(x => typeof x === 'string') : [])
     } else if (ev.type === 'watchStatus') {
       // What the watch says about itself, for Settings → Apple Watch. Never queued behind anything.
       writeWatchStatus(ev)
@@ -390,6 +394,24 @@ export function fitSnapshot (snap, max = SNAPSHOT_MAX_BYTES) {
   return out
 }
 
+// How many deleted workouts the watch is told about at most (the newest deletions).
+export const HEALTH_GONE_MAX = 60
+
+/**
+ * The Apple Health sync ids of workouts deleted in openGym (S.deleted, newest first), for the watch
+ * to take its own copies out of Health: a workout the watch app saved is the watch's, and the phone
+ * may not delete it, nor the heart rate and calories saved with it (lib/health-connect.js goneIds
+ * names the same ids for the phone's own copies).
+ */
+export function healthGoneFor (S, max = HEALTH_GONE_MAX) {
+  const del = S?.deleted && typeof S.deleted === 'object' && S.deleted.workouts && typeof S.deleted.workouts === 'object' ? S.deleted.workouts : {}
+  return Object.entries(del)
+    .filter(([, at]) => Number(at) > 0)
+    .sort((a, b) => Number(b[1]) - Number(a[1]))
+    .slice(0, max)
+    .map(([id]) => 'opengym-w-' + id)
+}
+
 /**
  * What the watch takes from the app beyond its own settings: the app's language (the watch shows
  * its words in it, whatever the watch itself is set to), and whether a workout starts with the
@@ -448,6 +470,8 @@ export async function startWatchSync ({ useStore, useUI }) {
         ? buildSnapshot(S, { timer: useUI.getState().timer, ready: readyFor(S) })
         : { v: SNAPSHOT_VERSION, unit: S.unit === 'lb' ? 'lb' : 'kg', active: null, ready: null }
       snap.settings = { ...settingsForWatch(prefs, healthOn), ...watchExtras(S) }
+      // With Apple Health on: the deleted workouts, so the watch removes the copies it saved.
+      if (healthOn) { const gone = healthGoneFor(S); if (gone.length) snap.healthGone = gone }
       const json = JSON.stringify(fitSnapshot(snap))
       if (json !== lastSent) {
         const r = await p.WatchBridge.sendSnapshot({ json })

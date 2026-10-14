@@ -261,6 +261,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                     self.summary = SessionCore.summary(ended, end: Date().timeIntervalSince1970 * 1000,
                                                        startedAt: self.workoutSeenAt.map { $0.timeIntervalSince1970 * 1000 }, endedOnPhone: true)
                 }
+                self.ran(ended.id)
                 self.health.end(save: true) { totals in self.addTotals(totals) }
                 self.dropClips()
                 self.stopHold()
@@ -278,6 +279,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 if end != self.restEndsAt { self.startRest(until: end, notify: true) }
             }
             self.health.syncSetting(next.settings.health)
+            self.removeDeletedFromHealth(snap.healthGone)
             self.loadTargets()
         }
     }
@@ -407,6 +409,37 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         summary = nil
     }
 
+    /* ---------- workouts deleted in openGym, out of Apple Health ---------- */
+
+    private static let healthDeletedKey = "healthDeleted"
+    private var healthDeleting = false
+    /// The last few workouts that ran here (their Apple Health copy may still be being saved).
+    private var recentWorkouts: [String] = []
+    private func ran(_ wid: String?) {
+        guard let wid = wid else { return }
+        recentWorkouts = Array((recentWorkouts.filter { $0 != wid } + [wid]).suffix(3))
+    }
+
+    /// The copies this watch saved of workouts deleted in openGym: taken out once (the ids settled
+    /// are remembered), and the phone told, so it stops retrying what it could not delete itself.
+    private func removeDeletedFromHealth(_ gone: [String]?) {
+        guard !isDemo, !healthDeleting else { return }
+        let done = UserDefaults.standard.stringArray(forKey: SessionStore.healthDeletedKey) ?? []
+        let todo = SessionCore.healthToDelete(gone: gone, done: done)
+        guard !todo.isEmpty else { return }
+        healthDeleting = true
+        let recent = Set(recentWorkouts.map { "opengym-w-\($0)" })
+        health.deleteWorkouts(syncIds: todo, keepTrying: recent) { [weak self] settled in
+            guard let self = self else { return }
+            self.healthDeleting = false
+            guard !settled.isEmpty else { return }
+            let now = UserDefaults.standard.stringArray(forKey: SessionStore.healthDeletedKey) ?? []
+            UserDefaults.standard.set(SessionCore.healthDeleted(now, adding: settled), forKey: SessionStore.healthDeletedKey)
+            if let ev = SessionCore.healthDeletedEvent(settled, id: UUID().uuidString) { self.send(event: ev) }
+            self.log("removed from Apple Health: \(settled.count)")
+        }
+    }
+
     /// The weigh-in before a workout started here (the phone's check-in), when the phone asks for one.
     @Published private(set) var weighInFor: ReadySession?
     /// The body weight on the weigh-in's crown.
@@ -462,6 +495,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         let (next, event) = SessionCore.finish(state, at: now, id: UUID().uuidString)
         guard let ev = event else { return }
         if let w = ended { summary = SessionCore.summary(w, end: now, startedAt: workoutSeenAt.map { $0.timeIntervalSince1970 * 1000 }) }
+        ran(ended?.id)
         health.end(save: true) { [weak self] totals in self?.addTotals(totals) }
         stopHold()
         skipRest()
@@ -689,7 +723,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         if screen != "empty" { apply(json: screen == "idle" ? SessionStore.demoReadyJSON : SessionStore.demoJSON) }
         DispatchQueue.main.async {
             switch screen {
-            case "set", "weight", "rest", "offline": self.picked[0] = 2
+            case "set", "weight", "rest", "offline", "edit-weight", "edit-reps": self.picked[0] = 2
             case "hold": self.state.entryIndex = 1
             case "bodyweight": self.state.entryIndex = 2
             case "side": self.state.entryIndex = 3

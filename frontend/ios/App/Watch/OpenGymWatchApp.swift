@@ -540,7 +540,7 @@ struct ValueEditor: View {
     let unit: String
     @State private var value: Double = 0
     @FocusState private var focused: Bool
-    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 46
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 54
 
     private var step: Double {
         switch field {

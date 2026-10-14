@@ -212,3 +212,30 @@ final class SettingsAndWeighInTests: XCTestCase {
         XCTAssertNil(old.settings?.lang)
     }
 }
+
+/// Workouts deleted in openGym: the watch takes its own copies out of Apple Health, once.
+final class HealthDeleteTests: XCTestCase {
+    func testOnlyWorkoutIdsNotDoneYetOnceEach() {
+        let todo = SessionCore.healthToDelete(gone: ["opengym-w-a", "opengym-bw-2026-10-01", "opengym-w-b", "opengym-w-a"], done: ["opengym-w-b"])
+        XCTAssertEqual(todo, ["opengym-w-a"])
+        XCTAssertEqual(SessionCore.healthToDelete(gone: nil, done: []), [])
+    }
+
+    func testDoneIsKeptBoundedAndANewRoundIsANoOp() {
+        var done: [String] = []
+        done = SessionCore.healthDeleted(done, adding: ["opengym-w-a"])
+        done = SessionCore.healthDeleted(done, adding: ["opengym-w-a"])
+        XCTAssertEqual(done, ["opengym-w-a"])
+        XCTAssertEqual(SessionCore.healthToDelete(gone: ["opengym-w-a"], done: done), [])
+        let many = (0..<400).map { "opengym-w-\($0)" }
+        XCTAssertEqual(SessionCore.healthDeleted([], adding: many).count, 300)
+        let ev = SessionCore.healthDeletedEvent(["opengym-w-a"], id: "e")
+        XCTAssertEqual(ev?["type"] as? String, "healthDeleted")
+        XCTAssertNil(SessionCore.healthDeletedEvent([], id: "e"))
+    }
+
+    func testASnapshotWithTheListReads() throws {
+        let snap = try JSONDecoder().decode(Snapshot.self, from: Data(#"{"v":1,"healthGone":["opengym-w-x"]}"#.utf8))
+        XCTAssertEqual(snap.healthGone, ["opengym-w-x"])
+    }
+}

@@ -158,6 +158,42 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         }
     }
 
+    /// Takes out of Apple Health the workouts this app saved under these sync ids (workouts deleted
+    /// in openGym), with the calories saved along with them. Heart-rate readings are the watch's
+    /// sensors' own and stay, as with Apple's Workout app. `done` gets the ids that are settled:
+    /// removed, or with no copy of this app's to remove. Nothing settled when Health could not be
+    /// read or the delete was refused: the next snapshot tries again.
+    /// `keepTrying`: ids of workouts that ran here just now, whose copy may still be on its way
+    /// into Health (a workout deleted on the phone while the watch was still saving it): not
+    /// settled while no copy is found, so the next snapshot looks again.
+    func deleteWorkouts(syncIds ids: [String], keepTrying: Set<String> = [], done: @escaping ([String]) -> Void) {
+        guard HKHealthStore.isHealthDataAvailable(), !ids.isEmpty else { done([]); return }
+        let predicate = HKQuery.predicateForObjects(withMetadataKey: HKMetadataKeySyncIdentifier, allowedValues: ids)
+        let q = HKSampleQuery(sampleType: HKObjectType.workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { [weak self] _, found, error in
+            guard let self = self else { return }
+            if error != nil { DispatchQueue.main.async { done([]) }; return }
+            let me = Bundle.main.bundleIdentifier ?? ""
+            let mine = (found as? [HKWorkout] ?? []).filter { $0.sourceRevision.source.bundleIdentifier == me }
+            let held = Set(mine.compactMap { $0.metadata?[HKMetadataKeySyncIdentifier] as? String })
+            // Settled without a delete: no copy of this app's, and not one that may still come.
+            let nothing = ids.filter { !held.contains($0) && !keepTrying.contains($0) }
+            if mine.isEmpty { DispatchQueue.main.async { done(nothing) }; return }
+            let group = DispatchGroup()
+            if let kcal = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) {
+                for w in mine {
+                    group.enter()
+                    self.store.deleteObjects(of: kcal, predicate: HKQuery.predicateForObjects(from: w)) { _, _, _ in group.leave() }
+                }
+            }
+            group.notify(queue: .global()) {
+                self.store.delete(mine) { ok, _ in
+                    DispatchQueue.main.async { done(ok ? nothing + Array(held) : nothing) }
+                }
+            }
+        }
+        store.execute(q)
+    }
+
     private func startQuery(from start: Date) {
         guard let type = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: nil, options: .strictStartDate)

@@ -222,6 +222,28 @@ enum SessionCore {
         return (count, true)
     }
 
+    /// Of the deleted workouts the phone names, the ones this watch has not taken out of Apple Health
+    /// yet (`done`: already removed, or found to have no copy of the watch's). Only workout ids.
+    static func healthToDelete(gone: [String]?, done: [String]) -> [String] {
+        let seen = Set(done)
+        var out: [String] = []
+        for id in gone ?? [] where id.hasPrefix("opengym-w-") && !seen.contains(id) && !out.contains(id) { out.append(id) }
+        return out
+    }
+
+    /// `done` with these ids added, the newest kept (a few hundred is plenty: the phone names at
+    /// most the last sixty deletions).
+    static func healthDeleted(_ done: [String], adding ids: [String]) -> [String] {
+        var out = done.filter { !ids.contains($0) }
+        out.append(contentsOf: ids)
+        return Array(out.suffix(300))
+    }
+
+    /// What the phone is told once they are out, so its own retries of them stop.
+    static func healthDeletedEvent(_ ids: [String], id: String) -> Event? {
+        ids.isEmpty ? nil : ["id": id, "type": "healthDeleted", "ids": ids]
+    }
+
     /// The weigh-in before a workout started here, for the phone's body weight list.
     static func weighIn(_ w: Double, at: Double, id: String) -> Event? {
         guard w > 0, w < 700 else { return nil }
