@@ -245,7 +245,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   <p class="api-facts">
     <span>OpenAPI 3.1.0</span>
     <span>openGym v1.4.1</span>
-    <span>73 endpoints</span>
+    <span>74 endpoints</span>
     <span>AGPL-3.0-or-later</span>
   </p>
 
@@ -1423,7 +1423,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <div class="ptab">
   <div class="prow rrow">
     <span class="r-code s2">200</span>
-    <span class="p-desc">Ceremony options.<span class="r-sig">{ cid: string, options: <a href="#schema-WebAuthnRegistrationOptions">WebAuthnRegistrationOptions</a>, id: string, name: string }</span></span>
+    <span class="p-desc">Ceremony options.<span class="r-sig">{ cid: string, options: <a href="#schema-WebAuthnRegistrationOptions">WebAuthnRegistrationOptions</a>, id: string, name: string, recovery: boolean }</span></span>
   </div>
   <div class="prow rrow">
     <span class="r-code s4">400</span>
@@ -1449,7 +1449,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="ep-sum">Redeem a device link (step 2): store the passkey and sign this device in</span>
   </summary>
   <div class="ep-body">
-<p>Verifies the attestation against the challenge from step 1 (which must have been made for this very code), stores the passkey on the code's profile, burns the code and sets the session cookie; the passkey just made is what signs the device in. Of two requests racing with one code, one wins. Audited as <code>auth.link.ok</code>, and every refusal as <code>auth.link.fail</code>. <b>Not</b> CSRF-exempt.</p>
+<p>Verifies the attestation against the challenge from step 1 (which must have been made for this very code), stores the passkey on the code's profile, burns the code and sets the session cookie; the passkey just made is what signs the device in. Of two requests racing with one code, one wins. Audited as <code>auth.link.ok</code> (a recovery code as <code>auth.recovery.ok</code>), and every refusal as <code>auth.link.fail</code>. A recovery code also works on a profile at the passkey limit: the passkey used longest ago is removed to make room. <b>Not</b> CSRF-exempt.</p>
     <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Public: no authentication required.</span></p>
 
 <p class="ep-h">Request body <span class="p-hint">(JSON)</span></p><div class="ptab">
@@ -2563,6 +2563,51 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
   <h2>Admin</h2>
   <p class="sub">Admin dashboard. Requires an admin session (<code>ADMIN_UIDS</code> or <code>admin:true</code>)</p>
   <div class="eps">
+
+<details class="ep" id="op-adminRecoveryCode">
+  <summary>
+    <span class="m post">POST</span>
+    <span class="ep-path"><code>/api/admin/user/recovery</code><span class="ep-chip admin">admin</span></span>
+    <span class="ep-chev" aria-hidden="true"></span>
+    <span class="ep-sum">Make a one-time recovery code (#584)</span>
+  </summary>
+  <div class="ep-body">
+<p>For someone who lost every way in, on any instance (with or without <code>PASSWORD_LOGIN</code>). Returns a code (12 characters from the pairing alphabet, 60 bits), shown once, stored only as a SHA-256, valid for 24 h. The person redeems it like a device link (<code>POST /api/device-link/options</code> and <code>/verify</code>): the device they use gets a new passkey for the profile and is signed in. Making it bumps the profile's session version (every session, pending pairing code and device link ends); passkeys and the password stay. A newer code replaces an older one.</p>
+<p>Any admin may make one for a profile that is not an admin; only the owner for an admin; nobody for the owner (403 <code>owner</code>: the owner uses the server command <code>node recover.js &lt;name&gt;</code>), for oneself (400 <code>self</code>) or for a disabled profile (400 <code>disabled</code>). Audited as <code>admin.recovery.create</code>; a refusal for an admin as <code>admin.denied</code>.</p>
+    <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Admin only: a signed-in session whose user is an admin (<code>ADMIN_UIDS</code> or <code>admin:true</code>), as the session cookie or a Bearer token.</span></p>
+
+<p class="ep-h">Request body <span class="p-hint">(JSON)</span></p><div class="ptab">
+  <div class="prow">
+    <span class="p-name">id<em class="p-req" title="required">required</em></span>
+    <span class="p-type">string</span>
+    <span class="p-desc">The user id.</span>
+  </div>
+</div>
+    <p class="ep-h">Responses</p>
+    <div class="ptab">
+  <div class="prow rrow">
+    <span class="r-code s2">200</span>
+    <span class="p-desc">The code, once.<span class="r-sig">{ ok: always true, name: string, code: string, expires: number }</span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">400</span>
+    <span class="p-desc">Oneself, or a disabled profile.<span class="r-sig"><code>{&quot;error&quot;:&quot;enable the account first&quot;}</code></span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">401</span>
+    <span class="p-desc">No session, expired/revoked session, or a disabled account.<span class="r-sig"><code>{&quot;error&quot;:&quot;not signed in&quot;}</code></span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">403</span>
+    <span class="p-desc">Not an admin; an admin who is not the owner asking for an admin; or the target is the owner.<span class="r-sig"><code>{&quot;error&quot;:&quot;the owner recovers with the server command (recover.js)&quot;}</code></span></span>
+  </div>
+  <div class="prow rrow">
+    <span class="r-code s4">404</span>
+    <span class="p-desc">No user with that id.<span class="r-sig"><code>{&quot;error&quot;:&quot;no such user&quot;}</code></span></span>
+  </div>
+    </div>
+  </div>
+</details>
 
 <details class="ep" id="op-adminPasswordReset">
   <summary>
@@ -4516,6 +4561,11 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="p-name">user.resetUntil</span>
     <span class="p-type">number | null</span>
     <span class="p-desc">PASSWORD_LOGIN instances only. Expiry (ms) of an unused reset code.</span>
+  </div>
+  <div class="prow">
+    <span class="p-name">user.recoveryUntil</span>
+    <span class="p-type">number | null</span>
+    <span class="p-desc">Expiry (ms) of an unused recovery code (POST /api/admin/user/recovery, recover.js).</span>
   </div>
   <div class="prow">
     <span class="p-name">unit</span>

@@ -1112,6 +1112,67 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '503': { $ref: '#/components/responses/Busy' }
 
+  /api/admin/user/recovery:
+    post:
+      tags: [admin, passkeys]
+      operationId: adminRecoveryCode
+      summary: 'Admin: make a one-time recovery code (#584)'
+      description: |
+        For someone who lost every way in, on any instance (with or without
+        `PASSWORD_LOGIN`). Returns a code (12 characters from the pairing alphabet, 60 bits),
+        shown once, stored only as a SHA-256, valid for 24 h. The person redeems it like a
+        device link (`POST /api/device-link/options` and `/verify`): the device they use gets a
+        new passkey for the profile and is signed in. Making it bumps the profile's session
+        version (every session, pending pairing code and device link ends); passkeys and the
+        password stay. A newer code replaces an older one.
+
+        Any admin may make one for a profile that is not an admin; only the owner for an
+        admin; nobody for the owner (403 `owner`: the owner uses the server command
+        `node recover.js <name>`), for oneself (400 `self`) or for a disabled profile (400
+        `disabled`). Audited as `admin.recovery.create`; a refusal for an admin as
+        `admin.denied`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: string, description: The user id. }
+      responses:
+        '200':
+          description: The code, once.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean, const: true }
+                  name: { type: string }
+                  code: { type: string }
+                  expires: { type: number, description: Expiry (ms). }
+              example: { ok: true, name: "Ada", code: "K7WQ-2MZP-4HXA", expires: 1790000000000 }
+        '400':
+          description: Oneself, or a disabled profile.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: "enable the account first", code: disabled }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin; an admin who is not the owner asking for an admin; or the target is the owner.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: "the owner recovers with the server command (recover.js)", code: owner }
+        '404':
+          description: No user with that id.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: "no such user" }
+
   /api/admin/user/password-reset:
     post:
       tags: [admin, password]
@@ -1429,6 +1490,7 @@ paths:
                   options: { $ref: '#/components/schemas/WebAuthnRegistrationOptions' }
                   id: { type: string, description: "The profile's id (also the options' user handle). Names are not unique; this is what tells two profiles apart." }
                   name: { type: string, description: The profile this device is being added to. }
+                  recovery: { type: boolean, description: 'Present (true) when the code is a recovery code (POST /api/admin/user/recovery, recover.js).' }
         '400': { $ref: '#/components/responses/LinkInvalid' }
         '409': { $ref: '#/components/responses/PasskeyLimit' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
@@ -1442,8 +1504,10 @@ paths:
         Verifies the attestation against the challenge from step 1 (which must have been
         made for this very code), stores the passkey on the code's profile, burns the code
         and sets the session cookie; the passkey just made is what signs the device in.
-        Of two requests racing with one code, one wins. Audited as `auth.link.ok`, and every
-        refusal as `auth.link.fail`. **Not** CSRF-exempt.
+        Of two requests racing with one code, one wins. Audited as `auth.link.ok` (a recovery
+        code as `auth.recovery.ok`), and every refusal as `auth.link.fail`. A recovery code
+        also works on a profile at the passkey limit: the passkey used longest ago is removed
+        to make room. **Not** CSRF-exempt.
       security: []
       requestBody:
         required: true
@@ -3833,6 +3897,9 @@ components:
             resetUntil:
               oneOf: [{ type: number }, { type: 'null' }]
               description: PASSWORD_LOGIN instances only. Expiry (ms) of an unused reset code.
+            recoveryUntil:
+              oneOf: [{ type: number }, { type: 'null' }]
+              description: Expiry (ms) of an unused recovery code (POST /api/admin/user/recovery, recover.js).
         unit: { type: string, enum: [kg, lb] }
         lastSync: { oneOf: [{ type: number }, { type: 'null' }] }
         routines:
