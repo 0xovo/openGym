@@ -130,10 +130,11 @@ jobs:
             xcrun simctl bootstatus "$UDID" -b
             xcrun simctl install "$UDID" "$APP"
             # A synthetic clip (a square moving, made with ffmpeg for the tests; no exercise media)
-            # in the app's own container, to show the animation path renders.
+            # in the app's own container, to show the animation path renders: a GIF, as the phone
+            # sends it (the watch decodes what WatchBridgePlugin made, never WebP itself).
             DATA=$(xcrun simctl get_app_container "$UDID" ch.opengym.app.watchkitapp data 2>/dev/null || true)
             CLIP=""
-            if [ -n "$DATA" ]; then mkdir -p "$DATA/tmp" && cp WatchCore/Tests/WatchCoreTests/Fixtures/synthetic-square.webp "$DATA/tmp/clip.webp" && CLIP="$DATA/tmp/clip.webp"; fi
+            if [ -n "$DATA" ]; then mkdir -p "$DATA/tmp" && cp WatchCore/Tests/WatchCoreTests/Fixtures/synthetic-square.gif "$DATA/tmp/clip.gif" && CLIP="$DATA/tmp/clip.gif"; fi
             for screen in idle empty set weight rest finish; do
               xcrun simctl terminate "$UDID" ch.opengym.app.watchkitapp 2>/dev/null || true
               if [ "$screen" = set ] && [ -n "$CLIP" ]; then

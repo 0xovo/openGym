@@ -36,6 +36,15 @@ final class ClipCodecTests: XCTestCase {
         XCTAssertGreaterThan(try XCTUnwrap(ClipCodec.decode(out)).images.count, 5)
     }
 
+    /// What the watch gets (and what CI's watch screenshots show): Fixtures/synthetic-square.gif,
+    /// the same moving square as a GIF, as the phone sends it.
+    func testTheWatchReadsAGifAsThePhoneSendsIt() throws {
+        let gif = try XCTUnwrap(Bundle.module.url(forResource: "synthetic-square", withExtension: "gif", subdirectory: "Fixtures"))
+        let frames = try XCTUnwrap(ClipCodec.decode(gif))
+        XCTAssertEqual(frames.images.count, 12)
+        XCTAssertEqual(frames.duration, 1.2, accuracy: 0.25)
+    }
+
     func testSomethingThatIsNotAnImageGivesNothing() throws {
         let junk = FileManager.default.temporaryDirectory.appendingPathComponent("junk-\(UUID().uuidString).webp")
         try Data("not an image".utf8).write(to: junk)
