@@ -1377,14 +1377,21 @@ export const useStore = create((set, get) => {
     },
     update(mut, push = true) {
       const prev = get().S
+      // Under test, every change proves it left the previous state as it was: the draft shares
+      // whatever the producer did not touch, so a write into one of those would change history.
+      const prevJson = import.meta.env?.MODE === 'test' ? JSON.stringify(prev) : null
       const draft = draftOf(prev)
       mut(draft.S)
       const S = draft.done()
+      // The stamps below write the change's records into these two maps in place (stampDeletions,
+      // stampEdits); a draft that never touched them still shares them with the previous state.
+      for (const k of ['deleted', 'edited']) if (S[k] && typeof S[k] === 'object' && S[k] === prev[k]) S[k] = clone(S[k])
       // What the change removed, and which routines, workouts, settings and plan days it touched,
       // each with one time that comes after every stamp the copy already carries: a conflict then
       // keeps a removal and the edit made last, even from a device whose clock runs behind
       // (lib/sync-merge.js stampChange).
       S._ts = stampChange(prev, S, Date.now())
+      if (prevJson !== null && JSON.stringify(prev) !== prevJson) throw new Error('update(): the previous state was changed in place')
       persist(S, push)
       // A photo or video added to a workout is a change worth the day's backup too: the one
       // finishing wrote went before the finish screen's pictures (autoBackupNow). Not a removal,
