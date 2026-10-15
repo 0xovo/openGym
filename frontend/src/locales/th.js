@@ -2541,4 +2541,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'ในแอปนี้: ใส่รหัสในเว็บ openGym ของคุณผ่านเบราว์เซอร์ แล้วจับคู่แอปใหม่จาก ตั้งค่า → บัญชี ที่นั่น',
   'I have a code': 'ฉันมีรหัส',
   'A recovery code from your admin goes here too.': 'รหัสกู้คืนจากผู้ดูแลก็ใส่ที่นี่ได้',
+  'A day off before the next one': 'หยุดหนึ่งวันก่อนรายการถัดไป',
+  'Already in the loop: adds it again': 'อยู่ในรอบแล้ว: เพิ่มอีกครั้ง',
+  'Rest day. The loop goes on {0}.': 'วันพัก รอบจะเริ่มต่อ {0}',
 }

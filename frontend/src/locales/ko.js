@@ -2530,4 +2530,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': '이 앱에서는: 브라우저로 openGym 사이트에 코드를 입력한 뒤, 거기서 설정 → 계정에서 앱을 다시 페어링하세요.',
   'I have a code': '코드가 있어요',
   'A recovery code from your admin goes here too.': '관리자에게 받은 복구 코드도 여기에 입력하면 돼요.',
+  'A day off before the next one': '다음 운동 전에 하루 쉬기',
+  'Already in the loop: adds it again': '이미 순환에 있어요: 한 번 더 추가해요',
+  'Rest day. The loop goes on {0}.': '쉬는 날이에요. 순환은 {0}에 이어져요.',
 }

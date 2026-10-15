@@ -2533,4 +2533,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'Ebben az appban: add meg a kódot az openGym-oldaladon egy böngészőben, aztán párosítsd újra az appot ott a Beállítások → Fiók menüben.',
   'I have a code': 'Van kódom',
   'A recovery code from your admin goes here too.': 'Az admintól kapott helyreállító kód is ide kerül.',
+  'A day off before the next one': 'Egy pihenőnap a következő előtt',
+  'Already in the loop: adds it again': 'Már benne van a körben: még egyszer hozzáadja',
+  'Rest day. The loop goes on {0}.': 'Pihenőnap. A kör {0} folytatódik.',
 }

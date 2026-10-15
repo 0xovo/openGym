@@ -2527,4 +2527,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'У цьому застосунку: введи код на своєму сайті openGym у браузері, а потім знову спаруй застосунок у Налаштування → Акаунт там.',
   'I have a code': 'У мене є код',
   'A recovery code from your admin goes here too.': 'Код відновлення від адміністратора теж вводиться тут.',
+  'A day off before the next one': 'Вихідний перед наступним',
+  'Already in the loop: adds it again': 'Уже в циклі: додасться ще раз',
+  'Rest day. The loop goes on {0}.': 'День відпочинку. Цикл продовжиться {0}.',
 }

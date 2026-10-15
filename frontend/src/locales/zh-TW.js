@@ -2523,4 +2523,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': '在此 App 中：先在瀏覽器裡的 openGym 網站輸入代碼，然後在那裡的 設定 → 帳號 中重新配對 App。',
   'I have a code': '我有代碼',
   'A recovery code from your admin goes here too.': '管理員給你的復原代碼也在這裡輸入。',
+  'A day off before the next one': '下一項之前休息一天',
+  'Already in the loop: adds it again': '已在循環中：再加一次',
+  'Rest day. The loop goes on {0}.': '休息日。循環將在 {0} 繼續。',
 }

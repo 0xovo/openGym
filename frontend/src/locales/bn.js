@@ -2609,4 +2609,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'এই অ্যাপে: কোডটি ব্রাউজারে আপনার openGym সাইটে দিন, তারপর সেখানে সেটিংস → অ্যাকাউন্ট থেকে অ্যাপটি আবার পেয়ার করুন।',
   'I have a code': 'আমার কাছে কোড আছে',
   'A recovery code from your admin goes here too.': 'অ্যাডমিনের দেওয়া রিকভারি কোডও এখানে দিন।',
+  'A day off before the next one': 'পরেরটার আগে এক দিনের ছুটি',
+  'Already in the loop: adds it again': 'লুপে আগেই আছে: আবার যোগ হবে',
+  'Rest day. The loop goes on {0}.': 'বিশ্রামের দিন। লুপ আবার চলবে {0}।',
 }

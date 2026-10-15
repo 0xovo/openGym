@@ -2530,4 +2530,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'Bu uygulamada: kodu bir tarayıcıda openGym sitene gir, sonra uygulamayı oradaki Ayarlar → Hesap’tan yeniden eşleştir.',
   'I have a code': 'Kodum var',
   'A recovery code from your admin goes here too.': 'Yöneticinden aldığın kurtarma kodu da buraya girilir.',
+  'A day off before the next one': 'Sıradakinden önce bir gün izin',
+  'Already in the loop: adds it again': 'Zaten döngüde: bir kez daha ekler',
+  'Rest day. The loop goes on {0}.': 'Dinlenme günü. Döngü {0} devam ediyor.',
 }

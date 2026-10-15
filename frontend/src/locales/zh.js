@@ -2530,4 +2530,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': '在此应用中：先在浏览器里的 openGym 网站输入代码，然后在那里的 设置 → 账号 中重新配对应用。',
   'I have a code': '我有代码',
   'A recovery code from your admin goes here too.': '管理员给你的恢复代码也在这里输入。',
+  'A day off before the next one': '下一项之前休息一天',
+  'Already in the loop: adds it again': '已在循环中：再加一次',
+  'Rest day. The loop goes on {0}.': '休息日。循环将在 {0} 继续。',
 }

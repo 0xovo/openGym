@@ -2530,4 +2530,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'In questa app: inserisci il codice sul tuo sito openGym in un browser, poi abbina di nuovo l’app da Impostazioni → Account lì.',
   'I have a code': 'Ho un codice',
   'A recovery code from your admin goes here too.': 'Anche un codice di recupero del tuo admin va qui.',
+  'A day off before the next one': 'Un giorno libero prima del prossimo',
+  'Already in the loop: adds it again': 'Già nel ciclo: lo aggiunge di nuovo',
+  'Rest day. The loop goes on {0}.': 'Giorno di riposo. Il ciclo riprende {0}.',
 }

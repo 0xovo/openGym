@@ -1611,6 +1611,7 @@ export const PT_BR_OVERRIDES = {
   'Get a recovery code for any profile, the owner’s too, on the server: docker compose exec api node recover.js "Your name"': 'No servidor, gere um código de recuperação para qualquer perfil, inclusive o do dono: docker compose exec api node recover.js "Seu nome"',
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'Neste aplicativo: digite o código no seu site openGym em um navegador e depois pareie o aplicativo de novo em Configurações → Conta lá.',
   'A recovery code from your admin goes here too.': 'Um código de recuperação do seu admin também vai aqui.',
+  'Already in the loop: adds it again': 'Já está no ciclo: adiciona de novo',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

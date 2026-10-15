@@ -2585,4 +2585,7 @@ export default {
   'In this app: enter the code on your openGym site in a browser, then pair the app again from Settings → Account there.': 'في هذا التطبيق: أدخل الرمز في موقع openGym الخاص بك في متصفح، ثم أعد إقران التطبيق من الإعدادات ← الحساب هناك.',
   'I have a code': 'لديّ رمز',
   'A recovery code from your admin goes here too.': 'رمز الاسترداد من المسؤول يُدخل هنا أيضًا.',
+  'A day off before the next one': 'يوم راحة قبل التالي',
+  'Already in the loop: adds it again': 'موجود في الدورة: يضيفه مرة أخرى',
+  'Rest day. The loop goes on {0}.': 'يوم راحة. تستمر الدورة {0}.',
 }
