@@ -4,6 +4,32 @@ Newest first. Each release is a `## vX.Y.Z (YYYY-MM-DD)` section, and the releas
 GitHub and GitLab are that section, word for word. New work goes under `## Unreleased` until the
 tag. Write it for the people using the app: what changed for them, short, no em dashes.
 
+## Unreleased
+
+**Gym reminder** (#614, phone app). Walk into your gym and openGym nudges you to hit Start. Add
+your gyms in Settings → Reminders → Gym reminder: "I'm at the gym right now" or a pin on an
+OpenStreetMap map, each with its own radius and text. Once a day at most, never after you trained,
+never mid-workout, optionally only between certain hours. Off by default, and your gyms stay on
+the phone (not on your server, not in backups). Android uses the system's own proximity alerts,
+so no Google services are needed. Android can be slow to notice you arrived (up to half an hour),
+so near a gym the phone can take a short GPS look and nudge you at the door; that needs openGym's
+battery use on Unrestricted (Settings shows it as "Quick arrival check"). And if you logged a
+workout on your laptop that your phone hasn't synced yet, the phone asks your server first (3
+seconds at most) instead of nagging you anyway.
+
+**Security.** Follow-ups to v1.4.2's audit.
+- **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
+  counts), like adding another device does. A copied browser session can no longer mint a phone
+  sign-in that renews itself.
+- Deleting your account from a paired phone only skips the passkey for a real phone sign-in, not
+  for a browser session sent along as one.
+- On iPhone the paired server's sign-in is no longer part of iCloud or computer backups. A
+  restored iPhone pairs again.
+- The Android updater (direct APK only) installs nothing without its checksum and only its own
+  download, and the backup folder is only written to while the app still has your permission.
+- Push addresses that hide a private IPv4 address inside an IPv6 one are refused like the plain
+  ones.
+
 ## v1.4.2 (2026-10-18)
 
 openGym comes to the App Store, with an Apple Watch app in tow. Plus everything you asked for
@@ -112,17 +138,6 @@ when the app may check in the background; opening the app always catches up.)
   pull requests by @anshuman83-40 (#526, #530) and @tfdmendes (#543). The CLA wasn't signed yet,
   so we built our own take for this release, but the ideas are theirs. Thank you!
 
-**Gym reminder** (#614, phone app). Walk into your gym and openGym nudges you to hit Start. Add
-your gyms in Settings → Reminders → Gym reminder: "I'm at the gym right now" or a pin on an
-OpenStreetMap map, each with its own radius and text. Once a day at most, never after you trained,
-never mid-workout, optionally only between certain hours. Off by default, and your gyms stay on
-the phone (not on your server, not in backups). Android uses the system's own proximity alerts,
-so no Google services are needed. Android can be slow to notice you arrived (up to half an hour),
-so near a gym the phone can take a short GPS look and nudge you at the door; that needs openGym's
-battery use on Unrestricted (Settings shows it as "Quick arrival check"). And if you logged a
-workout on your laptop that your phone hasn't synced yet, the phone asks your server first (3
-seconds at most) instead of nagging you anyway.
-
 **Security.** Five private reports, all fixed, plus our own audit. Thanks to Boris Kurktchiev
 for the reports, each with a patch and a test. Self-hosters: please update.
 
@@ -145,17 +160,6 @@ for the reports, each with a patch and a test. Self-hosters: please update.
 - The Coach forgets a stored API key when its server address moves to another host. Enter it again.
 - Request paths the server would have to tidy up (`..`, backslashes) are refused, nginx stops
   naming its version, and Android backups no longer include the paired server's sign-in.
-- **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
-  counts), like adding another device does. A copied browser session can no longer mint a phone
-  sign-in that renews itself.
-- Deleting your account from a paired phone only skips the passkey for a real phone sign-in, not
-  for a browser session sent along as one.
-- On iPhone the paired server's sign-in is no longer part of iCloud or computer backups. A
-  restored iPhone pairs again.
-- The Android updater (direct APK only) installs nothing without its checksum and only its own
-  download, and the backup folder is only written to while the app still has your permission.
-- Push addresses that hide a private IPv4 address inside an IPv6 one are refused like the plain
-  ones.
 - **One owner, many admins.** Any admin could delete every other admin and then clear the activity
   log. Now one admin is the owner: only they make or remove admins, delete an admin, clear the log
   or hand the role on (Admin, tap a user). Existing instances: the oldest admin is the owner.
