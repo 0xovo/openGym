@@ -26,6 +26,10 @@ result-*
 # CI reports (test:* jobs write these next to the suites)
 junit.xml
 coverage/
+test-results.json
+test-results.tap
+lcov.info
+/stats/
 frontend/bundle-size.json
 
 # Local planning notes

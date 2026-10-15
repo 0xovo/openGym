@@ -58,6 +58,17 @@ updates:
         patterns: ['*']
         update-types: ['major']
 
+  # MCP bridge — mcp/package.json
+  - package-ecosystem: npm
+    directory: /mcp
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 2
+    groups:
+      mcp:
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+
   # Base images — api/Dockerfile (node:22-alpine)
   - package-ecosystem: docker
     directory: /api
@@ -89,7 +100,8 @@ updates:
       interval: monthly
     open-pull-requests-limit: 2
     groups:
-      # These are all first-party actions/* and docker/* pinned to a major tag; they update
+      # Pinned to commit SHAs (with the tag in a comment), which Dependabot updates the same way;
+      # mostly first-party actions/* and docker/*, they update
       # in lockstep and none of them is worth a PR of its own.
       actions:
         patterns: ['*']
