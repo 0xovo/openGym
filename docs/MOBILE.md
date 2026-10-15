@@ -2,7 +2,7 @@
 
 **Just want the app?** Download the APK from the
 [latest release](https://github.com/DuarteSantos8/openGym/releases/latest) (`openGym-X.Y.Z.apk`,
-or `openGym-HD-X.Y.Z.apk` for sharper animations at about twice the size) and read
+or `openGym-Plus-X.Y.Z.apk` / `openGym-HD-X.Y.Z.apk` for sharper animations at a bigger size) and read
 [how the phone app works](#how-the-phone-app-works) and
 [connecting it to your server](#connecting-the-app-to-your-own-server). On an iPhone, see
 [what's possible](#iphone--whats-actually-possible). Everything from [Prerequisites](#prerequisites)
@@ -268,7 +268,7 @@ and **Delete**.
   `https://localhost/_opengym_pack/<packId>/<drawing>.webp`, never a file path. The pack modules
   are generated on the release machine by `scripts/android/make-asset-packs.mjs` and never
   committed. The `sideload` flavour (the APKs) answers "unavailable" and only ever has its
-  built-in animations: 180 px in the Standard APK, 360 px in the HD one. Each APK's updater
+  built-in animations: 180 px in the Standard APK, 240 px in Plus, 360 px in HD. Each APK's updater
   stays with its own kind (`pickApk` in `lib/update.js`, told by `VITE_APK_VARIANT`).
 
 App Store Connect, once: the App Group `group.ch.opengym.app`; the bundle id
@@ -327,13 +327,14 @@ Google Play build come from the same code; how they are built and uploaded is in
 
 ### Android: sideload the APK
 
-Every release has two signed APKs on [the GitHub release](https://github.com/DuarteSantos8/openGym/releases),
-each with its `.sha256` beside it, and [opengym.ch](https://opengym.ch) links to both:
+Every release has three signed APKs on [the GitHub release](https://github.com/DuarteSantos8/openGym/releases),
+each with its `.sha256` beside it, and [opengym.ch](https://opengym.ch) links to all three:
 
 - **`openGym-X.Y.Z.apk` (Standard):** the exercise animations built in at 180 px, about 315 MB.
+- **`openGym-Plus-X.Y.Z.apk` (Plus):** the same app with 240 px animations, about 424 MB.
 - **`openGym-HD-X.Y.Z.apk` (HD):** the same app with 360 px animations, about 760 MB.
 
-Same app id, same key: install one over the other and the data stays. The in-app updater keeps
+Same app id, same key: install one over another and the data stays. The in-app updater keeps
 each on its own kind. Android asks you to allow installs from the browser the first time; that is
 standard for any app outside the Play Store. Check the `.sha256` if you got the file from anywhere
 else.

@@ -27,7 +27,7 @@ ever sees the repo's 180 px media.
   it). The sharper qualities, 240 included, are on-demand **Play asset packs** (Play Asset
   Delivery), one per quality and figure like the iPhone's, each under Play's 1.5 GB per pack (a bigger one is split into parts),
   far under the 30 GB for all on-demand packs together. Google Play delivers them; the sideloaded
-  APKs have none and keep what they have built in (Standard 180 px, HD 360 px).
+  APKs have none and keep what they have built in (Standard 180 px, Plus 240 px, HD 360 px).
 - **App Store:** built with Xcode 26 (the `macos-26` runner). Privacy manifest
   (`ios/App/App/PrivacyInfo.xcprivacy`): no tracking, no data collected. No non-exempt
   encryption (`ITSAppUsesNonExemptEncryption = NO`, HTTPS only). The Coach asks before anything
@@ -50,13 +50,15 @@ cd gym-app        # the release checkout, at the release tag
 export ANDROID_HOME=/opt/android-sdk
 K=/root/.config/opengym
 scripts/android/build-release.sh $K/opengym-release.keystore $K/keystore.pass $K/key.alias ~/release
-#  → openGym-X.Y.Z.apk + openGym-HD-X.Y.Z.apk (each + .sha256) for the GitHub release,
+#  → openGym-X.Y.Z.apk, openGym-Plus-X.Y.Z.apk, openGym-HD-X.Y.Z.apk (each + .sha256, and
+#    SHA256SUMS) for the GitHub release (APK_ONLY=1: only these),
 #    openGym-X.Y.Z.aab for Google Play
 ```
 
 Each is built from its own phone build: the **Standard** APK with the box-free 180 px animations
-built in (`quality/180`, about 315 MB), the **HD** APK with 360 px (`quality/360`, about 760 MB;
-`HD_PX=240` makes a lighter one, `HD_PX=0` none), the bundle with 180 px (`quality/180`, like the App Store app) and an asset
+built in (`quality/180`, about 315 MB), the **Plus** APK with 240 px (`quality/240`, about
+424 MB; `PLUS_PX=0` none), the **HD** APK with 360 px (`quality/360`, about 760 MB; `HD_PX=0`
+none), the bundle with 180 px (`quality/180`, like the App Store app) and an asset
 pack for every quality above 180 that has a folder in `/mnt/backup-hdd/opengym-media/quality/`
 (`scripts/android/make-asset-packs.mjs`, the same drawings per pack as the iPhone's); the pack
 modules are generated into `frontend/android/` for the build and removed after, never committed.

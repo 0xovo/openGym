@@ -29,7 +29,7 @@ https://testflight.apple.com/join/RKATb61k
   separately, so you only get the one you use.
 - **No more boxes.** The animations in the app showed faint rectangles around the moving parts.
   They are re-made from the original files, frame by frame, and look like the originals now. The
-  APKs get the same fix (180 px built in, or 360 px in the HD one).
+  APKs get the same fix (180, 240 or 360 px built in, see Android below).
 - **Swipe from the left edge to go back**, with the page you came from sliding in underneath.
 - **Notifications are asked for at the start**, not in the middle of your first rest.
 - The Vibrate switch works on the iPhone, and a server or Coach on your home network works over
@@ -37,11 +37,11 @@ https://testflight.apple.com/join/RKATb61k
 - **A logo instead of a black screen** while the app starts, loading its plates.
 
 **Android.** The app now targets Android 16 and needs Android 7.0 or newer (6.0 is out). The APK
-you know stays and updates itself, now in two sizes: **Standard** (`openGym-1.4.2.apk`, animations
-built in at 180 px, the small one) and **HD** (`openGym-HD-1.4.2.apk`, 360 px, sharper and
-heavier). Each one updates to its own kind, so nobody gets a surprise download twice the size.
-Phones on v1.4.1 update to Standard; want HD? Install it on top, your data stays (same goes for
-going back). A Google Play version is ready for the store too: it updates through Play and gets
+you know stays and updates itself, now in three sizes: **Standard** (`openGym-1.4.2.apk`,
+animations built in at 180 px, the small one), **Plus** (`openGym-Plus-1.4.2.apk`, 240 px) and
+**HD** (`openGym-HD-1.4.2.apk`, 360 px, sharp and hungry). Each one updates to its own kind, so
+nobody gets a surprise download twice the size. Phones on v1.4.1 update to Standard; want Plus or
+HD? Install it on top, your data stays (same goes for going back). A Google Play version is ready for the store too: it updates through Play and gets
 the sharper animations as Play downloads, like the iPhone, and an APK phone can move to it later
 without losing anything.
 

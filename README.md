@@ -191,7 +191,8 @@ on the phone, with native reminders and a rest countdown in the notification sha
 
 - **Android:** download the signed APK from the [latest release](https://github.com/DuarteSantos8/openGym/releases/latest)
   or the [website](https://opengym.ch): Standard (`openGym-X.Y.Z.apk`, 180 px animations, about
-  315 MB) or HD (`openGym-HD-X.Y.Z.apk`, 360 px, about 760 MB). Each sits next to its `.sha256`,
+  315 MB), Plus (`openGym-Plus-X.Y.Z.apk`, 240 px, about 424 MB) or HD (`openGym-HD-X.Y.Z.apk`,
+  360 px, about 760 MB). Each sits next to its `.sha256`,
   checks for updates itself and stays the kind you picked. A Google Play version is on its way.
 - **iPhone and Apple Watch:** the App Store app, with a public
   [TestFlight beta](https://testflight.apple.com/join/RKATb61k) until it is out. Or self-host and
