@@ -131,11 +131,15 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             // The Apple Health session of a workout that was running when the app was killed is
             // recovered (WatchAppDelegate.handleActiveWorkoutRecovery); a new one starts only if
             // none came back by then, so one workout never becomes two.
+            // A workout left open for hours (SensorPlan) starts no session until something happens in it.
             if let w = saved.workout {
                 workoutSeenAt = w.start.map { Date(timeIntervalSince1970: $0 / 1000) }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                     guard let self = self, self.state.workout?.id == w.id else { return }
-                    self.health.start(workoutId: w.id)
+                    if !SensorPlan.idle(w, seen: nil, now: Date().timeIntervalSince1970 * 1000, busy: false) {
+                        self.health.start(workoutId: w.id)
+                    }
+                    self.armIdleCheck()
                 }
             }
         }
@@ -147,6 +151,48 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             WCSession.default.delegate = self
             WCSession.default.activate()
         }
+    }
+
+    /* ---------- the heart-rate sensor in a workout nobody finishes (SensorPlan) ---------- */
+
+    /// The last thing that happened here or came from the phone in the running workout.
+    private var activityAt: Date?
+    private var idleCheck: DispatchWorkItem?
+
+    /// Something happened in the workout: a paused session resumes (or one starts, for a restored
+    /// workout that was idle at launch), and the idle check moves out.
+    private func noteActivity() {
+        guard !isDemo, let w = workout else { return }
+        activityAt = Date()
+        if health.paused { health.resume() } else { health.start(workoutId: w.id) }
+        armIdleCheck()
+    }
+
+    /// One check, at the moment the workout would turn idle; nothing runs in between.
+    private func armIdleCheck() {
+        idleCheck?.cancel()
+        idleCheck = nil
+        guard !isDemo, let at = SensorPlan.checkAt(workout, seen: activityAt.map { $0.timeIntervalSince1970 * 1000 }) else { return }
+        let item = DispatchWorkItem { [weak self] in
+            guard let self = self, self.workout != nil else { return }
+            let busy = self.restEndsAt != nil || self.holdEndsAt != nil
+            if SensorPlan.idle(self.workout, seen: self.activityAt.map { $0.timeIntervalSince1970 * 1000 },
+                               now: Date().timeIntervalSince1970 * 1000, busy: busy) {
+                self.log("idle \(Int(SensorPlan.idleLimitMs / 60000)) min: workout session paused")
+                self.health.pause()
+            } else if busy {
+                // A rest or hold runs on: look again once it is surely over.
+                self.idleCheck = nil
+                let again = DispatchWorkItem { [weak self] in self?.armIdleCheck() }
+                self.idleCheck = again
+                DispatchQueue.main.asyncAfter(deadline: .now() + 300, execute: again)
+            } else {
+                self.armIdleCheck()
+            }
+        }
+        idleCheck = item
+        let delay = max(0, at - Date().timeIntervalSince1970 * 1000) / 1000 + 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: item)
     }
 
     private func save() {
@@ -274,6 +320,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 self.summary = nil
                 self.health.start(workoutId: next.workout?.id)
             }
+            if next.workout != nil && next.workout != before.workout { self.noteActivity() }
             if let rest = snap.active?.rest, next.workout?.id == snap.active?.id {
                 let end = Date(timeIntervalSince1970: rest.endsAt / 1000)
                 if end != self.restEndsAt { self.startRest(until: end, notify: true) }
@@ -330,6 +377,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         state = next
         setStartedAt = now
         picked[ei] = nil
+        noteActivity()
         let (to, rest) = SessionCore.next(after: state, entry: ei, set: si)
         if side != nil && !rest {
             Haptics.side()          // the other side now
@@ -352,6 +400,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         let ei = entryIndex
         state = SessionCore.skip(state, entry: ei, set: si)
         picked[ei] = nil
+        noteActivity()
         if setIndex == nil {
             let (to, _) = SessionCore.next(after: state, entry: ei, set: si)
             state.entryIndex = to
@@ -367,6 +416,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         guard entry?.isTimed == true, setIndex != nil, seconds > 0 else { return }
         ackRestOver()
         skipRest()
+        noteActivity()
         let now = Date()
         let end = now.addingTimeInterval(seconds)
         holdStartedAt = now
@@ -483,6 +533,8 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         restAfter = nil
         loadTargets()
         health.start(workoutId: next.workout?.id)
+        activityAt = now
+        armIdleCheck()
         summary = nil
         Haptics.start()
     }

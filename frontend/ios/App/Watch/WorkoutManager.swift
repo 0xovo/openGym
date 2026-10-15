@@ -116,6 +116,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             samples = []
             heartRate = nil
             calories = nil
+            paused = false
             let now = Date()
             s.startActivity(with: now)
             b.beginCollection(withStart: now) { _, _ in }
@@ -127,6 +128,23 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             session = nil
             builder = nil
         }
+    }
+
+    /// Rested for a workout nobody finishes (SensorPlan): the session pauses, which lets the
+    /// heart-rate sensor go back to its everyday rate. Nothing is lost: the builder keeps what it
+    /// measured, and the workout is still saved when it ends. `resume()` picks it up again.
+    private(set) var paused = false
+
+    func pause() {
+        guard let s = session, !paused, s.state == .running else { return }
+        paused = true
+        s.pause()
+    }
+
+    func resume() {
+        guard paused else { return }
+        paused = false
+        session?.resume()
     }
 
     /// The app was killed (or crashed) with a workout session running: watchOS kept the session and
@@ -147,6 +165,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
                 b.delegate = self
                 self.session = s
                 self.builder = b
+                self.paused = s.state == .paused
                 self.wanted = true
                 if let wid = wid { self.workoutId = wid }
                 self.tagged = nil
@@ -267,6 +286,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         }
         session = nil
         builder = nil
+        paused = false
         DispatchQueue.main.async {
             self.running = false
             self.heartRate = nil
