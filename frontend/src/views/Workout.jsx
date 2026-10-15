@@ -8,7 +8,7 @@ import { useUI } from '../store/useUI.js'
 import { exOr, betterWeight } from '../lib/exercises.js'
 import { usesBar } from '../lib/bar.js'
 import { loadKindFor, baseWeightFor, inventoryFor, rowLoad, sameLoad, plateDelta, dropGrid } from '../lib/plates.js'
-import { effectiveRoutines, effectiveRoutineIds, lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, freestyleConfig, defaultConfig, setsDoneActive, setUnitsTotal, supersetUnits, unitOf, setLabel, modeOf, isBw, isPerSide, repStep, EFFORT, effortOf, stepEffort, capEffort, cascadeWeight, insertWarmupRow, barFloor, makeWarmupAt, canBeWarmup, makeWorkAt, removeRowAt, removeLastSet, setSpanAt, copyRowAt, copySpanAt, insertRowAt, pairAdjacent, unpairSuperset, cleanupSg, applyIntensifierPlan, pinnedNoteFor, exNoteFor, setsRepsOf } from '../lib/history.js'
+import { effectiveRoutines, effectiveRoutineIds, lastEntryFor, bestWeightFor, bestWeightForEntry, freestyleConfig, defaultConfig, setsDoneActive, setUnitsTotal, supersetUnits, unitOf, setLabel, modeOf, isBw, isPerSide, repStep, EFFORT, effortOf, stepEffort, capEffort, cascadeWeight, insertWarmupRow, barFloor, makeWarmupAt, canBeWarmup, makeWorkAt, removeRowAt, removeLastSet, setSpanAt, copyRowAt, copySpanAt, insertRowAt, pairAdjacent, unpairSuperset, cleanupSg, applyIntensifierPlan, pinnedNoteFor, exNoteFor, setsRepsOf } from '../lib/history.js'
 import { fmtNum, fmtPlate, exerciseNameText, fmtDate, fmtDaysAgo, todayISO, exCount, DAYN } from '../lib/format.js'
 import { speedUnitOf, toSpeed, fromSpeed } from '../lib/speed.js'
 import { clampIncline, hasIncline, inclineFits, inclineFrom, INCLINE_STEP } from '../lib/incline.js'
@@ -34,7 +34,7 @@ import Icon from '../components/Icon.jsx'
 import { Button, Check, NumberField } from '../components/ui.jsx'
 import { defaultIncrement, weightIncrement, stepWeight } from '../lib/progression.js'
 import { progressionGuidance } from '../lib/progression-copy.js'
-import { buildPlannedEntry, plannedConfigOf, builtOutOfProgression } from '../lib/session-start.js'
+import { buildPlannedEntry, buildSessionEntry, plannedConfigOf, builtOutOfProgression } from '../lib/session-start.js'
 import { routineChangesFromEntry, updateRoutineFromEntry } from '../lib/routines.js'
 import { sessionNoProg, setSessionNoProg, setEntryNoProg, joinSessionNoProg } from '../lib/session-noprog.js'
 import { glyphOf } from '../lib/glyphs.js'
@@ -47,7 +47,7 @@ import { canMoveActiveWorkoutUnit, moveActiveWorkoutUnit, canMoveActiveWorkoutEn
 import { nextOpenSet, workoutKeyAction } from '../lib/workout-keys.js'
 import { MUSCLE_NAME } from '../lib/muscles.js'
 import FocusView from './FocusView.jsx'
-import { withMeaning, historyAs, dbLoadFor, entryDbLoad, bellsIn, ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
+import { entryDbLoad, bellsIn, ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
 
 // How long after a key starts a hold the same key is not yet its "Done" (#133). A USB button
 // that bounces, or a double press, sends two presses a moment apart: the first starts the hold,
@@ -1102,7 +1102,15 @@ function ActiveWorkout() {
     const was = lastCur.current
     lastCur.current = cur
     const moved = was != null && was !== cur
-    if (!isSuperset || listMode) return
+    if (!isSuperset) return
+    // A superset is one card in every layout, so moving the marker from one member to the next
+    // does not change which `.wl-unit` is current: the list's own scroll (to `.wl-unit.cur`)
+    // stands still, and the partner's row stays below the fold. The member rows carry their refs
+    // in the list too, so the next member's row is brought into view here the same way the cards
+    // view does it — but only when the marker moved WITHIN this superset (member → member). A
+    // move that leaves the unit (the next unit after a round, revealCur) is the list's own job,
+    // and mount/pairing/layout switches are not moves at all, where the list leaves "current" put.
+    if (listMode && (!moved || !unit.includes(was))) return
     // A run the marker did not cause, with a sheet closing in the same tap, never scrolled: the
     // restore undid it. Keep that by not asking at all. Asking after the restore and then judging
     // the row would centre a first row that a tall first block (a note, "Last time", the
@@ -1116,12 +1124,28 @@ function ActiveWorkout() {
     return afterScrollRestore(() => {
       const { entries, cur: at } = shown.current
       const entry = entries[at]
+      // Cards centres the actionable set row so a tall first block does not push it off; the list
+      // has the whole session stacked under a pinned header, so it brings the next member's
+      // exercise block (its name first) up under the header, not the set field — you want to see
+      // which exercise you are on, then the row. Fall back to the row/block the other way round.
       const firstIncomplete = entry?.sets.findIndex(s => !s.done) ?? -1
       const setIdx = firstIncomplete >= 0 ? firstIncomplete : (entry?.sets.length ?? 0) - 1
-      const el = (setIdx >= 0 && setRefs.current.get(entry)?.get(setIdx)) || exRefs.current.get(entry)
+      const row = setIdx >= 0 && setRefs.current.get(entry)?.get(setIdx)
+      const block = exRefs.current.get(entry)
+      const el = listMode ? (block || row) : (row || block)
       if (!el || typeof el.scrollIntoView !== 'function') return
       if (!moved && rowOnScreen(el)) return
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      // In the list the header is pinned over the page: land the block below it (block:'start',
+      // fed the header's current height like scrollToUnit) rather than behind it. Cards has no
+      // pinned header, so the actionable row is centred as it was.
+      if (listMode) {
+        const hdrH = hdrRef.current?.offsetHeight
+        if (hdrH) listRef.current?.style.setProperty('--whdr-h', hdrH + 'px')
+        const still = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        el.scrollIntoView(still ? { block: 'start' } : { block: 'start', behavior: 'smooth' })
+      } else {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     })
   }, [cur, isSuperset, listMode, A.entries.length])
   // The list opens at the exercise you are on, not at the top of the session (issue #224): you
@@ -1416,18 +1440,9 @@ function ActiveWorkout() {
     const commit = cfg => {
       if (focusMode) focusPointerEpoch.current++
       update(s => {
-        const full = { ...cfg, id: ex.id }
         // A planned session builds the exercise the way its routine would (prescription, reps
-        // source, target); freestyle reproduces what you did last time.
-        // Read from before the session's day when it is logged into the past (sessionHistory).
-        const past = sessionHistory(s)
-        // Freestyle stamps the meaning of a dumbbell weight and reads last time in it, the way
-        // buildPlannedEntry does for a planned exercise (lib/dumbbells.js).
-        const built = freestyle
-          ? { target: withMeaning(s, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(s, full)), full, {
-            step: modeOf(full) === 'reps' ? (ownedWeightsFor(s, full) || weightIncrement(full, s.unit)) : defaultIncrement(ex.id, s.unit), preferLast: true,
-          }), full, dropGrid(s, full)) }
-          : buildPlannedEntry(past, full, routine, { noProg })
+        // source, target); freestyle reproduces what you did last time (buildSessionEntry).
+        const built = buildSessionEntry(s, ex.id, cfg, routine, curEntry)
         const insertAt = insertionIndexAfterCurrentUnit(supersetUnits(s.active.entries), s.active.cur, s.active.entries.length)
         s.active.entries.splice(insertAt, 0, joinSessionNoProg(s.active, { id: ex.id, ...built, ...(curRid ? { rid: curRid } : {}), ...(noProg ? { noProg: true } : {}) }))
         s.active.cur = insertAt

@@ -36,8 +36,8 @@ import { importHevyData, HevyApiError, HEVY_DEV_SETTINGS, mergeHevyRoutines } fr
 import { buildPlanBundle, parsePlan, mergePlan, printPlan, planPrintHTML } from './lib/plan-share.js'
 import { estimate1RM, best1RM, is1RMRecord, REP_CAP, formulaOf, FORMULA_NAMES } from './lib/onerm.js'
 import { exerciseHistory } from './lib/exercise-history.js'
-import { isBellEx, dbLoadOf, dbLoadFor, withDbLoad, withMeaning, historyAs, entryDbLoad, currentDbLoad, isOneArm, ownedWeightsFor, dumbbellsOf, ownsDumbbells, withDumbbells, presetWeights, cleanWeights } from './lib/dumbbells.js'
-import { policyFor, defaultIncrement, POLICIES_FOR, POLICY_NAME, POLICY_DESC, MAX_BW_SETS, MAX_TRIPLE_SETS, weightIncrement } from './lib/progression.js'
+import { isBellEx, dbLoadOf, dbLoadFor, withDbLoad, entryDbLoad, currentDbLoad, isOneArm, dumbbellsOf, ownsDumbbells, withDumbbells, presetWeights, cleanWeights } from './lib/dumbbells.js'
+import { policyFor, defaultIncrement, POLICIES_FOR, POLICY_NAME, POLICY_DESC, MAX_BW_SETS, MAX_TRIPLE_SETS } from './lib/progression.js'
 import { normalizeRepRange } from './lib/rep-range.js'
 import { isBackoff, backoffWeights } from './lib/backoff.js'
 import { isPyramid, normalizePyramid, normalizePyramidRest, normalizePyramidWeight, pyramidFromFlat, flatFromPyramid, pyramidLabel, PYRAMID_MAX, MAX_PYRAMID_SETS, PYRAMID_PRESETS } from './lib/pyramid.js'
@@ -52,7 +52,7 @@ import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
 import { useAutoMore } from './lib/use-auto-more.js'
 import { isFav, toggleFav, sortFavouritesFirst, sortYoursFirst } from './lib/favourites.js'
-import { buildSessionEntries, buildPlannedEntry, builtOutOfProgression } from './lib/session-start.js'
+import { buildSessionEntries, buildPlannedEntry, buildSessionEntry } from './lib/session-start.js'
 import { finishCompare, finishCardio } from './lib/finish-compare.js'
 import { workoutFit, fitFileName } from './lib/fit-export.js'
 import { joinSessionNoProg } from './lib/session-noprog.js'
@@ -1493,7 +1493,6 @@ export function swapActiveWorkoutExercise(index) {
     // The picker is a chooser here, not a stack you keep adding from: one swap, then back to
     // the workout. (The add flow deliberately leaves it open.)
     picker.close()
-    const full = { ...cfg, id: ex.id }
     const st = S()
     const current = st.active?.entries?.[index]
     if (!current) return
@@ -1501,17 +1500,8 @@ export function swapActiveWorkoutExercise(index) {
     // keeps the slot's own `rid` and reads its prescription from that routine (not a
     // session-wide one). A slot with no `rid` is freestyle.
     const slotRoutine = current.rid ? st.routines.find(r => r.id === current.rid) : null
-    const freestyle = !slotRoutine
-    // Same rows the add flow builds: last time's loads and, in a planned session, the
-    // prescription — swapping barbell for dumbbell bench must not start you at an empty bar.
-    // Built from what came before the session's day when it is logged into the past (sessionHistory).
-    const step = modeOf(full) === 'reps' ? weightIncrement(full, st.unit) : defaultIncrement(ex.id, st.unit)
-    const past = sessionHistory(st)
-    // A freestyle swap logs dumbbell weights the way the exercise means them now, and starts
-    // from last time read in that meaning (lib/dumbbells.js), as a planned one does.
-    const built = freestyle
-      ? { target: withMeaning(st, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(st, full)), full, { step: (modeOf(full) === 'reps' && ownedWeightsFor(st, full)) || step, preferLast: true }), full, dropGrid(st, full)) }
-      : buildPlannedEntry(past, full, slotRoutine, { noProg: builtOutOfProgression(current, slotRoutine) })
+    // Same rows the add flow builds (buildSessionEntry).
+    const built = buildSessionEntry(st, ex.id, cfg, slotRoutine, current)
     const replacement = {
       id: ex.id,
       ...built,
@@ -1535,19 +1525,7 @@ export function swapActiveWorkoutExercise(index) {
     if (!logged) { apply(); return }
 
     if (current.sg) {
-      ui().openSheet(close => <>
-        <h3>{t('Swap exercise?')}</h3>
-        <div className="muted small" style={{ marginBottom: 12 }}>
-          {t('Logged sets stay with the original exercise. Choose where the replacement belongs.')}
-        </div>
-        <Button variant="primary" onClick={() => { close(); apply({ loggedConfirmed: true, groupDisposition: 'keep' }) }}>
-          {t('Keep replacement in this group')}
-        </Button>
-        <div style={{ height: 8 }} />
-        <Button variant="ghost" onClick={() => { close(); apply({ loggedConfirmed: true, groupDisposition: 'detach' }) }}>
-          {t('Insert after this group')}
-        </Button>
-      </>)
+      swapGroupSheet(groupDisposition => apply({ loggedConfirmed: true, groupDisposition }))
       return
     }
 
@@ -1558,6 +1536,23 @@ export function swapActiveWorkoutExercise(index) {
       onConfirm: () => apply({ loggedConfirmed: true })
     })
   }
+}
+
+/** A logged superset member being swapped: the replacement stays in the group or goes after it. */
+export function swapGroupSheet(choose) {
+  ui().openSheet(close => <>
+    <h3>{t('Swap exercise?')}</h3>
+    <div className="muted small" style={{ marginBottom: 12 }}>
+      {t('Logged sets stay with the original exercise. Choose where the replacement belongs.')}
+    </div>
+    <Button variant="primary" onClick={() => { close(); choose('keep') }}>
+      {t('Keep replacement in this group')}
+    </Button>
+    <div style={{ height: 8 }} />
+    <Button variant="ghost" onClick={() => { close(); choose('detach') }}>
+      {t('Insert after this group')}
+    </Button>
+  </>)
 }
 
 /* ============================ equipment profiles ============================ */
@@ -3458,17 +3453,19 @@ function CardioDone({ st, w }) {
 function FinishSummary({ w, prs, e1prs = [], close }) {
   const st = useStore(s => s.S)
   return <div style={{ textAlign: 'center', padding: '8px 0' }}>
+    {/* Sticky, so the summary can be left from the top however far it has been scrolled. */}
+    <div className="fin-x"><button type="button" className="iconbtn" aria-label={t('Close')} onClick={() => closeThenNav(close, '/home')}><Icon name="xmark" /></button></div>
     <div style={{ fontSize: 44, display: 'flex', justifyContent: 'center', color: 'var(--acc)' }}><Icon name="trophy" /></div>
     <h3 style={{ margin: '8px 0' }}>{t('Workout complete!')}</h3>
-    <div className="tiles" style={{ textAlign: 'start' }}>
+    <div className="tiles fin" style={{ textAlign: 'start' }}>
       <div className="tile"><div className="l">{t('Duration')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{fmtDur(w.end - w.start)}</div></div>
       <div className="tile"><div className="l">{t('Volume')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{fmtVol(w.vol, st.unit)}</div></div>
-      <div className="tile"><div className="l">{t('Sets')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{setsWorkCount(setsDone(w), workSetsDone(w))}</div></div>
-      <div className="tile"><div className="l">{t('PRs')}</div><div className="v" style={{ fontSize: 20 }}>{prs.length || '–'}</div></div>
+      <div className="tile wide"><div className="l">{t('Sets')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{setsWorkCount(setsDone(w), workSetsDone(w))}</div></div>
+      <div className="tile narrow"><div className="l">{t('PRs')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{prs.length || '–'}</div></div>
     </div>
     {(prs.length > 0 || e1prs.length > 0) && <div style={{ textAlign: 'start', marginBottom: 12 }}>
-      {prs.map(id => <div key={id} className="small accent row" style={{ gap: 5 }}><Icon name="trophy" style={{ fontSize: 13 }} />{t('New PR:')} <span className={exerciseNameClass(EXIDX[id])}>{EXIDX[id] ? exerciseNameFor(EXIDX[id]) : id}</span></div>)}
-      {e1prs.map(p => <div key={p.id} className="small accent row" style={{ gap: 5 }}><Icon name="chartLine" style={{ fontSize: 13 }} />{t('Best estimated 1RM:')} <span className={exerciseNameClass(EXIDX[p.id])}>{EXIDX[p.id] ? exerciseNameFor(EXIDX[p.id]) : p.id}</span> · {fmtNum(p.est)} {st.unit}</div>)}
+      {prs.map(id => <div key={id} className="small accent row" style={{ gap: 6, alignItems: 'flex-start' }}><Icon name="trophy" style={{ fontSize: 13, marginTop: 2, flex: 'none' }} /><span>{t('New PR:')} <span className={exerciseNameClass(EXIDX[id])}>{EXIDX[id] ? exerciseNameFor(EXIDX[id]) : id}</span></span></div>)}
+      {e1prs.map(p => <div key={p.id} className="small accent row" style={{ gap: 6, alignItems: 'flex-start' }}><Icon name="chartLine" style={{ fontSize: 13, marginTop: 2, flex: 'none' }} /><span>{t('Best estimated 1RM:')} <span className={exerciseNameClass(EXIDX[p.id])}>{EXIDX[p.id] ? exerciseNameFor(EXIDX[p.id]) : p.id}</span> · {fmtNum(p.est)} {st.unit}</span></div>)}
     </div>}
     <h4 className="sec" style={{ textAlign: 'start' }}>{t('What you just trained')}</h4>
     <BodyMap load={loadOfWorkouts([w])} body={st.body} />
@@ -3571,5 +3568,5 @@ function doFinishWorkout() {
   // into s.active, which is gone. What it held is not logged, like any set left unchecked.
   useUI.getState().stopWork()
   beep(snd(), 880, 0.15); beep(snd(), 1100, 0.15, 0.18); beep(snd(), 1320, 0.3, 0.36)
-  ui().openSheet(close => <FinishSummary w={shown} prs={prs} e1prs={e1prs} close={close} />, { kind: 'center', locked: true })
+  ui().openSheet(close => <FinishSummary w={shown} prs={prs} e1prs={e1prs} close={close} />, { kind: 'center', locked: true, wide: true })
 }
