@@ -30,9 +30,10 @@ public enum HealthReadCore {
         }
     }
 
-    /// The samples in [from, to] with a plausible rate, oldest first, as [[ms, bpm]].
+    /// The samples in [from, to] with a plausible rate, oldest first, as [[ms, bpm]]. The rate is
+    /// rounded first, as Health Connect's whole beats and lib/heart-rate.js have it: 250.4 is 250.
     public static func samples(_ all: [HeartSample], from: Double, to: Double) -> [[Double]] {
-        let kept = all.filter { $0.ms >= from && $0.ms <= to && bpmRange.contains($0.bpm) }
+        let kept = all.filter { $0.ms >= from && $0.ms <= to && bpmRange.contains($0.bpm.rounded()) }
             .sorted { $0.ms < $1.ms }
             .prefix(maxSamples)
         return kept.map { [$0.ms.rounded(), $0.bpm.rounded()] }
