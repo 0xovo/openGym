@@ -27,7 +27,7 @@ result-*
 junit.xml
 coverage/
 test-results.json
-test-results.tap
+test-results.jsonl
 lcov.info
 /stats/
 frontend/bundle-size.json

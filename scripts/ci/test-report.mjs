@@ -8,9 +8,9 @@
 //     node scripts/ci/test-report.mjs --label Frontend --root frontend \
 //       --vitest frontend/test-results.json --coverage frontend/coverage/coverage-summary.json \
 //       [--bundle frontend/bundle-size.json] --out stats/frontend.json
-//   node:test (api):
+//   node:test (api, run with --test-reporter=scripts/ci/node-test-reporter.mjs):
 //     node scripts/ci/test-report.mjs --label API --root api \
-//       --tap api/test-results.tap --lcov api/lcov.info --out stats/api.json
+//       --node api/test-results.jsonl --lcov api/lcov.info --out stats/api.json
 //   several suites into one table:
 //     node scripts/ci/test-report.mjs --combine stats/*.json [--out combined.json]
 //
@@ -49,38 +49,20 @@ function fromVitest(file, root) {
   return { tests, files, startTime: j.startTime }
 }
 
-// node --test --test-reporter=tap. Each test file runs as its own subtest group in node 22;
-// the YAML block after every result carries duration_ms and the location of the test.
-function fromTap(file, root) {
+// node --test with scripts/ci/node-test-reporter.mjs: one JSON line per test, with its file.
+function fromNodeJson(file, root) {
   if (!file || !existsSync(file)) return null
-  const lines = readFileSync(file, 'utf8').split('\n')
-  const tests = []
-  let cur = null
-  for (let i = 0; i < lines.length; i++) {
-    const m = /^(\s*)(ok|not ok) \d+ - (.*?)(\s+#\s*(SKIP|TODO).*)?$/i.exec(lines[i])
-    if (m) {
-      cur = { indent: m[1].length, name: m[3], status: m[5] ? 'skipped' : m[2] === 'ok' ? 'passed' : 'failed', ms: 0, file: null }
-      tests.push(cur)
-      continue
-    }
-    if (!cur) continue
-    let y
-    if ((y = /^\s*duration_ms: ([\d.]+)/.exec(lines[i]))) cur.ms = Number(y[1])
-    else if ((y = /^\s*location: '(.*?):\d+:\d+'/.exec(lines[i]))) cur.file = rel(root, y[1].replace(/^file:\/\//, ''))
-    else if ((y = /^\s*error: [|>]?-?\s*['"]?(.*?)['"]?$/.exec(lines[i])) && cur.status === 'failed' && !cur.message) cur.message = (y[1] || lines[i + 1] || '').trim().slice(0, 300)
-    else if ((y = /^\s*type: '(suite|test)'/.exec(lines[i]))) cur.type = y[1]
-  }
-  // Keep the leaves: a describe() is a 'suite' and its children are already counted.
-  const leaves = tests.filter((t) => t.type !== 'suite' && t.file)
+  const tests = readFileSync(file, 'utf8').split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l) } catch { return null } })
+    .filter((t) => t && t.file).map((t) => ({ file: rel(root, t.file), name: t.name, status: t.status, ms: t.ms || 0, message: t.message }))
   const byFile = new Map()
-  for (const t of leaves) {
+  for (const t of tests) {
     const f = byFile.get(t.file) || { file: t.file, ms: 0, tests: 0, status: 'passed' }
     f.tests++
     f.ms += t.ms
     if (t.status === 'failed') f.status = 'failed'
     byFile.set(t.file, f)
   }
-  return { tests: leaves.map(({ indent, type, ...t }) => t), files: [...byFile.values()] }
+  return { tests, files: [...byFile.values()] }
 }
 
 // v8 json-summary (vitest --coverage.reporter=json-summary).
@@ -218,7 +200,7 @@ if (ci >= 0) {
   emit(mdCombined(list), { generated: new Date().toISOString(), suites: list })
 } else {
   const root = opt('--root') || '.'
-  const run = opt('--vitest') ? fromVitest(opt('--vitest'), root) : fromTap(opt('--tap'), root)
+  const run = opt('--vitest') ? fromVitest(opt('--vitest'), root) : fromNodeJson(opt('--node'), root)
   const cov = opt('--coverage') ? coverageFromSummary(opt('--coverage'), root) : coverageFromLcov(opt('--lcov'), root)
   const s = summarise(opt('--label') || 'Tests', run, cov, readJSON(opt('--bundle')))
   emit(md(s), s)

@@ -63,20 +63,34 @@ jobs:
     timeout-minutes: 40
     strategy:
       fail-fast: false
+      # One condition per run, so a failure says which one it is about.
       matrix:
         include:
-          # Fourteen hours ahead of UTC, and six weeks later: "today" is tomorrow for UTC, and
-          # fixed fixture dates age.
-          - name: 'UTC+14, six weeks ahead, shuffled'
+          - name: shuffled order
+            tz: UTC
+            shift: ''
+            shuffle: true
+          # Fourteen hours ahead of UTC: the evening in UTC is already tomorrow here.
+          - name: UTC+14
             tz: Pacific/Kiritimati
-            shift: '+42d'
-          # Behind UTC with a daylight-saving change in the range most fixtures use.
-          - name: 'America/Los_Angeles, shuffled'
+            shift: ''
+            shuffle: false
+          # Behind UTC, with a daylight-saving change in the range most fixtures use.
+          - name: Los Angeles
             tz: America/Los_Angeles
             shift: ''
+            shuffle: false
+          # The calendar six weeks on: fixed fixture dates that age out of a window.
+          - name: six weeks ahead
+            tz: UTC
+            shift: '+42d'
+            shuffle: false
     name: robustness (${{ matrix.name }})
     env:
       TZ: ${{ matrix.tz }}
+      # Property tests (fast-check) try more cases than on a push, and the sync fuzz new seeds.
+      PROPERTY_RUNS: 1000
+      SYNC_FUZZ_SEED_BASE: ${{ github.run_number }}000
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -107,18 +121,18 @@ jobs:
         working-directory: frontend
         run: |
           LD_PRELOAD="${FAKE_PRELOAD:-}" node -e 'console.log("clock:", new Date().toString())'
-          LD_PRELOAD="${FAKE_PRELOAD:-}" npx vitest run --sequence.shuffle --reporter=default --reporter=json --outputFile.json=test-results.json
+          LD_PRELOAD="${FAKE_PRELOAD:-}" npx vitest run ${{ matrix.shuffle && '--sequence.shuffle' || '' }} --reporter=default --reporter=json --outputFile.json=test-results.json
       - name: API suite
         id: api
         continue-on-error: true
         working-directory: api
         run: >
           LD_PRELOAD="${FAKE_PRELOAD:-}" node --test --test-reporter=spec --test-reporter-destination=stdout
-          --test-reporter=tap --test-reporter-destination=test-results.tap test/*.test.js
+          --test-reporter=../scripts/ci/node-test-reporter.mjs --test-reporter-destination=test-results.jsonl test/*.test.js
       - name: Report
         if: always()
         run: |
           echo "## Robustness: ${{ matrix.name }}" >> "$GITHUB_STEP_SUMMARY"
           node scripts/ci/test-report.mjs --label "Frontend (${{ matrix.name }})" --root frontend --vitest frontend/test-results.json --out stats/frontend.json > /dev/null
-          node scripts/ci/test-report.mjs --label "API (${{ matrix.name }})" --root api --tap api/test-results.tap --out stats/api.json > /dev/null
+          node scripts/ci/test-report.mjs --label "API (${{ matrix.name }})" --root api --node api/test-results.jsonl --out stats/api.json > /dev/null
           test "${{ steps.fe.outcome }}" = success && test "${{ steps.api.outcome }}" = success

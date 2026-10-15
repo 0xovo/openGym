@@ -204,7 +204,7 @@ jobs:
           node --test --experimental-test-coverage
           --test-coverage-exclude='test/**' --test-coverage-exclude='node_modules/**'
           --test-reporter=spec --test-reporter-destination=stdout
-          --test-reporter=tap --test-reporter-destination=test-results.tap
+          --test-reporter=../scripts/ci/node-test-reporter.mjs --test-reporter-destination=test-results.jsonl
           --test-reporter=lcov --test-reporter-destination=lcov.info
           --test-reporter=junit --test-reporter-destination=junit.xml
           test/*.test.js
@@ -222,7 +222,7 @@ jobs:
         if: always()
         run: >
           node scripts/ci/test-report.mjs --label API --root api
-          --tap api/test-results.tap --lcov api/lcov.info --out stats/api.json
+          --node api/test-results.jsonl --lcov api/lcov.info --out stats/api.json
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
