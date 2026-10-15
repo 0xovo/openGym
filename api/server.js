@@ -289,6 +289,7 @@ function isPrivateAddr(ip) {
     if (a === 192 && b === 168) return true;                      // private
     if (a === 192 && b === 0) return true;                        // 192.0.0.0/24, 192.0.2.0/24
     if (a === 100 && b >= 64 && b <= 127) return true;            // CGNAT
+    if (a === 198 && (b === 18 || b === 19)) return true;         // benchmarking 198.18.0.0/15
     if (a >= 224) return true;                                    // multicast + reserved
     return false;
   }
@@ -302,7 +303,17 @@ function isPrivateAddr(ip) {
   }
   if (g.slice(0, 7).every(x => x === 0) && g[7] <= 1) return true; // unspecified, loopback
   if ((g[0] & 0xffc0) === 0xfe80) return true;                    // link-local fe80::/10
+  if ((g[0] & 0xffc0) === 0xfec0) return true;                    // site-local fec0::/10 (deprecated, still routed by some)
   if ((g[0] & 0xfe00) === 0xfc00) return true;                    // unique local fc00::/7
+  if ((g[0] & 0xff00) === 0xff00) return true;                    // multicast ff00::/8
+  // The forms that carry an IPv4 address inside: on a host with NAT64 or a 6to4 relay they reach
+  // that IPv4 address, so they are judged by it. 64:ff9b:1::/48 is the local-use NAT64 prefix,
+  // which only ever translates into a network of the operator's own.
+  const v4 = (hi, lo) => isPrivateAddr(`${hi >> 8}.${hi & 255}.${lo >> 8}.${lo & 255}`);
+  if (g.slice(0, 6).every(x => x === 0)) return v4(g[6], g[7]);          // IPv4-compatible ::a.b.c.d
+  if (g[0] === 0x64 && g[1] === 0xff9b && g.slice(2, 6).every(x => x === 0)) return v4(g[6], g[7]); // NAT64 64:ff9b::/96
+  if (g[0] === 0x64 && g[1] === 0xff9b && g[2] === 1) return true;       // local-use NAT64 64:ff9b:1::/48
+  if (g[0] === 0x2002) return v4(g[1], g[2]);                            // 6to4 2002::/16
   return false;
 }
 
@@ -1070,6 +1081,8 @@ const THROTTLED = {
   // budget: the password that may prove them counts its own failures (passwordAttempt).
   'POST /api/device-link/options': 'link', 'POST /api/device-link/verify': 'link',
   'POST /api/account/passkeys/options': null, 'POST /api/account/device-link': null,
+  // Pairing a phone: the same, for the password that may prove it.
+  'POST /api/pair/create': null,
   'DELETE /api/account/passkeys': null,
   // Deleting the account: the same, for the password that may prove it.
   'POST /api/account/delete': null
@@ -2308,7 +2321,12 @@ const routes = {
     const lastAdmin = () => lastAdminLeaving(user);
     const refuseLastAdmin = () => json(res, 409, { error: 'the last admin cannot leave while other profiles remain', code: 'last-admin' });
     if (lastAdmin()) return refuseLastAdmin();
-    const proof = s.bearer && !passwordWayIn(user) ? 'device' : await proveOwner(req, res, user, body, 'account-delete');
+    // The pairing is the proof only for a token the pairing made: a browser's cookie value
+    // replayed in an Authorization header is a Bearer too, and is told apart by its kind (`c`,
+    // makeSession). Without this a cookie someone walked off with deleted a passkey-only profile
+    // with no proof at all, the one case this route exists to refuse.
+    const paired = s.bearer && s.kind !== 'c';
+    const proof = paired && !passwordWayIn(user) ? 'device' : await proveOwner(req, res, user, body, 'account-delete');
     if (!proof) return;
     // Everything above awaited: the session may have ended, and another admin may have left.
     if (readSession(req) !== user) return json(res, 401, { error: 'not signed in' });
@@ -2319,16 +2337,26 @@ const routes = {
   },
 
   // Mobile app pairing: called from an already signed-in browser tab (Settings → "Pair the
-  // mobile app") to mint a short code the phone can redeem below.
+  // mobile app") to mint a short code the phone can redeem below. The code turns into a phone's
+  // token, which /api/me renews for as long as it is used and which gets the device pass on the
+  // account's own delete, so it asks the proof a device link asks (proveOwner): a session alone
+  // may be a cookie someone walked off with, and minting a phone token is how that cookie would
+  // stop having to expire.
   'POST /api/pair/create': async (req, res) => {
     const user = readSession(req);
     if (!user) return json(res, 401, { error: 'not signed in' });
+    const body = await readBody(req);
+    const proof = await proveOwner(req, res, user, body, 'pair');
+    if (!proof) return;
+    // Awaited: a sign-out everywhere, a disable or an admin reset may have ended this session.
+    if (readSession(req) !== user) return json(res, 401, { error: 'not signed in' });
+    if (proof === 'passkey') saveDb();   // the confirming passkey's counter and last use
     // One live code per profile: the newest is the one on screen. Keeping every code minted
     // let one session grow this Map without limit for five minutes at a time.
     for (const [k, v] of pairings) if (v.uid === user.id) pairings.delete(k);
     const code = makePairCode();
     pairings.set(code, { uid: user.id, exp: Date.now() + 5 * 60000 });
-    audit(req, 'auth.pair.create', { user });
+    audit(req, 'auth.pair.create', { user, msg: proof });
     json(res, 200, { code });
   },
 

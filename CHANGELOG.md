@@ -130,6 +130,17 @@ for the reports, each with a patch and a test. Self-hosters: please update.
 - The Coach forgets a stored API key when its server address moves to another host. Enter it again.
 - Request paths the server would have to tidy up (`..`, backslashes) are refused, nginx stops
   naming its version, and Android backups no longer include the paired server's sign-in.
+- **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
+  counts), like adding another device does. A copied browser session can no longer mint a phone
+  sign-in that renews itself.
+- Deleting your account from a paired phone only skips the passkey for a real phone sign-in, not
+  for a browser session sent along as one.
+- On iPhone the paired server's sign-in is no longer part of iCloud or computer backups. A
+  restored iPhone pairs again.
+- The Android updater (direct APK only) installs nothing without its checksum and only its own
+  download, and the backup folder is only written to while the app still has your permission.
+- Push addresses that hide a private IPv4 address inside an IPv6 one are refused like the plain
+  ones.
 - **One owner, many admins.** Any admin could delete every other admin and then clear the activity
   log. Now one admin is the owner: only they make or remove admins, delete an admin, clear the log
   or hand the role on (Admin, tap a user). Existing instances: the oldest admin is the owner.

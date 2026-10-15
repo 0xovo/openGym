@@ -104,18 +104,45 @@ export async function writeJsonFile(name, data) {
   } catch (e) { /* not a Capacitor build, or the write failed — the caller's in-memory copy stands */ }
 }
 
+// Where the pairing lives. It holds the session token, so on iOS it stays out of iCloud and
+// computer backups: Library/NoCloud (Directory.LibraryNoCloud) is excluded from them, where
+// Documents (Directory.Data on iOS) is not. Android keeps it in the app's files and excludes it
+// by name in backup_rules.xml / data_extraction_rules.xml. A restored iPhone is paired again,
+// the same as an Android phone moved through a cloud backup.
+async function remoteDir() {
+  const { Directory } = await import('@capacitor/filesystem')
+  return (await nativePlatform()) === 'ios' ? Directory.LibraryNoCloud : Directory.Data
+}
+
 export async function loadRemoteFile() {
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
+    const directory = await remoteDir()
+    try {
+      const r = await Filesystem.readFile({ path: REMOTE_FILE, directory, encoding: Encoding.UTF8 })
+      return JSON.parse(r.data)
+    } catch (e) {
+      if (directory === Directory.Data) throw e
+    }
+    // An iPhone paired before the move: its pairing is still in Documents. Moved once, then the
+    // backed-up copy is gone.
     const r = await Filesystem.readFile({ path: REMOTE_FILE, directory: Directory.Data, encoding: Encoding.UTF8 })
-    return JSON.parse(r.data)
+    const data = JSON.parse(r.data)
+    await Filesystem.writeFile({ path: REMOTE_FILE, directory, data: JSON.stringify(data), encoding: Encoding.UTF8, recursive: true })
+    try { await Filesystem.deleteFile({ path: REMOTE_FILE, directory: Directory.Data }) } catch { /* moved; the old copy is only stale */ }
+    return data
   } catch (e) { return null }   // never decided yet
 }
 
 export async function saveRemoteFile(data) {
   try {
-    const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
-    await Filesystem.writeFile({ path: REMOTE_FILE, directory: Directory.Data, data: JSON.stringify(data), encoding: Encoding.UTF8 })
+    const { Filesystem, Encoding } = await import('@capacitor/filesystem')
+    const directory = await remoteDir()
+    await Filesystem.writeFile({ path: REMOTE_FILE, directory, data: JSON.stringify(data), encoding: Encoding.UTF8, recursive: true })
+    // The plugin marks Library/NoCloud as excluded from backup each time it looks the folder up,
+    // which does nothing while the folder does not exist yet: the first write creates it, so
+    // one more lookup marks it now rather than on the next launch.
+    if (directory !== (await import('@capacitor/filesystem')).Directory.Data) await Filesystem.stat({ path: REMOTE_FILE, directory })
   } catch (e) { /* worst case: onboarding asks again next launch */ }
 }
 

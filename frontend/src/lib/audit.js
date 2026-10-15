@@ -118,6 +118,7 @@ const ACTS = {
   'passkey-add': 'adding a passkey',
   'passkey-remove': 'removing a passkey',
   'device-link': 'making a one-time code for another device',
+  'pair': 'making a code to pair the phone app',
   'account-delete': 'deleting their account'
 }
 export const auditAct = act => ACTS[act] || (act ? String(act) : '')
