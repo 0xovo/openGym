@@ -155,6 +155,13 @@ export default function GymReminderPage() {
         accessory={perm.background === 'granted' ? 'none' : 'chevron'}
         onClick={perm.background === 'granted' ? undefined : () => openAppSettings()} />
     </Section>}
+    {perm?.quick && perm.background === 'granted' && <Section footer={perm.quick === 'granted'
+      ? t('Near a gym, the phone takes a short GPS look (a few minutes at most) so the nudge comes at the door.')
+      : t('Android can take up to half an hour to notice you walked in. Set openGym’s battery use to Unrestricted and the phone takes a short GPS look when you get near a gym, so the nudge comes at the door.')}>
+      <Row icon="bolt" iconTint="var(--orange)" title={t('Quick arrival check')} value={perm.quick === 'granted' ? t('On') : t('Off')}
+        accessory={perm.quick === 'granted' ? 'none' : 'chevron'}
+        onClick={perm.quick === 'granted' ? undefined : () => openAppSettings()} />
+    </Section>}
   </>
 }
 

@@ -76,6 +76,7 @@ final class GymReminder {
     static final long SERVER_CHECK_MS = 3_000L;
 
     static String actionEnter(Context ctx) { return ctx.getPackageName() + ".GYM_ENTER"; }
+    static String actionCheck(Context ctx) { return ctx.getPackageName() + ".GYM_CHECK"; }
     static String actionOpen(Context ctx) { return ctx.getPackageName() + ".GYM_REMINDER_OPEN"; }
 
     private GymReminder() {}
@@ -258,21 +259,69 @@ final class GymReminder {
             note(ctx, "near " + gymId + ": no check (3 today)");
             return;
         }
+        String how = launchCheck(ctx);
+        if (how == null) {
+            // Android 12+ refuses a foreground service from the background unless the app may
+            // set exact alarms or runs with unrestricted battery: the gym's own alert still
+            // fires, just on the system's slower schedule.
+            note(ctx, "near " + gymId + ": check refused (background start not allowed)");
+            return;
+        }
+        p.edit().putString("scanDay", today).putInt("scans", count + 1).apply();
+        note(ctx, "near " + gymId + ": check started (" + how + ")");
+    }
+
+    /**
+     * Starts GymScanService. Android 12+ lets a background app start a foreground service only
+     * with an exemption: unrestricted battery (works directly), or the right to set exact alarms
+     * (an exact alarm a moment later may start it: GymReminderReceiver, actionCheck). Returns how
+     * it went ("direct", "alarm"), or null when neither is possible.
+     */
+    static String launchCheck(Context ctx) {
+        if (startScan(ctx)) return "direct";
+        if (Build.VERSION.SDK_INT < 31) return null;
+        android.app.AlarmManager am = (android.app.AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (am == null || !am.canScheduleExactAlarms()) return null;
+        Intent i = new Intent(ctx, GymReminderReceiver.class).setAction(actionCheck(ctx));
+        PendingIntent pi = PendingIntent.getBroadcast(ctx, REQUEST_BASE + 2 * MAX_GYMS, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        try {
+            am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 500, pi);
+            return "alarm";
+        } catch (SecurityException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Whether the approach check can start with the app in the background: always before
+     * Android 12; from 12 on with unrestricted battery or with the right to set exact alarms.
+     */
+    static boolean quickCheckAllowed(Context ctx) {
+        if (Build.VERSION.SDK_INT < 31) return true;
+        android.os.PowerManager pm = (android.os.PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+        if (pm != null && pm.isIgnoringBatteryOptimizations(ctx.getPackageName())) return true;
+        android.app.AlarmManager am = (android.app.AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        return am != null && am.canScheduleExactAlarms();
+    }
+
+    /** True when the check's foreground service could be started from here. */
+    static boolean startScan(Context ctx) {
         try {
             Intent i = new Intent(ctx, GymScanService.class);
             if (Build.VERSION.SDK_INT >= 26) ctx.startForegroundService(i);
             else ctx.startService(i);
-            p.edit().putString("scanDay", today).putInt("scans", count + 1).apply();
-            note(ctx, "near " + gymId + ": check started");
+            return true;
         } catch (Exception e) {
-            // Android may refuse a foreground service from the background: the gym's own alert
-            // still fires, just on the system's slower schedule.
-            note(ctx, "near " + gymId + ": check refused (" + e.getClass().getSimpleName() + ")");
+            Log.i(TAG, "check: start refused (" + e.getClass().getSimpleName() + ")");
+            return false;
         }
     }
 
-    /** Applies the no-nag rule for arriving at `gymId` now, and posts if it says so. True if posted. */
-    static boolean arrive(Context ctx, String gymId, Calendar now) {
+    /**
+     * Applies the no-nag rule for arriving at `gymId` now, and posts if it says so. True if posted.
+     * One at a time: the gym's own alert and the approach check can both see the same arrival.
+     */
+    static synchronized boolean arrive(Context ctx, String gymId, Calendar now) {
         JSONObject c = config(ctx);
         if (c == null) return false;
         JSONObject st = status(ctx);

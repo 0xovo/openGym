@@ -93,7 +93,8 @@
             android:exported="false" />
         <!-- Gym reminder: the short check with live location after the phone entered a gym's wide
              approach zone (GymScanService). At most 15 minutes, at most 3 a day; its notification
-             is a silent one. Started by the approach alert's broadcast, never exported. -->
+             is a silent one. Started by the approach alert's broadcast (Android 12+: only with
+             unrestricted battery or exact alarms allowed, see GymReminder.launchCheck), never exported. -->
         <service
             android:name=".GymScanService"
             android:exported="false"

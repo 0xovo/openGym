@@ -77,6 +77,8 @@ public class GymReminderPlugin extends Plugin {
         else r.put("background", "prompt");
         android.app.NotificationManager nm = (android.app.NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         r.put("notifications", nm != null && nm.areNotificationsEnabled() ? "granted" : "denied");
+        // Whether the approach check may start from the background (GymReminder.launchCheck).
+        r.put("quick", GymReminder.quickCheckAllowed(ctx) ? "granted" : "off");
         return r;
     }
 

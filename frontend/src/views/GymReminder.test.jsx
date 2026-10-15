@@ -142,6 +142,26 @@ describe('Gym reminder page', () => {
     expect(host.textContent).toContain('Only while using the app')
     expect(host.textContent).toContain('needs location access in the background')
   })
+  it('Android, quick arrival check not allowed: says why and leads to the settings; allowed: just On', async () => {
+    const { openAppSettings } = await import('../lib/gym-reminder.js')
+    mocks.perm = { location: 'granted', background: 'granted', notifications: 'granted', quick: 'off' }
+    await render(<GymReminderPage />)
+    expect(rowByText('Quick arrival check').textContent).toContain('Off')
+    expect(host.textContent).toContain('up to half an hour')
+    await click(rowByText('Quick arrival check'))
+    expect(openAppSettings).toHaveBeenCalled()
+    act(() => root.unmount()); host.remove()
+    host = document.createElement('div'); document.body.appendChild(host); root = createRoot(host)
+    mocks.perm = { ...mocks.perm, quick: 'granted' }
+    await render(<GymReminderPage />)
+    expect(rowByText('Quick arrival check').textContent).toContain('On')
+    expect(host.textContent).toContain('a few minutes at most')
+  })
+  it('iOS (no quick flag): no such row', async () => {
+    mocks.perm = { location: 'granted', background: 'granted', notifications: 'granted' }
+    await render(<GymReminderPage />)
+    expect(host.textContent).not.toContain('Quick arrival check')
+  })
 })
 
 describe('one gym', () => {
