@@ -70,6 +70,16 @@ Almost always one of two things:
 [SELF_HOSTING.md](SELF_HOSTING.md#2-understand-the-passkey-requirement-important) explains both, and
 its troubleshooting section covers the rarer cases.
 
+### I lost my phone and my passkey. How do I get back in?
+
+Tap **Lost access?** on the sign-in screen. If your passkey was synced (iCloud Keychain, Google
+Password Manager, a password manager), it still works on your other devices. If another device is
+still signed in, it can give this one a passkey (**Settings → Account → Add another device**).
+Otherwise ask whoever runs your server for a **recovery code**: entered under **I have a code**, it
+gives your device a new passkey. Running the server yourself? `docker compose exec api node
+recover.js "Your name"` prints one, the owner's included. Details in
+[SELF_HOSTING.md](SELF_HOSTING.md#recovery-codes-when-every-way-in-is-gone).
+
 ### Can I use a password instead of a passkey?
 
 Yes, if the instance allows it: set `PASSWORD_LOGIN=1`. It's off by default. See

@@ -30,7 +30,8 @@ import {
   listPasskeys, addPasskeyRecord, renamePasskeyRecord, removePasskeyRecord, passkeyRemovalRefused, MAX_PASSKEYS,
   transportsOf,
 } from './passkeys-store.js';
-import { createDeviceLink, findDeviceLink, burnDeviceLink, dropDeviceLinks } from './device-link.js';
+import { createDeviceLink, findDeviceLink, burnDeviceLink, dropDeviceLinks, recoveryLinkOf, RECOVERY_TTL_MS } from './device-link.js';
+import { startAdminSocket } from './admin-socket.js';
 import { createMediaStore, mediaLimits, mediaConfig, MediaError, HASH_RE } from './media.js';
 import { effectiveRoutineId } from './queue.js';
 import { stampPut } from './sync-stamps.js';
@@ -1686,6 +1687,23 @@ const passwordRoutes = {
 // The last admin may not delete their own profile while anyone else is on the instance: nobody
 // could run it from the app afterwards. Alone on it, they may go.
 const lastAdminLeaving = u => isAdmin(u) && db.users.length > 1 && db.users.filter(isAdmin).length <= 1;
+// Makes a recovery code for `target` (#584): a device link that lives a day and says who made it
+// (`by`: the admin, or null for the server's own command). Making it signs the profile out
+// everywhere, as a password reset does: it is asked for when the devices are lost, and a lost phone
+// should not stay signed in for the day the code is good. Pairing codes and device links go too.
+// Passkeys and the password are left alone; the person removes the lost device's passkey in
+// Settings once they are back. Saved and audited here, whoever asked.
+function issueRecovery(req, target, by) {
+  target.sv = sessionVersion(target) + 1;
+  for (const [k, v] of pairings) if (v.uid === target.id) pairings.delete(k);
+  dropDeviceLinks(db, target.id);
+  presence.delete(target.id);
+  const made = createDeviceLink(db, target.id, Date.now(), RECOVERY_TTL_MS, { kind: 'recovery', by: by ? by.id : 'server' });
+  saveDb();
+  audit(req, by ? 'admin.recovery.create' : 'server.recovery.create', { ...(by ? { user: by } : {}), target, msg: by ? null : 'recover.js' });
+  return made;
+}
+
 const passkeyState = u => {
   const passkeys = listPasskeys(db, u.id);
   // `password`: whether the password can confirm an addition or a removal (proveOwner) — only
@@ -1863,10 +1881,12 @@ const passkeyRoutes = {
       audit(req, 'auth.link.fail', { ok: false, uid: link.userId, msg: 'user-unavailable' });
       return json(res, 400, LINK_INVALID);
     }
-    if (passkeyCount(user) >= MAX_PASSKEYS) return json(res, 409, LIMIT);
+    // A recovery code still works on a profile full of passkeys: the oldest unused one makes room
+    // (verify below). The lost devices' passkeys are what fill it.
+    if (link.kind !== 'recovery' && passkeyCount(user) >= MAX_PASSKEYS) return json(res, 409, LIMIT);
     const options = await moreOptions(user);
     const cid = putChallenge({ challenge: options.challenge, uid: user.id, kind: 'link', lh: link.h });
-    json(res, 200, { cid, options, id: user.id, name: user.name });
+    json(res, 200, { cid, options, id: user.id, name: user.name, ...(link.kind === 'recovery' ? { recovery: true } : {}) });
   },
 
   // Step two: the new passkey is stored, the code is burned, and this device is signed in by the
@@ -1897,6 +1917,13 @@ const passkeyRoutes = {
       audit(req, 'auth.link.fail', { ok: false, uid: link.userId, msg: 'link-invalid' });
       return json(res, 400, LINK_INVALID);
     }
+    const recovery = link.kind === 'recovery';
+    // Recovery on a full profile: the passkey used longest ago goes, to make room for this one.
+    let dropped = null;
+    if (recovery && passkeyCount(user) >= MAX_PASSKEYS) {
+      const oldest = listPasskeys(db, user.id).slice().sort((a, b) => String(a.lastUsed || a.created || '').localeCompare(String(b.lastUsed || b.created || '')))[0];
+      if (oldest && !removePasskeyRecord(db, user.id, oldest.id, 1).error) dropped = oldest;
+    }
     const added = addPasskeyRecord(db, user.id, cred);
     if (added.error) {
       audit(req, 'auth.link.fail', { ok: false, user, msg: added.code });
@@ -1905,7 +1932,7 @@ const passkeyRoutes = {
     added.row.lastUsed = added.row.created;
     burnDeviceLink(db, link);
     saveDb();
-    audit(req, 'auth.link.ok', { user, msg: added.row.name || null });
+    audit(req, recovery ? 'auth.recovery.ok' : 'auth.link.ok', { user, msg: [added.row.name, dropped && `replaced ${dropped.name || 'a passkey'}`].filter(Boolean).join(', ') || null });
     json(res, 200, { user: publicUser(user) }, { 'Set-Cookie': sessionCookie(user) });
   }
 };
@@ -2699,7 +2726,9 @@ const routes = {
         id: u.id, name: u.name, created: u.created || null, disabled: !!u.disabled, admin: isAdmin(u), owner: isOwner(u), invitedBy: u.invitedBy || null,
         // Only on an instance with password sign-in: whether they have one, and until when an
         // unused reset code is good.
-        ...(PASSWORD_LOGIN ? { password: hasPassword(u), email: u.email || null, resetUntil: u.pwReset?.exp > Date.now() ? u.pwReset.exp : null } : {})
+        ...(PASSWORD_LOGIN ? { password: hasPassword(u), email: u.email || null, resetUntil: u.pwReset?.exp > Date.now() ? u.pwReset.exp : null } : {}),
+        // Until when an unused recovery code is good (#584), on every instance.
+        recoveryUntil: recoveryLinkOf(db, u.id)?.exp || null
       },
       unit: S.unit || 'kg',
       lastSync: lastSyncOf(u, S),
@@ -2709,6 +2738,25 @@ const routes = {
       // photos and videos are the owner's own: the admin view gets no refs to them.
       workouts: records(S.workouts).reverse().map(({ media, ...w }) => w)
     });
+  },
+
+  // A recovery code (#584): for someone who lost every way in, on any instance, password sign-in
+  // or not. The person enters it on the sign-in screen, and the device they use gets a new passkey
+  // for the profile (POST /api/device-link/*, the same redemption a device link has). Who may make
+  // one for whom: any admin for a profile that is not an admin; the owner for an admin; nobody here
+  // for the owner, who uses the server's own command (recover.js), since no one else may take over
+  // the owner's login. Not for oneself, and not for a disabled profile. See issueRecovery.
+  'POST /api/admin/user/recovery': async (req, res) => {
+    const admin = requireAdmin(req, res); if (!admin) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    if (u.id === admin.id) return json(res, 400, { error: 'you are signed in: add a passkey in Settings instead', code: 'self' });
+    if (isOwner(u)) return json(res, 403, { error: 'the owner recovers with the server command (recover.js)', code: 'owner' });
+    if (isAdmin(u) && !isOwner(admin)) { audit(req, 'admin.denied', { ok: false, user: admin, target: u, msg: 'recovery' }); return json(res, 403, { error: 'only the owner can make a recovery code for an admin' }); }
+    if (u.disabled) return json(res, 400, { error: 'enable the account first', code: 'disabled' });
+    const { code, link } = issueRecovery(req, u, admin);
+    json(res, 200, { ok: true, name: u.name, code, expires: link.exp });
   },
 
   'POST /api/admin/user/disable': async (req, res) => {
@@ -3006,3 +3054,23 @@ server.headersTimeout = 60000;
 // (the tests spawn the server that way, and so does anyone running two instances on one box) has
 // no other way to learn it.
 server.listen(PORT, () => console.log(`gym-api on :${server.address().port} (rpID=${RP_ID}, origin=${ORIGIN})`));
+
+// The server's own command for a locked-out owner or admin (#584, recover.js): asked over a local
+// socket only this process's user can open (admin-socket.js explains why not by editing db.json).
+// One command: a recovery code for a profile named, or picked by id when several share the name.
+const CLI_REQ = { headers: {}, socket: {} };
+startAdminSocket({
+  handle: async msg => {
+    if (!msg || msg.cmd !== 'recover') return { error: 'unknown command' };
+    const id = typeof msg.id === 'string' ? msg.id : null;
+    const k = nameKey(typeof msg.name === 'string' ? msg.name : '');
+    const found = id ? db.users.filter(u => u.id === id) : k ? db.users.filter(u => nameKey(u.name) === k || u.email === k) : [];
+    const row = u => ({ id: u.id, name: u.name, created: u.created || null, admin: isAdmin(u), owner: isOwner(u) });
+    if (!found.length) return { error: id ? 'no profile with that id' : 'no profile with that name' };
+    if (found.length > 1) return { error: 'several profiles have that name: pick one with --id', matches: found.map(row) };
+    const u = found[0];
+    if (u.disabled) return { error: 'that profile is disabled: enable it in the admin dashboard first' };
+    const { code, link } = issueRecovery(CLI_REQ, u, null);
+    return { ...row(u), code, expires: link.exp };
+  }
+});
