@@ -114,6 +114,13 @@ if you want to try it before installing anything.
 - 19 languages, including right-to-left Arabic and Traditional Chinese. Exercise names and
   instructions are translated for most of them.
 
+**On the phone and the wrist**
+
+- Apps for iPhone, iPad and Android that work on their own (no server, no account) or connected to
+  yours. Rest timer in the notification shade, reminders, and Health Connect or Apple Health.
+- An Apple Watch app: tick off sets with the Digital Crown, a full-screen rest countdown, heart
+  rate per set, and complications. Widgets and a Live Activity on the iPhone.
+
 **Optional extras, off by default**
 
 - An [AI coach](docs/AI_COACH.md) that drafts a week of routines and later suggests changes based on
@@ -186,19 +193,18 @@ variable. The [self-hosting guide](docs/SELF_HOSTING.md) covers every option in 
 
 ## Phone app
 
-The same codebase builds a standalone app with Capacitor: no account, no server, everything stays
-on the phone, with native reminders and a rest countdown in the notification shade.
+The same codebase builds the phone apps with Capacitor. Use them on their own (everything stays on
+the phone, no account) or connect them to your server and sync.
 
-- **Android:** download the signed APK from the [latest release](https://github.com/DuarteSantos8/openGym/releases/latest)
-  or the [website](https://opengym.ch): Standard (`openGym-X.Y.Z.apk`, 180 px animations, about
-  315 MB), Plus (`openGym-Plus-X.Y.Z.apk`, 240 px, about 424 MB) or HD (`openGym-HD-X.Y.Z.apk`,
-  360 px, about 760 MB). Each sits next to its `.sha256`,
-  checks for updates itself and stays the kind you picked. A Google Play version is on its way.
-- **iPhone and Apple Watch:** the App Store app, with a public
-  [TestFlight beta](https://testflight.apple.com/join/RKATb61k) until it is out. Or self-host and
-  add the PWA to your home screen from Safari.
+| | Get it |
+|---|---|
+| **iPhone and iPad**, with the **Apple Watch** app | The App Store. Until it is listed there, the [public TestFlight beta](https://testflight.apple.com/join/RKATb61k) |
+| **Android** | The signed APK from the [latest release](https://github.com/DuarteSantos8/openGym/releases/latest) or [opengym.ch](https://opengym.ch), in three sizes: **Standard** (`openGym-X.Y.Z.apk`, animations at 180 px, about 315 MB), **Plus** (`openGym-Plus-X.Y.Z.apk`, 240 px, about 424 MB) and **HD** (`openGym-HD-X.Y.Z.apk`, 360 px, about 760 MB). It updates itself and stays the kind you picked |
+| **Google Play** | Coming: a new developer account has to run a closed test first |
 
-Details and build instructions: [docs/MOBILE.md](docs/MOBILE.md).
+Every APK sits next to its `.sha256`. The APK and the Play app share one signing key, so you can
+switch between them (or between Standard, Plus and HD) without losing data. Details, building it
+yourself and connecting to your server: [docs/MOBILE.md](docs/MOBILE.md).
 
 ## How it works
 
@@ -210,10 +216,14 @@ Details and build instructions: [docs/MOBILE.md](docs/MOBILE.md).
 </p>
 
 - **`frontend/`** is React 19 and Vite (React Router, Zustand), built to static files inside Docker.
-- **`api/`** is plain `node:http` with two dependencies: `@simplewebauthn/server` for passkeys and
-  `web-push` for notifications. Everything is stored as JSON under `./data`.
+- **`api/`** is plain `node:http` with three dependencies: `@simplewebauthn/server` for passkeys,
+  `web-push` for notifications and `undici` for the AI coach's provider calls. Everything is
+  stored as JSON under `./data`.
 - **`web/`** builds the frontend and serves it with nginx, proxying `/api` so the whole app sits on
   one origin, which passkeys require.
+
+The [architecture overview](docs/ARCHITECTURE.md) has the longer version, with diagrams of the
+frontend, sync, the exercise media and the watch.
 
 The training logic (progression rules, 1RM, how a logged session is read back) lives in pure
 functions under `frontend/src/lib/` with tests beside them. The HTTP API is documented as an
@@ -271,18 +281,14 @@ The [documentation index](docs/README.md) sorts every guide by who it's for. The
 
 A release roughly every two weeks, each small and themed. The full plan is in
 [ROADMAP.md](ROADMAP.md), and the issues sit in the
-[GitHub milestones](https://github.com/DuarteSantos8/openGym/milestones). The next two releases
-finish the community wishes, then comes a new exercise database and a themed release every
-two weeks after it.
+[GitHub milestones](https://github.com/DuarteSantos8/openGym/milestones).
 
 | Release | When | Theme |
 |---|---|---|
-| v1.3.10 | released Oct 2026 | New design, rotation, swipe actions, safer sync |
-| v1.3.11 | next | Fixes, about thirty community pull requests, Health Connect, measurements |
-| v1.3.12 | Nov 2026 | Community features: focus view, widget, timer rework |
-| v1.4.0 | Nov 2026 | A new exercise database |
-| v1.4.1 to v1.4.4 | Dec 2026 and Jan 2027 | Programmes, the progression engine, cardio |
-| v1.4.5 to v1.4.10 | Jan to Apr 2027 | Search, accounts, the iOS app, Android and health, looks |
+| v1.4.0 | released Oct 2026 | A new exercise database with 5,632 exercises, plus two rounds of community work |
+| v1.4.1 | released Oct 2026 | Bug fixes for v1.4.0 |
+| v1.4.2 | Oct 2026 | The App Store, the Apple Watch, widgets, a Google Play build |
+| next | Nov 2026 to Apr 2027 | Programmes, the progression engine, cardio, sharing, accounts, Android and health, looks |
 | later | | Database storage |
 
 ## Community

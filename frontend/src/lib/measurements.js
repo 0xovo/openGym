@@ -111,11 +111,6 @@ export function measurementValue(entry, key) {
   return valid((entry.other || []).find(o => o.id === key.slice(6))?.value)
 }
 
-export function measurementLabel(key, custom = []) {
-  if (key.startsWith('other:')) return custom.find(c => c.id === key.slice(6))?.name || 'Other'
-  return MEASUREMENT_FIELDS.find(f => f.key === key)?.label || key
-}
-
 // Order comes from MEASUREMENT_FIELDS, not from measurementEnabled: that array is a set the
 // toggles append to, so reading it in stored order would move a field to the end of the logging
 // form the moment you switched it off and on again, interleaving the Torso/Arms/Legs groups.

@@ -1,7 +1,7 @@
-// The German exercise-name rules, in one place. Imported by translate-de-exercise-names.mjs,
-// which checks every batch during translation and sends violations back to the model as a
-// correction, and by frontend/src/lib/exercise-names.test.js, which fails the build. The two
-// callers share this definition deliberately: inline copies are how a rule drifts unseen.
+// The German exercise-name rules, in one place. frontend/src/lib/exercise-names.test.js imports
+// them and fails the build on a name that breaks one. (The translation script that also checked
+// every batch against them went with v1.4.0; the rules stay here so any future tool shares this
+// one definition instead of an inline copy that drifts unseen.)
 //
 // Every `fix` quotes the offending word. A generic instruction ("use the German term") is
 // ignored by a small model often enough to stall a stage; naming the text is what lands.

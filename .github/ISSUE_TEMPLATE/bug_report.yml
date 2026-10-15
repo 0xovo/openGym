@@ -32,19 +32,34 @@ body:
   - type: dropdown
     id: setup
     attributes:
-      label: How are you running openGym?
+      label: Where does it happen?
       options:
-        - Self-hosted (docker compose)
+        - iPhone or iPad app (App Store or TestFlight)
+        - Apple Watch app
+        - Android app (APK)
+        - Android app (Google Play)
+        - Browser, on my own server (docker compose, Helm, Nix...)
+        - Browser, on someone else's instance
+        - The demo on opengym.ch
         - Frontend dev server (npm run dev)
         - Other / not sure
     validations:
       required: true
 
   - type: input
+    id: version
+    attributes:
+      label: openGym version
+      description: Settings, About & updates, Version. On a server, the image tag works too.
+      placeholder: e.g. 1.4.2
+    validations:
+      required: false
+
+  - type: input
     id: environment
     attributes:
-      label: Browser & OS
-      placeholder: e.g. Safari 17 on iOS 18, Chrome 126 on Android
+      label: Device, OS and browser
+      placeholder: e.g. iPhone 15 on iOS 26, Pixel 8 on Android 16, Firefox 140 on Windows
     validations:
       required: true
 
@@ -53,7 +68,7 @@ body:
     attributes:
       label: Is this about login / passkeys?
       description: >
-        Most login issues are an `RP_ID`/`ORIGIN` mismatch — check your `.env` against the
+        Most login issues are an `RP_ID`/`ORIGIN` mismatch. Check your `.env` against the
         domain you're accessing openGym from before reporting. See the
         [self-hosting guide](../../docs/SELF_HOSTING.md).
       options:

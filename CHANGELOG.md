@@ -1,5 +1,9 @@
 # Changelog
 
+Newest first. Each release is a `## vX.Y.Z (YYYY-MM-DD)` section, and the release notes on
+GitHub and GitLab are that section, word for word. New work goes under `## Unreleased` until the
+tag. Write it for the people using the app: what changed for them, short, no em dashes.
+
 ## v1.4.2 (2026-10-18)
 
 openGym comes to the App Store, with an Apple Watch app in tow. Plus everything you asked for
@@ -482,7 +486,7 @@ update". Once everything is on 1.3.10, none of this applies.
   zh-HK or zh-MO open in it.
 - Every string reworded to sound more human, with fewer long dashes and a bit more fun.
 
-## v1.3.9 — 2026-09-28
+## v1.3.9 (2026-09-28)
 
 The milestone was "edit your history", and it is in: fix a saved workout after the fact, move it to
 another day, change how long it took, attach photos and videos to it. Around it, the two reports
@@ -711,7 +715,7 @@ sacgsxr, Agripa22, smsmy, Josevi, AlexanderVott, thedandano, horusglez and Vaibh
 plural rule ("2 дней" where it should read "2 дня"). The Ukrainian, Arabic, Hindi, Korean, Thai and
 Chinese packs have not been read by a native speaker yet — corrections are very welcome.
 
-## v1.3.8 — 2026-09-20
+## v1.3.8 (2026-09-20)
 
 Twenty-four reports closed: the keyboard that would not stay open on iPhone and iPad, notifications
 that arrived with notifications switched off, reps you could not read on a narrow phone, and
@@ -799,7 +803,7 @@ account for real. Eleven community pull requests from six contributors. Web bund
 rule, so "2 дней" where it should read "2 дня". It affects every counter in the app and is being
 done properly rather than patched here.
 
-## v1.3.7 — 2026-09-12
+## v1.3.7 (2026-09-12)
 
 The v1.3.6 tag's Android build failed on a double dash inside an XML comment, so the APK for everything in v1.3.6 is this one — plus the iPhone timer-sound fix that landed an hour later. Web bundle, APK and API image; v1.3.6 and v1.3.7 are the same code apart from the two items below.
 
@@ -810,7 +814,7 @@ The v1.3.6 tag's Android build failed on a double dash inside an XML comment, so
   default, iOS 17+), which switches the page's audio session to playback so the ring/silent switch
   no longer mutes the beep — at the cost of pausing whatever else the phone was playing.
 
-## v1.3.6 — 2026-09-12
+## v1.3.6 (2026-09-12)
 
 Sync you can trust and a phone that behaves: signed in, the server's profile is always the truth, two devices merge instead of overwriting each other, the app polls for changes and works offline with a banner; reminders and push subscriptions heal themselves; chip rows, sheets under the notch and the tab bar are fixed on iOS; the twelve Astra findings, eleven community merges and a headless QA sweep of every screen. Web bundle, APK and API image.
 
@@ -996,7 +1000,7 @@ tab bar mid-screen during a workout. Web bundle, APK and API image.
   the signed APK and the images. Issues and pull requests go to GitHub; the merge requests still
   open on GitLab are reviewed and land on `main` from there. The site follows suit.
 
-## v1.3.5 — 2026-09-06
+## v1.3.5 (2026-09-06)
 
 One bug, and the one everybody with the Android app and their own API key ran into. Web bundle and
 APK; the API only carries the version number.
@@ -1013,7 +1017,7 @@ APK; the API only carries the version number.
   tagging. The web app and the "use my self-hosted openGym" mode were never affected.
   (issues #42, #58; reported by many on Discord)
 
-## v1.3.4 — 2026-09-05
+## v1.3.4 (2026-09-05)
 
 Two things noticed on the phone right after v1.3.3. Web bundle and APK; the API only carries the
 version number.
@@ -1028,7 +1032,7 @@ version number.
   picture takes its place; if that fails too, a neutral tile does, and a tap tries again. No more
   broken-image glyph on a white block.
 
-## v1.3.3 — 2026-09-05
+## v1.3.3 (2026-09-05)
 
 The workout screen gets out of the way, and the bug round from the board. Same day as v1.3.2 on
 purpose: that one is the contributors' batch, this one is the redesign and the fixes on top of it.
@@ -1087,7 +1091,7 @@ install on Android — it is the first APK that can update itself.
 - The APK carries version code 17 (v1.3.2: 16). Two releases had reused 15; the update check
   compares the version name, so nothing changes for you, but Android's own "newer" check is honest again.
 
-## v1.3.2 — 2026-09-05
+## v1.3.2 (2026-09-05)
 
 Seventeen community merge requests from twelve contributors, each read, rebased onto a staging
 instance and put through a tester round before landing, plus the fixes that round turned up. The
@@ -1158,7 +1162,7 @@ ships with a real version code again (16 — the last two releases had reused 15
   started automatically for returning contributors.
 - Renovate runs again: its configuration had two unknown keys and had stopped opening MRs. (issue #37)
 
-## v1.3.1 — 2026-09-04
+## v1.3.1 (2026-09-04)
 
 - **"Use my self-hosted openGym" works on a paired phone.** The phone app never fetched the
   server's `/api/config` after boot or after pairing, so the Coach setup screen told everyone
@@ -1166,7 +1170,7 @@ ships with a real version code again (16 — the last two releases had reused 15
   now asks the server afresh every time it opens, and the boot and pairing paths load the config
   like the web app always did. Reported on Discord.
 
-## v1.3.0 — 2026-09-03
+## v1.3.0 (2026-09-03)
 
 The AI Coach gets the version number it deserves. v1.2.16, earlier today, was the release that
 got it out of the door; v1.3.0 is the same app with one more fix, and the number that says
@@ -1180,7 +1184,7 @@ bar weights, the rest-day line and the rewritten admin dashboard are all new to 
   printed as `1.2000000000000002`. Each row now says how many weeks ago the muscle was last
   trained (or "not trained"), with the rounded 90-day sets on top only when there are any.
 
-## v1.2.16 — 2026-09-03
+## v1.2.16 (2026-09-03)
 
 - **The web image builds again.** v1.2.15's tag pipeline published the API image and the APK
   but the web image failed to build: the frontend imports the Coach's core from `api/coach/core`,
@@ -1190,7 +1194,7 @@ bar weights, the rest-day line and the rewritten admin dashboard are all new to 
   image had that check, the web image did not. Nothing else changed; v1.2.15's notes below are
   this release's notes.
 
-## v1.2.15 — 2026-09-03
+## v1.2.15 (2026-09-03)
 
 The AI Coach. An optional coach that designs a training plan from a few answers and reviews
 what you actually log — off by default, switched on by the admin, consented to by each user,
@@ -1302,7 +1306,7 @@ rewritten in plain language — those three shipped to main earlier and are here
   ceilings; an exercise cannot be added twice to a routine; two changes cannot share an id; a
   weight for an exercise never lifted is dropped rather than guessed.
 
-## v1.2.14 — 2026-08-30
+## v1.2.14 (2026-08-30)
 
 The largest community release so far: twenty merge requests from ten contributors, read and
 tried one by one on a staging instance, plus two features of our own and a pass over how the
@@ -1380,7 +1384,7 @@ touch targets; and rows everywhere can be driven from a keyboard.
 With thanks to Space-Hermes, mflova, JuliusHaring, trapy, tokyo_underworld, mzspicoli,
 TheophileDiot, tomzt, kecskemethy and andi242 — ten contributors in one release.
 
-## v1.2.13 — 2026-08-30
+## v1.2.13 (2026-08-30)
 
 One follow-up that arrived on !60 minutes after v1.2.12 was tagged, and belongs with it.
 
@@ -1389,7 +1393,7 @@ One follow-up that arrived on !60 minutes after v1.2.12 was tagged, and belongs 
   that cannot progress anything is no longer stored by accident. Nothing else changed; a
   self-hosted instance only needs the new web bundle. (mflova, !60)
 
-## v1.2.12 — 2026-08-30
+## v1.2.12 (2026-08-30)
 
 Six small fixes from the community, each read and tried on staging before it went in. All of
 them are in the active workout or the exercise settings; nothing changes on the server, so a
@@ -1423,7 +1427,7 @@ self-hosted instance only needs the new web bundle.
 
 With thanks to Space-Hermes, mflova and MokshManral.
 
-## v1.2.11 — 2026-08-25
+## v1.2.11 (2026-08-25)
 
 A correction release. v1.2.10 landed planned warm-ups and notes, and reviewing that release
 afterwards turned up six defects it had either introduced or made matter — three of them in the
@@ -1479,7 +1483,7 @@ tests rather than failures in them.
   and a section collecting where the project actually lives. It had been live for a while without
   ever being committed, so the repository and the site had drifted apart.
 
-## v1.2.10 — 2026-08-25
+## v1.2.10 (2026-08-25)
 
 The first release since the move to GitLab that is mostly **other people's work**. Nine
 contributors, thirteen merge requests: Brazilian Portuguese in full — interface, all 1,324
@@ -1578,7 +1582,7 @@ which turned out to be worse than they looked from the outside.
 With thanks to mzspicoli, Josevi, andi242, Space_Hermes, Horus Gonzalez, wagenheimer, koyosan,
 mflova and Aaron Sachs — and to everyone who reported one of the bugs above.
 
-## v1.2.9 — 2026-08-23
+## v1.2.9 (2026-08-23)
 
 If you run openGym for other people, you have had no way to answer "who signed in, and when?" —
 the server kept no record of anything. It does now: an **activity log** in the admin dashboard,
@@ -1656,7 +1660,7 @@ since the GitHub account went.
 - Every repository link in the README, the docs, the app and the website points at GitLab, and
   the website's live star/release numbers come from GitLab's API.
 
-## v1.2.8 — 2026-08-22
+## v1.2.8 (2026-08-22)
 
 A housekeeping release, and two things worth reading even if you skip the rest. openGym has moved
 to **gitea.com** — the GitHub account it lived on was suspended, and everything you click to
@@ -1723,7 +1727,7 @@ animations are © Gym visual, not CC, which matters if you redistribute them.
   `VITE_UMAMI_SRC` *and* `VITE_UMAMI_ID` are set at build time, which they are not in any published
   image or in a plain `npm run build`. A self-hosted openGym remains telemetry-free, as advertised.
 
-## v1.2.7 — 2026-08-18
+## v1.2.7 (2026-08-18)
 
 The muscle map answers a third question. Balance showed where the volume went and Fatigue what was
 still recovering; Strength now names the exercises behind a muscle and what each one is worth in
@@ -1789,7 +1793,7 @@ behave: pair them as you go, rest once per round, and drop an exercise you have 
 [#87]: https://github.com/DuarteSantos8/openGym/issues/87
 [#99]: https://github.com/DuarteSantos8/openGym/issues/99
 
-## v1.2.6 — 2026-08-11
+## v1.2.6 (2026-08-11)
 
 The muscle map learned to answer a second question — not just where the volume went, but what is
 still recovering from it. Plus: a freestyle session no longer starts from blanks, the rest timer
@@ -1913,7 +1917,7 @@ Contributed by [@Space-Hermes](https://github.com/Space-Hermes) in
 [#74]: https://github.com/DuarteSantos8/openGym/issues/74
 [#60]: https://github.com/DuarteSantos8/openGym/pull/60
 
-## v1.2.5 — 2026-08-04
+## v1.2.5 (2026-08-04)
 
 Nothing in the app itself changed. This release adds an optional side door: a small server that
 lets an AI assistant you already run — Claude Desktop, Cursor, Cline — answer questions about
@@ -1955,7 +1959,7 @@ release is invisible to you.
 The MCP server was contributed by [@Pengboi](https://github.com/Pengboi) — the first feature in
 openGym written by someone other than me. Thank you.
 
-## v1.2.4 — 2026-08-01
+## v1.2.4 (2026-08-01)
 
 The effort ratings you have been recording since v1.2.3 now answer questions, and bodyweight
 training stops being treated as barbell training with the weight left at zero. Plus: creating a
@@ -2025,7 +2029,7 @@ progress lived in the load. It doesn't, for the exercises most people actually s
 - **A long value no longer runs through its own label** in a settings row — "Follow the routine
   (Linear progression)" overlapped "Rule" rather than shortening itself.
 
-## v1.2.3 — 2026-07-31
+## v1.2.3 (2026-07-31)
 
 How hard a set was, in whichever of the two scales you already think in — and the ratings your
 old app recorded come across with the rest of your history. Plus: the phone stops locking itself
@@ -2103,7 +2107,7 @@ what each thing actually affects.
 - Backups already carried both fields and the setting, since a backup is the whole state — there
   are now tests pinning that, so it can't quietly stop being true.
 
-## v1.2.2 — 2026-07-25
+## v1.2.2 (2026-07-25)
 
 Training that moves on its own: an exercise can now be logged by time instead of reps, the
 next weight follows a progression rule you choose rather than a single hard-coded hint, and
@@ -2228,7 +2232,7 @@ through app stores.
   - Importing is idempotent: days you already have data for are left alone, so running it
     twice, or importing from two apps, never duplicates a workout.
 
-## v1.2.1 — 2026-07-23
+## v1.2.1 (2026-07-23)
 
 A muscle map across the app, and a live demo you can try without installing anything.
 
@@ -2262,7 +2266,7 @@ A muscle map across the app, and a live demo you can try without installing anyt
   serves the ~140 MB dataset from a CDN instead of shipping it. The default (`img/` and `gif/` next
   to the app) is unchanged.
 
-## v1.2.0 — 2026-07-23
+## v1.2.0 (2026-07-23)
 
 A complete visual redesign. Same app, same data — every screen redrawn.
 
@@ -2299,7 +2303,7 @@ A complete visual redesign. Same app, same data — every screen redrawn.
 - **It also goes away again** — moving off the chart now clears the readout, crosshair and
   marker, which previously stayed until you hovered somewhere else.
 
-## v1.1.3 — 2026-07-22
+## v1.1.3 (2026-07-22)
 
 Admin dashboard for self-hosters (opt-in — off by default), equipment filtering, and
 workout-screen fixes.
@@ -2336,7 +2340,7 @@ workout-screen fixes.
   meant the timer could only be cleared with Skip, and a redundant "rest over" push notification
   could still fire.
 
-## v1.1.2 — 2026-07-22
+## v1.1.2 (2026-07-22)
 
 Custom exercises, full localization, and input fixes.
 
@@ -2388,7 +2392,7 @@ Custom exercises, full localization, and input fixes.
 - Added a global horizontal-overflow guard so a single too-wide element can no longer knock the
   page layout off-scale.
 
-## v1.1.1 — 2026-07-21
+## v1.1.1 (2026-07-21)
 
 Reliability fixes for the push notifications shipped in v1.1.0, found through live testing:
 
@@ -2402,7 +2406,7 @@ Reliability fixes for the push notifications shipped in v1.1.0, found through li
   Apple/Google's push relay.
 - Push send failures are now logged instead of silently swallowed.
 
-## v1.1.0 — 2026-07-21
+## v1.1.0 (2026-07-21)
 
 - Prebuilt Docker images published to `ghcr.io/duartesantos8/opengym-{api,web}` (amd64 + arm64)
   via GitHub Actions, so self-hosting no longer requires building from source. `docker compose pull`
@@ -2414,7 +2418,7 @@ Reliability fixes for the push notifications shipped in v1.1.0, found through li
 - Fixed the rest timer stalling when the tab/app is backgrounded — it's now anchored to a real
   timestamp instead of a plain per-second counter, so it stays accurate after you come back.
 
-## v1.0.0 — 2026-07-20
+## v1.0.0 (2026-07-20)
 
 First public release. A complete, self-hostable gym & body-weight tracker.
 

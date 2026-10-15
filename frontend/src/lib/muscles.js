@@ -178,8 +178,6 @@ export function muscleGroupsOf(entry) {
   return out
 }
 
-export const normalizeMuscleGroups = muscleGroupsOf
-
 /** True when any requested group matches; an empty request is an intentionally unfiltered query. */
 export function matchesMuscleGroups(ex, requested) {
   const wanted = arrayOf(requested).map(canonicalMuscle).filter(Boolean)
@@ -318,10 +316,6 @@ export function loadOfWeeklyPlan(S) {
   }
   return load
 }
-
-/** Load for a workout still in progress — the sets ticked so far. */
-export const loadOfActive = active =>
-  loadOf((active?.entries || []).map(e => ({ id: e.id, ex: e.exercise || e, sets: (e.sets || []).filter(s => s.done && !isWarmupRow(s)).length })))
 
 /**
  * Shade buckets 0–4 per muscle.
