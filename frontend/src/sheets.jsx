@@ -2860,7 +2860,10 @@ export const workoutDetailSheet = w => ui().openSheet(close => <WorkoutDetail w=
 /* ============================ calendar ============================ */
 function Calendar({ start, close }) {
   const st = useStore(s => s.S)
-  const [cur, setCur] = useState(() => { const d = start ? new Date(start) : new Date(); d.setDate(1); return d })
+  // A day as 'YYYY-MM-DD' is read at local noon: new Date('2026-09-01') is UTC midnight, which is
+  // still August west of UTC, so a tap on the 1st in Stats opened the month before (found by the
+  // weekly run in America/Los_Angeles, .github/workflows/audit.yml).
+  const [cur, setCur] = useState(() => { const d = start ? new Date(/^\d{4}-\d{2}-\d{2}$/.test(start) ? start + 'T12:00:00' : start) : new Date(); d.setDate(1); return d })
   const y = cur.getFullYear(), mo = cur.getMonth()
   const byDay = {}
   st.workouts.forEach(w => {

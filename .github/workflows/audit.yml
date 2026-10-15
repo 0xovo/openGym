@@ -86,6 +86,10 @@ jobs:
             shift: '+42d'
             shuffle: false
     name: robustness (${{ matrix.name }})
+    # Shuffled order is a report for now: 12 tests in 7 files (2026-10-15) lean on what an
+    # earlier test in their file left behind, mostly state inside the store module that
+    # useStore.setState cannot reset. Listed in the summary; the other conditions must pass.
+    continue-on-error: ${{ matrix.shuffle }}
     env:
       TZ: ${{ matrix.tz }}
       # Property tests (fast-check) try more cases than on a push, and the sync fuzz new seeds.
