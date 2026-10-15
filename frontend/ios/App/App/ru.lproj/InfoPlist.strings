@@ -1,4 +1,0 @@
-/* openGym on the iPhone, ru: Info.plist. Written by ios/ci/watch-strings.mjs. */
-
-"NSHealthShareUsageDescription" = "openGym показывает пульс на Apple Watch во время тренировки, а если вы это включите, добавляет в журнал пульс, сохранённый часами, и взвешивания из других приложений.";
-"NSHealthUpdateUsageDescription" = "openGym сохраняет тренировки и взвешивания в Apple Здоровье, если вы это включите.";

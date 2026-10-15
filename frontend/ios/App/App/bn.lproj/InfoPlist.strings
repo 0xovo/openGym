@@ -1,4 +1,0 @@
-/* openGym on the iPhone, bn: Info.plist. Written by ios/ci/watch-strings.mjs. */
-
-"NSHealthShareUsageDescription" = "openGym ট্রেনিংয়ের সময় Apple Watch-এ আপনার হার্ট রেট দেখায়, আর চালু করলে আপনার ঘড়ির সেভ করা হার্ট রেট ও অন্য অ্যাপের ওজন আপনার লগে যোগ করে।";
-"NSHealthUpdateUsageDescription" = "চালু করলে openGym আপনার ওয়ার্কআউট আর ওজন Apple Health-এ সেভ করে।";

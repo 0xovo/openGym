@@ -12,7 +12,6 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const out = join(root, 'ios', 'App', 'Watch')
 const widgets = join(root, 'ios', 'App', 'WatchWidgets')
-const phone = join(root, 'ios', 'App', 'App')
 
 // app pack → watch .lproj
 const LANGS = {
@@ -185,51 +184,6 @@ const PLIST = {
   },
 }
 
-// The iPhone app's Info.plist (its Apple Health prompts, which since v1.4.3 also cover reading the
-// heart rate and weigh-ins back), into ios/App/App/<lang>.lproj/InfoPlist.strings.
-const PHONE_PLIST = {
-  NSHealthShareUsageDescription: {
-    de: 'openGym zeigt deinen Puls auf der Apple Watch beim Training und trägt, wenn du es einschaltest, den Puls deiner Uhr und Wiegungen aus anderen Apps in dein Protokoll ein.',
-    fr: 'openGym affiche ton pouls sur l’Apple Watch pendant la séance et, si tu l’actives, ajoute à ton journal le pouls enregistré par ta montre et les pesées d’autres apps.',
-    es: 'openGym muestra tu pulso en el Apple Watch mientras entrenas y, si lo activas, añade a tu registro el pulso que guardó tu reloj y los pesajes de otras apps.',
-    it: 'openGym mostra il tuo battito su Apple Watch mentre ti alleni e, se lo attivi, aggiunge al tuo diario il battito salvato dall’orologio e le pesate di altre app.',
-    'pt-PT': 'O openGym mostra a tua frequência cardíaca no Apple Watch enquanto treinas e, se o ativares, junta ao teu registo a frequência cardíaca que o relógio guardou e pesagens de outras apps.',
-    'pt-BR': 'O openGym mostra sua frequência cardíaca no Apple Watch enquanto você treina e, se você ativar, adiciona ao seu registro a frequência cardíaca que o relógio salvou e pesagens de outros aplicativos.',
-    pl: 'openGym pokazuje tętno na Apple Watch podczas treningu, a jeśli to włączysz, dodaje do dziennika tętno zapisane przez zegarek i pomiary wagi z innych aplikacji.',
-    hu: 'Az openGym edzés közben mutatja a pulzusodat az Apple Watchon, és ha bekapcsolod, a naplódba írja az órád által mentett pulzust és más appok mérlegeléseit.',
-    tr: 'openGym antrenman sırasında nabzını Apple Watch’ta gösterir ve açarsan saatinin kaydettiği nabzı ve diğer uygulamalardaki tartılmaları kaydına ekler.',
-    ru: 'openGym показывает пульс на Apple Watch во время тренировки, а если вы это включите, добавляет в журнал пульс, сохранённый часами, и взвешивания из других приложений.',
-    uk: 'openGym показує пульс на Apple Watch під час тренування, а якщо ти це ввімкнеш, додає до журналу пульс, збережений годинником, і зважування з інших застосунків.',
-    ar: 'يعرض openGym نبضك على Apple Watch أثناء التمرين، وإذا فعّلت ذلك يضيف إلى سجلك النبض الذي حفظته ساعتك وقياسات الوزن من تطبيقات أخرى.',
-    hi: 'openGym ट्रेनिंग के दौरान Apple Watch पर आपकी धड़कन दिखाता है, और चालू करने पर आपकी घड़ी की सहेजी धड़कन और दूसरे ऐप्स का वज़न आपके लॉग में जोड़ता है।',
-    bn: 'openGym ট্রেনিংয়ের সময় Apple Watch-এ আপনার হার্ট রেট দেখায়, আর চালু করলে আপনার ঘড়ির সেভ করা হার্ট রেট ও অন্য অ্যাপের ওজন আপনার লগে যোগ করে।',
-    th: 'openGym แสดงอัตราการเต้นของหัวใจบน Apple Watch ระหว่างฝึก และเมื่อคุณเปิดใช้ จะเพิ่มอัตราการเต้นของหัวใจที่นาฬิกาบันทึกไว้และน้ำหนักจากแอปอื่นลงในบันทึกของคุณ',
-    ko: 'openGym은 운동하는 동안 Apple Watch에 심박수를 보여주고, 켜면 워치가 저장한 심박수와 다른 앱의 체중 기록을 내 기록에 더해요.',
-    'zh-Hans': 'openGym 会在训练时于 Apple Watch 上显示你的心率；打开后，还会把手表保存的心率和其他应用的称重加入你的记录。',
-    'zh-Hant': 'openGym 會在訓練時於 Apple Watch 上顯示你的心率；開啟後，還會把手錶儲存的心率和其他 App 的體重紀錄加入你的紀錄。',
-  },
-  NSHealthUpdateUsageDescription: {
-    de: 'openGym speichert deine Trainings und Wiegungen in Apple Health, wenn du das einschaltest.',
-    fr: 'openGym enregistre tes séances et tes pesées dans Apple Santé si tu l’actives.',
-    es: 'openGym guarda tus entrenos y pesajes en Apple Salud si lo activas.',
-    it: 'openGym salva i tuoi allenamenti e le tue pesate in Apple Salute se lo attivi.',
-    'pt-PT': 'O openGym guarda os teus treinos e pesagens no Apple Saúde se o ativares.',
-    'pt-BR': 'O openGym salva seus treinos e pesagens no Apple Saúde se você ativar.',
-    pl: 'openGym zapisuje treningi i pomiary wagi w Apple Zdrowie, jeśli to włączysz.',
-    hu: 'Az openGym az Apple Egészség appba menti az edzéseidet és mérlegeléseidet, ha bekapcsolod.',
-    tr: 'Açarsan openGym antrenmanlarını ve tartılmalarını Apple Sağlık’a kaydeder.',
-    ru: 'openGym сохраняет тренировки и взвешивания в Apple Здоровье, если вы это включите.',
-    uk: 'openGym зберігає тренування та зважування в Apple Здоров’я, якщо ти це ввімкнеш.',
-    ar: 'يحفظ openGym تمارينك وقياسات وزنك في Apple صحتي إذا فعّلت ذلك.',
-    hi: 'चालू करने पर openGym आपके वर्कआउट और वज़न Apple Health में सहेजता है।',
-    bn: 'চালু করলে openGym আপনার ওয়ার্কআউট আর ওজন Apple Health-এ সেভ করে।',
-    th: 'openGym บันทึกการฝึกและน้ำหนักของคุณลงใน Apple Health เมื่อคุณเปิดใช้',
-    ko: '켜면 openGym이 운동과 체중 기록을 Apple 건강에 저장해요.',
-    'zh-Hans': '打开后，openGym 会把训练和称重保存到 Apple 健康。',
-    'zh-Hant': '開啟後，openGym 會把訓練和體重紀錄儲存到 Apple 健康。',
-  },
-}
-
 const esc = s => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')
 let problems = 0
 for (const [pack, lproj] of Object.entries(LANGS)) {
@@ -254,13 +208,6 @@ for (const [pack, lproj] of Object.entries(LANGS)) {
     plist.push(`"${k}" = "${esc(tr[lproj])}";`)
   }
   writeFileSync(join(out, `${lproj}.lproj`, 'InfoPlist.strings'), plist.join('\n') + '\n')
-  const phonePlist = [`/* openGym on the iPhone, ${lproj}: Info.plist. Written by ios/ci/watch-strings.mjs. */`, '']
-  for (const [k, tr] of Object.entries(PHONE_PLIST)) {
-    if (!tr[lproj] || /—/.test(tr[lproj])) { console.error(`${lproj}: iPhone ${k} missing or with an em dash`); problems++; continue }
-    phonePlist.push(`"${k}" = "${esc(tr[lproj])}";`)
-  }
-  mkdirSync(join(phone, `${lproj}.lproj`), { recursive: true })
-  writeFileSync(join(phone, `${lproj}.lproj`, 'InfoPlist.strings'), phonePlist.join('\n') + '\n')
 }
 // English: every key as itself. Without an en.lproj a watch set to another language could show
 // that language's words to an app in English.

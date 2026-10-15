@@ -1,4 +1,0 @@
-/* openGym on the iPhone, zh-Hans: Info.plist. Written by ios/ci/watch-strings.mjs. */
-
-"NSHealthShareUsageDescription" = "openGym 会在训练时于 Apple Watch 上显示你的心率；打开后，还会把手表保存的心率和其他应用的称重加入你的记录。";
-"NSHealthUpdateUsageDescription" = "打开后，openGym 会把训练和称重保存到 Apple 健康。";

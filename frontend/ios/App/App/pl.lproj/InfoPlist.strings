@@ -1,4 +1,0 @@
-/* openGym on the iPhone, pl: Info.plist. Written by ios/ci/watch-strings.mjs. */
-
-"NSHealthShareUsageDescription" = "openGym pokazuje tętno na Apple Watch podczas treningu, a jeśli to włączysz, dodaje do dziennika tętno zapisane przez zegarek i pomiary wagi z innych aplikacji.";
-"NSHealthUpdateUsageDescription" = "openGym zapisuje treningi i pomiary wagi w Apple Zdrowie, jeśli to włączysz.";

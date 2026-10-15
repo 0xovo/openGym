@@ -1,4 +1,0 @@
-/* openGym on the iPhone, hu: Info.plist. Written by ios/ci/watch-strings.mjs. */
-
-"NSHealthShareUsageDescription" = "Az openGym edzés közben mutatja a pulzusodat az Apple Watchon, és ha bekapcsolod, a naplódba írja az órád által mentett pulzust és más appok mérlegeléseit.";
-"NSHealthUpdateUsageDescription" = "Az openGym az Apple Egészség appba menti az edzéseidet és mérlegeléseidet, ha bekapcsolod.";
