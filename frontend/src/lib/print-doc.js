@@ -4,7 +4,13 @@
 // What every printout gets from here:
 //  - the openGym logo top left, the title, a line of facts, and who it is for and when;
 //  - page numbers and opengym.ch in the bottom margin (CSS @page margin boxes: Chrome, Android's
-//    WebView, desktop Chrome/Edge; the iOS app draws the same line natively, PrintPlugin.swift);
+//    WebView, desktop Chrome/Edge; the iOS app draws the same line natively, PrintPlugin.swift).
+//    Desktop Firefox (checked with 158) and Safari drop margin boxes, so there the line is left
+//    out on purpose: nothing else changes, and their own "Headers and footers" print option (on
+//    by default in Firefox) adds "Page 1 of 3". Our own running footer would have to be a fixed
+//    element inside the page area (Firefox clips anything placed in the margin), sitting on the
+//    last lines of each page, and page numbers would need our own pagination guessing where the
+//    browser breaks pages. A wrong page number is worse than none;
 //  - a white, ink-light page: thin rules, grey text, the lime accent only as a small mark;
 //  - the page-break rules: anything marked .keep stays on one page, a heading is printed inside
 //    the same .keep as the first block under it so it can never be left alone at a page bottom,

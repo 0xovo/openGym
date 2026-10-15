@@ -135,6 +135,29 @@ describe('report and workout printouts', () => {
     // No exercise media on paper, ever.
     expect(html).not.toMatch(/<img|\.webp|\.gif|\.mp4/)
   })
+  it('summary cards show the change itself under the arrow, with a percentage when there was a before', () => {
+    const html = reportPrintHTML(state(), { range: '4w', today: TODAY })
+    // 5 workouts in the 4 weeks, 1 in the 4 weeks before.
+    expect(html).toContain('<div class="delta up">▲ +4 · 400%</div>')
+    expect(html).toContain('Arrows compare with the 28 days before.')
+    // Same count both weeks: a flat line, no arrow.
+    expect(reportPrintHTML(state(), { range: '7d', today: TODAY })).toContain('<div class="delta flat">± 0</div>')
+  })
+  it('nothing before the range: the change without a percentage; nothing at all: no arrows, no note', () => {
+    const S = { ...state(), workouts: state().workouts.slice(-1), bodyweight: [] }
+    const html = reportPrintHTML(S, { range: '7d', today: TODAY })
+    expect(html).toContain('<div class="delta up">▲ +1</div>')
+    const empty = reportPrintHTML({ unit: 'kg', workouts: [], bodyweight: [] }, { range: '7d', today: TODAY })
+    expect(empty).not.toContain('class="delta')
+    expect(empty).not.toContain('Arrows compare')
+  })
+  it('sets per muscle are whole numbers, with the rounding explained', () => {
+    const html = reportPrintHTML(state(), { range: '4w', today: TODAY })
+    const vals = [...html.matchAll(/<td class="v">([^<]*)<\/td>/g)].map(x => x[1])
+    expect(vals.length).toBeGreaterThan(0)
+    for (const v of vals) expect(v).toMatch(/^(<|&lt;)?\d+ sets?$/)
+    expect(html).toContain('Rounded to whole sets.')
+  })
   it('a workout: every exercise with every set, warm-ups marked', () => {
     const S = state()
     const html = workoutPrintHTML(S, S.workouts[4], { owner: 'Ana' })

@@ -2439,7 +2439,7 @@ export default {
   'Most days in a row': 'Legtöbb nap egymás után',
   'No muscle work in this period.': 'Ebben az időszakban nem volt izommunka.',
   'Not trained:': 'Nem edzett:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'Effektív sorozatok: egy sorozat teljesen számít a fő izomnak, részben a segítőknek.',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'Egész sorozatra kerekítve. Egy sorozat teljesen számít a fő izomnak, részben a segítőknek, ezért az izmok összesen többet adnak ki, mint a munkasorozataid.',
   'One session in this period.': 'Egy edzés ebben az időszakban.',
   'No workouts in this period.': 'Ebben az időszakban nincs edzés.',
   'Consistency': 'Rendszeresség',

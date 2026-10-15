@@ -2436,7 +2436,7 @@ export default {
   'Most days in a row': 'लगातार सबसे ज़्यादा दिन',
   'No muscle work in this period.': 'इस अवधि में कोई मसल वर्क नहीं।',
   'Not trained:': 'ट्रेन नहीं हुए:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'प्रभावी सेट: एक सेट मुख्य मसल के लिए पूरा और मदद करने वाली मसल्स के लिए आंशिक गिना जाता है।',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'पूरे सेट तक राउंड किया गया। एक सेट मुख्य मसल के लिए पूरा और मदद करने वाली मसल्स के लिए आंशिक गिना जाता है, इसलिए मसल्स का जोड़ आपके वर्क सेट से ज़्यादा होता है।',
   'One session in this period.': 'इस अवधि में एक सेशन।',
   'No workouts in this period.': 'इस अवधि में कोई वर्कआउट नहीं।',
   'Consistency': 'नियमितता',

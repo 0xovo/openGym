@@ -2436,7 +2436,7 @@ export default {
   'Most days in a row': 'Üst üste en çok gün',
   'No muscle work in this period.': 'Bu dönemde kas çalışması yok.',
   'Not trained:': 'Çalışılmayanlar:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'Etkili setler: bir set ana kas için tam, yardımcı kaslar için kısmen sayılır.',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'Tam sete yuvarlandı. Bir set ana kas için tam, yardımcı kaslar için kısmen sayılır, bu yüzden kasların toplamı çalışma setlerinden fazladır.',
   'One session in this period.': 'Bu dönemde tek seans.',
   'No workouts in this period.': 'Bu dönemde antrenman yok.',
   'Consistency': 'Düzenlilik',

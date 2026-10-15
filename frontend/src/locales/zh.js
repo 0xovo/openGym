@@ -2436,7 +2436,7 @@ export default {
   'Most days in a row': '最长连续训练天数',
   'No muscle work in this period.': '这段时间没有肌肉训练。',
   'Not trained:': '未训练：',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': '有效组数：一组对主要肌肉算一整组，对辅助肌肉算一部分。',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': '已四舍五入为整组。一组对主要肌肉算一整组，对辅助肌肉算一部分，所以各肌肉加起来会比你的正式组多。',
   'One session in this period.': '这段时间只练了一次。',
   'No workouts in this period.': '这段时间没有训练。',
   'Consistency': '规律性',

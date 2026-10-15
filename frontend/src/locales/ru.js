@@ -2440,7 +2440,7 @@ export default {
   'Most days in a row': 'Больше всего дней подряд',
   'No muscle work in this period.': 'За этот период нет работы мышц.',
   'Not trained:': 'Не тренировались:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'Эффективные подходы: подход считается полностью для основной мышцы и частично для помогающих.',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'Округлено до целых подходов. Подход считается полностью для основной мышцы и частично для помогающих, поэтому по мышцам в сумме выходит больше, чем рабочих подходов.',
   'One session in this period.': 'Одна тренировка за этот период.',
   'No workouts in this period.': 'За этот период нет тренировок.',
   'Consistency': 'Регулярность',

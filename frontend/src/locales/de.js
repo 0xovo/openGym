@@ -2456,7 +2456,7 @@ export default {
   'Most days in a row': 'Meiste Tage am Stück',
   'No muscle work in this period.': 'In diesem Zeitraum keine Muskelarbeit.',
   'Not trained:': 'Nicht trainiert:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'Effektive Sätze: Ein Satz zählt voll für den Hauptmuskel und anteilig für die Helfer.',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'Auf ganze Sätze gerundet. Ein Satz zählt voll für den Hauptmuskel und anteilig für die Helfer, darum ergeben die Muskeln zusammen mehr als deine Arbeitssätze.',
   'One session in this period.': 'Eine Einheit in diesem Zeitraum.',
   'No workouts in this period.': 'Keine Trainings in diesem Zeitraum.',
   'Consistency': 'Regelmässigkeit',

@@ -2491,7 +2491,7 @@ export default {
   'Most days in a row': 'أكثر أيام متتالية',
   'No muscle work in this period.': 'لا يوجد عمل عضلي في هذه الفترة.',
   'Not trained:': 'لم يتم تدريبها:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'المجموعات الفعلية: تُحسب المجموعة كاملة للعضلة الأساسية وجزئيًا للعضلات المساعدة.',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'مقرّبة إلى مجموعات كاملة. تُحسب المجموعة كاملة للعضلة الأساسية وجزئيًا للعضلات المساعدة، لذلك يكون مجموع العضلات أكبر من مجموعات العمل.',
   'One session in this period.': 'حصة واحدة في هذه الفترة.',
   'No workouts in this period.': 'لا توجد تمارين في هذه الفترة.',
   'Consistency': 'الانتظام',

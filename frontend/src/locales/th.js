@@ -2447,7 +2447,7 @@ export default {
   'Most days in a row': 'ฝึกติดกันมากที่สุด (วัน)',
   'No muscle work in this period.': 'ช่วงนี้ไม่มีการฝึกกล้ามเนื้อ',
   'Not trained:': 'ยังไม่ได้ฝึก:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'เซ็ตที่มีผล: หนึ่งเซ็ตนับเต็มให้กล้ามเนื้อหลัก และนับบางส่วนให้กล้ามเนื้อที่ช่วย',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'ปัดเป็นเซ็ตเต็ม หนึ่งเซ็ตนับเต็มให้กล้ามเนื้อหลัก และนับบางส่วนให้กล้ามเนื้อที่ช่วย ผลรวมของกล้ามเนื้อจึงมากกว่าเซ็ตทำงานของคุณ',
   'One session in this period.': 'ช่วงนี้มีการฝึกครั้งเดียว',
   'No workouts in this period.': 'ช่วงนี้ไม่มีการฝึก',
   'Consistency': 'ความสม่ำเสมอ',

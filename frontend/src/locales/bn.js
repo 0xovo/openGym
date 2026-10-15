@@ -2515,7 +2515,7 @@ export default {
   'Most days in a row': 'টানা সবচেয়ে বেশি দিন',
   'No muscle work in this period.': 'এই সময়ে কোনো মাসল ওয়ার্ক নেই।',
   'Not trained:': 'ট্রেন করা হয়নি:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'কার্যকর সেট: একটি সেট মূল পেশির জন্য পুরো এবং সাহায্যকারী পেশির জন্য আংশিক গোনা হয়।',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'পুরো সেটে রাউন্ড করা। একটি সেট মূল পেশির জন্য পুরো এবং সাহায্যকারী পেশির জন্য আংশিক গোনা হয়, তাই পেশিগুলোর যোগফল তোমার ওয়ার্ক সেটের চেয়ে বেশি।',
   'One session in this period.': 'এই সময়ে একটি সেশন।',
   'No workouts in this period.': 'এই সময়ে কোনো ওয়ার্কআউট নেই।',
   'Consistency': 'নিয়মিততা',

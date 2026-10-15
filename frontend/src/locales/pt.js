@@ -2436,7 +2436,7 @@ export default {
   'Most days in a row': 'Mais dias seguidos',
   'No muscle work in this period.': 'Sem trabalho muscular neste período.',
   'Not trained:': 'Não treinados:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': 'Séries efetivas: uma série conta por inteiro para o músculo principal e em parte para os que ajudam.',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': 'Arredondado a séries inteiras. Uma série conta por inteiro para o músculo principal e em parte para os que ajudam, por isso os músculos somam mais do que as séries de trabalho.',
   'One session in this period.': 'Uma sessão neste período.',
   'No workouts in this period.': 'Sem treinos neste período.',
   'Consistency': 'Regularidade',

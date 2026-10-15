@@ -35,12 +35,16 @@ const signed = (n, digits = 1) => {
   const r = Math.round(n * 10 ** digits) / 10 ** digits
   return (r > 0 ? '+' : r < 0 ? '−' : '±') + fmtNum(Math.abs(r))
 }
-// Change against the stretch before, as a small arrow line under a card's number.
-function delta(now, before, { pct = true } = {}) {
-  if (!(before > 0) || now == null) return ''
-  const p = Math.round((now - before) / before * 100)
-  if (!p) return `<div class="delta flat">± 0%</div>`
-  return `<div class="delta ${p > 0 ? 'up' : 'down'}">${p > 0 ? '▲' : '▼'} ${pct ? Math.abs(p) + '%' : ''}</div>`
+// Change against the stretch before, as a small line under a card's number: arrow, the change
+// itself and, when there was something before, the percentage ("▲ +3 · 33%"). The arrow and the
+// sign carry the meaning, the colour only helps (so it reads the same in grey and to colour-blind
+// eyes). Nothing when both stretches are empty.
+function delta(now, before, fmt = v => fmtNum(Math.round(v))) {
+  if (now == null || before == null || !(now > 0 || before > 0)) return ''
+  const d = now - before
+  if (!d) return `<div class="delta flat">± 0</div>`
+  const pct = before > 0 ? ` · ${fmtNum(Math.abs(Math.round(d / before * 100)))}%` : ''
+  return `<div class="delta ${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲ +' : '▼ −'}${esc(fmt(Math.abs(d)))}${pct}</div>`
 }
 
 // A stat card: label, value, an optional line under it.
@@ -349,14 +353,17 @@ function summaryHTML(R, unit) {
   const bw = T.bwChange != null
     ? card(t('Body weight'), `${esc(signed(T.bwChange))}<small>${esc(unit)}</small>`, `<div class="c-s">${esc(fmtNum(T.bwStart))} → ${esc(fmtNum(T.bwEnd))} ${esc(unit)}</div>`)
     : card(t('Body weight'), T.bwEnd != null ? `${esc(fmtNum(T.bwEnd))}<small>${esc(unit)}</small>` : '–', `<div class="c-s">${esc(T.bwEnd != null ? t('One weigh-in') : t('No weigh-ins'))}</div>`)
-  return `<div class="cards">${[
+  const cards = [
     card(t('Workouts'), esc(fmtNum(T.workouts)), delta(T.workouts, P.workouts)),
-    card(t('Volume'), `${esc(compact(T.volume))}<small>${esc(unit)}</small>`, delta(T.volume, P.volume)),
+    card(t('Volume'), `${esc(compact(T.volume))}<small>${esc(unit)}</small>`, delta(T.volume, P.volume, v => `${compact(v)} ${unit}`)),
     card(t('Work sets'), esc(fmtNum(T.sets)), delta(T.sets, P.sets)),
-    card(t('Training time'), esc(T.ms >= 60000 ? fmtDur(T.ms) : '–'), delta(T.ms, P.ms)),
+    card(t('Training time'), esc(T.ms >= 60000 ? fmtDur(T.ms) : '–'), delta(T.ms, P.ms, v => fmtDur(Math.max(60000, v)))),
     card(t('New bests'), esc(fmtNum(T.prs)), delta(T.prs, P.prs)),
     bw,
-  ].join('')}</div><div class="note-line">${esc(t('Arrows compare with the {0} days before.', R.range.days))}</div>`
+  ]
+  // The note only when at least one card carries an arrow.
+  const note = cards.some(c => c.includes('class="delta')) ? `<div class="note-line">${esc(t('Arrows compare with the {0} days before.', R.range.days))}</div>` : ''
+  return `<div class="cards">${cards.join('')}</div>${note}`
 }
 
 function volumeHTML(R, unit) {
@@ -383,9 +390,9 @@ function musclesHTML(R, m) {
   const list = R.muscles.worked
   if (!list.length) return `<div class="keep panel"><h3 class="sec-h">${esc(t('Sets per muscle'))}</h3><p class="none">${esc(t('No muscle work in this period.'))}</p></div>`
   const max = list[0].sets || 1
-  const rows = list.map((x, i) => `<tr><td class="m">${m.s('mus' + i)}${esc(t(x.name))}${m.e('mus' + i)}</td><td><div class="hbar${i === 0 ? ' top' : ''}" style="width:${Math.max(2, Math.round(x.sets / max * 100))}%"></div></td><td class="v">${esc(t('{0} sets', fmtNum(x.sets)))}</td></tr>`).join('')
+  const rows = list.map((x, i) => `<tr><td class="m">${m.s('mus' + i)}${esc(t(x.name))}${m.e('mus' + i)}</td><td><div class="hbar${i === 0 ? ' top' : ''}" style="width:${Math.max(2, Math.round(x.sets / max * 100))}%"></div></td><td class="v">${esc(t('{0} sets', x.sets >= 0.5 ? fmtNum(Math.round(x.sets)) : '<1'))}</td></tr>`).join('')
   const missed = R.muscles.missed.length ? `<div class="note-line">${esc(t('Not trained:'))} ${esc(R.muscles.missed.map(x => t(x.name)).join(', '))}</div>` : ''
-  return `<table class="mus">${headRow(t('Sets per muscle'), 3, 'mus0', m)}<tbody>${rows}</tbody></table>${missed}<div class="note-line">${esc(t('Effective sets: a set counts fully for its main muscle and partly for the ones that help.'))}</div>`
+  return `<table class="mus">${headRow(t('Sets per muscle'), 3, 'mus0', m)}<tbody>${rows}</tbody></table>${missed}<div class="note-line">${esc(t('Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.'))}</div>`
 }
 
 function liftsHTML(R, unit, range, m) {

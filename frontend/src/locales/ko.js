@@ -2436,7 +2436,7 @@ export default {
   'Most days in a row': '최장 연속 운동일',
   'No muscle work in this period.': '이 기간에는 근육 운동이 없어요.',
   'Not trained:': '운동하지 않은 부위:',
-  'Effective sets: a set counts fully for its main muscle and partly for the ones that help.': '유효 세트: 세트는 주동근에 온전히, 보조근에 일부 계산돼요.',
+  'Rounded to whole sets. A set counts fully for its main muscle and partly for the ones that help, so the muscles add up to more than your work sets.': '정수 세트로 반올림했어요. 세트는 주동근에 온전히, 보조근에 일부 계산되므로 근육별 합계가 본 세트 수보다 많아요.',
   'One session in this period.': '이 기간에 한 번 운동했어요.',
   'No workouts in this period.': '이 기간에는 운동 기록이 없어요.',
   'Consistency': '꾸준함',
