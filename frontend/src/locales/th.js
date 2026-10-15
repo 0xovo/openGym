@@ -2437,6 +2437,7 @@ export default {
   'Finding you…': 'กำลังหาคุณ…',
   'From': 'ตั้งแต่',
   'Gym reminder': 'เตือนเมื่อถึงยิม',
+  'Checking if you made it to the gym': 'กำลังดูว่าคุณถึงยิมแล้วหรือยัง',
   'Gym spotted': 'เจอยิมแล้ว',
   'I’m at the gym right now': 'ตอนนี้ฉันอยู่ที่ยิม',
   'Leave it empty for the default.': 'เว้นว่างไว้เพื่อใช้ข้อความเริ่มต้น',

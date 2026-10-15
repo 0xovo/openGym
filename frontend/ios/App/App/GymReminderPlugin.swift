@@ -23,12 +23,17 @@ import UserNotifications
  *   const GR = registerPlugin('GymReminder');
  *   await GR.configure({ config });   // { watching, permission }
  *   await GR.status({ trainedOn, quietOn, activeSince, title, body });
+ *   await GR.server({ server, headers }); // the paired server, asked about today before posting ('' forgets it)
  *   await GR.get();                   // { config, permission, watching }
  *   await GR.permission();            // { location, background, precise, notifications }
  *   await GR.requestForeground();     // While Using the App
  *   await GR.requestBackground();     // Always, after the in-app explainer
  *   await GR.currentPosition();       // { lat, lng, accuracy }
  *   await GR.openSettings();
+ * Before posting, a paired phone asks its server whether today was trained on another device that
+ * has not synced here yet (GET /api/nudge-check, at most 3 seconds). The server and its headers
+ * (the pairing token) are kept in the Keychain, this device only. No server, offline, or no
+ * answer in time: the phone's own status decides.
  * A tap on the notification goes through Capacitor's local-notifications handler (the page
  * listens there for id 3000).
  */
@@ -39,6 +44,7 @@ public class GymReminderPlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "configure", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "status", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "server", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "get", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "permission", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "requestForeground", returnType: CAPPluginReturnPromise),
@@ -70,6 +76,16 @@ public class GymReminderPlugin: CAPPlugin, CAPBridgedPlugin {
             self.center.saveStatus(status)
             call.resolve()
         }
+    }
+
+    @objc func server(_ call: CAPPluginCall) {
+        let server = call.getString("server") ?? ""
+        if server.isEmpty {
+            GymReminderCenter.clearServer()
+        } else {
+            _ = GymReminderCenter.saveServer(["server": server, "headers": call.getObject("headers") ?? [:]])
+        }
+        call.resolve()
     }
 
     @objc func get(_ call: CAPPluginCall) {
@@ -181,6 +197,71 @@ final class GymReminderCenter: NSObject, CLLocationManagerDelegate {
 
     func saveConfig(_ c: [String: Any]) { store["config"] = c; writeStore() }
     func saveStatus(_ s: [String: Any]) { store["status"] = s; writeStore() }
+
+    // MARK: the paired server (Keychain: it carries the pairing token)
+
+    private static func serverQuery() -> [String: Any] {
+        return [kSecClass as String: kSecClassGenericPassword,
+                kSecAttrService as String: Bundle.main.bundleIdentifier ?? "ch.opengym.app",
+                kSecAttrAccount as String: "gym-reminder-server"]
+    }
+
+    static func saveServer(_ auth: [String: Any]) -> Bool {
+        guard let data = try? JSONSerialization.data(withJSONObject: auth) else { return false }
+        SecItemDelete(serverQuery() as CFDictionary)
+        var add = serverQuery()
+        add[kSecValueData as String] = data
+        // Readable after the first unlock: a region event can wake the app while the phone is locked.
+        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        return SecItemAdd(add as CFDictionary, nil) == errSecSuccess
+    }
+
+    static func loadServer() -> [String: Any]? {
+        var q = serverQuery()
+        q[kSecReturnData as String] = true
+        q[kSecMatchLimit as String] = kSecMatchLimitOne
+        var out: AnyObject?
+        guard SecItemCopyMatching(q as CFDictionary, &out) == errSecSuccess, let data = out as? Data else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+    }
+
+    static func clearServer() {
+        SecItemDelete(serverQuery() as CFDictionary)
+    }
+
+    /// Whether the paired server says `today` was trained or excused. Calls back false without a
+    /// server, offline, on any error and after 3 seconds, always on the main queue.
+    func trainedElsewhere(today: String, _ done: @escaping (Bool) -> Void) {
+        guard let auth = GymReminderCenter.loadServer(), var base = auth["server"] as? String, !base.isEmpty else { done(false); return }
+        while base.hasSuffix("/") { base.removeLast() }
+        guard var parts = URLComponents(string: base + "/api/nudge-check") else { done(false); return }
+        parts.queryItems = [URLQueryItem(name: "date", value: today)]
+        guard let url = parts.url else { done(false); return }
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 3)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        for (k, v) in auth["headers"] as? [String: String] ?? [:] { request.setValue(v, forHTTPHeaderField: k) }
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.timeoutIntervalForRequest = 3
+        cfg.timeoutIntervalForResource = 3
+        cfg.waitsForConnectivity = false
+        let session = URLSession(configuration: cfg)
+        var finished = false
+        let finish: (Bool) -> Void = { v in
+            DispatchQueue.main.async {
+                if finished { return }
+                finished = true
+                session.invalidateAndCancel()
+                done(v)
+            }
+        }
+        session.dataTask(with: request) { data, response, _ in
+            guard (response as? HTTPURLResponse)?.statusCode == 200, let data = data,
+                  let a = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else { finish(false); return }
+            finish((a["date"] as? String) == today && (a["done"] as? Bool) == true)
+        }.resume()
+        // The hard stop, whatever URLSession does with DNS or a half-open socket.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { finish(false) }
+    }
 
     // MARK: permissions
 
@@ -351,6 +432,23 @@ final class GymReminderCenter: NSObject, CLLocationManagerDelegate {
             activeSince: (st["activeSince"] as? NSNumber)?.doubleValue ?? 0,
             lastFired: store["lastFired"] as? String ?? "", now: now)
         guard why == nil else { done(); return }
+        let today = GymReminderRules.isoOf(now)
+        trainedElsewhere(today: today) { [weak self] elsewhere in
+            guard let self = self else { done(); return }
+            if elsewhere {
+                // Remember it, so the next region event today needs no network.
+                var s = self.status
+                s["trainedOn"] = today
+                self.saveStatus(s)
+                done()
+                return
+            }
+            self.post(gymId: gymId, gyms: gyms, now: now, done: done)
+        }
+    }
+
+    private func post(gymId: String, gyms: [[String: Any]], now: Date, done: @escaping () -> Void) {
+        let st = status
         let gym = gyms.first { ($0["id"] as? String) == gymId }
         let own = ((gym?["text"] as? String) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let content = UNMutableNotificationContent()

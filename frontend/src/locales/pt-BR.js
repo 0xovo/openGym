@@ -1547,6 +1547,7 @@ export const PT_BR_OVERRIDES = {
   'Finding you…': 'Procurando você…',
   'From': 'Das',
   'Gym reminder': 'Lembrete da academia',
+  'Checking if you made it to the gym': 'Vendo se você chegou na academia',
   'Gym spotted': 'Academia à vista',
   'I’m at the gym right now': 'Estou na academia agora',
   'Leave it empty for the default.': 'Deixe vazio para o texto padrão.',

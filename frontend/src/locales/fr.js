@@ -2426,6 +2426,7 @@ export default {
   'Finding you…': 'On te cherche…',
   'From': 'De',
   'Gym reminder': 'Rappel à la salle',
+  'Checking if you made it to the gym': 'On vérifie si tu es arrivé à la salle',
   'Gym spotted': 'Salle repérée',
   'I’m at the gym right now': 'Je suis à la salle en ce moment',
   'Leave it empty for the default.': 'Laisse vide pour le texte par défaut.',

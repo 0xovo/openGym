@@ -5,9 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
    applies when a gym is entered, and the plugin wrapper (never resolving with the bare proxy). */
 const mocks = vi.hoisted(() => ({
   MOBILE: true, platform: 'android', registered: 0, calls: [], listeners: {},
-  get: null, configure: null, status: null,
+  get: null, configure: null, status: null, auth: null,
 }))
 vi.mock('./mobile.js', () => ({ get MOBILE() { return mocks.MOBILE } }))
+vi.mock('./api.js', () => ({ remoteAuth: () => mocks.auth }))
 vi.mock('@capacitor/core', () => ({
   Capacitor: { getPlatform: () => mocks.platform },
   registerPlugin: name => {
@@ -20,6 +21,7 @@ vi.mock('@capacitor/core', () => ({
         if (k === 'get') return async () => mocks.get
         if (k === 'configure') return async a => { mocks.calls.push(['configure', a]); return mocks.configure }
         if (k === 'status') return async a => { mocks.calls.push(['status', a]); return mocks.status }
+        if (k === 'server') return async a => { mocks.calls.push(['server', a]) }
         if (k === 'addListener') return async (ev, fn) => { mocks.listeners[ev] = fn; return { remove: () => { delete mocks.listeners[ev] } } }
         return () => new Promise(() => {})
       },
@@ -43,7 +45,7 @@ const on = (over = {}) => ({ on: true, gyms: [gym()], window: null, ...over })
 const flush = () => new Promise(r => setTimeout(r, 0))
 
 beforeEach(() => {
-  mocks.MOBILE = true; mocks.platform = 'android'; mocks.registered = 0; mocks.calls = []; mocks.listeners = {}
+  mocks.MOBILE = true; mocks.platform = 'android'; mocks.registered = 0; mocks.calls = []; mocks.listeners = {}; mocks.auth = null
   mocks.get = null; mocks.configure = { watching: 1, permission: { location: 'granted', background: 'granted' } }; mocks.status = undefined
   ln.listeners = {}
   localStorage.clear()
@@ -168,7 +170,21 @@ describe('kept on the device, never in the synced state', () => {
   })
   it('with the profile: today is sent first, so the native side never acts on stale news', async () => {
     await saveGymConfig(on(), { workouts: [{ d: '2026-10-01' }] })
-    expect(mocks.calls.map(c => c[0])).toEqual(['status', 'configure'])
+    expect(mocks.calls.map(c => c[0])).toEqual(['server', 'status', 'configure'])
+  })
+  it('server: a paired phone hands over its server for the arrival check, once per change; no server, an empty one', async () => {
+    localStorage.setItem(GYM_KEY, JSON.stringify(on()))
+    await pushGymStatus({ workouts: [] })
+    expect(mocks.calls.filter(c => c[0] === 'server')).toEqual([['server', { server: '' }]])
+    mocks.auth = { base: 'https://gym.example', headers: { Authorization: 'Bearer t' } }
+    await pushGymStatus({ workouts: [] })
+    await pushGymStatus({ workouts: [] })
+    expect(mocks.calls.filter(c => c[0] === 'server')).toEqual([
+      ['server', { server: '' }],
+      ['server', { server: 'https://gym.example', headers: { Authorization: 'Bearer t' } }],
+    ])
+    // never in the page's own storage
+    expect(JSON.stringify({ ...localStorage })).not.toContain('Bearer')
   })
   it('loading prefers the native copy (WebView storage can be evicted)', async () => {
     localStorage.setItem(GYM_KEY, JSON.stringify(on({ on: false })))

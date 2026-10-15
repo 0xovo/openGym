@@ -2505,6 +2505,7 @@ export default {
   'Finding you…': 'আপনাকে খুঁজছি…',
   'From': 'থেকে',
   'Gym reminder': 'জিম রিমাইন্ডার',
+  'Checking if you made it to the gym': 'দেখছি তুমি জিমে পৌঁছেছ কি না',
   'Gym spotted': 'জিম দেখা গেছে',
   'I’m at the gym right now': 'আমি এখন জিমে আছি',
   'Leave it empty for the default.': 'ডিফল্ট লেখার জন্য ফাঁকা রাখুন।',

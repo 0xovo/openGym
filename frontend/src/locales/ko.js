@@ -2426,6 +2426,7 @@ export default {
   'Finding you…': '위치 찾는 중…',
   'From': '시작',
   'Gym reminder': '헬스장 알림',
+  'Checking if you made it to the gym': '헬스장에 도착했는지 확인하는 중',
   'Gym spotted': '헬스장 발견',
   'I’m at the gym right now': '지금 헬스장에 있어요',
   'Leave it empty for the default.': '비워 두면 기본 문구를 써요.',

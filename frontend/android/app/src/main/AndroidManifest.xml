@@ -91,6 +91,13 @@
         <receiver
             android:name=".GymReminderReceiver"
             android:exported="false" />
+        <!-- Gym reminder: the short check with live location after the phone entered a gym's wide
+             approach zone (GymScanService). At most 15 minutes, at most 3 a day; its notification
+             is a silent one. Started by the approach alert's broadcast, never exported. -->
+        <service
+            android:name=".GymScanService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
         <!-- Proximity alerts are gone after a restart or an app update: registered again here.
              Only the system sends these two broadcasts. -->
         <receiver
@@ -149,6 +156,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- The approach check above runs as a location foreground service (Android 14+ names the
+         type), and asks the paired server about today only when there is a network. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Location is optional: a phone without GPS still installs the app (the permissions above
          would otherwise make Google Play require the hardware). -->
     <uses-feature android:name="android.hardware.location" android:required="false" />

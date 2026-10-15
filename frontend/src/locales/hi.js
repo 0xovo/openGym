@@ -2426,6 +2426,7 @@ export default {
   'Finding you…': 'आपको ढूँढ रहे हैं…',
   'From': 'से',
   'Gym reminder': 'जिम रिमाइंडर',
+  'Checking if you made it to the gym': 'देख रहे हैं कि आप जिम पहुँचे या नहीं',
   'Gym spotted': 'जिम दिख गया',
   'I’m at the gym right now': 'मैं अभी जिम में हूँ',
   'Leave it empty for the default.': 'डिफ़ॉल्ट टेक्स्ट के लिए खाली छोड़ें।',

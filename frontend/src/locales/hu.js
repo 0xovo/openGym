@@ -2429,6 +2429,7 @@ export default {
   'Finding you…': 'Keresünk…',
   'From': 'Ettől',
   'Gym reminder': 'Edzőterem-emlékeztető',
+  'Checking if you made it to the gym': 'Nézzük, beértél-e az edzőterembe',
   'Gym spotted': 'Edzőterem a láthatáron',
   'I’m at the gym right now': 'Most épp a teremben vagyok',
   'Leave it empty for the default.': 'Hagyd üresen az alapszöveghez.',

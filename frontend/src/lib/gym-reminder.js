@@ -15,6 +15,7 @@ import { MOBILE } from './mobile.js'
 import { t } from './i18n-core.js'
 import { isoOf } from './format.js'
 import { excusedOn } from './day-notes.js'
+import { remoteAuth } from './api.js'
 
 export const GYM_KEY = 'gym_reminder_v1'
 export const RADIUS = Object.freeze({ min: 50, max: 500, def: 100, step: 10 })
@@ -98,6 +99,8 @@ export function statusOf(S, now = new Date()) {
     body: t('Ready for your workout? 💪'),
     // Android's name for the notification channel, in the app's language.
     channel: t('Gym reminder'),
+    // Android: the quiet notification while it checks with live location near a gym.
+    scan: t('Checking if you made it to the gym'),
   }
 }
 
@@ -204,6 +207,22 @@ export async function saveGymConfig(next, S = null) {
 }
 
 let lastStatus = ''
+let lastServer = null
+/**
+ * Tells the native side which server this phone is paired with (and the headers a request to it
+ * carries), so that on arrival it can ask whether today was trained on another device that has
+ * not synced here yet (GET /api/nudge-check, bounded to 3 s, see GymReminder.java and
+ * GymReminderPlugin.swift). A phone without a server sends '' and the phone decides alone. The
+ * native side keeps it encrypted (Android Keystore, iOS Keychain), never in the page's storage.
+ */
+async function pushGymServer(p) {
+  const auth = remoteAuth()
+  const arg = auth ? { server: auth.base, headers: auth.headers } : { server: '' }
+  const key = JSON.stringify(arg)
+  if (key === lastServer) return
+  try { await p.GymReminder.server(arg); lastServer = key } catch { /* an older native shell: no server check */ }
+}
+
 /**
  * Tells the native side how today stands (statusOf). Cheap and deduplicated: run after every
  * save of the profile; does nothing with the reminder off on this device.
@@ -211,11 +230,12 @@ let lastStatus = ''
 export async function pushGymStatus(S, force = false) {
   if (!MOBILE) return false
   if (!force && !readGymConfig().on) return false
+  const p = await gymPlugin()
+  if (!p) return false
+  await pushGymServer(p)
   const status = statusOf(S)
   const key = JSON.stringify(status)
   if (!force && key === lastStatus) return false
-  const p = await gymPlugin()
-  if (!p) return false
   try { await p.GymReminder.status(status); lastStatus = key; return true } catch { return false }
 }
 
@@ -278,4 +298,4 @@ export function onGymReminderOpen(cb) {
   return () => { gone = true; handles.splice(0).forEach(h => { try { h?.remove?.() } catch { /* gone already */ } }) }
 }
 
-export function _resetGymReminder() { pluginP = null; lastStatus = ''; memory = null }
+export function _resetGymReminder() { pluginP = null; lastStatus = ''; lastServer = null; memory = null }

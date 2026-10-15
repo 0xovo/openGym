@@ -2426,6 +2426,7 @@ export default {
   'Finding you…': 'Seni arıyoruz…',
   'From': 'Başlangıç',
   'Gym reminder': 'Salon hatırlatıcısı',
+  'Checking if you made it to the gym': 'Spor salonuna varıp varmadığına bakılıyor',
   'Gym spotted': 'Salon göründü',
   'I’m at the gym right now': 'Şu an salondayım',
   'Leave it empty for the default.': 'Varsayılan metin için boş bırak.',

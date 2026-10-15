@@ -2426,6 +2426,7 @@ export default {
   'Finding you…': 'À tua procura…',
   'From': 'Das',
   'Gym reminder': 'Lembrete do ginásio',
+  'Checking if you made it to the gym': 'A ver se chegaste ao ginásio',
   'Gym spotted': 'Ginásio à vista',
   'I’m at the gym right now': 'Estou no ginásio agora',
   'Leave it empty for the default.': 'Deixa vazio para o texto predefinido.',

@@ -2426,6 +2426,7 @@ export default {
   'Finding you…': '正在定位…',
   'From': '从',
   'Gym reminder': '健身房提醒',
+  'Checking if you made it to the gym': '正在看看你到健身房了没',
   'Gym spotted': '发现健身房',
   'I’m at the gym right now': '我现在就在健身房',
   'Leave it empty for the default.': '留空则使用默认文字。',

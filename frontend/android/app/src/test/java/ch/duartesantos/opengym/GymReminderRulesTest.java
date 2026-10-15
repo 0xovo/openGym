@@ -69,4 +69,34 @@ public class GymReminderRulesTest {
         assertEquals(-1, GymReminderRules.minuteOf("24:00"));
         assertEquals(6 * 60 + 5, GymReminderRules.minuteOf("06:05"));
     }
+
+    @Test
+    public void approachZoneIsAtLeast800Metres() {
+        assertEquals(800, GymReminderRules.approachOf(100), 0.01);
+        assertEquals(2500, GymReminderRules.approachOf(500), 0.01);
+    }
+
+    @Test
+    public void insideNeedsTheRadiusAndAGoodEnoughFix() {
+        double[] r = { 100, 100 };
+        assertEquals(-1, GymReminderRules.insideOf(new double[] { 400, 900 }, r, 10));
+        assertEquals(0, GymReminderRules.insideOf(new double[] { 80, 900 }, r, 10));
+        assertEquals(1, GymReminderRules.insideOf(new double[] { 90, 30 }, r, 10));   // the nearer one
+        assertEquals(-1, GymReminderRules.insideOf(new double[] { 80, 900 }, r, 350)); // a vague network fix
+    }
+
+    @Test
+    public void theCheckStopsOnceEveryGymIsBehind() {
+        double[] r = { 100, 100 };
+        assertFalse(GymReminderRules.awayFromAll(new double[] { 1000, 5000 }, r));
+        assertTrue(GymReminderRules.awayFromAll(new double[] { 1100, 5000 }, r));
+    }
+
+    @Test
+    public void atMostThreeChecksADay() {
+        assertTrue(GymReminderRules.mayScan("", 0, "2026-10-15"));
+        assertTrue(GymReminderRules.mayScan("2026-10-15", 2, "2026-10-15"));
+        assertFalse(GymReminderRules.mayScan("2026-10-15", 3, "2026-10-15"));
+        assertTrue(GymReminderRules.mayScan("2026-10-14", 3, "2026-10-15"));
+    }
 }

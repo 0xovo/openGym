@@ -29,7 +29,8 @@ import org.json.JSONObject;
  * Usage from JS:
  *   const GR = registerPlugin('GymReminder');
  *   await GR.configure({ config });          // { watching, permission }
- *   await GR.status({ trainedOn, quietOn, activeSince, title, body });
+ *   await GR.status({ trainedOn, quietOn, activeSince, title, body, channel, scan });
+ *   await GR.server({ server, headers });    // the paired server, asked about today before posting ('' forgets it)
  *   await GR.get();                          // { config, permission, watching }
  *   await GR.permission();                   // { location, background, notifications }
  *   await GR.requestForeground();            // while-in-use location
@@ -104,7 +105,26 @@ public class GymReminderPlugin extends Plugin {
         s.put("title", call.getString("title", ""));
         s.put("body", call.getString("body", ""));
         s.put("channel", call.getString("channel", ""));
+        s.put("scan", call.getString("scan", ""));
         GymReminder.saveStatus(getContext(), s);
+        call.resolve();
+    }
+
+    @PluginMethod
+    public void server(PluginCall call) {
+        String server = call.getString("server", "");
+        JSONObject auth = null;
+        if (server != null && !server.isEmpty()) {
+            auth = new JSONObject();
+            try {
+                auth.put("server", server);
+                JSObject h = call.getObject("headers");
+                auth.put("headers", h == null ? new JSONObject() : h);
+            } catch (Exception e) {
+                auth = null;
+            }
+        }
+        GymReminder.saveServer(getContext(), auth);
         call.resolve();
     }
 

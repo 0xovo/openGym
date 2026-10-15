@@ -2423,6 +2423,7 @@ export default {
   'Finding you…': 'Шукаємо тебе…',
   'From': 'З',
   'Gym reminder': 'Нагадування в залі',
+  'Checking if you made it to the gym': 'Перевіряємо, чи ти дістався до залу',
   'Gym spotted': 'Зал помічено',
   'I’m at the gym right now': 'Я зараз у залі',
   'Leave it empty for the default.': 'Залиш порожнім для тексту за замовчуванням.',

@@ -2446,6 +2446,7 @@ export default {
   'Finding you…': 'Suche dich…',
   'From': 'Von',
   'Gym reminder': 'Gym-Erinnerung',
+  'Checking if you made it to the gym': 'Schaue, ob du es ins Gym geschafft hast',
   'Gym spotted': 'Gym gesichtet',
   'I’m at the gym right now': 'Ich bin gerade im Gym',
   'Leave it empty for the default.': 'Leer lassen für den Standardtext.',

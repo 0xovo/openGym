@@ -2481,6 +2481,7 @@ export default {
   'Finding you…': 'نبحث عنك…',
   'From': 'من',
   'Gym reminder': 'تذكير الصالة',
+  'Checking if you made it to the gym': 'نتحقق إن كنت وصلت إلى النادي',
   'Gym spotted': 'تم رصد الصالة',
   'I’m at the gym right now': 'أنا في الصالة الآن',
   'Leave it empty for the default.': 'اتركه فارغًا للنص الافتراضي.',

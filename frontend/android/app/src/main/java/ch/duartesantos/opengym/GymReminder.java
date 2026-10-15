@@ -10,8 +10,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Build;
+import android.util.Log;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,6 +38,17 @@ import org.json.JSONObject;
  * system hands GymReminderReceiver a broadcast on entering, which decides with GymReminderRules
  * whether to post. Proximity alerts do not survive a restart or an app update:
  * GymReminderBootReceiver registers them again.
+ *
+ * Android only looks at proximity alerts for a background app every 30 minutes, unless another
+ * app's location request feeds it a fix. So every gym gets a second, wide alert (the approach
+ * zone, GymReminderRules.approachOf): entering it starts GymScanService, a short check with live
+ * location that notices the walk into the gym within a fix or two and then stops (at most 15
+ * minutes, at most 3 times a day, never once today is settled). The gym's own alert stays as the
+ * fallback.
+ *
+ * Before posting, a paired phone asks its server whether today was trained somewhere else (a
+ * workout logged on the web or another phone this one has not synced yet), bounded to 3 seconds;
+ * no server, no network or no answer in time: the phone's own status decides, as before.
  *
  * What is kept, in the app's private preferences: the config the page saved (gyms with their
  * places, the time window), the status it last reported (last day trained, a running session, the
@@ -42,6 +68,12 @@ final class GymReminder {
      * would ping right after "I'm at the gym right now". Entries this soon after arming are ignored.
      */
     static final long ARM_GRACE_MS = 90_000L;
+
+    static final String TAG = "OpenGymGym";
+    /** The approach alerts use the request codes after the gyms' own ones. */
+    private static final int NEAR_SLOT = MAX_GYMS;
+    /** How long the server may take to say how today stands before the phone decides alone. */
+    static final long SERVER_CHECK_MS = 3_000L;
 
     static String actionEnter(Context ctx) { return ctx.getPackageName() + ".GYM_ENTER"; }
     static String actionOpen(Context ctx) { return ctx.getPackageName() + ".GYM_REMINDER_OPEN"; }
@@ -80,6 +112,35 @@ final class GymReminder {
         }
     }
 
+    /**
+     * The paired server and the headers a request to it carries (the pairing token), from the page
+     * (GymReminderPlugin.server); null or an empty server forgets them. Encrypted with the app's
+     * Keystore key (NudgeCheck.seal), in the same file as the gyms, so also out of backups.
+     */
+    static void saveServer(Context ctx, JSONObject auth) {
+        SharedPreferences.Editor e = prefs(ctx).edit();
+        String[] sealed = auth == null || auth.optString("server", "").isEmpty() ? null : NudgeCheck.seal(auth.toString());
+        if (sealed == null) e.remove("authIv").remove("auth");
+        else e.putString("authIv", sealed[0]).putString("auth", sealed[1]);
+        e.apply();
+    }
+
+    static JSONObject server(Context ctx) {
+        SharedPreferences p = prefs(ctx);
+        String plain = NudgeCheck.open(p.getString("authIv", null), p.getString("auth", null));
+        try {
+            return plain == null ? null : new JSONObject(plain);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** What happened at the last arrival or check, for the emulator proof and bug reports. */
+    static void note(Context ctx, String what) {
+        Log.i(TAG, what);
+        prefs(ctx).edit().putString("lastNote", what).apply();
+    }
+
     // ---------------------------------------------------------------- permissions
 
     static boolean hasFine(Context ctx) {
@@ -97,6 +158,7 @@ final class GymReminder {
     private static PendingIntent alertIntent(Context ctx, int slot, String gymId, int flags) {
         Intent i = new Intent(ctx, GymReminderReceiver.class).setAction(actionEnter(ctx));
         if (gymId != null) i.putExtra("gym", gymId);
+        if (slot >= NEAR_SLOT) i.putExtra("near", true);
         // Mutable: the system adds KEY_PROXIMITY_ENTERING to it. Explicit, so nothing else can fill it in.
         int mutable = Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0;
         return PendingIntent.getBroadcast(ctx, REQUEST_BASE + slot, i, flags | mutable);
@@ -105,7 +167,7 @@ final class GymReminder {
     /** Stops every alert this app may have registered. */
     static void unregister(Context ctx) {
         LocationManager lm = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-        for (int slot = 0; slot < MAX_GYMS; slot++) {
+        for (int slot = 0; slot < 2 * MAX_GYMS; slot++) {
             PendingIntent pi = alertIntent(ctx, slot, null, PendingIntent.FLAG_NO_CREATE);
             if (pi == null) continue;
             try {
@@ -138,6 +200,8 @@ final class GymReminder {
             if (Double.isNaN(lat) || Double.isNaN(lng)) continue;
             try {
                 lm.addProximityAlert(lat, lng, radius, -1, alertIntent(ctx, slot, g.optString("id", ""), PendingIntent.FLAG_UPDATE_CURRENT));
+                lm.addProximityAlert(lat, lng, (float) GymReminderRules.approachOf(radius), -1,
+                        alertIntent(ctx, NEAR_SLOT + slot, g.optString("id", ""), PendingIntent.FLAG_UPDATE_CURRENT));
                 n++;
             } catch (SecurityException e) {
                 break;
@@ -158,7 +222,53 @@ final class GymReminder {
         if (!intent.getBooleanExtra(LocationManager.KEY_PROXIMITY_ENTERING, false)) return;
         SharedPreferences p = prefs(ctx);
         if (System.currentTimeMillis() - p.getLong("armedAt", 0) < ARM_GRACE_MS) return;
-        arrive(ctx, intent.getStringExtra("gym"), Calendar.getInstance());
+        if (intent.getBooleanExtra("near", false)) startCheck(ctx, intent.getStringExtra("gym"), Calendar.getInstance());
+        else arrive(ctx, intent.getStringExtra("gym"), Calendar.getInstance());
+    }
+
+    /** The no-nag rule for now (GymReminderRules.skipReason), or "off" without a config. */
+    static String skipNow(Context ctx, Calendar now) {
+        JSONObject c = config(ctx);
+        if (c == null) return "off";
+        JSONObject st = status(ctx);
+        JSONObject win = c.optJSONObject("window");
+        JSONArray gyms = c.optJSONArray("gyms");
+        return GymReminderRules.skipReason(
+                c.optBoolean("on", false), gyms == null ? 0 : gyms.length(),
+                win == null ? null : win.optString("from", null), win == null ? null : win.optString("to", null),
+                st.optString("trainedOn", ""), st.optString("quietOn", ""), st.optLong("activeSince", 0),
+                prefs(ctx).getString("lastFired", ""), now);
+    }
+
+    /**
+     * The phone entered a gym's approach zone: start the short check with live location, unless
+     * today is settled already (no point looking), three checks ran today, or Android refuses.
+     */
+    static void startCheck(Context ctx, String gymId, Calendar now) {
+        String why = skipNow(ctx, now);
+        if (why != null) {
+            note(ctx, "near " + gymId + ": no check (" + why + ")");
+            return;
+        }
+        SharedPreferences p = prefs(ctx);
+        String today = GymReminderRules.isoOf(now);
+        String day = p.getString("scanDay", "");
+        int count = today.equals(day) ? p.getInt("scans", 0) : 0;
+        if (!GymReminderRules.mayScan(day, count, today)) {
+            note(ctx, "near " + gymId + ": no check (3 today)");
+            return;
+        }
+        try {
+            Intent i = new Intent(ctx, GymScanService.class);
+            if (Build.VERSION.SDK_INT >= 26) ctx.startForegroundService(i);
+            else ctx.startService(i);
+            p.edit().putString("scanDay", today).putInt("scans", count + 1).apply();
+            note(ctx, "near " + gymId + ": check started");
+        } catch (Exception e) {
+            // Android may refuse a foreground service from the background: the gym's own alert
+            // still fires, just on the system's slower schedule.
+            note(ctx, "near " + gymId + ": check refused (" + e.getClass().getSimpleName() + ")");
+        }
     }
 
     /** Applies the no-nag rule for arriving at `gymId` now, and posts if it says so. True if posted. */
@@ -166,15 +276,23 @@ final class GymReminder {
         JSONObject c = config(ctx);
         if (c == null) return false;
         JSONObject st = status(ctx);
-        JSONObject win = c.optJSONObject("window");
         JSONArray gyms = c.optJSONArray("gyms");
         SharedPreferences p = prefs(ctx);
-        String why = GymReminderRules.skipReason(
-                c.optBoolean("on", false), gyms == null ? 0 : gyms.length(),
-                win == null ? null : win.optString("from", null), win == null ? null : win.optString("to", null),
-                st.optString("trainedOn", ""), st.optString("quietOn", ""), st.optLong("activeSince", 0),
-                p.getString("lastFired", ""), now);
-        if (why != null) return false;
+        String why = skipNow(ctx, now);
+        if (why != null) {
+            note(ctx, "at " + gymId + ": quiet (" + why + ")");
+            return false;
+        }
+        String today = GymReminderRules.isoOf(now);
+        if (trainedElsewhere(ctx, today)) {
+            // Remember it, so the next alert today needs no network.
+            try {
+                saveStatus(ctx, status(ctx).put("trainedOn", today));
+            } catch (Exception ignored) {
+            }
+            note(ctx, "at " + gymId + ": quiet (trained on another device)");
+            return false;
+        }
         JSONObject gym = null;
         for (int i = 0; gyms != null && i < gyms.length(); i++) {
             JSONObject g = gyms.optJSONObject(i);
@@ -186,7 +304,85 @@ final class GymReminder {
         if (body.isEmpty()) body = "Ready for your workout? 💪";
         if (!post(ctx, title, body, st.optString("channel", ""))) return false;
         p.edit().putString("lastFired", GymReminderRules.isoOf(now)).apply();
+        note(ctx, "at " + gymId + ": posted");
         return true;
+    }
+
+    // ---------------------------------------------------------------- the server's word on today
+
+    private static boolean online(Context ctx) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null) return false;
+            if (Build.VERSION.SDK_INT < 23) {
+                android.net.NetworkInfo ni = cm.getActiveNetworkInfo();
+                return ni != null && ni.isConnected();
+            }
+            Network n = cm.getActiveNetwork();
+            NetworkCapabilities caps = n == null ? null : cm.getNetworkCapabilities(n);
+            return caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Whether the paired server says `today` was trained or excused (GET /api/nudge-check, the
+     * same few bytes the missed-day check asks for). False without a server, offline, on any
+     * error and after SERVER_CHECK_MS: the phone then goes by what it knows. Runs off the main
+     * thread (the receiver's and the check's own threads).
+     */
+    static boolean trainedElsewhere(Context ctx, String today) {
+        JSONObject auth = server(ctx);
+        String base = auth == null ? "" : auth.optString("server", "").replaceAll("/+$", "");
+        if (base.isEmpty()) return false;
+        if (!online(ctx)) {
+            note(ctx, "server check skipped (offline)");
+            return false;
+        }
+        JSONObject headers = auth.optJSONObject("headers");
+        ExecutorService ex = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "opengym-gym-check");
+            t.setDaemon(true);
+            return t;
+        });
+        long t0 = System.currentTimeMillis();
+        Future<Boolean> f = ex.submit(() -> {
+            HttpURLConnection c = (HttpURLConnection) new URL(base + "/api/nudge-check?date=" + URLEncoder.encode(today, "UTF-8")).openConnection();
+            try {
+                c.setConnectTimeout((int) SERVER_CHECK_MS);
+                c.setReadTimeout((int) SERVER_CHECK_MS);
+                c.setInstanceFollowRedirects(false);
+                c.setRequestProperty("Accept", "application/json");
+                if (headers != null) {
+                    for (Iterator<String> it = headers.keys(); it.hasNext();) {
+                        String k = it.next();
+                        c.setRequestProperty(k, headers.optString(k));
+                    }
+                }
+                if (c.getResponseCode() != 200) return false;
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                try (InputStream in = c.getInputStream()) {
+                    byte[] buf = new byte[1024];
+                    for (int n; (n = in.read(buf)) > 0 && out.size() < 8192;) out.write(buf, 0, n);
+                }
+                JSONObject a = new JSONObject(new String(out.toByteArray(), StandardCharsets.UTF_8));
+                return today.equals(a.optString("date", null)) && Boolean.TRUE.equals(a.opt("done"));
+            } finally {
+                c.disconnect();
+            }
+        });
+        try {
+            boolean done = f.get(SERVER_CHECK_MS, TimeUnit.MILLISECONDS);
+            note(ctx, "server check: " + (done ? "done" : "not done") + " in " + (System.currentTimeMillis() - t0) + " ms");
+            return done;
+        } catch (Exception e) {
+            f.cancel(true);
+            note(ctx, "server check: no answer (" + e.getClass().getSimpleName() + ") after " + (System.currentTimeMillis() - t0) + " ms");
+            return false;
+        } finally {
+            ex.shutdownNow();
+        }
     }
 
     static boolean post(Context ctx, String title, String body, String channelName) {

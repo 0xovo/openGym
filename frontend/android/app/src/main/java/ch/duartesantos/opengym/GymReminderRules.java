@@ -54,4 +54,50 @@ final class GymReminderRules {
         if (!inWindow(windowFrom, windowTo, minute)) return "window";
         return null;
     }
+
+    // ---------------------------------------------------------------- the approach check (Android)
+    //
+    // Android looks at proximity alerts only every 30 minutes for an app in the background unless
+    // some other app's location request feeds it a fix. So each gym also gets a wide "approach"
+    // zone. Entering it starts a short, bounded check with live location (GymScanService) that
+    // notices the walk through the door within about one fix interval, then stops.
+
+    /** The approach zone around a gym: at least 800 m, wider for a gym with a wide radius. */
+    static final double APPROACH_MIN_M = 800;
+    /** How long one check may keep the location on, at most: a walk across the zone fits. */
+    static final long SCAN_MAX_MS = 15 * 60_000L;
+    /** How often it asks for a fix while it runs. */
+    static final long SCAN_INTERVAL_MS = 15_000L;
+    /** How many checks one day may start (a commute past the gym, a gym next to the office). */
+    static final int SCANS_PER_DAY = 3;
+    /** A check ends early once the phone is this much beyond every gym's approach zone. */
+    static final double AWAY_MARGIN_M = 250;
+
+    static double approachOf(double radius) {
+        return Math.max(APPROACH_MIN_M, 5 * radius);
+    }
+
+    /**
+     * The gym a fix is inside (its index), or -1. Inside means within the gym's radius, with a fix
+     * good enough to say so: accuracy no worse than twice the radius (and at least 100 m allowed).
+     */
+    static int insideOf(double[] dist, double[] radius, double accuracy) {
+        int best = -1;
+        for (int i = 0; i < dist.length; i++) {
+            if (dist[i] > radius[i] || accuracy > Math.max(100, 2 * radius[i])) continue;
+            if (best < 0 || dist[i] < dist[best]) best = i;
+        }
+        return best;
+    }
+
+    /** True when the phone has left every gym's approach zone (with a margin): the check stops. */
+    static boolean awayFromAll(double[] dist, double[] radius) {
+        for (int i = 0; i < dist.length; i++) if (dist[i] <= approachOf(radius[i]) + AWAY_MARGIN_M) return false;
+        return true;
+    }
+
+    /** Whether another check may start today, given the day the last ones ran and how many. */
+    static boolean mayScan(String scanDay, int scansThatDay, String today) {
+        return !today.equals(scanDay) || scansThatDay < SCANS_PER_DAY;
+    }
 }

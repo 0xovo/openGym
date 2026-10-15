@@ -103,7 +103,7 @@
   <h1>Privacy</h1>
   <p class="lead">This page covers the openGym apps for Android and iPhone (the APK from this
      site and GitHub, the Google Play and App Store versions) and this website.
-     Last changed: 11 October 2026.</p>
+     Last changed: 15 October 2026.</p>
 
   <h2 id="short">The short version</h2>
   <ul>
@@ -113,7 +113,8 @@
     <li><b>Your training log stays on your phone.</b> Workouts, plans, body weight, photos and
         settings are stored in the app's own storage on your device. We never receive them.</li>
     <li><b>You decide what leaves the phone</b>, and only these things can: a backup you export,
-        a server you connect, the AI coach if you set it up, and Health Connect if you switch it on.</li>
+        a server you connect, the AI coach if you set it up, Health Connect if you switch it on,
+        and the address search of the gym reminder.</li>
   </ul>
 
   <h2 id="online">When the app goes online</h2>
@@ -144,6 +145,14 @@
      The camera is used only when you scan your gym membership code or take a photo or video of
      an exercise you add yourself; scanned images are read on the phone and never stored or
      sent. Notifications (workout reminder, end of a rest) are scheduled on the phone itself.</p>
+  <p><b>Gym reminder</b> (phone app, off until you switch it on). Where your gyms are stays on your
+     phone: not synced, not in backups, not sent to us or to your server. The phone itself notices
+     when you walk in (Android's location service or iOS region monitoring), so nobody, us
+     included, learns where you go. We don't want to know, honestly. Two things do go out: an
+     address you search for on the map goes to OpenStreetMap's Nominatim (just the text you
+     typed), and the map tiles come from OpenStreetMap. And if the phone is connected to your own
+     server, it asks that server "trained today already?" when you arrive, so a workout logged on
+     your laptop doesn't get you nagged. That question carries the date, not your location.</p>
   <p><b>Deleting your data:</b> it's on your phone, so Settings → Reset or uninstalling the app
      removes it. A backup file you exported is yours to keep or delete. On a server you
      connected, delete your profile there.</p>
