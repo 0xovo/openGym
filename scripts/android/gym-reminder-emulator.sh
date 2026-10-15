@@ -53,6 +53,8 @@ walk_in() {  # out, wait out the 90 s arming grace, in; returns after up to 75 s
 }
 
 $ADB install -r -g "$APK" >/dev/null
+# A fresh start: an earlier run today would have left "went off today" behind.
+$ADB shell pm clear "$PKG" >/dev/null
 for p in ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION ACCESS_BACKGROUND_LOCATION POST_NOTIFICATIONS; do
   $ADB shell pm grant "$PKG" "android.permission.$p" 2>/dev/null || true
 done
@@ -77,8 +79,8 @@ foreground; cdp "location.hash = '#/settings'; location.hash"
 $ADB shell input keyevent KEYCODE_HOME; sleep 2
 $ADB shell cmd statusbar expand-notifications; sleep 3
 $ADB shell uiautomator dump /sdcard/ui.xml >/dev/null
-set -- $($ADB shell cat /sdcard/ui.xml | grep -o 'text="Gym spotted"[^>]*bounds="[^"]*"' | head -1 | grep -o 'bounds="[^"]*"' | grep -o '[0-9]*' | tr '\n' ' ')
-$ADB shell input tap $(( ($1+$3)/2 )) $(( ($2+$4)/2 )); sleep 8
+set -- 0 0 0 0 $($ADB shell cat /sdcard/ui.xml | grep -o 'text="Gym spotted"[^>]*bounds="[^"]*"' | head -1 | grep -o 'bounds="[^"]*"' | grep -o '[0-9]*' | tr '\n' ' ')
+shift 4; [ $# -eq 4 ] && $ADB shell input tap $(( ($1+$3)/2 )) $(( ($2+$4)/2 )); sleep 8
 h=$(cdp "location.hash"); echo "   route after the tap: $h"; [ "$h" = '=> "#/workout"' ] || FAIL=1
 echo "   left in the shade: $(count)"
 

@@ -308,9 +308,14 @@ opens the Start screen (or the running workout).
   `GymReminderCenter` the location delegate at launch so the event lands. On an iPhone with an
   Apple Watch the notification shows on the watch as usual.
 
-Testing on the Android emulator: add a gym, wait 90 s, `adb emu geo fix <lng> <lat>` somewhere
-far away, then inside the radius; the notification arrives within a minute or two
-(`scripts/android/gym-reminder-emulator.sh` does exactly that).
+Testing on the Android emulator: `scripts/android/gym-reminder-emulator.sh <debug apk>` saves a
+gym, moves the phone far away and then inside the radius, and checks the notification, the tap
+(lands on `#/workout`) and the no-nag rules. `adb emu geo fix` alone is not enough there: it feeds
+the GPS provider, while proximity alerts are fed by the fused provider, so the script replaces that
+with a shell test provider (`cmd location providers ...`). Android polls proximity alerts at most
+every 30 min on its own (`location_background_throttle_proximity_alert_interval_ms`), faster
+whenever other apps get fixes; the script lowers it to 15 s. On a real phone that means the nudge
+usually comes within minutes, at worst about half an hour after you walk in.
 
 ## Prerequisites
 
