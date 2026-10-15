@@ -2474,7 +2474,6 @@ export default {
   'Always': 'Всегда',
   'Couldn’t find where you are. Try the map instead.': 'Не получилось тебя найти. Попробуй карту.',
   'Finding you…': 'Ищем тебя…',
-  'From': 'С',
   'Gym reminder': 'Напоминание в зале',
   'Checking if you made it to the gym': 'Проверяем, добрался ли ты до зала',
   'Quick arrival check': 'Быстрая проверка прихода',

@@ -2470,7 +2470,6 @@ export default {
   'Always': '항상',
   'Couldn’t find where you are. Try the map instead.': '위치를 찾지 못했어요. 지도로 해 보세요.',
   'Finding you…': '위치 찾는 중…',
-  'From': '시작',
   'Gym reminder': '헬스장 알림',
   'Checking if you made it to the gym': '헬스장에 도착했는지 확인하는 중',
   'Quick arrival check': '빠른 도착 확인',

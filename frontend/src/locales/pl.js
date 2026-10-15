@@ -2470,7 +2470,6 @@ export default {
   'Always': 'Zawsze',
   'Couldn’t find where you are. Try the map instead.': 'Nie możemy cię znaleźć. Spróbuj mapy.',
   'Finding you…': 'Szukamy cię…',
-  'From': 'Od',
   'Gym reminder': 'Przypomnienie na siłowni',
   'Checking if you made it to the gym': 'Sprawdzam, czy dotarłeś na siłownię',
   'Quick arrival check': 'Szybkie wykrycie przyjścia',

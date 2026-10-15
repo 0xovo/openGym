@@ -2481,7 +2481,6 @@ export default {
   'Always': 'ตลอด',
   'Couldn’t find where you are. Try the map instead.': 'หาตำแหน่งคุณไม่เจอ ลองใช้แผนที่แทน',
   'Finding you…': 'กำลังหาคุณ…',
-  'From': 'ตั้งแต่',
   'Gym reminder': 'เตือนเมื่อถึงยิม',
   'Checking if you made it to the gym': 'กำลังดูว่าคุณถึงยิมแล้วหรือยัง',
   'Quick arrival check': 'ตรวจการมาถึงแบบเร็ว',

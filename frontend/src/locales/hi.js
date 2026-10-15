@@ -2470,7 +2470,6 @@ export default {
   'Always': 'हमेशा',
   'Couldn’t find where you are. Try the map instead.': 'आपकी लोकेशन नहीं मिली। मैप आज़माएँ।',
   'Finding you…': 'आपको ढूँढ रहे हैं…',
-  'From': 'से',
   'Gym reminder': 'जिम रिमाइंडर',
   'Checking if you made it to the gym': 'देख रहे हैं कि आप जिम पहुँचे या नहीं',
   'Quick arrival check': 'जल्दी पहुँचने की जाँच',

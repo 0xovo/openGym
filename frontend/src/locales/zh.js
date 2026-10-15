@@ -2470,7 +2470,6 @@ export default {
   'Always': '始终',
   'Couldn’t find where you are. Try the map instead.': '找不到你的位置。试试地图吧。',
   'Finding you…': '正在定位…',
-  'From': '从',
   'Gym reminder': '健身房提醒',
   'Checking if you made it to the gym': '正在看看你到健身房了没',
   'Quick arrival check': '到达快速检测',

@@ -2467,7 +2467,6 @@ export default {
   'Always': 'Завжди',
   'Couldn’t find where you are. Try the map instead.': 'Не вдалося тебе знайти. Спробуй карту.',
   'Finding you…': 'Шукаємо тебе…',
-  'From': 'З',
   'Gym reminder': 'Нагадування в залі',
   'Checking if you made it to the gym': 'Перевіряємо, чи ти дістався до залу',
   'Quick arrival check': 'Швидка перевірка приходу',

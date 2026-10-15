@@ -2470,7 +2470,6 @@ export default {
   'Always': 'Her Zaman',
   'Couldn’t find where you are. Try the map instead.': 'Seni bulamadık. Haritayı dene.',
   'Finding you…': 'Seni arıyoruz…',
-  'From': 'Başlangıç',
   'Gym reminder': 'Salon hatırlatıcısı',
   'Checking if you made it to the gym': 'Spor salonuna varıp varmadığına bakılıyor',
   'Quick arrival check': 'Hızlı varış kontrolü',

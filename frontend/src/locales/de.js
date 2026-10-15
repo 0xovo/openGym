@@ -2490,7 +2490,6 @@ export default {
   'Always': 'Immer',
   'Couldn’t find where you are. Try the map instead.': 'Wir finden dich gerade nicht. Versuch es mit der Karte.',
   'Finding you…': 'Suche dich…',
-  'From': 'Von',
   'Gym reminder': 'Gym-Erinnerung',
   'Checking if you made it to the gym': 'Schaue, ob du es ins Gym geschafft hast',
   'Quick arrival check': 'Schneller Ankunfts-Check',

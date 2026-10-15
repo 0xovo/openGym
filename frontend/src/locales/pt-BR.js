@@ -1552,7 +1552,6 @@ export const PT_BR_OVERRIDES = {
   'Always': 'Sempre',
   'Couldn’t find where you are. Try the map instead.': 'Não conseguimos achar você. Tente o mapa.',
   'Finding you…': 'Procurando você…',
-  'From': 'Das',
   'Gym reminder': 'Lembrete da academia',
   'Checking if you made it to the gym': 'Vendo se você chegou na academia',
   'Quick arrival check': 'Detecção rápida na chegada',

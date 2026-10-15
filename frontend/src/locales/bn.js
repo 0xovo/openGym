@@ -2549,7 +2549,6 @@ export default {
   'Always': 'সবসময়',
   'Couldn’t find where you are. Try the map instead.': 'আপনাকে খুঁজে পাওয়া গেল না। ম্যাপ দিয়ে চেষ্টা করুন।',
   'Finding you…': 'আপনাকে খুঁজছি…',
-  'From': 'থেকে',
   'Gym reminder': 'জিম রিমাইন্ডার',
   'Checking if you made it to the gym': 'দেখছি তুমি জিমে পৌঁছেছ কি না',
   'Quick arrival check': 'দ্রুত পৌঁছানোর চেক',

@@ -2473,7 +2473,6 @@ export default {
   'Always': 'Mindig',
   'Couldn’t find where you are. Try the map instead.': 'Nem találunk. Próbáld a térképpel.',
   'Finding you…': 'Keresünk…',
-  'From': 'Ettől',
   'Gym reminder': 'Edzőterem-emlékeztető',
   'Checking if you made it to the gym': 'Nézzük, beértél-e az edzőterembe',
   'Quick arrival check': 'Gyors érkezésfigyelés',

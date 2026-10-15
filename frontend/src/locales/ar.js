@@ -2525,7 +2525,6 @@ export default {
   'Always': 'دائمًا',
   'Couldn’t find where you are. Try the map instead.': 'لم نجد موقعك. جرّب الخريطة.',
   'Finding you…': 'نبحث عنك…',
-  'From': 'من',
   'Gym reminder': 'تذكير الصالة',
   'Checking if you made it to the gym': 'نتحقق إن كنت وصلت إلى النادي',
   'Quick arrival check': 'فحص سريع عند الوصول',
