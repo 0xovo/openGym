@@ -96,7 +96,7 @@ function openPrompt() {
 
 const LIST = {
   passkeys: [
-    { id: 'k/1+', name: 'Laptop', created: '2025-09-01T10:00:00.000Z', lastUsed: new Date().toISOString(), transports: ['internal'] },
+    { id: 'k/1+', name: 'Laptop', created: new Date(2025, 8, 1, 12).toISOString(), lastUsed: new Date().toISOString(), transports: ['internal'] },
     { id: 'k2', name: null, created: null, lastUsed: null, transports: [] }
   ],
   password: false, lastWayIn: false

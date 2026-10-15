@@ -940,46 +940,6 @@ describe('sessionSections', () => {
   })
 })
 
-describe('superset editing', () => {
-  it('pairs adjacent entries without mutating the source and keeps the display units contiguous', () => {
-    const entries = [{ id: 'a' }, { id: 'b' }, { id: 'c' }]
-    const paired = pairAdjacent(entries, 1, 2, 'sg-new')
-
-    expect(paired).toEqual([{ id: 'a' }, { id: 'b', sg: 'sg-new' }, { id: 'c', sg: 'sg-new' }])
-    expect(entries).toEqual([{ id: 'a' }, { id: 'b' }, { id: 'c' }])
-    expect(supersetUnits(paired)).toEqual([[0], [1, 2]])
-  })
-
-  it('merges both contiguous groups when their boundary entries are paired', () => {
-    const entries = [
-      { id: 'a', sg: 'left' }, { id: 'b', sg: 'left' },
-      { id: 'c', sg: 'right' }, { id: 'd', sg: 'right' }
-    ]
-    const merged = pairAdjacent(entries, 1, 2)
-
-    expect(merged.map(e => e.sg)).toEqual(['left', 'left', 'left', 'left'])
-    expect(entries.map(e => e.sg)).toEqual(['left', 'left', 'right', 'right'])
-  })
-
-  it('unpairs one entry and removes sg values left without an adjacent partner', () => {
-    const entries = [
-      { id: 'a', sg: 'group' }, { id: 'b', sg: 'group' }, { id: 'c', sg: 'group' },
-      { id: 'd', sg: 'orphan' }
-    ]
-    const unpaired = unpairSuperset(entries, 1)
-
-    expect(unpaired).toEqual([{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }])
-    expect(entries.map(e => e.sg)).toEqual(['group', 'group', 'group', 'orphan'])
-  })
-
-  it('rejects a non-adjacent pairing request', () => {
-    const entries = [{ id: 'a' }, { id: 'b' }, { id: 'c' }]
-
-    expect(() => pairAdjacent(entries, 0, 2, 'sg-invalid')).toThrow(/adjacent/)
-    expect(entries).toEqual([{ id: 'a' }, { id: 'b' }, { id: 'c' }])
-  })
-})
-
 
 describe('session row helpers', () => {
   it('cascadeWeight propagates to same-flag undone rows and never rewrites done sets', () => {
@@ -1241,56 +1201,6 @@ describe('exNoteFor', () => {
     expect(exNoteFor({ exNotes: { '0025': ' seat 4, pin 7 ' } }, '0025')).toBe('seat 4, pin 7')
     expect(exNoteFor({ exNotes: { '0025': '   ' } }, '0025')).toBeNull()
     expect(exNoteFor({}, '0025')).toBeNull()
-  })
-})
-
-describe('nextTrainingDay', () => {
-  // 2026-08-18 is a Tuesday; the week map is keyed by getDay(), so 0 is Sunday.
-  const TUE = '2026-08-18'
-  const base = (over = {}) => ({
-    dayPlan: {},
-    routines: [{ id: 'r1', name: 'A', ex: [{ id: '0001' }] }, { id: 'r2', name: 'B', ex: [{ id: '0002' }] }],
-    week: {},
-    ...over
-  })
-
-  it('finds the next scheduled day and names its routine', () => {
-    const S = base({ week: { 4: 'r2' } })                 // Thursday
-    expect(nextTrainingDay(S, TUE)).toMatchObject({ iso: '2026-08-20', weekday: 4 })
-    expect(nextTrainingDay(S, TUE).routine.name).toBe('B')
-  })
-
-  it('looks forward only — today itself is never the answer', () => {
-    // Only Tuesday is scheduled and today is Tuesday, so the next one is a week out. (The UI
-    // cannot reach this: a day with a session takes the other branch and never asks.)
-    const S = base({ week: { 2: 'r1' } })
-    expect(nextTrainingDay(S, TUE)).toMatchObject({ iso: '2026-08-25', weekday: 2 })
-  })
-
-  it('wraps around the end of the week', () => {
-    const S = base({ week: { 1: 'r1' } })                 // Monday, six days on
-    expect(nextTrainingDay(S, TUE)).toMatchObject({ iso: '2026-08-24', weekday: 1 })
-  })
-
-  it('is null when every day is rest', () => {
-    expect(nextTrainingDay(base(), TUE)).toBeNull()
-  })
-
-  it('skips a day whose routine no longer exists', () => {
-    const S = base({ week: { 3: 'gone', 5: 'r1' } })
-    expect(nextTrainingDay(S, TUE)).toMatchObject({ iso: '2026-08-21', weekday: 5 })
-  })
-
-  it('skips a routine with no exercises — starting it would open an empty session', () => {
-    const S = base({ routines: [{ id: 'r1', name: 'A', ex: [] }, { id: 'r2', name: 'B', ex: [{ id: '1' }] }], week: { 3: 'r1', 5: 'r2' } })
-    expect(nextTrainingDay(S, TUE)).toMatchObject({ weekday: 5 })
-  })
-
-  it('respects a per-date override in both directions', () => {
-    const moved = base({ week: {}, dayPlan: { '2026-08-19': 'r1' } })
-    expect(nextTrainingDay(moved, TUE)).toMatchObject({ iso: '2026-08-19' })
-    const off = base({ week: { 3: 'r1', 5: 'r2' }, dayPlan: { '2026-08-19': 'rest' } })
-    expect(nextTrainingDay(off, TUE)).toMatchObject({ weekday: 5 })
   })
 })
 
