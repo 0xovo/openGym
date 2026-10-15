@@ -52,6 +52,8 @@ import { platformNow } from '../lib/platform-now.js'
 import { pathBefore } from '../lib/nav.js'
 import WatchSettingsPage from './WatchSettings.jsx'
 import { reportSheet } from '../components/ReportSheet.jsx'
+import GymReminderPage, { GymEditPage } from './GymReminder.jsx'
+import { readGymConfig } from '../lib/gym-reminder.js'
 
 /* Settings (v1.3.11). The root is one screen: an account card, eleven rows that each open a page
    (/settings/<page>), and a search over every row. Rare things live one level further down
@@ -74,7 +76,7 @@ export function SettingsRoute() {
   // that did not know yet sent every visit to it straight back to the root.
   // (Unknown counts as yes inside the phone app: the page itself then says there is no watch.)
   const ctx = { user: useStore(s => s.user), mobile: MOBILE, ios: MOBILE && platformNow() !== 'android' }
-  if (page && (!PAGES[page] || !pageVisible(PAGES[page].parent || page, ctx))) return <Navigate to="/settings" replace />
+  if (page && (!PAGES[page] || !pageVisible(PAGES[page].parent || page, ctx) || !pageVisible(page, ctx))) return <Navigate to="/settings" replace />
   if (page === 'coach') return <Navigate to="/coach/setup" replace />
   return <Settings key={page || 'root'} page={page || null} find={loc.state?.find || null} via={loc.state?.via || null} entryKey={loc.key} />
 }
@@ -113,6 +115,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
   const importRef = useRef(null)
   const body = useRef(null)
   const wakeOK = wakeLockSupported()
+  // The gym reminder's switch lives on its own page and on this device only (lib/gym-reminder.js).
+  const gymOn = MOBILE && readGymConfig().on
 
   // A planner's own queue (no rotationId, or one that doesn't match the saved rotation here) is
   // not this app's to switch off or overwrite. The Scheduling row goes read-only for it.
@@ -491,6 +495,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
 
   const pages = {
     watch: () => <WatchSettingsPage />,
+    gym: () => <GymReminderPage />,
+    'gym-edit': () => <GymEditPage />,
     workout: () => <>
       <Section title={t('Rest')} footer={t('Each exercise can have its own rest too. Set it in the exercise settings of a routine.')}>
         {restRow}
@@ -670,7 +676,12 @@ export default function Settings({ page = null, find = null, via = null, entryKe
       </>
     },
 
-    reminders: () => <NotificationsCard S={S} update={update} toast={toast} />,
+    reminders: () => <>
+      <NotificationsCard S={S} update={update} toast={toast} />
+      {MOBILE && <Section footer={t('A nudge when you walk into your gym.')}>
+        <Row icon="mapPin" iconTint="var(--green)" title={t('Gym reminder')} value={gymOn ? t('On') : t('Off')} accessory="chevron" onClick={() => nav('/settings/gym')} />
+      </Section>}
+    </>,
 
     plan: () => <>
       <Section>

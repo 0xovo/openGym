@@ -112,6 +112,17 @@ when the app may check in the background; opening the app always catches up.)
   pull requests by @anshuman83-40 (#526, #530) and @tfdmendes (#543). The CLA wasn't signed yet,
   so we built our own take for this release, but the ideas are theirs. Thank you!
 
+**Gym reminder** (#614, phone app). Walk into your gym and openGym nudges you to hit Start. Add
+your gyms in Settings → Reminders → Gym reminder: "I'm at the gym right now" or a pin on an
+OpenStreetMap map, each with its own radius and text. Once a day at most, never after you trained,
+never mid-workout, optionally only between certain hours. Off by default, and your gyms stay on
+the phone (not on your server, not in backups). Android uses the system's own proximity alerts,
+so no Google services are needed. Android can be slow to notice you arrived (up to half an hour),
+so near a gym the phone can take a short GPS look and nudge you at the door; that needs openGym's
+battery use on Unrestricted (Settings shows it as "Quick arrival check"). And if you logged a
+workout on your laptop that your phone hasn't synced yet, the phone asks your server first (3
+seconds at most) instead of nagging you anyway.
+
 **Security.** Five private reports, all fixed, plus our own audit. Thanks to Boris Kurktchiev
 for the reports, each with a patch and a test. Self-hosters: please update.
 

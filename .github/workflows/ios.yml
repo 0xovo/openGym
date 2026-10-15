@@ -96,6 +96,12 @@ jobs:
         run: |
           set -o pipefail
           swift test 2>&1 | tail -60
+      # The gym reminder's no-nag rule (#614), compiled into the iPhone app, tested on the Mac.
+      - name: GymReminderCore tests
+        working-directory: frontend/ios/App/GymReminderCore
+        run: |
+          set -o pipefail
+          swift test 2>&1 | tail -60
       # The widgets and the Live Activity's extension, likewise until it is committed.
       - run: ruby ios/ci/add-widgets.rb
         working-directory: frontend

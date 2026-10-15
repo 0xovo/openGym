@@ -333,6 +333,90 @@ Worth checking on a device: picking 720 px starts a download that shows its prog
 animation sharpens once it is done; Delete frees the space and the animation falls back; on
 cellular with Wi-Fi only on, it waits; Still only shows stills everywhere a workout shows media.
 
+### Gym reminder (#614)
+
+Settings → Reminders → **Gym reminder**, in the phone app only (the web build has no such page:
+a browser cannot watch where you are with the page closed). Off by default. Add gyms with "I'm at
+the gym right now" (the phone's position) or a pin on an OpenStreetMap map (Leaflet; the address
+search asks Nominatim, only on an explicit tap of Search, with a User-Agent naming the app). Each
+gym has a radius (100 m by default, 50 to 500) and an optional text. Up to 20 gyms (iOS watches at
+most 20 regions per app). Walking into one posts "Gym spotted. Ready for your workout? 💪"; a tap
+opens the Start screen (or the running workout).
+
+- **No nagging** (`src/lib/gym-reminder.js` `skipReason`, the same rule in
+  `GymReminderRules.java` and `ios/App/GymReminderCore`): at most once a day, not after a workout
+  logged today, not on a day note that excuses today, not while a session started in the last
+  12 hours runs, and only inside the optional time window (an overnight one wraps). The phone
+  decides when the gym is entered, from what the page last told it (`GymReminder.status`, sent
+  after every save of the profile and on every return to the app).
+- **Trained on another device?** A workout logged on the web or another phone that this phone has
+  not synced yet: before posting, a paired phone asks its server (`GET /api/nudge-check`, the same
+  few bytes the missed-day check uses) whether today is done, bounded to **3 seconds** (Android:
+  a future with a timeout around `HttpURLConnection`, so a hanging DNS lookup cannot stretch it;
+  iOS: an ephemeral `URLSession` with 3 s timeouts plus a hard stop). "Done" keeps it quiet and is
+  remembered for the rest of the day. No server (local only), offline, an error or no answer in
+  time: the phone's own status decides, as before. The page hands over the server and its headers
+  with `GymReminder.server` (`lib/gym-reminder.js` `pushGymServer`); Android keeps them encrypted
+  with the app's Keystore key (`NudgeCheck.seal`), iOS in the Keychain (this device only).
+- **Locations stay on the phone.** The gyms live only in the native side's own storage: Android
+  `shared_prefs/opengym_gym_reminder.xml`, left out of cloud backup and device transfer
+  (`res/xml/*_rules.xml`); iOS `Application Support/gym-reminder.json`, excluded from backups. The
+  WebView's storage keeps only an on/off flag (it is part of phone backups), the synced profile
+  and backup files never see any of it.
+- **Android:** the platform's proximity alerts (`LocationManager.addProximityAlert`), no Google
+  Play Services, so the APK and F-Droid builds have it too. Location while in use is asked when
+  you add a gym from where you stand; "Allow all the time" (`ACCESS_BACKGROUND_LOCATION`) only
+  after the in-app explainer, and from Android 11 on that is the system's settings page.
+  `GymReminderReceiver` gets the alert, `GymReminderBootReceiver` registers the alerts again after
+  a restart or an app update. An alert added while you are already inside reports an entry at once;
+  entries in the first 90 s after arming are ignored. How soon an entry is noticed is the system's
+  call: Android's geofencing service asks for a fix only every 30 min for a background app
+  (`location_background_throttle_proximity_alert_interval_ms`) and otherwise piggybacks on fixes
+  other apps cause. On a phone with Google Play Services those come often; on a phone without
+  (and indoors, where GPS may not get a fix at all) the nudge could come half an hour late.
+- **Approach check (Android):** every gym also gets a wide proximity alert, the approach zone
+  (800 m, or 5× the radius for big ones; `GymReminderRules.approachOf`). Entering it starts
+  `GymScanService`, a location foreground service that asks for a fix every 15 s (fused, high
+  accuracy) and stops at the first of: inside a gym (then the usual no-nag rule and the server
+  check decide), beyond every approach zone + 250 m, today settled meanwhile, or **15 minutes**.
+  At most **3 checks a day**, none once today is settled (fired, trained, excused, outside the
+  window), so a normal day costs one check of a few minutes and the worst case is 45 min of GPS.
+  Its notification is a silent one on its own channel (`gym-reminder-check`, IMPORTANCE_MIN) and
+  goes away with the check (Android holds a new foreground-service notification back for up to
+  10 s, so a check that ends quickly may never show one). Catch: Android 12+ lets a background app start a foreground service
+  only with an exemption, and a proximity alert is not one (checked on the emulator:
+  `ForegroundServiceStartNotAllowedException`). It works with openGym's battery use on
+  **Unrestricted** (started directly) or with "Alarms & reminders" allowed (an exact alarm half a
+  second later starts it); the gym page shows this as "Quick arrival check" and leads to the app's
+  settings. Without either, the gym's own alert still fires on the system's schedule. Trade-offs
+  considered: the Play Services Geofencing API would give ~2 min latency on the `play` flavour
+  without any of this (and its transitions do exempt a service start), but adds a Google
+  dependency and a second code path; a periodic location poll would cost battery all day for one
+  arrival. Google Play: the `play` flavour now also declares a `location` foreground service type,
+  which needs the foreground-service declaration in the Play Console next to the background
+  location one (same feature, same video).
+- **iOS:** region monitoring (`CLLocationManager`, `GymReminderPlugin.swift`). Needs **Always**
+  location and Precise Location; no background location mode is declared (region monitoring does
+  not need one). iOS relaunches the app in the background on arrival; `AppDelegate` makes
+  `GymReminderCenter` the location delegate at launch so the event lands. On an iPhone with an
+  Apple Watch the notification shows on the watch as usual.
+
+Testing on the Android emulator: `scripts/android/gym-reminder-emulator.sh <debug apk>` saves a
+gym, moves the phone far away and then inside the radius, and checks the notification, the tap
+(lands on `#/workout`) and the no-nag rules. `adb emu geo fix` alone is not enough there: it feeds
+the GPS provider, while proximity alerts are fed by the fused provider, so the script replaces that
+with a shell test provider (`cmd location providers ...`). Android polls proximity alerts at most
+every 30 min on its own (`location_background_throttle_proximity_alert_interval_ms`), faster
+whenever other apps get fixes; the script lowers it to 15 s. On a real phone that means the nudge
+usually comes within minutes, at worst about half an hour after you walk in.
+
+`scripts/android/gym-reminder-approach-emulator.sh <debug apk>` (EXEMPT=battery|alarm|none) proves
+the approach check with the throttle left at Android's default: the app is closed, the phone
+waits in the approach zone, the check starts (its location request shows in `dumpsys location`),
+then the phone walks in at 1.4 m/s and the time from crossing the radius to the notification is
+measured; then the server check against a fake paired server on the host (trained elsewhere:
+quiet; a black-holed server: posts after the 3 s bound; no server: posts).
+
 ## Prerequisites
 
 - Node 22 (the Capacitor 8 CLI needs it)

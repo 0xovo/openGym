@@ -234,6 +234,9 @@ export function buildNudgeNotifications(S, now = new Date()) {
 // may just have been edited. `interactive` gates the OS permission prompt to the Settings toggle;
 // a background resync never pops a dialog.
 export async function syncReminder(S, interactive = false) {
+  // The gym reminder (lib/gym-reminder.js) decides on the phone whether to go off, from what it
+  // was last told about today: told again here, after every save and on every return to the app.
+  if (MOBILE) import('./gym-reminder.js').then(m => m.pushGymStatus(S)).catch(() => {})
   try {
     const { LocalNotifications } = await import('@capacitor/local-notifications')
     await LocalNotifications.cancel({ notifications: [

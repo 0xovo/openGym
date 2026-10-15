@@ -2186,3 +2186,19 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   left:calc(-1 * var(--eb-l,0px));right:calc(-1 * var(--eb-r,0px));
   box-shadow:0 0 28px rgba(0,0,0,.28);
 }
+
+/* Gym reminder (#614, views/GymReminder.jsx): the map with its pin and radius, and the editor rows */
+.gym-map-wrap{margin:0 0 22px}
+.gym-map{height:300px;border-radius:12px;overflow:hidden;background:var(--surface-2);z-index:0;isolation:isolate}
+.gym-map .leaflet-control-attribution{font-size:10px}
+.gym-pin span{display:block;width:30px;height:30px;border-radius:50% 50% 50% 0;background:var(--acc);transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.35);border:2px solid #fff}
+.gym-radius{stroke:var(--acc);fill:var(--acc);stroke-width:2}
+.gym-search{display:flex;gap:8px;align-items:center;padding:8px 12px}
+.gym-search>.field{flex:1;min-width:0;width:auto}
+.gym-search>.btn{flex:none;width:auto;padding-left:16px;padding-right:16px}
+.gym-field{padding:8px 12px}
+.gym-field input{width:100%}
+.gym-radius-row{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.gym-radius-row>:first-child{flex:1}
+.gym-radius-val{min-width:64px;text-align:end;font-variant-numeric:tabular-nums;color:var(--label-2)}
+.gym-actions{display:flex;flex-direction:column;gap:10px;margin:4px 0 30px}
