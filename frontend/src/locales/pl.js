@@ -2052,7 +2052,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Zainstaluj Health Connect, aby udostępniać treningi i pomiary wagi innym aplikacjom.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Zaktualizuj Health Connect, aby udostępniać treningi i pomiary wagi innym aplikacjom.',
   'Permission withdrawn. Tap to allow again': 'Uprawnienie cofnięte — dotknij, aby przyznać ponownie',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Treningi i pomiary wagi trafiają do Health Connect, gdy je kończysz lub zmieniasz. openGym niczego stamtąd nie odczytuje.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Treningi i pomiary wagi trafiają do Health Connect, gdy je kończysz lub zmieniasz.',
   'Health Connect permission not granted': 'Nie przyznano uprawnienia Health Connect',
   'Could not write to Health Connect': 'Nie udało się zapisać w Health Connect',
   'Writing to Health Connect': 'Zapisywanie w Health Connect włączone',
@@ -2454,4 +2454,10 @@ export default {
   'Save as PDF': 'Zapisz jako PDF',
   'Performance report (PDF)': 'Raport wyników (PDF)',
   'Charts, totals and every workout of the last days or weeks.': 'Wykresy, sumy i każdy trening z ostatnich dni lub tygodni.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'Tętno z zegarka',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Po treningu każda seria dostaje tętno zapisane przez zegarek. Garmin, Fitbit, Galaxy Watch i spółka mile widziani.',
+  'Weigh-ins from other apps': 'Pomiary wagi z innych aplikacji',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'Pomiary z twojej inteligentnej wagi trafiają tutaj. Ten wpisany ręcznie zawsze wygrywa.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym czyta tylko, gdy jest otwarty: tętno z treningów z ostatniej doby, pomiary wagi z ostatnich 30 dni. Starsze treningi zostają bez zmian.',
 }

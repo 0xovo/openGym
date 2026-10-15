@@ -2068,7 +2068,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': '請安裝 Health Connect，才能與其他 App 分享訓練和體重紀錄。',
   'Update Health Connect to share workouts and weigh-ins with other apps.': '請更新 Health Connect，才能與其他 App 分享訓練和體重紀錄。',
   'Permission withdrawn. Tap to allow again': '權限已被撤回。點一下重新允許',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': '訓練與體重紀錄會在你完成或修改時寫入 Health Connect。openGym 不會讀取任何資料。',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': '訓練與體重紀錄會在你完成或修改時寫入 Health Connect。',
   'Health Connect permission not granted': '未授予 Health Connect 權限',
   'Could not write to Health Connect': '無法寫入 Health Connect',
   'Writing to Health Connect': '正在寫入 Health Connect',
@@ -2447,4 +2447,10 @@ export default {
   'Save as PDF': '儲存為 PDF',
   'Performance report (PDF)': '訓練表現報告（PDF）',
   'Charts, totals and every workout of the last days or weeks.': '最近幾天或幾週的圖表、總計和每次訓練。',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': '來自手錶的心率',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': '訓練結束後，每組都會得到手錶儲存的心率。Garmin、Fitbit、Galaxy Watch 等等都歡迎。',
+  'Weigh-ins from other apps': '來自其他 App 的體重紀錄',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': '智慧體重計的紀錄會出現在這裡。你自己輸入的永遠優先。',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym 只在開啟時讀取：最近一天訓練的心率，最近 30 天的體重紀錄。更早的訓練維持不變。',
 }

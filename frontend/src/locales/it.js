@@ -2052,7 +2052,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Installa Connessione Salute per condividere allenamenti e pesate con altre app.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Aggiorna Connessione Salute per condividere allenamenti e pesate con altre app.',
   'Permission withdrawn. Tap to allow again': 'Permesso revocato — tocca per concederlo di nuovo',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Allenamenti e pesate vanno in Connessione Salute quando li concludi o li modifichi. openGym non legge nulla.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Allenamenti e pesate vanno in Connessione Salute quando li concludi o li modifichi.',
   'Health Connect permission not granted': 'Permesso di Connessione Salute non concesso',
   'Could not write to Health Connect': 'Impossibile scrivere in Connessione Salute',
   'Writing to Health Connect': 'Scrittura in Connessione Salute attiva',
@@ -2454,4 +2454,10 @@ export default {
   'Save as PDF': 'Salva come PDF',
   'Performance report (PDF)': 'Report delle prestazioni (PDF)',
   'Charts, totals and every workout of the last days or weeks.': 'Grafici, totali e ogni allenamento degli ultimi giorni o settimane.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'Battito dal tuo orologio',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Dopo l’allenamento ogni serie riceve il battito salvato dal tuo orologio. Garmin, Fitbit, Galaxy Watch e compagnia benvenuti.',
+  'Weigh-ins from other apps': 'Pesate da altre app',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'Le pesate della tua bilancia smart arrivano qui. Quella che inserisci tu vince sempre.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym legge solo mentre è aperto: battito degli allenamenti dell’ultimo giorno, pesate degli ultimi 30 giorni. Gli allenamenti più vecchi restano come sono.',
 }

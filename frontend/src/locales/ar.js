@@ -2055,7 +2055,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'ثبّت Health Connect لمشاركة التمارين وقياسات الوزن مع تطبيقات أخرى.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'حدّث Health Connect لمشاركة التمارين وقياسات الوزن مع تطبيقات أخرى.',
   'Permission withdrawn. Tap to allow again': 'تم سحب الإذن — اضغط لمنحه مجددًا',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'تذهب التمارين وقياسات الوزن إلى Health Connect عند إنهائها أو تعديلها. لا يقرأ openGym أي شيء منه.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'تذهب التمارين وقياسات الوزن إلى Health Connect عند إنهائها أو تعديلها.',
   'Health Connect permission not granted': 'لم يُمنح إذن Health Connect',
   'Could not write to Health Connect': 'تعذّرت الكتابة في Health Connect',
   'Writing to Health Connect': 'الكتابة في Health Connect مفعّلة',
@@ -2509,4 +2509,10 @@ export default {
   'Save as PDF': 'حفظ كملف PDF',
   'Performance report (PDF)': 'تقرير الأداء (PDF)',
   'Charts, totals and every workout of the last days or weeks.': 'رسوم بيانية ومجاميع وكل تمرين في الأيام أو الأسابيع الأخيرة.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'نبض القلب من ساعتك',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'بعد التمرين، تحصل كل مجموعة على نبض القلب الذي حفظته ساعتك. أهلًا بـ Garmin وFitbit وGalaxy Watch ورفاقها.',
+  'Weigh-ins from other apps': 'قياسات الوزن من تطبيقات أخرى',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'تصل قياسات ميزانك الذكي إلى هنا. القياس الذي تكتبه بنفسك يفوز دائمًا.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'يقرأ openGym فقط وهو مفتوح: نبض القلب لتمارين آخر يوم، وقياسات الوزن لآخر 30 يومًا. تبقى التمارين الأقدم كما هي.',
 }

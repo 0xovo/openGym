@@ -2052,7 +2052,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': '운동과 체중 기록을 다른 앱과 공유하려면 헬스 커넥트를 설치하세요.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': '운동과 체중 기록을 다른 앱과 공유하려면 헬스 커넥트를 업데이트하세요.',
   'Permission withdrawn. Tap to allow again': '권한이 철회됨 — 다시 허용하려면 탭하세요',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': '운동과 체중 기록은 완료하거나 수정할 때 헬스 커넥트로 갑니다. openGym은 아무것도 읽어 오지 않습니다.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': '운동과 체중 기록은 완료하거나 수정할 때 헬스 커넥트로 갑니다.',
   'Health Connect permission not granted': '헬스 커넥트 권한이 허용되지 않음',
   'Could not write to Health Connect': '헬스 커넥트에 기록할 수 없음',
   'Writing to Health Connect': '헬스 커넥트에 기록 중',
@@ -2454,4 +2454,10 @@ export default {
   'Save as PDF': 'PDF로 저장',
   'Performance report (PDF)': '운동 성과 리포트 (PDF)',
   'Charts, totals and every workout of the last days or weeks.': '최근 며칠 또는 몇 주의 차트, 합계, 모든 운동.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': '워치의 심박수',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': '운동이 끝나면 각 세트에 워치가 저장한 심박수가 들어가요. Garmin, Fitbit, Galaxy Watch 다 환영해요.',
+  'Weigh-ins from other apps': '다른 앱의 체중 기록',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': '스마트 체중계의 기록이 여기로 와요. 직접 입력한 기록이 항상 이겨요.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym은 열려 있을 때만 읽어요: 최근 하루 동안의 운동 심박수와 최근 30일의 체중 기록. 그보다 오래된 운동은 그대로 둬요.',
 }

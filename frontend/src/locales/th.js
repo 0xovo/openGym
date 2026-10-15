@@ -2013,7 +2013,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'ติดตั้ง Health Connect เพื่อแชร์การออกกำลังกายและการชั่งน้ำหนักกับแอปอื่น',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'อัปเดต Health Connect เพื่อแชร์การออกกำลังกายและการชั่งน้ำหนักกับแอปอื่น',
   'Permission withdrawn. Tap to allow again': 'สิทธิ์ถูกเพิกถอน — แตะเพื่ออนุญาตอีกครั้ง',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'การออกกำลังกายและการชั่งน้ำหนักจะไปที่ Health Connect เมื่อคุณทำเสร็จหรือแก้ไข openGym ไม่อ่านอะไรกลับมา',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'การออกกำลังกายและการชั่งน้ำหนักจะไปที่ Health Connect เมื่อคุณทำเสร็จหรือแก้ไข',
   'Health Connect permission not granted': 'ไม่ได้รับสิทธิ์ Health Connect',
   'Could not write to Health Connect': 'เขียนลงใน Health Connect ไม่ได้',
   'Writing to Health Connect': 'กำลังเขียนลงใน Health Connect',
@@ -2465,4 +2465,10 @@ export default {
   'Save as PDF': 'บันทึกเป็น PDF',
   'Performance report (PDF)': 'รายงานผลการฝึก (PDF)',
   'Charts, totals and every workout of the last days or weeks.': 'กราฟ ยอดรวม และการฝึกทุกครั้งในช่วงวันหรือสัปดาห์ที่ผ่านมา',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'อัตราการเต้นของหัวใจจากนาฬิกา',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'หลังฝึก แต่ละเซ็ตจะได้อัตราการเต้นของหัวใจที่นาฬิกาบันทึกไว้ ยินดีต้อนรับ Garmin, Fitbit, Galaxy Watch และเพื่อน ๆ',
+  'Weigh-ins from other apps': 'การชั่งน้ำหนักจากแอปอื่น',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'น้ำหนักจากเครื่องชั่งอัจฉริยะของคุณจะมาอยู่ที่นี่ ค่าที่คุณพิมพ์เองชนะเสมอ',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym อ่านเฉพาะตอนที่เปิดอยู่: อัตราการเต้นของหัวใจของการฝึกในวันล่าสุด และน้ำหนักใน 30 วันล่าสุด การฝึกที่เก่ากว่านั้นจะเหมือนเดิม',
 }
