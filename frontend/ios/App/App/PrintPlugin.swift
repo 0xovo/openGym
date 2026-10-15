@@ -31,7 +31,7 @@ public class PrintPlugin: CAPPlugin, CAPBridgedPlugin, WKNavigationDelegate {
     ]
 
     // Held until the print sheet is done: the web view must outlive the layout and the spooling.
-    private var webView: WKWebView?
+    private var printView: WKWebView?  // not `webView`: CAPPlugin has one (the app's own)
     private var pending: CAPPluginCall?
 
     @objc func printHtml(_ call: CAPPluginCall) {
@@ -50,7 +50,7 @@ public class PrintPlugin: CAPPlugin, CAPBridgedPlugin, WKNavigationDelegate {
             view.navigationDelegate = self
             // In the window (hidden): WebKit only lays out a view that is in one.
             self.bridge?.viewController?.view.addSubview(view)
-            self.webView = view
+            self.printView = view
             // The renderer below draws the margins, so the document's own @page margins go.
             let page = html.replacingOccurrences(of: "</head>", with: "<style>@page { margin: 0 !important; }</style></head>")
             view.loadHTMLString(page, baseURL: nil)
@@ -71,7 +71,7 @@ public class PrintPlugin: CAPPlugin, CAPBridgedPlugin, WKNavigationDelegate {
     }
 
     private func present(_ webView: WKWebView) {
-        guard let call = pending, webView === self.webView else { return }
+        guard let call = pending, webView === printView else { return }
         let footer = call.getObject("footer")
         let renderer = FooterPageRenderer(
             left: footer?["left"] as? String ?? "opengym.ch",
@@ -104,9 +104,9 @@ public class PrintPlugin: CAPPlugin, CAPBridgedPlugin, WKNavigationDelegate {
     }
 
     private func cleanUp() {
-        webView?.navigationDelegate = nil
-        webView?.removeFromSuperview()
-        webView = nil
+        printView?.navigationDelegate = nil
+        printView?.removeFromSuperview()
+        printView = nil
     }
 }
 
