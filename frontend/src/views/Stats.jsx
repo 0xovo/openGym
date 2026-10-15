@@ -74,13 +74,20 @@ export const STRENGTH_LEVELS = [
   { at: 1, level: 4 },
 ]
 
-function useNow() {
-  const [, setTick] = useState(0)
+// The time the fatigue and strength figures are worked out for: taken again once a minute (they
+// decay with it) and whenever the data they read changes, but not on every render. It used to be
+// Date.now() of each render, so every useMemo below that depends on it ran again on any tap on
+// this screen (a chip, a week arrow): the whole history walked twice per tap. Hidden, the minute
+// is not counted; shown again, it is taken at once.
+function useNow(...data) {
+  const [tick, setTick] = useState(0)
   useEffect(() => {
-    const iv = setInterval(() => setTick(tick => tick + 1), 60000)
-    return () => clearInterval(iv)
+    const onTick = () => { if (!document.hidden) setTick(n => n + 1) }
+    const iv = setInterval(onTick, 60000)
+    document.addEventListener('visibilitychange', onTick)
+    return () => { clearInterval(iv); document.removeEventListener('visibilitychange', onTick) }
   }, [])
-  return Date.now()
+  return useMemo(() => Date.now(), [tick, ...data])
 }
 
 /**
@@ -132,7 +139,7 @@ function MuscleBalance({ S }) {
   const [hard, setHard] = useState(false)
   const [sel, setSel] = useState(null)
   const [weeklyExpanded, setWeeklyExpanded] = useState(false)
-  const now = useNow()
+  const now = useNow(S)
   const lang = getLang()
   const workouts = S.workouts
   const bodyweightKg = useMemo(() => profileBodyweightKg(S), [S.bodyweight, S.unit])
