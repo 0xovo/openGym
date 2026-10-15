@@ -168,6 +168,10 @@ jobs:
           node scripts/ci/test-report.mjs --label Frontend --root frontend
           --vitest frontend/test-results.json --coverage frontend/coverage/coverage-summary.json
           --bundle frontend/bundle-size.json --out stats/frontend.json
+      # Tests without an assertion, duplicated tests, tests that read source text: report only.
+      - name: Test audit
+        if: always()
+        run: node scripts/ci/test-audit.mjs frontend/src frontend/scripts api/test mcp/test > /dev/null
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
