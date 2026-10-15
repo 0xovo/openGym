@@ -464,12 +464,20 @@ export const useUI = create((set, get) => ({
 // A rest that ended meanwhile, or one left with no session running, is dropped.
 export const REST_KEY = 'gym_rest'
 const restStore = () => { try { return typeof localStorage === 'undefined' ? null : localStorage } catch { return null } }
+// Written when the rest itself changes, not on each second's tick: a running rest comes back from
+// its `endsAt`, and its `left` (kept in the copy for older builds) is read only while paused. The
+// bar's tick used to rewrite the key every second of every rest.
+let savedRestKey = null
 const saveRest = tm => {
   const ss = restStore()
   if (!ss) return
   try {
-    if (!tm || tm.ready) ss.removeItem(REST_KEY)
-    else ss.setItem(REST_KEY, JSON.stringify({ endsAt: tm.endsAt, total: tm.total, forIdx: tm.forIdx ?? null, forSet: tm.forSet ?? null, kind: tm.kind || null, paused: !!tm.paused, left: tm.left }))
+    if (!tm || tm.ready) { savedRestKey = null; ss.removeItem(REST_KEY); return }
+    const v = { endsAt: tm.endsAt, total: tm.total, forIdx: tm.forIdx ?? null, forSet: tm.forSet ?? null, kind: tm.kind || null, paused: !!tm.paused, left: tm.left }
+    const key = JSON.stringify({ ...v, left: v.paused ? v.left : null })
+    if (key === savedRestKey && ss.getItem(REST_KEY) !== null) return
+    ss.setItem(REST_KEY, JSON.stringify(v))
+    savedRestKey = key
   } catch { /* the rest just does not outlive a reload */ }
 }
 export function restoreRest(now = Date.now()) {

@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 // openGym icon set — hand-drawn on a 24×24 grid, stroke-based, single weight.
 //
 // Everything is one <svg> primitive with `currentColor`, so an icon inherits the
@@ -190,7 +192,7 @@ export const ICON_NAMES = Object.keys(P)
  * <Icon name="flame" />           — inherits font-size via `1em` sizing
  * <Icon name="flame" size={28} /> — explicit pixel size
  */
-export default function Icon({ name, size, className = '', style, ...rest }) {
+function Icon({ name, size, className = '', style, ...rest }) {
   const d = P[name]
   if (!d) return null
   const s = size ? { width: size, height: size } : null
@@ -208,3 +210,7 @@ export default function Icon({ name, size, className = '', style, ...rest }) {
     </svg>
   )
 }
+
+// Memoised: an icon draws the same for the same props, and a workout screen holds a few dozen of
+// them (steppers, checks, swipe actions). A set tick re-rendered ~80 of them for nothing.
+export default memo(Icon)

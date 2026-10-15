@@ -922,7 +922,15 @@ function ActiveWorkout() {
   const nav = useNavigate()
   const S = useStore(s => s.S)
   const update = useStore(s => s.update)
-  const { startRest: liveRest, stopRest, stopWork, work, timer } = useUI()
+  // Only what this screen shows of the two timers: the whole UI store here re-rendered every card
+  // of the workout once a second while a rest or a hold counted down (`left` changes each tick).
+  const liveRest = useUI(s => s.startRest)
+  const stopRest = useUI(s => s.stopRest)
+  const stopWork = useUI(s => s.stopWork)
+  const working = useUI(s => !!s.work)
+  const workKey = useUI(s => s.work?.endsAt)
+  const timerKey = useUI(s => s.timer && `${s.timer.endsAt}:${s.timer.forIdx ?? ''}`)
+  const readyRestEnds = useUI(s => (s.timer?.ready ? s.timer.endsAt : undefined))
   const A = S.active
   const editing = !!A.editingWorkoutId
   // A past workout has no rest to time — the sets were done days ago. The work timer for
@@ -964,15 +972,15 @@ function ActiveWorkout() {
   const skipDone = !listMode && S.skipCompleted === true
   // Cards and Focus: when the rest after a timed exercise's last set runs out, the next exercise
   // comes up on its own (#532, lib/supersetFlow.js advanceAfterTimedRest). Once per rest.
-  const readyRest = timer?.ready ? timer : null
   useEffect(() => {
-    if (!readyRest || listMode || editing) return
+    const readyRest = useUI.getState().timer
+    if (readyRestEnds === undefined || !readyRest?.ready || listMode || editing) return
     const live = useStore.getState().S.active
     if (!live) return
     const timed = idx => modeOf({ ...(live.entries[idx]?.target || {}), id: live.entries[idx]?.id }) === 'time'
     const to = advanceAfterTimedRest(live.entries, supersetUnits(live.entries), readyRest.forIdx, live.cur, timed)
     if (to != null) update(s => { if (s.active && s.active.cur === live.cur) s.active.cur = to })
-  }, [readyRest?.endsAt])
+  }, [readyRestEnds])
   // A finished unit you tapped open again to look at or fix (Discord: "minimize completed exercises
   // so I view only what I have yet to do"). This screen's own memory: a reload folds it back.
   // Keyed by index like the units, so a different number of exercises starts over.
@@ -1334,7 +1342,7 @@ function ActiveWorkout() {
     canMoveUp: canMoveActiveWorkoutEntry(A, idx, -1),
     canMoveDown: canMoveActiveWorkoutEntry(A, idx, 1),
     onRemoveExercise: () => confirmRemoveExercise(idx),
-    busy: !!work,
+    busy: working,
     onToggle: (i, onFocusProgress) => toggle(idx, i, undefined, { onFocusProgress }),
     onToggleSide: (i, side, onFocusProgress) => toggle(idx, i, side, { onFocusProgress }),
     onField: (i, f, v) => setField(idx, i, f, v),
@@ -2100,7 +2108,7 @@ function ActiveWorkout() {
           others say what is done and what is waiting (#323). */}
       {chipRow || <div className="muted small" style={{ marginBottom: 6 }}>{isSuperset ? t('Superset {0} / {1}', unitIdx + 1, units.length) : t('Exercise {0} / {1}', unitIdx + 1, units.length)}</div>}
       <SwipeCards index={unitIdx} count={units.length} revision={A}
-        timerKey={timer && `${timer.endsAt}:${timer.forIdx ?? ''}`} workKey={work?.endsAt}
+        timerKey={timerKey} workKey={workKey}
         onNavigate={navigateUnit} renderPreview={direction => {
           // The card slid in shows what the card itself will: in the editor, no hold to start
           // and no plates to load; in a session, the progression line, or the card grows by it
@@ -2164,18 +2172,18 @@ function ActiveWorkout() {
       <div style={{ height: 6 }} />
       <div className="row">
         <Button size="sm" icon="chevronUp" aria-label={t('Move up')}
-          disabled={!!work || !canMoveActiveWorkoutUnit(A, cur, -1)} onClick={() => moveCurrentUnit(-1)}>{t('Move up')}</Button>
+          disabled={working || !canMoveActiveWorkoutUnit(A, cur, -1)} onClick={() => moveCurrentUnit(-1)}>{t('Move up')}</Button>
         <Button size="sm" trailingIcon="chevronDown" aria-label={t('Move down')}
-          disabled={!!work || !canMoveActiveWorkoutUnit(A, cur, 1)} onClick={() => moveCurrentUnit(1)}>{t('Move down')}</Button>
+          disabled={working || !canMoveActiveWorkoutUnit(A, cur, 1)} onClick={() => moveCurrentUnit(1)}>{t('Move down')}</Button>
       </div>
       <div style={{ height: 6 }} />
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button size="sm" icon="swap" aria-label={t('Swap exercise')} disabled={!!work}
+        <Button size="sm" icon="swap" aria-label={t('Swap exercise')} disabled={working}
           onClick={() => swapExercise(cur)}>{t('Swap exercise')}</Button>
       </div>
       <div style={{ height: 6 }} />
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button size="sm" icon="minus" style={{ color: 'var(--red)' }} disabled={!!work} onClick={removeExerciseSheet}>{t('Remove exercise')}</Button>
+        <Button size="sm" icon="minus" style={{ color: 'var(--red)' }} disabled={working} onClick={removeExerciseSheet}>{t('Remove exercise')}</Button>
       </div>
     </>}
     <div style={{ height: 10 }} />

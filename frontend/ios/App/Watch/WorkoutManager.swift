@@ -116,6 +116,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             samples = []
             heartRate = nil
             calories = nil
+            paused = false
             let now = Date()
             s.startActivity(with: now)
             b.beginCollection(withStart: now) { _, _ in }
@@ -127,6 +128,23 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             session = nil
             builder = nil
         }
+    }
+
+    /// Rested for a workout nobody finishes (SensorPlan): the session pauses, which lets the
+    /// heart-rate sensor go back to its everyday rate. Nothing is lost: the builder keeps what it
+    /// measured, and the workout is still saved when it ends. `resume()` picks it up again.
+    private(set) var paused = false
+
+    func pause() {
+        guard let s = session, !paused, s.state == .running else { return }
+        paused = true
+        s.pause()
+    }
+
+    func resume() {
+        guard paused else { return }
+        paused = false
+        session?.resume()
     }
 
     /// The app was killed (or crashed) with a workout session running: watchOS kept the session and
@@ -147,6 +165,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
                 b.delegate = self
                 self.session = s
                 self.builder = b
+                self.paused = s.state == .paused
                 self.wanted = true
                 if let wid = wid { self.workoutId = wid }
                 self.tagged = nil
@@ -214,8 +233,16 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
     private var shownAt = Date.distantPast
 
     private func add(_ readings: [(Date, Double)]) {
-        for r in readings where !samples.contains(where: { abs($0.0.timeIntervalSince(r.0)) < 0.5 }) { samples.append(r) }
-        samples.sort { $0.0 < $1.0 }
+        // Kept in time order by inserting each reading where it belongs: a duplicate (the same reading
+        // from the query and from the builder) can then only be the neighbour on either side, instead
+        // of a scan of the whole workout's readings and a full sort for every new one.
+        for r in readings {
+            var lo = 0, hi = samples.count
+            while lo < hi { let mid = (lo + hi) / 2; if samples[mid].0 < r.0 { lo = mid + 1 } else { hi = mid } }
+            if lo < samples.count && abs(samples[lo].0.timeIntervalSince(r.0)) < 0.5 { continue }
+            if lo > 0 && abs(samples[lo - 1].0.timeIntervalSince(r.0)) < 0.5 { continue }
+            samples.insert(r, at: lo)
+        }
         guard let last = samples.last?.1 else { return }
         let now = Date()
         if heartRate == nil || abs((heartRate ?? 0) - last) >= 5 || now.timeIntervalSince(shownAt) >= 4 {
@@ -259,6 +286,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         }
         session = nil
         builder = nil
+        paused = false
         DispatchQueue.main.async {
             self.running = false
             self.heartRate = nil

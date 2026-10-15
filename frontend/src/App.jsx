@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { hideBoot } from './lib/boot.js'
 import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation, useNavigationType } from 'react-router-dom'
 import { useStore } from './store/useStore.js'
@@ -48,14 +48,38 @@ import Stats from './views/Stats.jsx'
 import History from './views/History.jsx'
 import Library from './views/Library.jsx'
 import Muscles from './views/Muscles.jsx'
-import StructuralBalance from './views/StructuralBalance.jsx'
-import ProgressPhotos from './views/ProgressPhotos.jsx'
 import { SettingsRoute } from './views/Settings.jsx'
-import Admin from './views/Admin.jsx'
-import CoachChat from './views/CoachChat.jsx'
-import Measurements from './views/Measurements.jsx'
-import CoachIntake from './views/CoachIntake.jsx'
-import CoachSetup from './views/CoachSetup.jsx'
+
+// Screens most sessions never open (the Coach, the admin dashboard, photos, measurements, the
+// balance check) are their own chunks rather than part of the code every start parses: ~200 KB
+// of the main bundle. They are fetched once the app is idle after the start (the service worker
+// and the phone build hold them locally anyway), so by the time one is opened it renders at once,
+// in the same frame, as before; only a tap within the first moments can see one empty frame.
+const views = []
+function lazyView(load) {
+  let View = null
+  const fetchIt = () => load().then(m => { View = m.default; return m })
+  const Lazy = lazy(fetchIt)
+  views.push(fetchIt)
+  return function LazyView(props) {
+    return View ? <View {...props} /> : <Suspense fallback={null}><Lazy {...props} /></Suspense>
+  }
+}
+const Admin = lazyView(() => import('./views/Admin.jsx'))
+const CoachChat = lazyView(() => import('./views/CoachChat.jsx'))
+const Measurements = lazyView(() => import('./views/Measurements.jsx'))
+const CoachIntake = lazyView(() => import('./views/CoachIntake.jsx'))
+const CoachSetup = lazyView(() => import('./views/CoachSetup.jsx'))
+const StructuralBalance = lazyView(() => import('./views/StructuralBalance.jsx'))
+const ProgressPhotos = lazyView(() => import('./views/ProgressPhotos.jsx'))
+let viewsPrefetched = false
+const prefetchViews = () => {
+  if (viewsPrefetched) return
+  viewsPrefetched = true
+  const run = () => { for (const f of views) f().catch(() => {}) }
+  if (typeof globalThis.requestIdleCallback === 'function') globalThis.requestIdleCallback(run, { timeout: 4000 })
+  else setTimeout(run, 1500)
+}
 
 // last known scrollY per route, so back-navigation can put the page where it was
 const scrollPositions = new Map()
@@ -327,6 +351,7 @@ function Page({ loc, render, under = false, scrollY = 0 }) {
 export default function App() {
   const boot = useStore(s => s.boot)
   useEffect(() => { boot() }, [boot])
+  useEffect(() => { prefetchViews() }, [])
   // Android system back — sheet, then page, then press-again-to-exit (see lib/back.js)
   useEffect(() => {
     let stop = null, gone = false

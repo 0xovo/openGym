@@ -1430,7 +1430,8 @@ body.chips-dragging *{cursor:inherit}
 }
 @keyframes slideup{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
 #timer .bar{position:absolute;top:0;inset-inline-start:0;inset-inline-end:0;height:3px;background:var(--surface-3)}
-#timer .bar i{display:block;height:100%;background:var(--acc);transition:width 1s linear}
+#timer .bar i{display:block;height:100%;background:var(--acc);transform-origin:left center;transition:transform 1s linear;will-change:transform}
+[dir="rtl"] #timer .bar i{transform-origin:right center}
 /* The clock is what the bar is for, so it never gives up width: the buttons do (Skip is the one that
    gives: in a long language on a narrow phone it becomes an icon, RestTimer.jsx useSkipFits). The label under the
    clock fills the clock's width but does not widen it. */

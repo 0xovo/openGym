@@ -6,6 +6,7 @@ import { registerCustom, healCustomEx } from '../lib/exercises.js'
 import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
 import { rememberDefaultLang } from '../lib/default-lang.js'
 import { guestAllowed } from '../lib/guest.js'
+import { stateJson } from '../lib/state-json.js'
 import { MOBILE, initReminderSync, nativeLoad, nativeSave, onAppActive, readJsonFile, syncReminder, writeAutoBackup, writeJsonFile } from '../lib/mobile.js'
 import { initHealthSync, syncHealth } from '../lib/health-sync.js'
 import { refillIfComplete } from '../lib/rotation.js'
@@ -243,6 +244,37 @@ export const DEF = {
   balanceTemplate: DEFAULT_TEMPLATE_ID, balanceOverrides: {},
 }
 const clone = o => JSON.parse(JSON.stringify(o))
+
+// The draft an update() hands its producer: a copy of the state in which each top-level field is
+// copied (deep, as clone does) the first time the producer reads or writes it, and every field it
+// never touched stays the very object the previous state holds. A ticked set touches `active` and
+// little else, so it no longer copies the whole history (a full clone of a 400-workout profile was
+// most of the ~200 ms each tick took). The untouched fields are the old state's own objects, which
+// nothing mutates (every change goes through a draft like this one), and keeping them means that
+// what reads them by identity — the stamps (sync-merge stampChange), the watch's ready sessions,
+// a component's selector — sees them as unchanged, which they are. `done()` turns the fields still
+// untouched into plain values; until then reading one copies it, as clone() would have.
+export function draftOf(prev) {
+  const S = {}
+  const plain = (k, value) => Object.defineProperty(S, k, { value, writable: true, enumerable: true, configurable: true })
+  for (const k of Object.keys(prev)) {
+    const v = prev[k]
+    if (v === undefined || typeof v === 'function' || typeof v === 'symbol') continue
+    if (v === null || typeof v !== 'object') { S[k] = typeof v === 'number' && !Number.isFinite(v) ? null : v; continue }
+    Object.defineProperty(S, k, {
+      enumerable: true, configurable: true,
+      get() { const c = clone(v); plain(k, c); return c },
+      set(x) { plain(k, x) },
+    })
+  }
+  return {
+    S,
+    done() {
+      for (const k of Object.keys(S)) if (Object.getOwnPropertyDescriptor(S, k)?.get) plain(k, prev[k])
+      return S
+    },
+  }
+}
 
 // First run on a device whose language renders right-to-left starts in that language
 // rather than English; the boot script in index.html mirrors this check for the
@@ -587,7 +619,7 @@ export const useStore = create((set, get) => {
       // The marker goes first: a tab that loads the copy in between gets an older base than the
       // copy's, which costs one merge at worst — never a newer one, which would lose data.
       saveMarker(base)
-      localStorage.setItem(KEY, JSON.stringify(S))
+      localStorage.setItem(KEY, stateJson(S))
       localStorage.setItem(WID_OWNER_KEY, seenOwner || '')
       const wid = Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
       localStorage.setItem(WID_KEY, wid)
@@ -1346,13 +1378,21 @@ export const useStore = create((set, get) => {
     },
     update(mut, push = true) {
       const prev = get().S
-      const S = clone(prev)
-      mut(S)
+      // Under test, every change proves it left the previous state as it was: the draft shares
+      // whatever the producer did not touch, so a write into one of those would change history.
+      const prevJson = import.meta.env?.MODE === 'test' ? JSON.stringify(prev) : null
+      const draft = draftOf(prev)
+      mut(draft.S)
+      const S = draft.done()
+      // The stamps below write the change's records into these two maps in place (stampDeletions,
+      // stampEdits); a draft that never touched them still shares them with the previous state.
+      for (const k of ['deleted', 'edited']) if (S[k] && typeof S[k] === 'object' && S[k] === prev[k]) S[k] = clone(S[k])
       // What the change removed, and which routines, workouts, settings and plan days it touched,
       // each with one time that comes after every stamp the copy already carries: a conflict then
       // keeps a removal and the edit made last, even from a device whose clock runs behind
       // (lib/sync-merge.js stampChange).
       S._ts = stampChange(prev, S, Date.now())
+      if (prevJson !== null && JSON.stringify(prev) !== prevJson) throw new Error('update(): the previous state was changed in place')
       persist(S, push)
       // A photo or video added to a workout is a change worth the day's backup too: the one
       // finishing wrote went before the finish screen's pictures (autoBackupNow). Not a removal,
