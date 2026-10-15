@@ -2052,7 +2052,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Installez Santé Connect pour partager séances et pesées avec d’autres applis.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Mettez à jour Santé Connect pour partager séances et pesées avec d’autres applis.',
   'Permission withdrawn. Tap to allow again': 'Autorisation retirée — touchez pour l’accorder à nouveau',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Séances et pesées vont dans Santé Connect quand vous les terminez ou les modifiez. openGym n’y lit rien.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Séances et pesées vont dans Santé Connect quand vous les terminez ou les modifiez.',
   'Health Connect permission not granted': 'Autorisation Santé Connect refusée',
   'Could not write to Health Connect': 'Impossible d’écrire dans Santé Connect',
   'Writing to Health Connect': 'Écriture dans Santé Connect activée',
@@ -2414,4 +2414,10 @@ export default {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Cet appareil a 1 séance absente de cette sauvegarde. Remplacer la supprime.',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Cet appareil a {0} séances absentes de cette sauvegarde. Remplacer les supprime.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'Fréquence cardiaque de votre montre',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Après une séance, chaque série reçoit la fréquence cardiaque enregistrée par votre montre. Garmin, Fitbit, Galaxy Watch et compagnie bienvenus.',
+  'Weigh-ins from other apps': 'Pesées d’autres apps',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'Les pesées de votre balance connectée arrivent ici. Celle que vous saisissez vous-même gagne toujours.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym ne lit que lorsqu’il est ouvert : fréquence cardiaque des séances du dernier jour, pesées des 30 derniers jours. Les séances plus anciennes restent telles quelles.',
 }

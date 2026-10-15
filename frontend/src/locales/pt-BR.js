@@ -1260,7 +1260,7 @@ export const PT_BR_OVERRIDES = {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Instale o Conexão Saúde para compartilhar treinos e pesagens com outros apps.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Atualize o Conexão Saúde para compartilhar treinos e pesagens com outros apps.',
   'Permission withdrawn. Tap to allow again': 'Permissão retirada — toque para conceder de novo',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Treinos e pesagens vão para o Conexão Saúde quando você os conclui ou altera. O openGym não lê nada de volta.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Treinos e pesagens vão para o Conexão Saúde quando você os conclui ou altera.',
   'Health Connect permission not granted': 'Permissão do Conexão Saúde não concedida',
   'Could not write to Health Connect': 'Não foi possível gravar no Conexão Saúde',
   'Writing to Health Connect': 'Gravando no Conexão Saúde',
@@ -1535,6 +1535,10 @@ export const PT_BR_OVERRIDES = {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Este dispositivo tem 1 treino que não está neste backup. Substituir exclui esse treino.',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Este dispositivo tem {0} treinos que não estão neste backup. Substituir exclui esses treinos.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Depois do treino, cada série recebe a frequência cardíaca que seu relógio salvou. Garmin, Fitbit, Galaxy Watch e companhia são bem-vindos.',
+  'Weigh-ins from other apps': 'Pesagens de outros aplicativos',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'As pesagens da sua balança inteligente chegam aqui. A que você digitar sempre ganha.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

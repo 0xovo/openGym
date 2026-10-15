@@ -2052,7 +2052,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Instale o Health Connect para partilhar treinos e pesagens com outras apps.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Atualize o Health Connect para partilhar treinos e pesagens com outras apps.',
   'Permission withdrawn. Tap to allow again': 'Permissão retirada — toque para a conceder de novo',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Treinos e pesagens vão para o Health Connect quando os termina ou altera. O openGym não lê nada de volta.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Treinos e pesagens vão para o Health Connect quando os termina ou altera.',
   'Health Connect permission not granted': 'Permissão do Health Connect não concedida',
   'Could not write to Health Connect': 'Não foi possível escrever no Health Connect',
   'Writing to Health Connect': 'A escrever no Health Connect',
@@ -2414,4 +2414,10 @@ export default {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Este dispositivo tem 1 treino que não está nesta cópia. Substituir elimina-o.',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Este dispositivo tem {0} treinos que não estão nesta cópia. Substituir elimina-os.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'Frequência cardíaca do relógio',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Depois do treino, cada série recebe a frequência cardíaca que o relógio guardou. Garmin, Fitbit, Galaxy Watch e companhia são bem-vindos.',
+  'Weigh-ins from other apps': 'Pesagens de outras apps',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'As pesagens da balança inteligente chegam aqui. A que escrever à mão ganha sempre.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'O openGym só lê enquanto está aberto: frequência cardíaca dos treinos do último dia, pesagens dos últimos 30 dias. Os treinos mais antigos ficam como estão.',
 }

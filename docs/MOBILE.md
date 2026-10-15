@@ -191,8 +191,9 @@ that.
   Each weigh-in as a weight record, in kilograms. A workout without a real start and end is left
   out rather than given made-up times. `src/lib/health-connect.js` works this out; its tests
   pin it.
-- **Write-only.** The manifest declares `WRITE_EXERCISE` and `WRITE_WEIGHT` and nothing else, and
-  openGym reads nothing back.
+- **Permissions.** The manifest declares `WRITE_EXERCISE`, `WRITE_WEIGHT` and, since v1.4.3,
+  `READ_HEART_RATE` and `READ_WEIGHT` (see "Reading back" below). Each is asked for only when its
+  switch is turned on. No background and no history permission.
 - **No duplicates.** Every record carries openGym's own id as its `clientRecordId`
   (`opengym-w-<workout id>`, `opengym-bw-<day>`), so writing it again replaces it. An edited workout
   or weigh-in is written again; a deleted one is removed from Health Connect.
@@ -208,15 +209,55 @@ that.
 - **Where it shows:** Android 14 and later have Health Connect built in. On Android 9–13 it is an
   app of its own, and the card offers its store page until it is installed. Below Android 9 (the
   app supports Android 6) Health Connect does not exist and the card is not shown.
-- **The library:** `androidx.health.connect:connect-client` 1.1.0-alpha12, called from Java
-  (`HealthConnectPlugin.java`) through `runBlocking` on a worker thread, so the Android project stays
-  Java-only. 1.1.0 stable needs compileSdk 36 and AGP 8.9.1, a toolchain bump left for its own
-  change. The library asks for minSdk 26; `tools:overrideLibrary` keeps the app at 23 and the plugin
-  checks the version before touching it.
+- **The library:** `androidx.health.connect:connect-client` 1.1.0 (stable, `variables.gradle`),
+  called from Java (`HealthConnectPlugin.java`) through `runBlocking` on a worker thread, so the
+  Android project stays Java-only. The library asks for minSdk 26; `tools:overrideLibrary` keeps the
+  app at 23 and the plugin checks the version before touching it.
+- **Privacy link.** Health Connect's "why does this app ask?" link opens the app through the two
+  activity-aliases in the manifest; `MainActivity` then opens https://opengym.ch/privacy, the same
+  policy the Play listing names (Play requires that).
 
 Worth checking on a real device after changes here: turning it on shows Health Connect's own
 permission screen; a finished workout appears in Health Connect within a few seconds; deleting it
 in openGym removes it there; turning it off with "remove" leaves no openGym record behind.
+
+#### Reading back: heart rate and weigh-ins (v1.4.3, #544, #127)
+
+Two more switches in the same card (Android: Health Connect, iPhone: Apple Health), each off by
+default, each independent of writing and of the other:
+
+- **Heart rate from your watch.** For each workout finished in the last 24 hours, the heart-rate
+  samples between its start and end (+5 min) are read: `HC.readHeartRate({ from, to })` →
+  `{ samples: [[ms, bpm]] }`. `lib/heart-rate.js` `hrFromSamples` splits them over the sets: a set
+  ends at its tick (`at`) and lasts as long as its reps (3 s each, 15-120 s), seconds or minutes
+  take, never starting before the previous tick (the same estimate as the .fit export); its rest
+  runs to the next set. A set gets `hr` / `restHr` (`{ avg, max }`, the Apple Watch fields) only
+  when it has none yet, so the Apple Watch's live reading is never replaced. Sparse sources (median
+  gap over 20 s, a band that saves once a minute) and workouts without ticks get only the session's
+  reading, `w.hr = { avg, max, src: 'hc' | 'ah', n }`, replaced later only by a fuller read from
+  the same hub (Garmin and Fitbit sync late) and never when `src` is `'watch'`. Re-read at most
+  every 10 minutes (2 after coming back to the foreground) until the 24 hours are over.
+- **Weigh-ins from other apps.** `HC.readWeights({ since })` → `{ records: [{ t, kg, id, origin,
+  clientId }] }`: 30 days back the first time (what Health Connect gives without the history
+  permission), afterwards from the newest seen minus two days. `lib/health-read.js` `mergeWeighIns`
+  takes the latest of each day, skips openGym's own records (`clientRecordId` `opengym-*`, origin
+  `ch.duartesantos.opengym*`), keeps a day that has a weigh-in typed into openGym, does not bring
+  back one deleted in openGym after it was measured, and converts to lb for an lb profile. Imported
+  entries carry `src` and are never written back (`healthRecords` leaves them out), and in a sync
+  merge a typed weigh-in beats an imported one of the same day whichever is newer
+  (`mergeBodyweight`); typing over an imported one makes it a typed one.
+- **Foreground only.** Reads run at launch, on resume and after saves, never in the background.
+  No `READ_HEALTH_DATA_IN_BACKGROUND`, no `READ_HEALTH_DATA_HISTORY`; old workouts are not filled in.
+- **Device-local state** in `opengym-health.json`: `readHr`, `readWeight`, `wCursor`, `seen` (what
+  was imported per day), `hrTried` (when each recent workout was last read), `readError`.
+- **iPhone:** `AppleHealthPlugin.swift` `readHeartRate` / `readWeights` through `HKSampleQuery`;
+  the plain-value conversion is `WatchCore/Sources/WatchCore/HealthReadCore.swift` (compiled into
+  the app, tested by `swift test`). Apple Health never says whether reading was allowed, so a
+  refusal reads nothing. The usage string (`NSHealthShareUsageDescription`) says what is read.
+- **Synced fields:** `set.hr`, `set.restHr`, `w.hr`, `bodyweight[].src` are plain optional fields;
+  the server keeps them through every writer (`api/test/sync-hr.test.js`).
+- **Emulator check:** Google's Health Connect Toolbox can insert heart-rate and weight records on an
+  API 34+ emulator; see the v1.4.3 notes for the run.
 
 ### Animation quality and the animation packs (store apps)
 

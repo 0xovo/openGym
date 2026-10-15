@@ -85,7 +85,8 @@ export function healthRecords(S, { nameOf, speedUnit }) {
   const unit = S?.unit === 'lb' ? 'lb' : 'kg'
   return {
     sessions: (S?.workouts || []).map(w => sessionRecord(w, { unit, nameOf, speedUnit })).filter(Boolean),
-    weights: (S?.bodyweight || []).map(b => weightRecord(b, unit)).filter(Boolean),
+    // A weigh-in read from the hub (`src`, lib/health-read.js) is already there: never written back.
+    weights: (S?.bodyweight || []).filter(b => !b?.src).map(b => weightRecord(b, unit)).filter(Boolean),
   }
 }
 

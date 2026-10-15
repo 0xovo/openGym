@@ -2052,7 +2052,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Antrenmanları ve tartılmaları diğer uygulamalarla paylaşmak için Health Connect’i yükleyin.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Antrenmanları ve tartılmaları diğer uygulamalarla paylaşmak için Health Connect’i güncelleyin.',
   'Permission withdrawn. Tap to allow again': 'İzin geri alındı — yeniden vermek için dokunun',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Antrenmanlar ve tartılmalar, bitirdiğinizde veya değiştirdiğinizde Health Connect’e gider. openGym oradan hiçbir şey okumaz.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Antrenmanlar ve tartılmalar, bitirdiğinizde veya değiştirdiğinizde Health Connect’e gider.',
   'Health Connect permission not granted': 'Health Connect izni verilmedi',
   'Could not write to Health Connect': 'Health Connect’e yazılamadı',
   'Writing to Health Connect': 'Health Connect’e yazılıyor',
@@ -2414,4 +2414,10 @@ export default {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Bu cihazda bu yedekte olmayan 1 antrenman var. Değiştirmek onu siler.',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Bu cihazda bu yedekte olmayan {0} antrenman var. Değiştirmek onları siler.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'Saatinizden nabız',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Antrenmandan sonra her set, saatinizin kaydettiği nabzı alır. Garmin, Fitbit, Galaxy Watch ve diğerleri, hoş geldiniz.',
+  'Weigh-ins from other apps': 'Diğer uygulamalardan tartılmalar',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'Akıllı tartınızın ölçümleri buraya gelir. Kendi yazdığınız her zaman kazanır.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym yalnızca açıkken okur: son bir günün antrenmanları için nabız, son 30 günün tartılmaları. Daha eski antrenmanlar olduğu gibi kalır.',
 }

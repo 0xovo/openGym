@@ -309,7 +309,7 @@ function BwSheet({ required, onDone, close }) {
     if (date !== todayISO() && st.bodyweight.some(b => b.d === date)) { toast(t('That date already has a weigh-in. Delete it first.')); return }
     update(s => {
       const ex = s.bodyweight.find(b => b.d === date)
-      if (ex) { ex.w = n; ex.t = Date.now() } else s.bodyweight.push({ d: date, w: n, t: Date.now() })
+      if (ex) { ex.w = n; ex.t = Date.now(); delete ex.src } else s.bodyweight.push({ d: date, w: n, t: Date.now() })
       s.bodyweight.sort((a, b) => (a.d < b.d ? -1 : 1))
     })
     close()

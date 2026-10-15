@@ -2052,7 +2052,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'वर्कआउट और वज़न दूसरे ऐप्स के साथ साझा करने के लिए Health Connect इंस्टॉल करें।',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'वर्कआउट और वज़न दूसरे ऐप्स के साथ साझा करने के लिए Health Connect अपडेट करें।',
   'Permission withdrawn. Tap to allow again': 'अनुमति वापस ली गई — फिर से देने के लिए टैप करें',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'वर्कआउट और वज़न पूरा करने या बदलने पर Health Connect में जाते हैं। openGym वहाँ से कुछ नहीं पढ़ता।',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'वर्कआउट और वज़न पूरा करने या बदलने पर Health Connect में जाते हैं।',
   'Health Connect permission not granted': 'Health Connect की अनुमति नहीं मिली',
   'Could not write to Health Connect': 'Health Connect में नहीं लिखा जा सका',
   'Writing to Health Connect': 'Health Connect में लिखना चालू है',
@@ -2414,4 +2414,10 @@ export default {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'इस डिवाइस पर 1 वर्कआउट है जो इस बैकअप में नहीं है। बदलने से यह मिट जाएगा।',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'इस डिवाइस पर {0} वर्कआउट हैं जो इस बैकअप में नहीं हैं। बदलने से ये मिट जाएँगे।',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'आपकी घड़ी से धड़कन',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'वर्कआउट के बाद हर सेट को वह धड़कन मिलती है जो आपकी घड़ी ने सहेजी। Garmin, Fitbit, Galaxy Watch और बाकी सबका स्वागत है।',
+  'Weigh-ins from other apps': 'दूसरे ऐप्स से वज़न',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'आपके स्मार्ट स्केल का वज़न यहाँ आ जाता है। जो आप खुद लिखते हैं, वही हमेशा जीतता है।',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym सिर्फ़ तब पढ़ता है जब वह खुला हो: पिछले एक दिन के वर्कआउट की धड़कन, पिछले 30 दिन का वज़न। पुराने वर्कआउट जैसे हैं वैसे ही रहते हैं।',
 }

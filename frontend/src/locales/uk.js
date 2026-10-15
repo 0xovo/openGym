@@ -1997,7 +1997,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Установіть Health Connect, щоб ділитися тренуваннями та зважуваннями з іншими застосунками.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Оновіть Health Connect, щоб ділитися тренуваннями та зважуваннями з іншими застосунками.',
   'Permission withdrawn. Tap to allow again': 'Дозвіл відкликано — торкніться, щоб надати знову',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Тренування та зважування потрапляють до Health Connect, коли ви їх завершуєте або змінюєте. openGym нічого звідти не читає.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Тренування та зважування потрапляють до Health Connect, коли ви їх завершуєте або змінюєте.',
   'Health Connect permission not granted': 'Дозвіл Health Connect не надано',
   'Could not write to Health Connect': 'Не вдалося записати в Health Connect',
   'Writing to Health Connect': 'Запис у Health Connect увімкнено',
@@ -2411,4 +2411,10 @@ export default {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'На цьому пристрої є 1 тренування, якого немає в цій копії. Заміна його видалить.',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'На цьому пристрої є тренування, яких немає в цій копії ({0}). Заміна їх видалить.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'Пульс із вашого годинника',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Після тренування кожен підхід отримує пульс, який зберіг ваш годинник. Garmin, Fitbit, Galaxy Watch і компанія, ласкаво просимо.',
+  'Weigh-ins from other apps': 'Зважування з інших застосунків',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'Зважування з ваших розумних ваг потрапляють сюди. Введене вручну завжди перемагає.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym читає дані, лише поки відкритий: пульс тренувань за останню добу, зважування за останні 30 днів. Старіші тренування лишаються як є.',
 }

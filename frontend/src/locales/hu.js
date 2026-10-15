@@ -2005,7 +2005,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'Telepítsd a Health Connectet, hogy megoszthasd az edzéseket és mérlegeléseket más appokkal.',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'Frissítsd a Health Connectet, hogy megoszthasd az edzéseket és mérlegeléseket más appokkal.',
   'Permission withdrawn. Tap to allow again': 'Engedély visszavonva — koppints az újbóli megadáshoz',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'Az edzések és mérlegelések a befejezésükkor vagy módosításukkor a Health Connectbe kerülnek. Az openGym semmit nem olvas vissza.',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'Az edzések és mérlegelések a befejezésükkor vagy módosításukkor a Health Connectbe kerülnek.',
   'Health Connect permission not granted': 'A Health Connect engedély nincs megadva',
   'Could not write to Health Connect': 'Nem sikerült írni a Health Connectbe',
   'Writing to Health Connect': 'Írás a Health Connectbe bekapcsolva',
@@ -2417,4 +2417,10 @@ export default {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'Ezen az eszközön 1 edzés van, amely nincs ebben a mentésben. A csere törli.',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'Ezen az eszközön {0} edzés van, amely nincs ebben a mentésben. A csere törli őket.',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'Pulzus az órádról',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'Edzés után minden sorozat megkapja a pulzust, amit az órád elmentett. Garmin, Fitbit, Galaxy Watch és társaik szívesen látottak.',
+  'Weigh-ins from other apps': 'Mérlegelések más appokból',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'Az okosmérleged mérései ide érkeznek. Amit te magad írsz be, az mindig nyer.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'Az openGym csak nyitott állapotban olvas: az utolsó nap edzéseinek pulzusát és az utolsó 30 nap mérlegeléseit. A régebbi edzések maradnak, ahogy vannak.',
 }

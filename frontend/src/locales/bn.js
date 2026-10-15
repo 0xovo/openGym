@@ -2174,7 +2174,7 @@ export default {
   'Install Health Connect to share workouts and weigh-ins with other apps.': 'অন্য অ্যাপের সাথে ওয়ার্কআউট আর ওজন মাপা শেয়ার করতে Health Connect ইনস্টল করুন।',
   'Update Health Connect to share workouts and weigh-ins with other apps.': 'অন্য অ্যাপের সাথে ওয়ার্কআউট আর ওজন মাপা শেয়ার করতে Health Connect আপডেট করুন।',
   'Permission withdrawn. Tap to allow again': 'অনুমতি তুলে নেওয়া হয়েছে। আবার দিতে ট্যাপ করুন',
-  'Workouts and weigh-ins go to Health Connect when you finish or change them. openGym reads nothing back.': 'ওয়ার্কআউট আর ওজন মাপা শেষ করলে বা বদলালে Health Connect-এ যায়। openGym ওখান থেকে কিছুই পড়ে না।',
+  'Workouts and weigh-ins go to Health Connect when you finish or change them.': 'ওয়ার্কআউট আর ওজন মাপা শেষ করলে বা বদলালে Health Connect-এ যায়।',
   'Health Connect permission not granted': 'Health Connect-এর অনুমতি দেওয়া হয়নি',
   'Could not write to Health Connect': 'Health Connect-এ লেখা যায়নি',
   'Writing to Health Connect': 'Health Connect-এ লেখা হচ্ছে',
@@ -2493,4 +2493,10 @@ export default {
   // --- import with no account: workouts on this device ---
   'This device has 1 workout that is not in this backup. Replacing deletes it.': 'এই ডিভাইসে ১টি ওয়ার্কআউট আছে যা এই ব্যাকআপে নেই। প্রতিস্থাপন করলে এটি মুছে যাবে।',
   'This device has {0} workouts that are not in this backup. Replacing deletes them.': 'এই ডিভাইসে {0}টি ওয়ার্কআউট আছে যা এই ব্যাকআপে নেই। প্রতিস্থাপন করলে এগুলো মুছে যাবে।',
+  // --- reading back from Health Connect / Apple Health (v1.4.3) ---
+  'Heart rate from your watch': 'আপনার ঘড়ি থেকে হার্ট রেট',
+  'After a workout, each set gets the heart rate your watch saved. Garmin, Fitbit, Galaxy Watch and friends welcome.': 'ওয়ার্কআউটের পরে প্রতিটি সেট পায় আপনার ঘড়ির সেভ করা হার্ট রেট। Garmin, Fitbit, Galaxy Watch সবাইকে স্বাগতম।',
+  'Weigh-ins from other apps': 'অন্য অ্যাপ থেকে ওজন',
+  'Your smart scale’s weigh-ins land here. One you type in yourself always wins.': 'আপনার স্মার্ট স্কেলের ওজন এখানে চলে আসে। নিজে লিখলে সেটাই সবসময় জেতে।',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last 30 days. Older workouts stay as they are.': 'openGym শুধু খোলা থাকলেই পড়ে: শেষ এক দিনের ওয়ার্কআউটের হার্ট রেট, শেষ ৩০ দিনের ওজন। পুরোনো ওয়ার্কআউট যেমন আছে তেমনই থাকে।',
 }
