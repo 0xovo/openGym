@@ -170,6 +170,8 @@ jobs:
       # (SessionStore.demoJSON: text only, no exercise media), for a look at it.
       - name: Show the watch app
         continue-on-error: true
+        # Pictures only: a hung simulator here must not hold the job to its 60-minute limit.
+        timeout-minutes: 30
         working-directory: frontend/ios/App
         run: |
           APP=build/dd/Build/Products/Debug-watchsimulator/OpenGymWatch.app
@@ -241,6 +243,8 @@ jobs:
       # the synthetic clip or none (never exercise media).
       - name: Watch promo pictures
         continue-on-error: true
+        # Pictures only: a hung simulator here must not hold the job to its 60-minute limit.
+        timeout-minutes: 30
         working-directory: frontend/ios/App
         run: |
           APP=build/dd/Build/Products/Debug-watchsimulator/OpenGymWatch.app
