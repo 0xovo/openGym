@@ -1,0 +1,4 @@
+/* openGym on the iPhone, ko: Info.plist. Written by ios/ci/watch-strings.mjs. */
+
+"NSHealthShareUsageDescription" = "openGym은 운동하는 동안 Apple Watch에 심박수를 보여주고, 켜면 워치가 저장한 심박수와 다른 앱의 체중 기록을 내 기록에 더해요.";
+"NSHealthUpdateUsageDescription" = "켜면 openGym이 운동과 체중 기록을 Apple 건강에 저장해요.";

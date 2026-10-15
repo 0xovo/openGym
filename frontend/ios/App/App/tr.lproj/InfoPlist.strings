@@ -1,0 +1,4 @@
+/* openGym on the iPhone, tr: Info.plist. Written by ios/ci/watch-strings.mjs. */
+
+"NSHealthShareUsageDescription" = "openGym antrenman sırasında nabzını Apple Watch’ta gösterir ve açarsan saatinin kaydettiği nabzı ve diğer uygulamalardaki tartılmaları kaydına ekler.";
+"NSHealthUpdateUsageDescription" = "Açarsan openGym antrenmanlarını ve tartılmalarını Apple Sağlık’a kaydeder.";

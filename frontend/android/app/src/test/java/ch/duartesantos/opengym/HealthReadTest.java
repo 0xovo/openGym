@@ -31,9 +31,10 @@ public class HealthReadTest {
         HeartRateRecord a = hr(10_000, 20_000, new long[][] { { 10_000, 120 }, { 15_000, 130 }, { 20_000, 140 } });
         HeartRateRecord b = hr(0, 9_000, new long[][] { { 0, 90 }, { 9_000, 100 } });
         List<long[]> out = HealthRead.samples(Arrays.asList(a, b), 5_000, 15_000);
-        assertEquals(2, out.size());
+        assertEquals(3, out.size());
         assertArrayEquals(new long[] { 9_000, 100 }, out.get(0));
-        assertArrayEquals(new long[] { 15_000, 130 }, out.get(1));
+        assertArrayEquals(new long[] { 10_000, 120 }, out.get(1));
+        assertArrayEquals(new long[] { 15_000, 130 }, out.get(2));
     }
 
     @Test

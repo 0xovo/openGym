@@ -1,0 +1,4 @@
+/* openGym on the iPhone, pt-BR: Info.plist. Written by ios/ci/watch-strings.mjs. */
+
+"NSHealthShareUsageDescription" = "O openGym mostra sua frequência cardíaca no Apple Watch enquanto você treina e, se você ativar, adiciona ao seu registro a frequência cardíaca que o relógio salvou e pesagens de outros aplicativos.";
+"NSHealthUpdateUsageDescription" = "O openGym salva seus treinos e pesagens no Apple Saúde se você ativar.";

@@ -253,7 +253,9 @@ default, each independent of writing and of the other:
 - **iPhone:** `AppleHealthPlugin.swift` `readHeartRate` / `readWeights` through `HKSampleQuery`;
   the plain-value conversion is `WatchCore/Sources/WatchCore/HealthReadCore.swift` (compiled into
   the app, tested by `swift test`). Apple Health never says whether reading was allowed, so a
-  refusal reads nothing. The usage string (`NSHealthShareUsageDescription`) says what is read.
+  refusal reads nothing. The usage strings (`NSHealthShareUsageDescription`,
+  `NSHealthUpdateUsageDescription`) say what is read and written, in all 18 languages:
+  `ios/App/App/<lang>.lproj/InfoPlist.strings`, written by `ios/ci/watch-strings.mjs`.
 - **Synced fields:** `set.hr`, `set.restHr`, `w.hr`, `bodyweight[].src` are plain optional fields;
   the server keeps them through every writer (`api/test/sync-hr.test.js`).
 - **Emulator check:** Google's Health Connect Toolbox can insert heart-rate and weight records on an

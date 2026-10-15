@@ -1,0 +1,4 @@
+/* openGym on the iPhone, hi: Info.plist. Written by ios/ci/watch-strings.mjs. */
+
+"NSHealthShareUsageDescription" = "openGym ट्रेनिंग के दौरान Apple Watch पर आपकी धड़कन दिखाता है, और चालू करने पर आपकी घड़ी की सहेजी धड़कन और दूसरे ऐप्स का वज़न आपके लॉग में जोड़ता है।";
+"NSHealthUpdateUsageDescription" = "चालू करने पर openGym आपके वर्कआउट और वज़न Apple Health में सहेजता है।";
