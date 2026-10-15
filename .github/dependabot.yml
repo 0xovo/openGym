@@ -34,13 +34,8 @@ updates:
       frontend-major:
         patterns: ['*']
         update-types: ['major']
-    ignore:
-      # Capacitor 8 needs Node >= 22 (its own `engines` field) and the build host is on 20, and
-      # `frontend/android` + `frontend/ios` are committed, so a major also means migrating the
-      # native projects — Gradle/AGP, the Podfile. That is a deliberate piece of work, not a
-      # dependency bump. Drop this ignore once the build host is on Node 22 and you want it.
-      - dependency-name: '@capacitor/*'
-        update-types: ['version-update:semver-major']
+    # (A Capacitor-major ignore lived here while the build host was on Node 20; the app has been
+    # on Capacitor 8 since 2026-10-11, so a Capacitor 9 PR is now a normal frontend-major PR.)
 
   # Backend — api/package.json (@simplewebauthn/server, web-push)
   - package-ecosystem: npm
