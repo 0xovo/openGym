@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { checkForUpdate, sha256, resetUpdateCheck, fetchChecksum, pickApk, APK_VARIANT } from './update.js'
+import { checkForUpdate, sha256, resetUpdateCheck, fetchChecksum, pickApk, APK_VARIANT, apkKind } from './update.js'
 
 // __APP_VERSION__ is defined at build time by vite.config.js (reads package.json).
 // In the test environment vitest applies the same define, so it's available here.
@@ -279,5 +279,39 @@ describe('pickApk: Standard and HD APKs', () => {
     const { apk, hash } = pickApk(['openGym-HD-1.4.2.apk.sha256', 'openGym-1.4.2.apk'].map(a), 'standard')
     expect(apk.name).toBe('openGym-1.4.2.apk')
     expect(hash).toBe(null)
+  })
+})
+
+describe('pickApk: Standard, Plus and HD', () => {
+  const a = n => ({ name: n, browser_download_url: `https://github.com/DuarteSantos8/openGym/releases/download/v1.4.2/${n}` })
+  const NAMES = ['openGym-1.4.2.apk', 'openGym-1.4.2.apk.sha256', 'openGym-HD-1.4.2.apk', 'openGym-HD-1.4.2.apk.sha256',
+    'openGym-Plus-1.4.2.apk', 'openGym-Plus-1.4.2.apk.sha256']
+  const sorted = [...NAMES].sort().map(a)  // GitHub lists assets by name
+
+  it('names the three kinds', () => {
+    expect(apkKind('openGym-1.4.2.apk')).toBe('standard')
+    expect(apkKind('openGym-Plus-1.4.2.apk')).toBe('plus')
+    expect(apkKind('openGym-HD-1.4.2.apk')).toBe('hd')
+    expect(apkKind('openGym-1.5.0-plus.apk')).toBe('plus')
+    expect(apkKind('openGym-surplus-1.4.2.apk')).toBe('standard')
+  })
+
+  it('each kind updates only to itself, with its own checksum, in any order', () => {
+    for (const list of [sorted, [...sorted].reverse()]) {
+      for (const [variant, name] of [['standard', 'openGym-1.4.2.apk'], ['plus', 'openGym-Plus-1.4.2.apk'], ['hd', 'openGym-HD-1.4.2.apk']]) {
+        const { apk, hash } = pickApk(list, variant)
+        expect(apk.name).toBe(name)
+        expect(hash.name).toBe(`${name}.sha256`)
+      }
+    }
+  })
+
+  it('a phone from before v1.4.2 (first .apk, first .sha256 in name order) lands on Standard, checksum matching', () => {
+    expect(sorted.find(x => /\.apk$/i.test(x.name)).name).toBe('openGym-1.4.2.apk')
+    expect(sorted.find(x => /\.apk\.sha256$/i.test(x.name)).name).toBe('openGym-1.4.2.apk.sha256')
+  })
+
+  it('a Plus build is not moved to another kind when a release has no Plus APK', () => {
+    expect(pickApk(['openGym-1.4.3.apk', 'openGym-HD-1.4.3.apk'].map(a), 'plus').apk).toBe(null)
   })
 })
