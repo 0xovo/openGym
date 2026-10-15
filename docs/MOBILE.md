@@ -1,7 +1,8 @@
 # The phone app (Android and iOS)
 
 **Just want the app?** Download the APK from the
-[latest release](https://github.com/DuarteSantos8/openGym/releases/latest) and read
+[latest release](https://github.com/DuarteSantos8/openGym/releases/latest) (`openGym-X.Y.Z.apk`,
+or `openGym-HD-X.Y.Z.apk` for sharper animations at about twice the size) and read
 [how the phone app works](#how-the-phone-app-works) and
 [connecting it to your server](#connecting-the-app-to-your-own-server). On an iPhone, see
 [what's possible](#iphone--whats-actually-possible). Everything from [Prerequisites](#prerequisites)
@@ -266,8 +267,9 @@ and **Delete**.
   its `assets/anim-packs.json` lists, and serves their files to the page at
   `https://localhost/_opengym_pack/<packId>/<drawing>.webp`, never a file path. The pack modules
   are generated on the release machine by `scripts/android/make-asset-packs.mjs` and never
-  committed. The `sideload` flavour (the APK) answers "unavailable" and only ever has its
-  built-in animations (240 px).
+  committed. The `sideload` flavour (the APKs) answers "unavailable" and only ever has its
+  built-in animations: 180 px in the Standard APK, 360 px in the HD one. Each APK's updater
+  stays with its own kind (`pickApk` in `lib/update.js`, told by `VITE_APK_VARIANT`).
 
 App Store Connect, once: the App Group `group.ch.opengym.app`; the bundle id
 `ch.opengym.app.AnimationPacksDownloader` (an app extension); the App Groups capability on
@@ -323,32 +325,23 @@ The App Store app (public TestFlight beta: https://testflight.apple.com/join/RKA
 Google Play build come from the same code; how they are built and uploaded is in
 [APP_STORES.md](APP_STORES.md).
 
-### Android — sideload the APK
+### Android: sideload the APK
 
-The official signed APK is in four places, all the same file:
+Every release has two signed APKs on [the GitHub release](https://github.com/DuarteSantos8/openGym/releases),
+each with its `.sha256` beside it, and [opengym.ch](https://opengym.ch) links to both:
 
-- **[opengym.ch](https://opengym.ch)** — the download page.
-- **[GitLab's package registry](https://gitlab.com/DuarteSantos8/opengym/-/packages)** — every
-  build under `opengym-android/<version>/`, with a `.sha256` beside it. Direct link, no login:
-  `https://gitlab.com/api/v4/projects/85678327/packages/generic/opengym-android/<version>/openGym-<version>.apk`
-- **[The GitHub release](https://github.com/DuarteSantos8/openGym/releases)** for that version,
-  with the APK and its `.sha256` attached as release assets.
-- **[The GitLab release](https://gitlab.com/DuarteSantos8/opengym/-/releases)** on the mirror,
-  where the file is built; it links to the package registry above.
+- **`openGym-X.Y.Z.apk` (Standard):** the exercise animations built in at 180 px, about 315 MB.
+- **`openGym-HD-X.Y.Z.apk` (HD):** the same app with 360 px animations, about 760 MB.
 
-Android asks you to allow installs from the browser the first time — that's standard for any
-app outside the Play Store. Check the `.sha256` if you got the file from anywhere else.
+Same app id, same key: install one over the other and the data stays. The in-app updater keeps
+each on its own kind. Android asks you to allow installs from the browser the first time; that is
+standard for any app outside the Play Store. Check the `.sha256` if you got the file from anywhere
+else.
 
-Both come out of CI: the `build:apk` job in [`.gitlab-ci.yml`](../.gitlab-ci.yml) runs
-`npm run build:mobile` and `./gradlew assembleSideloadRelease`, then `zipalign`s and signs the result
-with the release key. The job runs on every push to `main` too, so the newest unreleased
-build is always one click away (signed with the same key, installs over a release):
-`https://gitlab.com/DuarteSantos8/opengym/-/jobs/artifacts/main/browse?job=build:apk`
-— a 30-day job artifact, not a package, and not what the in-app updater offers. The key lives in *protected* CI variables (`ANDROID_KEYSTORE_B64`,
-`ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`), so it only exists on `main` and on `v*`
-tags — a merge request from a fork can build an APK, but gets an unsigned one and never sees
-the key. On a `v*` tag the signed APK is also pushed to the generic package registry, which is
-what the release links to.
+Both are built and signed on the release machine with `scripts/android/build-release.sh`
+([APP_STORES.md](APP_STORES.md)), not in CI: anything above 180 px may only exist inside an app
+package (Gym visual licence), never in a CI artifact. The GitLab mirror's `build:apk` job only runs
+by hand and builds a plain 180 px APK; its releases link to GitHub's.
 
 The release APK carries native code for ARM only (`arm64-v8a`, `armeabi-v7a`), which is every
 phone; the x86 builds of the barcode scanner's library would add about 12 MB for emulators
