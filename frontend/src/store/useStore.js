@@ -6,6 +6,7 @@ import { registerCustom, healCustomEx } from '../lib/exercises.js'
 import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
 import { rememberDefaultLang } from '../lib/default-lang.js'
 import { guestAllowed } from '../lib/guest.js'
+import { stateJson } from '../lib/state-json.js'
 import { MOBILE, initReminderSync, nativeLoad, nativeSave, onAppActive, readJsonFile, syncReminder, writeAutoBackup, writeJsonFile } from '../lib/mobile.js'
 import { initHealthSync, syncHealth } from '../lib/health-sync.js'
 import { refillIfComplete } from '../lib/rotation.js'
@@ -618,7 +619,7 @@ export const useStore = create((set, get) => {
       // The marker goes first: a tab that loads the copy in between gets an older base than the
       // copy's, which costs one merge at worst — never a newer one, which would lose data.
       saveMarker(base)
-      localStorage.setItem(KEY, JSON.stringify(S))
+      localStorage.setItem(KEY, stateJson(S))
       localStorage.setItem(WID_OWNER_KEY, seenOwner || '')
       const wid = Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
       localStorage.setItem(WID_KEY, wid)

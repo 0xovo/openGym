@@ -14,6 +14,7 @@ import { isoOf, todayISO } from './format.js'
 import { effectiveRoutineIds } from './history.js'
 import { NUDGE_COPY, lineIndex, nudgeFor, nudgeMinute, toneOf } from './nudge.js'
 import { excusedOn } from './day-notes.js'
+import { stateJson } from './state-json.js'
 
 export const MOBILE = import.meta.env.VITE_MOBILE === '1'
 
@@ -70,7 +71,7 @@ export async function nativeLoad() {
 export async function nativeSave(state) {
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
-    const data = JSON.stringify(state)
+    const data = stateJson(state)
     if (typeof Filesystem.rename === 'function') {
       try {
         await Filesystem.writeFile({ path: FILE_NEW, directory: Directory.Data, data, encoding: Encoding.UTF8 })
