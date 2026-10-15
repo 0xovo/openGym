@@ -247,6 +247,9 @@ const REPORT_CSS = `
   [dir="rtl"] .set { margin: 0 0 4pt 4pt; }
   .set .k { display: block; font-size: 6.5pt; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); font-weight: 700; }
   .set .v { font-weight: 600; white-space: nowrap; }
+  /* "100×5 (RIR 2)" reads left to right in every language, Arabic included. */
+  .set .v, table.wk td.s { unicode-bidi: isolate; direction: ltr; }
+  [dir="rtl"] table.wk td.s { text-align: right; }
   .set.warm { border-style: dashed; color: var(--muted); }
   .set.warm .v { font-weight: 500; }
   .set.skip { color: var(--faint); }
