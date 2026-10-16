@@ -2533,4 +2533,8 @@ export default {
   'A day off before the next one': '下一项之前休息一天',
   'Already in the loop: adds it again': '已在循环中：再加一次',
   'Rest day. The loop goes on {0}.': '休息日。循环将在 {0} 继续。',
+  'Support openGym': '支持 openGym',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym 免费：没有广告、没有订阅、没有追踪。一杯咖啡让它保持这样。',
+  'Rate openGym on the App Store': '在 App Store 为 openGym 评分',
+  'Buy me a coffee': '请我喝杯咖啡',
 }

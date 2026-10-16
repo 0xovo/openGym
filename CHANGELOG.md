@@ -30,6 +30,10 @@ seconds at most) instead of nagging you anyway.
 - Push addresses that hide a private IPv4 address inside an IPv6 one are refused like the plain
   ones.
 
+**Support openGym.** Settings → About & updates has the coffee jar: Buy Me a Coffee, Ko-fi and
+GitHub Sponsors, and on the iPhone a straight line to writing an App Store review. No pop-ups
+asking for anything, promise.
+
 ## v1.4.2 (2026-10-18)
 
 openGym comes to the App Store, with an Apple Watch app in tow. Plus everything you asked for

@@ -2588,4 +2588,8 @@ export default {
   'A day off before the next one': 'يوم راحة قبل التالي',
   'Already in the loop: adds it again': 'موجود في الدورة: يضيفه مرة أخرى',
   'Rest day. The loop goes on {0}.': 'يوم راحة. تستمر الدورة {0}.',
+  'Support openGym': 'ادعم openGym',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym مجاني: بلا إعلانات ولا اشتراكات ولا تتبّع. فنجان قهوة يُبقيه كذلك.',
+  'Rate openGym on the App Store': 'قيّم openGym في App Store',
+  'Buy me a coffee': 'اشترِ لي قهوة',
 }

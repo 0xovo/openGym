@@ -2533,4 +2533,8 @@ export default {
   'A day off before the next one': 'Dzień wolny przed następnym',
   'Already in the loop: adds it again': 'Już jest w pętli: dodaje ją jeszcze raz',
   'Rest day. The loop goes on {0}.': 'Dzień odpoczynku. Pętla rusza dalej {0}.',
+  'Support openGym': 'Wesprzyj openGym',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym jest darmowy: bez reklam, subskrypcji i śledzenia. Kawa pomaga, żeby tak zostało.',
+  'Rate openGym on the App Store': 'Oceń openGym w App Store',
+  'Buy me a coffee': 'Postaw mi kawę',
 }

@@ -2533,4 +2533,8 @@ export default {
   'A day off before the next one': '다음 운동 전에 하루 쉬기',
   'Already in the loop: adds it again': '이미 순환에 있어요: 한 번 더 추가해요',
   'Rest day. The loop goes on {0}.': '쉬는 날이에요. 순환은 {0}에 이어져요.',
+  'Support openGym': 'openGym 후원하기',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym은 무료예요: 광고도, 구독도, 추적도 없어요. 커피 한 잔이 계속 그렇게 지켜줘요.',
+  'Rate openGym on the App Store': 'App Store에서 openGym 평가하기',
+  'Buy me a coffee': '커피 한 잔 사주기',
 }

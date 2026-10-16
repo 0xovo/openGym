@@ -2537,4 +2537,8 @@ export default {
   'A day off before the next one': 'Выходной перед следующей',
   'Already in the loop: adds it again': 'Уже в цикле: добавится ещё раз',
   'Rest day. The loop goes on {0}.': 'День отдыха. Цикл продолжится {0}.',
+  'Support openGym': 'Поддержать openGym',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym бесплатный: без рекламы, подписок и слежки. Чашка кофе помогает так и оставаться.',
+  'Rate openGym on the App Store': 'Оценить openGym в App Store',
+  'Buy me a coffee': 'Угостить кофе',
 }

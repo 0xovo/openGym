@@ -2612,4 +2612,8 @@ export default {
   'A day off before the next one': 'পরেরটার আগে এক দিনের ছুটি',
   'Already in the loop: adds it again': 'লুপে আগেই আছে: আবার যোগ হবে',
   'Rest day. The loop goes on {0}.': 'বিশ্রামের দিন। লুপ আবার চলবে {0}।',
+  'Support openGym': 'openGym-কে সমর্থন করুন',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym বিনামূল্যে: কোনো বিজ্ঞাপন, সাবস্ক্রিপশন বা ট্র্যাকিং নেই। এক কাপ কফি এটাকে এভাবেই রাখে।',
+  'Rate openGym on the App Store': 'App Store-এ openGym-কে রেটিং দিন',
+  'Buy me a coffee': 'আমাকে একটা কফি কিনে দিন',
 }

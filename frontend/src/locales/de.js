@@ -2553,4 +2553,8 @@ export default {
   'A day off before the next one': 'Ein freier Tag vor dem nächsten',
   'Already in the loop: adds it again': 'Schon in der Schleife: kommt nochmal dazu',
   'Rest day. The loop goes on {0}.': 'Pausentag. Die Schleife geht {0} weiter.',
+  'Support openGym': 'openGym unterstützen',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym ist gratis: keine Werbung, kein Abo, kein Tracking. Ein Kaffee hält das so.',
+  'Rate openGym on the App Store': 'openGym im App Store bewerten',
+  'Buy me a coffee': 'Spendier mir einen Kaffee',
 }

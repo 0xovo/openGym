@@ -2533,4 +2533,8 @@ export default {
   'A day off before the next one': 'Sıradakinden önce bir gün izin',
   'Already in the loop: adds it again': 'Zaten döngüde: bir kez daha ekler',
   'Rest day. The loop goes on {0}.': 'Dinlenme günü. Döngü {0} devam ediyor.',
+  'Support openGym': 'openGym\'i destekle',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym ücretsiz: reklam yok, abonelik yok, takip yok. Bir kahve bunu böyle tutar.',
+  'Rate openGym on the App Store': 'openGym\'i App Store\'da değerlendir',
+  'Buy me a coffee': 'Bana bir kahve ısmarla',
 }

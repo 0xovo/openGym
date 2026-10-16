@@ -2536,4 +2536,8 @@ export default {
   'A day off before the next one': 'Egy pihenőnap a következő előtt',
   'Already in the loop: adds it again': 'Már benne van a körben: még egyszer hozzáadja',
   'Rest day. The loop goes on {0}.': 'Pihenőnap. A kör {0} folytatódik.',
+  'Support openGym': 'Támogasd az openGymet',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'Az openGym ingyenes: nincs reklám, előfizetés vagy követés. Egy kávé segít, hogy így maradjon.',
+  'Rate openGym on the App Store': 'Értékeld az openGymet az App Store-ban',
+  'Buy me a coffee': 'Hívj meg egy kávéra',
 }

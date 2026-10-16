@@ -2544,4 +2544,8 @@ export default {
   'A day off before the next one': 'หยุดหนึ่งวันก่อนรายการถัดไป',
   'Already in the loop: adds it again': 'อยู่ในรอบแล้ว: เพิ่มอีกครั้ง',
   'Rest day. The loop goes on {0}.': 'วันพัก รอบจะเริ่มต่อ {0}',
+  'Support openGym': 'สนับสนุน openGym',
+  'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym ใช้ฟรี: ไม่มีโฆษณา ไม่มีสมาชิกรายเดือน ไม่มีการติดตาม กาแฟสักแก้วช่วยให้เป็นแบบนี้ต่อไป',
+  'Rate openGym on the App Store': 'ให้คะแนน openGym ใน App Store',
+  'Buy me a coffee': 'เลี้ยงกาแฟสักแก้ว',
 }

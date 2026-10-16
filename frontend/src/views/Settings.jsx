@@ -889,6 +889,18 @@ export default function Settings({ page = null, find = null, via = null, entryKe
               subtitle={t('Download the APK from opengym.ch')} accessory="chevron"
               onClick={() => window.open('https://opengym.ch/#download', '_blank', 'noopener')} />}
       </Section>
+      {/* Support: the project's own donation pages, and on the iPhone a straight line to writing a
+          review. Plain links, no pop-up asking for anything (App Store 5.6.1). */}
+      <Section title={t('Support openGym')} footer={t('openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.')}>
+        {MOBILE && ios && <Row icon="star" iconTint="var(--orange)" title={t('Rate openGym on the App Store')} accessory="chevron"
+          onClick={() => window.open('https://apps.apple.com/app/id6822275400?action=write-review', '_blank', 'noopener')} />}
+        <Row icon="heart" iconTint="var(--pink)" title={t('Buy me a coffee')} subtitle="Buy Me a Coffee" accessory="chevron"
+          onClick={() => window.open('https://buymeacoffee.com/duartesantos', '_blank', 'noopener')} />
+        <Row icon="heart" iconTint="var(--blue)" title="Ko-fi" accessory="chevron"
+          onClick={() => window.open('https://ko-fi.com/opengym', '_blank', 'noopener')} />
+        <Row icon="heart" iconTint="var(--purple)" title="GitHub Sponsors" accessory="chevron"
+          onClick={() => window.open('https://github.com/sponsors/DuarteSantos8', '_blank', 'noopener')} />
+      </Section>
       {/* "Add to Home screen": not inside the phone app, and not once it is installed. */}
       {!MOBILE && !standalone() && <Section title={t('Tip')}>
         <Row icon="share" iconTint="var(--blue)"
