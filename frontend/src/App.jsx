@@ -15,6 +15,7 @@ import { workoutVolume } from './lib/history.js'
 import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
+import { pageMotion } from './lib/page-motion.js'
 import { startWatchSync, bindWatchAppActions, patchSetIn } from './lib/watch-sync.js'
 import { stampWorkout } from './lib/sync-merge.js'
 import { logWeighIn } from './lib/bodyweight.js'
@@ -281,7 +282,7 @@ function Shell() {
           lands it simply stays: same key, same parent, so React keeps it instead of mounting
           the route again. */}
       <div id="app">
-        <Page key={loc.pathname} loc={loc} render={view} />
+        <Page key={loc.pathname} loc={loc} render={view} motion={pageMotion(pathRef.current, loc.pathname, navType)} />
         {showPreview && <Page key={preview} loc={previewLoc(preview)} render={view} under scrollY={scrollPositions.get(preview) || 0} />}
       </div>
       {/* Outside #app: the view's fade-in animates a transform, and a fixed element inside it
@@ -306,16 +307,17 @@ const previewLoc = pathname => ({ pathname, search: '', hash: '', state: null, k
    only shows. When the swipe lands it becomes the page in place (same element, same state, no
    second mount, no fade): the styles the gesture painted on it go, and App puts the window back
    at that scroll position in the same frame. */
-function Page({ loc, render, under = false, scrollY = 0 }) {
+function Page({ loc, render, under = false, scrollY = 0, motion = 'fade' }) {
   const ref = useRef(null)
   const wasUnder = useRef(under)
+  const arrival = useRef(motion)
   const promoted = wasUnder.current && !under
   useLayoutEffect(() => {
     if (under || !wasUnder.current) return
     const el = ref.current
     if (el) { el.style.transform = ''; el.style.transition = ''; el.style.visibility = '' }
   }, [under])
-  return <div ref={ref} className={'page' + (under ? ' under' : wasUnder.current ? '' : ' vfade')}
+  return <div ref={ref} className={'page' + (under ? ' under' : wasUnder.current ? '' : arrival.current === 'push' ? ' vpush' : arrival.current === 'pop' ? ' vpop' : ' vfade')}
     data-path={loc.pathname} data-promoted={promoted ? '' : undefined}
     aria-hidden={under || undefined} inert={under || undefined}>
     <div className="page-in" style={under && scrollY ? { transform: `translateY(${-scrollY}px)` } : undefined}>
