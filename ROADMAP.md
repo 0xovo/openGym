@@ -169,6 +169,7 @@ The animations come back as WebP, and the Android update check reads GitHub.
   Fitbit, Samsung, Polar and friends show up via the phone (#544)
 - Nicer PDFs with the logo, and a performance report for a week, a month or three
 - Less battery: the rest timer stops keeping the phone awake, long histories load in pieces
+- CSV export, and importing GymMane's CSV (#647)
 - Account recovery (#584), the rotation fix (#536), community PRs and bug fixes (#620, #631)
 
 ## v1.4.4: Programmes & phases  (2026-11-15)
@@ -177,11 +178,14 @@ The animations come back as WebP, and the Android update check reads GitHub.
   per profile (#159; Discord "Programme mode", "folders")
 - Session phases (mobility / work / accessory / cooldown) with completion-only exercises for
   stretching that stay out of volume and PRs (#57, #140)
+- Alternatives per routine slot, for when the machine is taken or you're at another gym (#649)
+- Body composition in measurements: fat %, muscle mass, water and friends (#648)
 
 ## v1.4.5: Google Play & progression engine I  (2026-11-29)
 
 - openGym on Google Play by then at the latest; Google wants a closed test with 12 testers for
   14 days first, so it can land earlier
+- Android home-screen widget and an ongoing workout notification (#125)
 - Rep or set ranges per set and AMRAP targets beyond the "to failure" flag (#154)
 - Assisted exercises as negative added weight (#176)
 
@@ -195,11 +199,12 @@ The animations come back as WebP, and the Android update check reads GitHub.
 ## v1.4.7: Cardio, alternatives, groups  (2026-12-27)
 
 - Cardio: intervals, interval programmes such as C25k, rucking, distance for cardio (#132, #169, #177)
-- Exercise alternatives per routine slot, complexes and interval groups beside supersets (Discord)
+- Complexes and interval groups beside supersets (Discord)
 
 ## v1.4.8: Search & catalogue  (2027-01-10)
 
 - Searching your own history, import aliases by name, more icons (#188)
+- Your own photos and videos on built-in exercises (#534)
 - Shared custom exercises between accounts on one instance (#151)
 - "Different gyms": separate histories and PRs per location (Discord)
 
