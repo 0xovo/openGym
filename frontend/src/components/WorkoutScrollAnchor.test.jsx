@@ -53,12 +53,21 @@ it('keeps the visible tile at the same pixel when a completed tile above it coll
   expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 300, left: 0, behavior: 'instant' })
 })
 
-it('keeps a partly visible next tile still when the topmost tile itself is collapsing', async () => {
+it('keeps a folding tile in view under the header and moves the next tile up (#642)', async () => {
   scrollY = 600
   await render('', [['0', 100, 700], ['1', 800, 650]])
-  const top = tileTop('1')
   await render('0', [['0', 100, 200], ['1', 300, 650]])
-  expect(tileTop('1')).toBe(top)
+  expect(tileTop('0')).toBe(80)
+  expect(tileTop('1')).toBe(280)
+})
+
+it('keeps a folding tile at its own pixel when its top was visible (#642)', async () => {
+  scrollY = 0
+  await render('', [['0', 100, 700], ['1', 800, 650]])
+  await render('0', [['0', 100, 120], ['1', 220, 650]])
+  expect(tileTop('0')).toBe(100)
+  expect(tileTop('1')).toBe(220)
+  expect(container.querySelector('[data-unit-key="1"]').style.marginTop).toBe('')
 })
 
 it('reserves only enough space to avoid a page-end clamp, then reclaims it on expansion', async () => {
@@ -72,12 +81,12 @@ it('reserves only enough space to avoid a page-end clamp, then reclaims it on ex
   expect(container.firstChild.style.paddingBottom).toBe('')
 })
 
-it('lets the next tile move up at the page start instead of leaving a gap above it', async () => {
+it('never leaves a gap before the next tile at the page start (#642)', async () => {
   scrollY = 400
   await render('', [['0', 100, 700], ['1', 800, 650]])
   await render('0', [['0', 100, 100], ['1', 200, 650]])
-  expect(window.scrollY).toBe(0)
-  expect(tileTop('1')).toBe(200)
+  expect(window.scrollY).toBe(20)
+  expect(tileTop('1')).toBe(tileTop('0') + 100)
   expect(container.querySelector('[data-unit-key="1"]').style.marginTop).toBe('')
 })
 

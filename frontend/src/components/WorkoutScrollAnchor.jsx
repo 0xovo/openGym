@@ -14,8 +14,11 @@ export default class WorkoutScrollAnchor extends Component {
       const rect = el.getBoundingClientRect()
       return rect.bottom > top && rect.top < window.innerHeight
     })
-    // If the content at the top is itself disappearing, hold the next surviving tile in
-    // place instead. A summary already collapsed is a perfectly good anchor too.
+    // A finished tile that folds on screen keeps its top (or lands just under the header when
+    // it started above it), so its summary stays in view and everything after it moves up
+    // (#642). Otherwise the first surviving tile holds still; a collapsed summary works too.
+    const folding = visible.find(el => collapsing.has(el.dataset.unitKey))
+    if (folding) return { anchor: folding, top: Math.max(top, folding.getBoundingClientRect().top) }
     const anchor = visible.find(el => !collapsing.has(el.dataset.unitKey)) || visible[0]
     return anchor ? { anchor, top: anchor.getBoundingClientRect().top } : null
   }
@@ -29,9 +32,8 @@ export default class WorkoutScrollAnchor extends Component {
     const delta = snapshot.anchor.getBoundingClientRect().top - snapshot.top
     const y = locked ? -(parseFloat(body.style.top) || 0) : window.scrollY
     const target = Math.max(0, y + delta)
-    // At the page start we cannot scroll to a negative offset, so the surviving tile moves
-    // up with the collapse. Padding it back down would leave a black gap between the
-    // folded exercises and the pending ones.
+    // At the page start we cannot scroll to a negative offset: the page simply starts at the
+    // top. No spacer before the next tile, that read as a blank gap (#642).
     // Collapsing near the page end can clamp scrollY before we restore it. Keep only the
     // trailing space needed to hold this viewport; a later expansion can reclaim it.
     const oldSpace = parseFloat(root.style.paddingBottom) || 0
