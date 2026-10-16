@@ -157,6 +157,10 @@ for the reports, each with a patch and a test. Self-hosters: please update.
   Coach reviews, and signing up with someone's e-mail as the name counts against your address
   like the e-mail field does.
 - A browser's sign-in cookie can no longer be turned into a phone token that renews forever.
+- Deleting your account from a paired phone only skips the passkey for a real phone sign-in, not
+  for a browser session sent along as one.
+- Push addresses that hide a private IPv4 address inside an IPv6 one are refused like the plain
+  ones.
 - The Coach forgets a stored API key when its server address moves to another host. Enter it again.
 - Request paths the server would have to tidy up (`..`, backslashes) are refused, nginx stops
   naming its version, and Android backups no longer include the paired server's sign-in.
