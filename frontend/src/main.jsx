@@ -6,11 +6,12 @@ import { useStore } from './store/useStore.js'
 import { startMediaSync } from './lib/media-sync.js'
 import { startNativeKeyboard } from './lib/native-keyboard.js'
 import './index.css'
-import { hideBoot } from './lib/boot.js'
+import { hideBoot, handOverFromLaunchScreen } from './lib/boot.js'
 
 // App.jsx restores per-route scroll itself; the browser's own attempt races it.
 // A script that dies before the app draws would otherwise leave the boot logo lifting forever.
 window.addEventListener('error', hideBoot, { once: true })
+handOverFromLaunchScreen()
 
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
 
