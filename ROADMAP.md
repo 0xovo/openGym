@@ -11,8 +11,8 @@ the next release is the last published one plus one patch (1.3.7 → 1.3.8), and
 reserved for a step as big as the new exercise database (v1.4.0).
 
 - Milestones: https://github.com/DuarteSantos8/openGym/milestones (every open issue sits in exactly one)
-- Tracks, in order: the App Store (v1.4.2) → Google Play and community features (v1.4.3) →
-  programmes → the progression engine → cardio → search → accounts → trainer → wearables → looks
+- Tracks, in order: the App Store (v1.4.2) → community features (v1.4.3) → programmes →
+  Google Play with the progression engine → cardio → search → accounts → trainer → wearables → looks
   and social, with database storage after that
 
 ---
@@ -162,9 +162,8 @@ The animations come back as WebP, and the Android update check reads GitHub.
 - Your bars, rest between warm-ups and between sides, backups for an exercise, the boot screen,
   five reported security holes closed
 
-## v1.4.3: Google Play, community features & fixes  (2026-11-01)
+## v1.4.3: Gym reminder, health data & community features  (2026-11-01)
 
-- Google Play, once the closed test is through (Google wants 12 testers for 14 days first)
 - Gym reminder: a nudge when you walk into your gym (#614)
 - Heart rate per set and weigh-ins read back from Health Connect and Apple Health, so Garmin,
   Fitbit, Samsung, Polar and friends show up via the phone (#544)
@@ -179,8 +178,10 @@ The animations come back as WebP, and the Android update check reads GitHub.
 - Session phases (mobility / work / accessory / cooldown) with completion-only exercises for
   stretching that stay out of volume and PRs (#57, #140)
 
-## v1.4.5: Progression engine I  (2026-11-29)
+## v1.4.5: Google Play & progression engine I  (2026-11-29)
 
+- openGym on Google Play by then at the latest; Google wants a closed test with 12 testers for
+  14 days first, so it can land earlier
 - Rep or set ranges per set and AMRAP targets beyond the "to failure" flag (#154)
 - Assisted exercises as negative added weight (#176)
 
