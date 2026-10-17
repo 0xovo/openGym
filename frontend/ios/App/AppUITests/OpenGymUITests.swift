@@ -36,7 +36,8 @@ final class OpenGymUITests: XCTestCase {
      * "Use on this device", until home shows. On a slow simulator the first tap can land while the
      * page is still starting and go nowhere. The first-start steps come right after the choice
      * (views/PermissionSteps.jsx): notifications (allowed here, and so is the system's question)
-     * and, on an iPhone with Apple Health, the Health step (Not now). Nothing is tapped twice and
+     * and, on an iPhone with Apple Health, the Health step (Continue, then Don't Allow in the iOS
+     * sheet). Nothing is tapped twice and
      * nothing in the app is tapped while a system alert is up: a late alert used to swallow one
      * tap and pass the next one through to home underneath (CI 10-13, the gym card opened).
      */
@@ -56,9 +57,9 @@ final class OpenGymUITests: XCTestCase {
     private func systemAlertUp() -> Bool { springboard.alerts.firstMatch.exists }
 
     /**
-     * Both first-start steps, whichever show, each answered once: notifications with Allow and then
-     * the system's own Allow (waited for up to 20 s, the simulator can be slow to ask), Apple Health
-     * with Not now, which leaves it off. Done when neither step is on screen any more.
+     * Both first-start steps, whichever show, each with its one Continue (App Review 5.1.1(iv)):
+     * notifications, then the system's own Allow (waited for up to 20 s, the simulator can be slow
+     * to ask); Apple Health, then Don't Allow in the iOS sheet, which leaves it off. Done when neither step is on screen any more.
      */
     private func passPermissionSteps() {
         let notifications = app.staticTexts["Never miss the end of a rest"]
@@ -71,8 +72,8 @@ final class OpenGymUITests: XCTestCase {
             if notifications.exists {
                 if !allowedNotifications {
                     shot("0-permission-step")
-                    let allow = app.buttons["Allow"]
-                    if allow.exists { allow.tap(); allowedNotifications = true }
+                    let next = app.buttons["Continue"]
+                    if next.exists { next.tap(); allowedNotifications = true }
                     // The system asks next; give it time before looking at the page again.
                     _ = springboard.alerts.firstMatch.waitForExistence(timeout: 20)
                 }
@@ -82,9 +83,12 @@ final class OpenGymUITests: XCTestCase {
             if health.exists {
                 if !declinedHealth {
                     shot("0b-apple-health-step")
-                    let notNow = app.buttons["Not now"]
-                    if notNow.exists { notNow.tap(); declinedHealth = true }
+                    let next = app.buttons["Continue"]
+                    if next.exists { next.tap(); declinedHealth = true }
                 }
+                // The Health sheet is the app's own window, not a springboard alert.
+                let dont = app.buttons["Don't Allow"]
+                if dont.waitForExistence(timeout: 10) { dont.tap() }
                 sleep(1)
                 continue
             }
