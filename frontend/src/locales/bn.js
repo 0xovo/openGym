@@ -2543,4 +2543,13 @@ export default {
   'Add them to “{1}”': 'সবগুলো “{1}”-এ যোগ করুন',
   'Thinking about your question…': 'আপনার প্রশ্ন নিয়ে ভাবছি…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'এটি ডেমো, তাই আমার পেছনে কোনো AI মডেল নেই। আপনার নিজের সার্ভারে আমি “{0}”-এর মতো প্রশ্নের উত্তর দিই আপনার প্ল্যান, সাম্প্রতিক সেশন আর এখন চলা ওয়ার্কআউট দেখে।',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'উন্নত',
+  'Max output tokens': 'সর্বোচ্চ আউটপুট টোকেন',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'একটি উত্তরের সীমা। যুক্তি-ভিত্তিক মডেলগুলো তাদের গোপন চিন্তা এতে গোনে, তাই কোনো পরিকল্পনা কাটা পড়লে এটি বাড়ান।',
+  'Daily runs': 'প্রতিদিনের রান',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'কোচের প্রতিটি রান আপনার প্রদানকারীর অ্যাকাউন্টে একটি অনুরোধ। 0 মানে কোনো সীমা নেই।',
+  'Max message length': 'সর্বোচ্চ বার্তার দৈর্ঘ্য',
+  'How long a message, refinement or review note can be.': 'একটি বার্তা, পরিমার্জনার অনুরোধ বা পর্যালোচনা নোট কত দীর্ঘ হতে পারে।',
 }

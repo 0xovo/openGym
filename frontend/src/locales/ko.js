@@ -2464,4 +2464,13 @@ export default {
   'Add them to “{1}”': '모두 “{1}”에 추가',
   'Thinking about your question…': '질문을 생각하고 있어요…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': '이것은 데모라서 뒤에 AI 모델이 없습니다. 내 서버에서는 “{0}” 같은 질문에 계획, 최근 세션, 지금 하고 있는 운동을 바탕으로 답합니다.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': '고급',
+  'Max output tokens': '최대 출력 토큰',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': '한 응답의 상한입니다. 추론 모델은 숨은 사고를 여기에 포함하므로, 계획이 잘리면 이 값을 높이세요.',
+  'Daily runs': '일일 실행 횟수',
+  'Every Coach run is one request on your provider account. 0 means no limit.': '코치 실행은 매번 제공자 계정으로 보내는 한 번의 요청입니다. 0은 무제한을 뜻합니다.',
+  'Max message length': '최대 메시지 길이',
+  'How long a message, refinement or review note can be.': '메시지, 수정 요청 또는 리뷰 메모의 최대 길이입니다.',
 }

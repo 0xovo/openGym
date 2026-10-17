@@ -2464,4 +2464,13 @@ export default {
   'Add them to “{1}”': 'Hepsini “{1}” rutinine ekle',
   'Thinking about your question…': 'Sorunu düşünüyorum…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Bu bir demo, yani arkamda bir yapay zekâ modeli yok. Kendi sunucunda “{0}” gibi sorulara planın, son antrenmanların ve şu anda yaptığın antrenmanla cevap veririm.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'Gelişmiş',
+  'Max output tokens': 'Maks. çıktı token’ı',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'Tek bir yanıtın üst sınırı. Akıl yürüten modeller gizli düşünmelerini bu sınıra sayar; bir plan kesilirse bunu yükselt.',
+  'Daily runs': 'Günlük çalıştırma',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'Her Koç çalıştırması sağlayıcı hesabında bir istektir. 0 sınırsız demektir.',
+  'Max message length': 'Maks. mesaj uzunluğu',
+  'How long a message, refinement or review note can be.': 'Bir mesajın, iyileştirme isteğinin veya inceleme notunun ne kadar uzun olabileceği.',
 }

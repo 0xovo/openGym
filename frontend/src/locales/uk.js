@@ -2461,4 +2461,13 @@ export default {
   'Add them to “{1}”': { one: 'Додати до «{1}»', few: 'Додати всі до «{1}»', many: 'Додати всі до «{1}»' },
   'Thinking about your question…': 'Думаю над вашим запитанням…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Це демо, тож за мною немає моделі ШІ. На вашому власному сервері я відповідаю на запитання на кшталт «{0}», враховуючи ваш план, останні тренування і тренування, яке ви робите зараз.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'Додатково',
+  'Max output tokens': 'Макс. вихідних токенів',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'Стеля однієї відповіді. Міркувальні моделі враховують у ній свої приховані роздуми, тож підніміть її, якщо план обривається.',
+  'Daily runs': 'Запусків на день',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'Кожен запуск Тренера — це один запит на вашому акаунті постачальника. 0 означає без обмежень.',
+  'Max message length': 'Макс. довжина повідомлення',
+  'How long a message, refinement or review note can be.': 'Наскільки довгим може бути повідомлення, прохання про доопрацювання чи нотатка до розбору.',
 }

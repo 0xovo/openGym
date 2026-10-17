@@ -2464,4 +2464,13 @@ export default {
   'Add them to “{1}”': '全部加入「{1}」',
   'Thinking about your question…': '正在思考你的问题…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': '这是演示版，我背后没有 AI 模型。在你自己的服务器上，我会结合你的计划、最近几次训练和你正在进行的训练，回答像“{0}”这样的问题。',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': '高级',
+  'Max output tokens': '最大输出 token 数',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': '单次回答的上限。推理模型会把隐藏的思考计入其中，所以如果计划被截断，就把它调高。',
+  'Daily runs': '每日运行次数',
+  'Every Coach run is one request on your provider account. 0 means no limit.': '教练每次运行都会向你的提供商账户发送一次请求。0 表示不限制。',
+  'Max message length': '最大消息长度',
+  'How long a message, refinement or review note can be.': '消息、修改要求或点评备注可以有多长。',
 }

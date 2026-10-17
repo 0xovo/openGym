@@ -2475,4 +2475,13 @@ export default {
   'Add them to “{1}”': 'เพิ่มทั้งหมดใน “{1}”',
   'Thinking about your question…': 'กำลังคิดเรื่องคำถามของคุณ…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'นี่คือเดโม จึงไม่มีโมเดล AI อยู่เบื้องหลัง บนเซิร์ฟเวอร์ของคุณเอง ฉันจะตอบคำถามอย่าง “{0}” โดยใช้แผน เซสชันล่าสุด และการออกกำลังกายที่คุณกำลังทำอยู่',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'ขั้นสูง',
+  'Max output tokens': 'จำนวนโทเคนเอาต์พุตสูงสุด',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'เพดานของคำตอบหนึ่งครั้ง โมเดลที่คิดวิเคราะห์จะนับการคิดที่ซ่อนอยู่รวมในเพดานนี้ ดังนั้นให้เพิ่มค่านี้หากแผนถูกตัดขาด',
+  'Daily runs': 'จำนวนครั้งต่อวัน',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'โค้ชแต่ละครั้งคือหนึ่งคำขอในบัญชีผู้ให้บริการของคุณ 0 หมายถึงไม่จำกัด',
+  'Max message length': 'ความยาวข้อความสูงสุด',
+  'How long a message, refinement or review note can be.': 'ข้อความ คำขอปรับแก้ หรือบันทึกการวิเคราะห์ยาวได้เท่าใด',
 }

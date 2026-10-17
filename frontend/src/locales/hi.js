@@ -2464,4 +2464,13 @@ export default {
   'Add them to “{1}”': 'सभी को “{1}” में जोड़ें',
   'Thinking about your question…': 'आपके सवाल पर सोच रहा हूँ…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'यह डेमो है, इसलिए मेरे पीछे कोई AI मॉडल नहीं है। आपके अपने सर्वर पर मैं “{0}” जैसे सवालों का जवाब आपकी योजना, पिछले सेशन और अभी चल रहे वर्कआउट के आधार पर देता हूँ।',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'उन्नत',
+  'Max output tokens': 'अधिकतम आउटपुट टोकन',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'एक उत्तर की सीमा। तर्क करने वाले मॉडल अपनी छिपी सोच को इसमें गिनते हैं, इसलिए यदि कोई योजना कट जाए तो इसे बढ़ाएँ।',
+  'Daily runs': 'प्रतिदिन रन',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'कोच का हर रन आपके प्रदाता खाते पर एक अनुरोध है। 0 का अर्थ है कोई सीमा नहीं।',
+  'Max message length': 'अधिकतम संदेश लंबाई',
+  'How long a message, refinement or review note can be.': 'संदेश, सुधार अनुरोध या समीक्षा नोट कितना लंबा हो सकता है।',
 }

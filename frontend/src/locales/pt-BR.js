@@ -1577,6 +1577,15 @@ export const PT_BR_OVERRIDES = {
   'Add them to “{1}”': 'Adicionar todos a “{1}”',
   'Thinking about your question…': 'Pensando na sua pergunta…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Esta é a demo, então não há nenhum modelo de IA por trás de mim. No seu próprio servidor eu respondo perguntas como “{0}” com o seu plano, suas últimas sessões e o treino que você está fazendo agora.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'Avançado',
+  'Max output tokens': 'Máximo de tokens de saída',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'O limite de uma resposta. Modelos de raciocínio contam o pensamento oculto nesse limite, então aumente se um plano for cortado.',
+  'Daily runs': 'Execuções por dia',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'Cada execução do Treinador é uma requisição na sua conta do provedor. 0 significa sem limite.',
+  'Max message length': 'Comprimento máximo da mensagem',
+  'How long a message, refinement or review note can be.': 'Quanto pode ter uma mensagem, um pedido de refinamento ou uma nota de análise.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

@@ -2467,4 +2467,13 @@ export default {
   'Add them to “{1}”': 'Mind hozzáadása ehhez: „{1}”',
   'Thinking about your question…': 'Gondolkodom a kérdéseden…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Ez a demó, így nincs mögöttem MI-modell. A saját szervereden az olyan kérdésekre, mint „{0}”, a terved, a legutóbbi edzéseid és az épp folyó edzésed alapján válaszolok.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'Speciális',
+  'Max output tokens': 'Max. kimeneti token',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'Egy válasz felső korlátja. A gondolkodó modellek a rejtett gondolkodásukat is beleszámítják, ezért emeld meg, ha egy terv elvágódik.',
+  'Daily runs': 'Napi futtatások',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'Minden Edző-futtatás egy kérés a szolgáltatói fiókodon. A 0 azt jelenti, nincs korlát.',
+  'Max message length': 'Max. üzenethossz',
+  'How long a message, refinement or review note can be.': 'Milyen hosszú lehet egy üzenet, finomítási kérés vagy elemzési megjegyzés.',
 }

@@ -2464,4 +2464,13 @@ export default {
   'Add them to “{1}”': 'Añadirlos a «{1}»',
   'Thinking about your question…': 'Pensando en tu pregunta…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Esto es la demo, así que no hay ningún modelo de IA detrás de mí. En tu propio servidor respondo preguntas como «{0}» con tu plan, tus últimas sesiones y el entrenamiento que estás haciendo ahora.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'Avanzado',
+  'Max output tokens': 'Máximo de tokens de salida',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'El límite de una respuesta. Los modelos de razonamiento cuentan su pensamiento oculto para este límite, así que súbelo si un plan se corta.',
+  'Daily runs': 'Ejecuciones por día',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'Cada ejecución del Entrenador es una solicitud en tu cuenta del proveedor. 0 significa sin límite.',
+  'Max message length': 'Longitud máxima del mensaje',
+  'How long a message, refinement or review note can be.': 'Cuánto puede tener un mensaje, una petición de refinamiento o una nota de análisis.',
 }

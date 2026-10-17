@@ -2468,4 +2468,13 @@ export default {
   'Add them to “{1}”': { one: 'Добавить в «{1}»', few: 'Добавить все в «{1}»', many: 'Добавить все в «{1}»' },
   'Thinking about your question…': 'Думаю над вашим вопросом…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Это демо, поэтому за мной нет модели ИИ. На вашем собственном сервере я отвечаю на вопросы вроде «{0}», учитывая ваш план, последние тренировки и тренировку, которую вы делаете сейчас.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'Дополнительно',
+  'Max output tokens': 'Макс. токенов вывода',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'Потолок одного ответа. Рассуждающие модели учитывают в нём свои скрытые размышления, поэтому увеличьте его, если план обрывается.',
+  'Daily runs': 'Запусков в день',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'Каждый запуск Тренера — один запрос на вашем аккаунте провайдера. 0 означает без ограничений.',
+  'Max message length': 'Макс. длина сообщения',
+  'How long a message, refinement or review note can be.': 'Насколько длинным может быть сообщение, просьба о доработке или заметка к разбору.',
 }

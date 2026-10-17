@@ -2519,4 +2519,13 @@ export default {
   'Add them to “{1}”': 'أضِفها إلى «{1}»',
   'Thinking about your question…': 'أفكر في سؤالك…',
   'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'هذا هو العرض التجريبي، لذا لا يوجد نموذج ذكاء اصطناعي خلفي. على خادمك الخاص أجيب عن أسئلة مثل «{0}» بالاعتماد على خطتك وجلساتك الأخيرة والتمرين الذي تقوم به الآن.',
+
+  // --- AI Coach on the phone: the BYOK limits (#527) ---
+  'Advanced': 'متقدم',
+  'Max output tokens': 'الحد الأقصى لرموز الإخراج',
+  'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'الحد الأقصى للإجابة الواحدة. تحتسب النماذج الاستدلالية تفكيرها الخفي ضمن هذا الحد، لذا ارفعه إذا قُطع خطتك.',
+  'Daily runs': 'عمليات التشغيل اليومية',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'كل تشغيل للمدرب هو طلب واحد على حساب مزودك. تعني 0 بلا حد.',
+  'Max message length': 'الحد الأقصى لطول الرسالة',
+  'How long a message, refinement or review note can be.': 'كم يمكن أن يطول نص رسالة أو طلب تعديل أو ملاحظة مراجعة.',
 }
