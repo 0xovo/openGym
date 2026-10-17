@@ -1,18 +1,17 @@
 // The phone app's first-start permission steps: right after "Use on this device" or a finished
-// pairing, one short screen per thing the OS has to be asked about, each with Allow / Not now
-// (views/PermissionSteps.jsx renders them). The OS dialog alone says nothing about why; asked
-// cold, mid-rest, people tap "Don't allow" and the rest timer never reaches the lock screen.
+// pairing, one short screen per thing the OS has to be asked about, each with one Continue that
+// leads to the OS dialog (views/PermissionSteps.jsx renders them). The OS dialog alone says
+// nothing about why; asked cold, mid-rest, people tap "Don't allow" and the rest timer never reaches the lock screen.
 //
 // A step is { id, state(), request() }. state() answers 'prompt' when there is something to
 // ask, anything else ('granted', 'denied', 'unsupported') skips the step: never a screen for a
 // permission already given, nor for one the OS will not show a dialog for any more. Each step is
-// shown once per device, whatever the answer; "Not now" leaves the in-context ask (the first
-// rest, the reminder switch) to do its job later.
+// shown once per device, whatever the answer in the OS dialog.
 //
-// iPhone only, Apple Health: Allow asks iOS for it (saving workouts and weigh-ins, reading the
+// iPhone only, Apple Health: Continue asks iOS for it (saving workouts and weigh-ins, reading the
 // heart rate and the body weight) and switches the app's Apple Health setting on, the same switch
-// as Settings → Apple Health (lib/health-sync.js), which the Apple Watch app goes by too. Not now
-// leaves it off, to switch on in Settings. Android keeps Health Connect in Settings as it is.
+// as Settings → Apple Health (lib/health-sync.js), which the Apple Watch app goes by too. Turning it all
+// off in the iOS sheet is the no; Settings can switch it off too. Android keeps Health Connect in Settings as it is.
 import { MOBILE } from './mobile.js'
 import { askNotifPermissionOnce } from './rest-alert.js'
 import { healthStatus, loadHealth, enableHealth } from './health-sync.js'
