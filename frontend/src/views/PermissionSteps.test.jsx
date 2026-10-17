@@ -1,9 +1,10 @@
 // @vitest-environment happy-dom
 // The phone app's first-start permission step (owner request, TestFlight): after "Use on this
-// device" or a finished pairing, one screen explains notifications with Allow / Not now. Shown
+// device" or a finished pairing, one screen explains notifications, and its one button, Continue, always goes on to the OS
+// dialog (App Review 5.1.1(iv): our screen must never let the real ask be skipped). Shown
 // once per device, never for a permission already granted or one the OS will not ask for again,
-// never off the phone app. Allow goes through the same request the first rest makes
-// (rest-alert.js), so the first rest does not ask a second time; Not now leaves that ask alone.
+// never off the phone app. Continue goes through the same request the first rest makes
+// (rest-alert.js), so the first rest does not ask a second time.
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -62,12 +63,12 @@ describe('which steps are due', () => {
 })
 
 describe('the screen', () => {
-  it('explains notifications; Allow asks the OS once and goes on to the app', async () => {
+  it('explains notifications; Continue asks the OS once and goes on to the app', async () => {
     await mount()
     expect(host.textContent).toContain('Never miss the end of a rest')
     expect(host.textContent).toContain('Training reminders, only if you switch them on')
     expect(host.textContent).not.toMatch(/—/)
-    await click(button('Allow'))
+    await click(button('Continue'))
     expect(h.requests).toBe(1)
     expect(h.finish).toHaveBeenCalledTimes(1)
     // The first rest does not ask again: the answer is on record where rest-alert.js looks.
@@ -75,17 +76,18 @@ describe('the screen', () => {
     expect(JSON.parse(localStorage.getItem(SEEN_KEY))).toEqual(['notifications'])
   })
 
-  it('Not now goes on without asking, and leaves the in-context ask for later', async () => {
+  it('has no way past the OS dialog: one button, and a no there still goes on', async () => {
+    h.after = 'denied'
     await mount()
-    await click(button('Not now'))
-    expect(h.requests).toBe(0)
+    expect([...host.querySelectorAll('button')].map(b => b.textContent.trim())).toEqual(['Continue'])
+    await click(button('Continue'))
+    expect(h.requests).toBe(1)
     expect(h.finish).toHaveBeenCalledTimes(1)
-    expect(localStorage.getItem(NOTIF_ASKED_KEY)).toBeNull()
   })
 
   it('is shown once per device', async () => {
     await mount()
-    await click(button('Not now'))
+    await click(button('Continue'))
     act(() => root.unmount()); root = createRoot(host); h.finish.mockReset()
     await mount()
     expect(host.textContent).toBe('')
@@ -120,26 +122,24 @@ describe('Apple Health, on the iPhone', () => {
     expect((await pendingSteps()).map(s => s.id)).toEqual(['notifications', 'appleHealth'])
   })
 
-  it('explains it; Allow asks iOS and switches the setting on', async () => {
+  it('explains it; Continue asks iOS and switches the setting on', async () => {
     iphone()
     await mount()
     expect(host.textContent).toContain('Your workouts in Apple Health')
     expect(host.textContent).toContain('Heart rate per set on your Apple Watch')
     expect(host.textContent).toContain('You can change it anytime in Settings.')
     expect(host.textContent).not.toMatch(/—/)
-    await click(button('Allow'))
+    await click(button('Continue'))
     expect(h.enable).toHaveLength(1)
     expect(h.enable[0]).toMatchObject({ unit: 'kg' })
     expect(h.finish).toHaveBeenCalledTimes(1)
     expect(JSON.parse(localStorage.getItem(SEEN_KEY))).toEqual(['appleHealth'])
   })
 
-  it('Not now leaves it off and goes on', async () => {
+  it('offers no "Not now": Continue is the only way on, to the iOS sheet (App Review 5.1.1(iv))', async () => {
     iphone()
     await mount()
-    await click(button('Not now'))
-    expect(h.enable).toEqual([])
-    expect(h.healthOn).toBe(false)
-    expect(h.finish).toHaveBeenCalledTimes(1)
+    expect([...host.querySelectorAll('button')].map(b => b.textContent.trim())).toEqual(['Continue'])
+    expect(host.textContent).not.toContain('Not now')
   })
 })

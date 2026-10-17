@@ -1,6 +1,7 @@
 // Phone app, first start: the permission steps between the onboarding choice and the app
-// (lib/onboarding-perms.js decides which are due). One step per screen, Allow / Not now, and
-// the app as soon as the list is through. A step with nothing to ask never renders, so a phone
+// (lib/onboarding-perms.js decides which are due). One step per screen with a single Continue
+// that always goes on to the OS dialog (App Review 5.1.1(iv): no way to skip the real ask from
+// our own screen; "Don't allow" there is the user's no), and the app as soon as the list is through. A step with nothing to ask never renders, so a phone
 // that already allowed everything goes straight on without a flash of this screen.
 import { useEffect, useState } from 'react'
 import { useStore } from '../store/useStore.js'
@@ -37,10 +38,10 @@ export default function PermissionSteps() {
   useEffect(() => { if (steps && !step) done() }, [steps, step])
   if (!step) return null
 
-  const answer = async allow => {
+  const next = async () => {
     setBusy(true)
     markStepSeen(step.id)
-    if (allow) await Promise.resolve(step.request()).catch(() => false)
+    await Promise.resolve(step.request()).catch(() => false)
     setBusy(false)
     setI(i + 1)
   }
@@ -53,9 +54,7 @@ export default function PermissionSteps() {
     <div style={{ display: 'grid', gap: 8, marginBottom: 28, textAlign: 'start' }}>
       {c.lines.map(l => <div key={l} className="row" style={{ gap: 10 }}><span style={{ color: 'var(--green)' }}><Icon name="check" /></span><span className="small">{l}</span></div>)}
     </div>
-    <Button variant="primary" disabled={busy} onClick={() => answer(true)}>{t('Allow')}</Button>
-    <div style={{ height: 10 }} />
-    <Button disabled={busy} onClick={() => answer(false)}>{t('Not now')}</Button>
+    <Button variant="primary" disabled={busy} onClick={next}>{t('Continue')}</Button>
     <div className="dim small" style={{ marginTop: 18, lineHeight: 1.5 }}>{c.foot || t('You can change it anytime in your phone’s settings.')}</div>
   </div>
 }
