@@ -4,7 +4,7 @@
 // the plugin is a Capacitor proxy that answers `then` with a native call that never settles, so
 // it must never become the value of a promise (the Coach hang, #42): here that would hang every
 // rest alert call.
-import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 
 const h = vi.hoisted(() => {
@@ -60,10 +60,10 @@ beforeEach(() => {
   unhandled.length = 0
   process.on('unhandledRejection', onUnhandled)
 })
-afterAll(() => {
-  process.off('unhandledRejection', onUnhandled)
-  vi.unstubAllEnvs()
-})
+// One listener per test, taken off after it: added in every beforeEach and only removed in
+// afterAll, twenty of them tripped Node's MaxListeners warning in a full run.
+afterEach(() => { process.off('unhandledRejection', onUnhandled) })
+afterAll(() => { vi.unstubAllEnvs() })
 
 describe('the rest alert in the iOS app', () => {
   it('schedules the end on the phone, like Android, and rejects nothing', async () => {
