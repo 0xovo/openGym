@@ -448,8 +448,16 @@ export function validateReview(data, plan, ctx = {}) {
         // the routine the model asked for minus the exercises it could not have, and hand that
         // to someone as if it were what they were shown.
         const listed = Array.isArray(a.ex) ? a.ex : [];
-        const bad = listed.find(e => !e || !isStr(e.id) || !knownEx(e.id));
-        if (bad) { errors.push(`${where}.after.ex "${bad.id}" is not in the exercise library — use an id from the library provided in the payload`); return; }
+        // By index: find() hands back the entry itself, and a null in the list was falsy enough
+        // to pass this check and crash on the next line instead of going back for repair.
+        const badAt = listed.findIndex(e => !e || typeof e !== 'object' || !isStr(e.id) || !knownEx(e.id));
+        if (badAt >= 0) {
+          const bad = listed[badAt];
+          errors.push(bad && typeof bad === 'object' && isStr(bad.id)
+            ? `${where}.after.ex "${bad.id}" is not in the exercise library — use an id from the library provided in the payload`
+            : `${where}.after.ex[${badAt}] is not an exercise — each entry needs an id from the library provided in the payload`);
+          return;
+        }
         const offEq = listed.find(e => offEquipment(ctx, e.id));
         if (offEq) { errors.push(OFF_EQUIPMENT(`${where}.after.ex`, offEq.id)); return; }
         const ex = listed.slice(0, MAX_EX_PER_ROUTINE);

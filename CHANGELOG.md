@@ -42,6 +42,8 @@ asking for anything, promise.
 - Cardio the Coach prescribes on a non-cardio exercise (kettlebell swings for 15 minutes) stays
   15 minutes instead of turning into sets with no target, in new plans, in review additions and
   in shared plan files (#640, thanks @rudycelekli for spotting the review side).
+- A Coach review that adds a routine with an empty slot in it gets a second try instead of
+  failing outright (thanks @rudycelekli).
 
 ## v1.4.2 (2026-10-18)
 

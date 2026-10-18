@@ -225,6 +225,16 @@ test('cardio on a non-cardio exercise keeps its mode, minutes and pace (#640)', 
   assert.equal(reps.proposal.changes[0].after.min, undefined);
 });
 
+test('an added routine with a null or junk entry goes back for repair instead of crashing', () => {
+  for (const junk of [null, false, 0, 'x', { sets: 3 }]) {
+    const r = review([change({ type: 'add-routine', target: {}, after: { name: 'C', ex: [{ id: '0001', sets: 3, reps: 10 }, junk] } })]);
+    assert.equal(r.ok, false, JSON.stringify(junk));
+    assert.ok(r.errors.some(e => e.includes('after.ex[1]')), JSON.stringify(r.errors));
+  }
+  const unknown = review([change({ type: 'add-routine', target: {}, after: { name: 'C', ex: [{ id: 'made-up' }] } })]);
+  assert.ok(unknown.errors.some(e => e.includes('"made-up"')), 'an unknown id is still named back to the model');
+});
+
 test('adding an exercise requires a real library id', () => {
   const ok = review([change({ type: 'add-exercise', target: { routineId: 'r1' }, after: { id: '0009', sets: 3, reps: 12 } })]);
   assert.equal(ok.ok, true);
