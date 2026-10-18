@@ -67,6 +67,8 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - Hevy import: 55 of Hevy's built-in exercises (Seated Leg Curl, Plank, Air Bike, Triceps Dip and
   friends) land on the right openGym exercise instead of a cousin or a custom one, and the import
   summary counts an exercise once even when it's in your workouts and your routines (thanks @lodepav).
+- German step-by-step instructions for the remaining 1,213 exercises, so every exercise explains
+  itself in German now (#645, thanks @junkerderprovinz).
 
 ## v1.4.2 (2026-10-18)
 
