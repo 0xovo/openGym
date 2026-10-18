@@ -605,7 +605,7 @@ export default {
   'What this session hits': 'ท่านี้ฝึกกล้ามเนื้อส่วนไหนบ้าง',
   'Already worked': 'ฝึกไปแล้ว',
   'Still to come': 'ยังเหลืออยู่',
-  'Muscle map in the header': 'แผนที่กล้ามเนื้อด้านบน',
+  'Muscle map at the top': 'แผนที่กล้ามเนื้อด้านบน',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'ร่างเล็ก ๆ ที่สว่างขึ้นทุกครั้งที่ติ๊กเซ็ต แตะเพื่อดูรายละเอียด',
   'What you just trained': 'สิ่งที่เพิ่งฝึกไป',
   'Body diagram': 'แผนภาพร่างกาย',

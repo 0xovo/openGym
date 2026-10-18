@@ -45,12 +45,13 @@ describe('sessionLevels', () => {
     const unplanned = MUSCLES.find(m => !musclesOf(EXIDX[BENCH])[m] && !musclesOf(EXIDX[SQUAT])[m])
     expect(fresh[unplanned]).toBe(0)
 
-    const oneSet = sessionLevels(sessionLoad([{ id: BENCH, sets: [set(true), set(false)] }, { id: SQUAT, sets: [set(false), set(false)] }]))
-    expect(oneSet[chest]).toBeGreaterThanOrEqual(2)
+    // one set of four: worked, but not yet the full accent
+    const oneSet = sessionLevels(sessionLoad([{ id: BENCH, sets: [set(true), set(false), set(false), set(false)] }, { id: SQUAT, sets: [set(false), set(false)] }]))
+    expect(oneSet[chest]).toBe(3)
     expect(oneSet[quads]).toBe(1)
 
-    const finished = sessionLevels(sessionLoad([{ id: BENCH, sets: [set(true), set(true)] }, { id: SQUAT, sets: [set(false), set(false)] }]))
-    expect(finished[chest]).toBeGreaterThan(oneSet[chest])
-    expect(finished[chest]).toBeLessThanOrEqual(4)
+    const finished = sessionLevels(sessionLoad([{ id: BENCH, sets: [set(true), set(true), set(true), set(true)] }, { id: SQUAT, sets: [set(false), set(false)] }]))
+    expect(finished[chest]).toBe(4)
+    expect(finished[quads]).toBe(1)
   })
 })

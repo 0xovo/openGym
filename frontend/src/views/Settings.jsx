@@ -617,9 +617,9 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           <Row icon="more" iconTint="var(--mint)" title={t('Exercise chips at the top')} subtitle={t('A numbered dot per exercise, filled as you go. Tap one to jump there.')}>
             <Switch aria-label={t('Exercise chips at the top')} checked={wc.exerciseChips} onChange={v => setWc('exerciseChips', v)} />
           </Row>
-          {/* The live session's body in the header (#670): on by default, it fits beside the ⋯. */}
-          <Row icon="figureStrength" iconTint="var(--orange)" title={t('Muscle map in the header')} subtitle={t('A tiny body that lights up as you tick sets. Tap it for the details.')}>
-            <Switch aria-label={t('Muscle map in the header')} checked={wc.muscleMap} onChange={v => setWc('muscleMap', v)} />
+          {/* The live session's body (#670): at the end of the chip row, or in the header without it. */}
+          <Row icon="figureStrength" iconTint="var(--orange)" title={t('Muscle map at the top')} subtitle={t('A tiny body that lights up as you tick sets. Tap it for the details.')}>
+            <Switch aria-label={t('Muscle map at the top')} checked={wc.muscleMap} onChange={v => setWc('muscleMap', v)} />
           </Row>
           <Row icon="link" iconTint="var(--blue)" title={t('Superset buttons in the exercise header')}>
             <Switch checked={wc.pairButtons} onChange={v => setWc('pairButtons', v)} />

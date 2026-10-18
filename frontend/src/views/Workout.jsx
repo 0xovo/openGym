@@ -1934,8 +1934,12 @@ function ActiveWorkout() {
     if (chip.unit.includes(cur)) return
     update(s => { if (s.active) s.active.cur = chip.unit[0] })
   }
+  // What the session hits so far (#670). It rides at the end of the chip row, which is taller
+  // than it and scrolls sideways anyway, so it costs no height; the header bar has no width to
+  // spare on a phone (a second line under the name). With the chips off it sits in the header.
+  const sessionMap = wc.muscleMap ? <SessionMapButton entries={A.entries} body={S.body} /> : null
   const chipRow = wc.exerciseChips && A.entries.length > 0
-    ? <WorkoutChips entries={A.entries} cur={listMode ? visibleExercise : cur} onPick={pickChip} />
+    ? <div className="wchips-row"><WorkoutChips entries={A.entries} cur={listMode ? visibleExercise : cur} onPick={pickChip} />{sessionMap}</div>
     : null
 
   // Hardware keys (issue #133, lib/workout-keys.js): Space or Enter ticks the next set, ← and →
@@ -2067,7 +2071,7 @@ function ActiveWorkout() {
         ? <button className="iconbtn" aria-label={t('Close editor')} title={t('Close editor')} onClick={() => exitWorkoutEdit()}><Icon name="xmark" /></button>
         : <button className="iconbtn" aria-label={t('Minimize')} title={t('Minimize')} onClick={() => nav('/home')}><Icon name="chevronDown" /></button>}
       <div className="whdr-mid"><div className="whdr-name">{A.name}</div><div className="sub">{(A.backfill || editing) ? fmtDate(A.d, true) : <Elapsed start={A.start} />} · {t('{0} sets', done + '/' + total)}</div></div>
-      {wc.muscleMap && <SessionMapButton entries={A.entries} body={S.body} />}
+      {!chipRow && sessionMap}
       <button className="iconbtn" aria-label={t('Workout options')} title={t('Workout options')} onClick={openViewMenu}><Icon name="more" /></button>
       <button className="btn primary pill whdr-finish" aria-label={editing ? t('Save changes') : undefined}
         onClick={() => (editing ? finishWorkout() : finishWorkoutSheet({ onDiscard: discardWorkout }))}>{editing ? t('Save') : t('Finish')}</button>

@@ -623,7 +623,7 @@ export default {
   'What this session hits': 'Was dieses Training trifft',
   'Already worked': 'Schon trainiert',
   'Still to come': 'Kommt noch',
-  'Muscle map in the header': 'Muskelkarte oben',
+  'Muscle map at the top': 'Muskelkarte oben',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'Ein kleiner Körper, der mit jedem abgehakten Satz aufleuchtet. Tippen für Details.',
   'What you just trained': 'Was du gerade trainiert hast',
   'Body diagram': 'Körperdiagramm',

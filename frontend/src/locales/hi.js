@@ -604,7 +604,7 @@ export default {
   'What this session hits': 'यह सत्र क्या ट्रेन करता है',
   'Already worked': 'पहले ही ट्रेन किया',
   'Still to come': 'अभी बाकी है',
-  'Muscle map in the header': 'ऊपर मांसपेशी मैप',
+  'Muscle map at the top': 'ऊपर मांसपेशी मैप',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'एक छोटा शरीर जो हर पूरे सेट के साथ चमकता है। विवरण के लिए टैप करें।',
   'What you just trained': 'आपने अभी क्या ट्रेन किया',
   'Body diagram': 'शरीर आरेख',

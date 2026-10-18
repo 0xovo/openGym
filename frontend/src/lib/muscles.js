@@ -306,15 +306,15 @@ export function sessionLoad(entries) {
 
 /**
  * Shade steps for the live session map. A muscle still to come gets the faintest step (l1); one
- * already worked starts a step above and climbs with its share of the session's busiest muscle,
- * so the first set already reads as "done" and the map brightens as the session goes.
+ * already worked jumps to l3, so the first set reads as "done" even on a 30px body, and to the
+ * full accent (l4) once it has half as many sets as the session's busiest muscle will.
  */
 export function sessionLevels({ done, planned }) {
   const max = Math.max(0, ...MUSCLES.map(m => planned[m] || 0), ...MUSCLES.map(m => done[m] || 0))
   const lv = {}
   MUSCLES.forEach(m => {
     const d = done[m] || 0
-    lv[m] = d > 0 && max > 0 ? Math.max(2, Math.min(4, 1 + Math.ceil(d / max * 3))) : (planned[m] || 0) > 0 ? 1 : 0
+    lv[m] = d > 0 ? (d * 2 >= max ? 4 : 3) : (planned[m] || 0) > 0 ? 1 : 0
   })
   return lv
 }

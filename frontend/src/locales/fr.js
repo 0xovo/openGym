@@ -604,7 +604,7 @@ export default {
   'What this session hits': 'Ce que cette séance sollicite',
   'Already worked': 'Déjà travaillé',
   'Still to come': 'Encore à venir',
-  'Muscle map in the header': 'Carte musculaire en haut',
+  'Muscle map at the top': 'Carte musculaire en haut',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'Un petit corps qui s’allume à chaque série cochée. Touchez-le pour les détails.',
   'What you just trained': 'Ce que tu viens de travailler',
   'Body diagram': 'Schéma du corps',

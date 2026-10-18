@@ -687,7 +687,7 @@ export default {
   'What this session hits': 'এই সেশন যেসব পেশিতে কাজ করে',
   'Already worked': 'ইতিমধ্যে কাজ হয়েছে',
   'Still to come': 'এখনও বাকি',
-  'Muscle map in the header': 'উপরে পেশি ম্যাপ',
+  'Muscle map at the top': 'উপরে পেশি ম্যাপ',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'একটা ছোট্ট শরীর যা প্রতিটি সেট শেষ করলে জ্বলে ওঠে। বিস্তারিত দেখতে ট্যাপ করুন।',
   'What you just trained': 'এইমাত্র যা ট্রেন করলেন',
   'Body diagram': 'শরীরের ডায়াগ্রাম',

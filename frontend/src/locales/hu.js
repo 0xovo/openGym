@@ -605,7 +605,7 @@ export default {
   'What this session hits': 'Mit érint ez az edzés',
   'Already worked': 'Már megdolgoztatva',
   'Still to come': 'Még hátravan',
-  'Muscle map in the header': 'Izomtérkép fent',
+  'Muscle map at the top': 'Izomtérkép fent',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'Egy kis test, ami minden kipipált sorozattal jobban világít. Koppints rá a részletekért.',
   'What you just trained': 'Mit edzettél az imént',
   'Body diagram': 'Testábra',

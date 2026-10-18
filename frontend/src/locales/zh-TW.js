@@ -593,7 +593,7 @@ export default {
   'What this session hits': '本次訓練主要刺激肌群',
   'Already worked': '已練到',
   'Still to come': '還沒練',
-  'Muscle map in the header': '頂部肌肉圖',
+  'Muscle map at the top': '頂部肌肉圖',
   'A tiny body that lights up as you tick sets. Tap it for the details.': '一個小人，每完成一組就亮一點。點一下看詳情。',
   'What you just trained': '剛才完成的鍛鍊肌群',
   'Body diagram': '身體肌群分佈圖',

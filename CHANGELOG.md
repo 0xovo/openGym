@@ -20,9 +20,10 @@ seconds at most) instead of nagging you anyway.
 **See what a session hits before you start it.** Every routine on the Plan page (the week, the
 rotation and the routine list) and today's session on Home now carry a tiny body, front and back,
 with the muscles it works lit up. No more opening Leg Day to remember it is, in fact, legs.
-And it keeps going once you start: the workout header has the same tiny body, faint where the
-session is headed and lit up where you've already ticked sets, in every layout (#670). Tap it for
-the big map and done/planned sets per muscle. Settings → Workout → Fine-tuning turns it off.
+And it keeps going once you start: the exercise chips at the top of a workout end in the same
+tiny body, faint where the session is headed and lit up where you've already ticked sets, in every
+layout and without moving a single set row (#670). Tap it for the big map and done/planned sets
+per muscle. Settings → Workout → Fine-tuning turns it off.
 
 - **Muscle balance**: tap a muscle you haven't trained right on the map and its row offers the
   exercises for it, the same way the "Not trained" chips do (#553).

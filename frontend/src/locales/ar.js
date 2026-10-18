@@ -494,7 +494,7 @@ export default {
   'What this session hits': 'ما الذي تستهدفه هذه الجلسة',
   'Already worked': 'تم تمرينها',
   'Still to come': 'لم تأتِ بعد',
-  'Muscle map in the header': 'خريطة العضلات في الأعلى',
+  'Muscle map at the top': 'خريطة العضلات في الأعلى',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'جسم صغير يضيء مع كل مجموعة تنهيها. اضغط عليه للتفاصيل.',
   'What you just trained': 'العضلات التي درّبتها',
   'Body diagram': 'خريطة الجسم',

@@ -430,7 +430,7 @@ export default {
   'What this session hits': 'Що задіює це тренування',
   'Already worked': 'Вже пропрацьовано',
   'Still to come': 'Ще попереду',
-  'Muscle map in the header': 'Мапа м’язів угорі',
+  'Muscle map at the top': 'Мапа м’язів угорі',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'Маленьке тіло, що світлішає з кожним відміченим підходом. Торкніться, щоб побачити деталі.',
   'What you just trained': 'Що ти щойно тренував',
   'Body diagram': 'Схема тіла',

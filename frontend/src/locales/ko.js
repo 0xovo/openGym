@@ -604,7 +604,7 @@ export default {
   'What this session hits': '이 세션이 자극하는 부위',
   'Already worked': '이미 운동함',
   'Still to come': '아직 남음',
-  'Muscle map in the header': '상단 근육 지도',
+  'Muscle map at the top': '상단 근육 지도',
   'A tiny body that lights up as you tick sets. Tap it for the details.': '세트를 완료할 때마다 밝아지는 작은 몸. 탭하면 자세히 볼 수 있어요.',
   'What you just trained': '방금 훈련한 부위',
   'Body diagram': '신체 도해',

@@ -594,7 +594,7 @@ export default {
   'What this session hits': 'Что задействует эта тренировка',
   'Already worked': 'Уже проработано',
   'Still to come': 'Ещё впереди',
-  'Muscle map in the header': 'Карта мышц вверху',
+  'Muscle map at the top': 'Карта мышц вверху',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'Маленькое тело, которое светлеет с каждым отмеченным подходом. Нажмите, чтобы увидеть детали.',
   'What you just trained': 'Что вы только что тренировали',
   'Body diagram': 'Схема тела',

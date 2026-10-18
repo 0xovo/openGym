@@ -283,7 +283,7 @@ describe('the pages', () => {
     expect([...host.querySelectorAll('.sect-f')].some(f => /screen stays on/.test(f.textContent))).toBe(false)
     mount('advanced')
     expect(titles()).toEqual(['Planned sessions start from', 'Keep timing after target', 'Weight and reps buttons',
-      'Drop and burst shortcuts on every set', 'Swipe actions', 'Exercise chips at the top', 'Muscle map in the header', 'Superset buttons in the exercise header', 'Move, swap and remove buttons below the exercise'])
+      'Drop and burst shortcuts on every set', 'Swipe actions', 'Exercise chips at the top', 'Muscle map at the top', 'Superset buttons in the exercise header', 'Move, swap and remove buttons below the exercise'])
   })
 
   it('Collapse completed exercises is saved for every session and drops a running session\'s own choice', () => {
@@ -306,7 +306,7 @@ describe('the pages', () => {
     act(() => chips.click())
     expect(mocks.S.wc.exerciseChips).toBe(false)
     // the header's muscle map (#670) is on by default too
-    const map = rowTitled('Muscle map in the header').querySelector('[role="switch"]')
+    const map = rowTitled('Muscle map at the top').querySelector('[role="switch"]')
     expect(map.getAttribute('aria-checked')).toBe('true')
     act(() => map.click())
     expect(mocks.S.wc.muscleMap).toBe(false)

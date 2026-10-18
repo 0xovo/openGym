@@ -44,8 +44,8 @@ function render(node = <MemoryRouter><Workout /></MemoryRouter>) {
   root = createRoot(container)
   act(() => root.render(node))
 }
-const headerMap = () => container.querySelector('.whdr [data-session-map]')
-const lastHeaderLevels = () => maps.filter(p => p.className === 'bm-mini').at(-1)?.levels
+const headerMap = () => container.querySelector('[data-session-map]')
+const lastHeaderLevels = () => maps.filter(p => /bm-mini/.test(p.className)).at(-1)?.levels
 const edit = fn => act(() => useStore.getState().update(fn))
 
 afterEach(() => {
@@ -54,15 +54,24 @@ afterEach(() => {
   useUI.setState({ sheets: [] })
 })
 
-describe('Workout header muscle map (#670)', () => {
+describe('Workout muscle map (#670)', () => {
   for (const view of ['cards', 'list', 'compact', 'focus']) {
     it(`is in the header in ${view}`, () => {
       setActive([entry(BENCH, [row(), row()])], { workoutView: view })
       render()
       expect(headerMap()).toBeTruthy()
       expect(headerMap().getAttribute('aria-label')).toBe('What this session hits')
+      // it rides at the end of the exercise chips, not in the crowded header bar
+      expect(headerMap().closest('.wchips-row')).toBeTruthy()
+      expect(container.querySelector('.whdr-bar [data-session-map]')).toBeNull()
     })
   }
+
+  it('moves into the header bar when the exercise chips are off', () => {
+    setActive([entry(BENCH, [row(), row()])], { wc: { exerciseChips: false } })
+    render()
+    expect(container.querySelector('.whdr-bar [data-session-map]')).toBeTruthy()
+  })
 
   it('lights a muscle up when its set is ticked, still-to-come ones stay faint', () => {
     setActive([entry(BENCH, [row(), row()]), entry(SQUAT, [row(), row()])])
@@ -70,7 +79,7 @@ describe('Workout header muscle map (#670)', () => {
     expect(lastHeaderLevels()[CHEST]).toBe(1)
     expect(lastHeaderLevels()[QUADS]).toBe(1)
     edit(s => { s.active.entries[0].sets[0].done = true })
-    expect(lastHeaderLevels()[CHEST]).toBeGreaterThanOrEqual(2)
+    expect(lastHeaderLevels()[CHEST]).toBeGreaterThanOrEqual(3)
     expect(lastHeaderLevels()[QUADS]).toBe(1)
   })
 

@@ -30,7 +30,7 @@ export function SessionMapButton({ entries, body }) {
   if (!any(load.planned)) return null
   return <button type="button" className="iconbtn whdr-map" data-session-map aria-label={t('What this session hits')}
     title={t('What this session hits')} onClick={sessionMusclesSheet}>
-    <BodyMap className="bm-mini" levels={levels} body={body} />
+    <BodyMap className="bm-mini bm-session" levels={levels} body={body} />
   </button>
 }
 
@@ -53,9 +53,9 @@ export function SessionMuscles({ close }) {
       <h3 style={{ margin: 0 }}>{t('What this session hits')}</h3>
       <Button size="sm" variant="ghost" onClick={close}>{t('Done')}</Button>
     </div>
-    <BodyMap levels={levels} body={body} />
+    <BodyMap className="bm-session" levels={levels} body={body} />
     <div className="hm-legend sm-legend">
-      <span className="hm-c l3" />{t('Already worked')}<span className="hm-c l1" />{t('Still to come')}
+      <span className="hm-c l4" />{t('Already worked')}<span className="hm-c l1" />{t('Still to come')}
     </div>
     {(all ? muscles : muscles.slice(0, ROWS)).map(m => {
       const d = r1(done[m] || 0)
@@ -63,7 +63,7 @@ export function SessionMuscles({ close }) {
       return <div className="mrow" key={m} data-muscle-session={m}>
         <span className="nm">{t(MUSCLE_NAME[m])}</span>
         <span className="bar"><i style={{ width: Math.round(Math.min(d / p, 1) * 100) + '%' }} /></span>
-        <span className="v cmp" aria-label={`${t('Completed')} ${t('{0} sets', fmtNum(d))} · ${t('Planned')} ${t('{0} sets', fmtNum(p))}`}>
+        <span className="v sess" aria-label={`${t('Completed')} ${t('{0} sets', fmtNum(d))} · ${t('Planned')} ${t('{0} sets', fmtNum(p))}`}>
           {fmtNum(d)}/{fmtNum(p)}
         </span>
       </div>

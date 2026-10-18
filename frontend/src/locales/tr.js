@@ -604,7 +604,7 @@ export default {
   'What this session hits': 'Bu antrenman neyi çalıştırıyor',
   'Already worked': 'Zaten çalıştı',
   'Still to come': 'Sırada',
-  'Muscle map in the header': 'Üstte kas haritası',
+  'Muscle map at the top': 'Üstte kas haritası',
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'Her işaretlediğin sette biraz daha parlayan minik bir vücut. Ayrıntılar için dokun.',
   'What you just trained': 'Az önce ne çalıştın',
   'Body diagram': 'Vücut diyagramı',

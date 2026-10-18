@@ -604,7 +604,7 @@ export default {
   'What this session hits': '这次训练练到哪里',
   'Already worked': '已练到',
   'Still to come': '还没练',
-  'Muscle map in the header': '顶部肌肉图',
+  'Muscle map at the top': '顶部肌肉图',
   'A tiny body that lights up as you tick sets. Tap it for the details.': '一个小人，每完成一组就亮一点。点一下看详情。',
   'What you just trained': '你刚刚练了什么',
   'Body diagram': '身体图示',
