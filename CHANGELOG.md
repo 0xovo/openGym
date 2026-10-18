@@ -38,6 +38,10 @@ with the muscles it works lit up. No more opening Leg Day to remember it is, in 
 GitHub Sponsors, and on the iPhone a straight line to writing an App Store review. No pop-ups
 asking for anything, promise.
 
+**Fixes**
+- Jumping jacks, burpees and the other cardio moves can be counted in sets x reps (or timed):
+  their settings now offer Cardio, Reps and Time, Cardio still the default (#678).
+
 ## v1.4.2 (2026-10-18)
 
 openGym comes to the App Store, with an Apple Watch app in tow. Plus everything you asked for
