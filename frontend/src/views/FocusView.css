@@ -1,6 +1,8 @@
-.focus-view{display:grid;gap:12px}
+/* One column no wider than the screen (#655): a grid track grows to its widest child's
+   min-content, and a long superset's dots or a long name pushed the whole card off the edge. */
+.focus-view{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 .focus-superset-inline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:12px;border-bottom:var(--hair) solid var(--sep);color:var(--acc);font-size:13px}
-.focus-superset-inline strong{font-weight:600}
+.focus-superset-inline strong{min-width:0;font-weight:600;overflow-wrap:anywhere}
 .focus-superset-inline span{color:var(--label-2)}
 .focus-superset-inline .icn{font-size:14px}
 .focus-superset-inline .btn{min-height:32px;padding-inline:8px;color:var(--acc)}
@@ -9,7 +11,7 @@
 .focus-superset-nav button:disabled{opacity:.3}
 .focus-card{padding:16px;border-radius:var(--r-lg);background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--acc-line)}
 .focus-card-header{display:flex;align-items:center;gap:6px;padding-bottom:12px;border-bottom:var(--hair) solid var(--sep)}
-.focus-card-header h2{flex:1;font-size:20px;line-height:1.2;text-transform:capitalize}
+.focus-card-header h2{flex:1;min-width:0;overflow-wrap:anywhere;font-size:20px;line-height:1.2;text-transform:capitalize}
 .focus-warmup{font-size:16px}
 /* The set on screen is taken to failure: the same purple "F" the set rows wear. */
 .focus-failure{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 4px;border-radius:10px;background:var(--purple);color:#fff;font-size:12px;font-weight:700}
@@ -19,7 +21,7 @@
 .focus-note{padding-left:8px;border-left:var(--hair) solid var(--sep)}
 .focus-note.pinned{color:var(--yellow);display:flex;gap:5px;align-items:flex-start}
 .focus-note .icn{margin-top:1px;flex:none}
-.focus-guidance{display:flex;align-items:center;gap:5px;width:max-content;text-align:left;color:var(--acc);font-weight:600}
+.focus-guidance{display:flex;align-items:center;gap:5px;width:max-content;max-width:100%;text-align:left;color:var(--acc);font-weight:600}
 .focus-guidance .icn{font-size:13px}
 .focus-prescription{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:14px 0}
 .focus-badge{display:inline-flex;align-items:center;gap:5px;max-width:100%;min-height:30px;padding:6px 11px;border-radius:99px;background:var(--surface-2);color:var(--label);font-size:14px;font-weight:500;line-height:1.2;white-space:nowrap}
@@ -37,11 +39,12 @@
 .focus-secondary{display:grid;grid-template-columns:1fr 44px;gap:8px;margin-top:8px}
 .focus-secondary>.iconbtn{width:44px;height:44px;border:1px solid var(--sep);border-radius:8px}
 .focus-skip{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border:1px solid var(--sep);border-radius:8px;color:var(--label)}
-.focus-pager{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px}
+.focus-pager{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px}
 .focus-pager>button{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--sep);border-radius:50%;color:var(--label)}
 .focus-pager>button:disabled{opacity:.3}
-.focus-dots{display:flex;align-items:center;justify-content:center;gap:4px}
-.focus-dots button{position:relative;width:44px;height:44px}
+/* Many sets (a superset with warm-ups is easily nine) squeeze the dots, then wrap. */
+.focus-dots{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px}
+.focus-dots button{position:relative;flex:0 1 44px;min-width:24px;height:44px}
 .focus-dots button::after{content:'';position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:var(--label-3);transform:translate(-50%,-50%)}
 .focus-dots button.active::after{width:9px;height:9px;background:var(--acc)}
 .focus-dots button.done::after{box-shadow:0 0 0 2px var(--acc-line)}

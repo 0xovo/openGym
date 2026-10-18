@@ -42,6 +42,7 @@ asking for anything, promise.
 - Jumping jacks, burpees and the other cardio moves can be counted in sets x reps (or timed):
   their settings now offer Cardio, Reps and Time, Cardio still the default (#678).
 - Add exercise → By muscle has the Favourites chip too, for the muscle you picked (#669).
+- Focus mode stays on the screen with lots of sets or a long exercise name (#655).
 
 ## v1.4.2 (2026-10-18)
 
