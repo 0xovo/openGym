@@ -55,6 +55,12 @@ const isStr = v => typeof v === 'string' && v.trim().length > 0;
 const isNum = v => typeof v === 'number' && Number.isFinite(v);
 const isInt = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
 const clampStr = (v, n) => String(v == null ? '' : v).slice(0, n);
+// The minutes and pace of a cardio exercise a review adds, in the bounds the 'cardio' change
+// holds them to. Without them the app fell back to 20 min at 8 km/h whatever was shown (#640).
+const cardioTarget = e => (e.mode !== 'cardio' ? {} : {
+  ...(isInt(e.min, 1, 180) ? { min: e.min } : {}),
+  ...(isNum(e.speed) && e.speed > 0 && e.speed <= MAX_SPEED ? { speed: e.speed } : {})
+});
 // Routine icons: an icon key the app knows or a legacy emoji, never free text (#311).
 export { ROUTINE_GLYPHS } from './glyphs.js';
 
@@ -128,6 +134,10 @@ export function validatePlan(data, ctx = {}) {
       const mode = MODES.includes(e.mode) ? e.mode : 'reps';
       const perSide = !!e.side;
       if (mode === 'cardio') {
+        // Written out like 'time' below: without it every reader falls back to the catalogue,
+        // and a cardio finisher on a non-cardio exercise (kettlebell swings) comes out as reps
+        // with no target at all (#640).
+        clean.mode = 'cardio';
         clean.min = isInt(e.min, 1, 180) ? e.min : 20;
         clean.speed = isNum(e.speed) && e.speed > 0 && e.speed <= MAX_SPEED ? e.speed : 8;
       } else if (mode === 'time') {
@@ -345,6 +355,7 @@ export function validateReview(data, plan, ctx = {}) {
           ...(MODES.includes(a.mode) ? { mode: a.mode } : { mode: 'reps' }),
           ...(isInt(a.reps, 1, 100) ? { reps: a.reps } : {}),
           ...(isInt(a.sec, 5, 3600) ? { sec: a.sec } : {}),
+          ...cardioTarget(a),
           ...(isNum(a.weight) && a.weight > 0 && a.weight <= MAX_WEIGHT ? { weight: a.weight } : {}),
           ...(POLICIES.includes(a.prog) ? { prog: a.prog } : {}),
           ...(isInt(a.repsMin, 1, 100) ? { repsMin: a.repsMin } : {}),
@@ -454,6 +465,7 @@ export function validateReview(data, plan, ctx = {}) {
             mode: MODES.includes(e.mode) ? e.mode : 'reps',
             ...(isInt(e.reps, 1, 100) ? { reps: e.reps } : {}),
             ...(isInt(e.sec, 5, 3600) ? { sec: e.sec } : {}),
+            ...cardioTarget(e),
             ...(isInt(e.repsMin, 1, 100) ? { repsMin: e.repsMin } : {}),
             ...(isInt(e.repsMax, 1, 100) ? { repsMax: e.repsMax } : {}),
             ...(isInt(e.setsMax, 1, 10) ? { setsMax: e.setsMax } : {}),

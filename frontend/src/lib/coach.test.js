@@ -299,6 +299,17 @@ describe('applying changes', () => {
     expect(out.routines[0].ex[1].sg).toBeUndefined()
   })
 
+  it('an added routine keeps a cardio exercise as minutes and pace, not reps (#640)', () => {
+    const out = apply(state(), proposal([change({
+      type: 'add-routine', target: {}, before: null,
+      after: { name: 'Finisher', ex: [{ id: '0001', sets: 2, mode: 'cardio', min: 15, speed: 10 }, { id: '0007', sets: 1, mode: 'cardio' }] }
+    })]), ['c1'])
+    const [swings, other] = out.routines[2].ex
+    expect(swings).toMatchObject({ mode: 'cardio', min: 15, speed: 10 })
+    expect(swings.reps).toBeUndefined()
+    expect(other).toMatchObject({ mode: 'cardio', min: 20, speed: 8 })
+  })
+
   it('adds, renames and removes routines, clearing any day that pointed at one', () => {
     const added = apply(state(), proposal([change({
       type: 'add-routine', target: {}, before: null,

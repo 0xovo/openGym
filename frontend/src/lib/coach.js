@@ -523,7 +523,9 @@ const CHANGE_APPLY = {
       ...(POLICIES.includes(a.prog) ? { prog: a.prog } : {}),
       ex: a.ex.map(e => ({
         id: canonicalExId(e.id), sets: e.sets || 3, mode: e.mode || 'reps',
-        ...(e.mode === 'time' ? { sec: e.sec || 45 } : { reps: e.reps || 10 }),
+        // The same targets and defaults as 'add-exercise': a cardio entry used to get reps (#640).
+        ...(e.mode === 'cardio' ? { min: e.min || 20, speed: e.speed || 8 }
+          : e.mode === 'time' ? { sec: e.sec || 45 } : { reps: e.reps || 10 }),
         ...(Number.isInteger(e.repsMax) ? { repsMax: e.repsMax } : {}),
         ...(Number.isInteger(e.setsMax) ? { setsMax: e.setsMax } : {}),
         ...(e.bodyweight != null ? { bodyweight: !!e.bodyweight } : {}),

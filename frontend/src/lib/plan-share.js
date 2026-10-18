@@ -74,6 +74,9 @@ function cleanEx(e) {
   const o = { id: e.id, sets: e.sets }
   const mode = modeOf(e)
   if (mode === 'cardio') {
+    // Written out for the same reason as 'time' below: swings set to cardio would otherwise
+    // arrive as reps with no target (#640).
+    o.mode = 'cardio'
     if (e.min != null) o.min = e.min
     if (e.speed != null) o.speed = e.speed
   } else if (mode === 'time') {
