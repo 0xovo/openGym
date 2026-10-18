@@ -1916,11 +1916,13 @@ function ActiveWorkout() {
     const still = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     el.scrollIntoView(glide && !still ? { block: 'start', behavior: 'smooth' } : { block: 'start' })
   }
-  // Explicit chip selection moves the marker in every view; list views also reveal the unit.
+  // A tap on a chip at the top (#323). Cards and Focus show one unit, so the chip makes it the one
+  // on screen: the marker moves because you asked it to, never on its own. The list already shows
+  // every unit, so there the chip scrolls to it and lights up, and "Current" stays where it was,
+  // the same as scrolling there by hand; the frame wait is the one opening the list uses (above).
   const pickChip = chip => {
-    setVisibleExercise(chip.unit[0])
-    if (!chip.unit.includes(cur)) update(s => { if (s.active) s.active.cur = chip.unit[0] })
     if (listMode) {
+      setVisibleExercise(chip.unit[0])
       // A folded unit opens as you jump to it: you tapped it to see it.
       if (collapsed.has(chip.key)) setUnitOpen(chip.key, true)
       const go = () => scrollToUnit(listRef.current?.querySelector(`.wl-unit[data-unit-key="${chip.key}"]`), true)
@@ -1928,6 +1930,8 @@ function ActiveWorkout() {
       else window.setTimeout(go, 0)
       return
     }
+    if (chip.unit.includes(cur)) return
+    update(s => { if (s.active) s.active.cur = chip.unit[0] })
   }
   const chipRow = wc.exerciseChips && A.entries.length > 0
     ? <WorkoutChips entries={A.entries} cur={listMode ? visibleExercise : cur} onPick={pickChip} />

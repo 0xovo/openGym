@@ -105,7 +105,10 @@ describe('workout keys (issue #133)', () => {
     const chips = () => [...container.querySelectorAll('.wchip')]
     expect(chips()[0].getAttribute('aria-current')).toBe('step')
     act(() => chips()[1].click())
-    expect(active().cur).toBe(1)
+    // Cards and Focus show the tapped unit, so it becomes Current; the list scrolls to it and
+    // lights its chip, and Current stays where it was (#323).
+    const listy = workoutView === 'compact' || workoutView === 'list'
+    expect(active().cur).toBe(listy ? 0 : 1)
     expect(chips()[1].getAttribute('aria-current')).toBe('step')
     expect(chips()[0].hasAttribute('aria-current')).toBe(false)
     act(() => chips()[0].click())
