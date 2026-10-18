@@ -181,6 +181,10 @@ function MuscleBalance({ S }) {
     return t('Weeks since training: {0}', weeks)
   }
   const toggleSel = m => setSel(s => (s === m ? null : m))
+  // The exercises for a muscle (#553): the untrained chips, and an untrained muscle tapped on the map.
+  const openMuscle = m => nav('/muscles?m=' + encodeURIComponent(m), { state: { from: '/stats' } })
+  const findExercises = m => <button type="button" className="mchip miss mfind" data-find-exercises={m}
+    aria-label={t('Exercises for {0}', t(MUSCLE_NAME[m]))} onClick={() => openMuscle(m)}>{t('Exercises')}<Icon name="chevronRight" /></button>
   // Selected-muscle detail for the Fatigue view: the same display value that
   // shades the map, as a percentage, plus when it drops back through the bands.
   const selFatigue = sel ? (fatigue[sel] || 0) : 0
@@ -229,6 +233,7 @@ function MuscleBalance({ S }) {
         aria-label={`${t('Completed')} ${completedSets} · ${t('Planned')} ${plannedSets}`}>
         {fmtNum(completed)}/{fmtNum(target)}{percentage == null ? '' : ` · ${percentage}%`}
       </span>
+      {sel === muscle && !completed && findExercises(muscle)}
     </div>
   })
   const completionSummary = <>
@@ -236,7 +241,7 @@ function MuscleBalance({ S }) {
       <h4 className="sec" style={{ marginTop: 12 }}>{on ? t('No hard sets in this period') : t('Not trained in this period')}</h4>
       {/* A tap opens the exercises for that muscle (#553). */}
       <div className="mchips">{missed.map(m => <button type="button" key={m} className="mchip miss" data-muscle={m}
-        aria-label={t('Exercises for {0}', t(MUSCLE_NAME[m]))} onClick={() => nav('/muscles?m=' + encodeURIComponent(m), { state: { from: '/stats' } })}>{t(MUSCLE_NAME[m])}</button>)}</div>
+        aria-label={t('Exercises for {0}', t(MUSCLE_NAME[m]))} onClick={() => openMuscle(m)}>{t(MUSCLE_NAME[m])}</button>)}</div>
     </>}
     {!missed.length && worked.length > 0 &&
       <div className="muted small" style={{ marginTop: 10 }}>{on
@@ -254,6 +259,7 @@ function MuscleBalance({ S }) {
     {sel && <div className="mrow" data-muscle-volume={sel} style={{ borderTop: 'var(--hair) solid var(--sep)', marginTop: 4, paddingTop: 10 }}>
       <span className="nm"><b>{t(MUSCLE_NAME[sel])}</b></span>
       <span className="v">{sets(sel) ? t('{0} sets', sets(sel)) : on ? t('no hard sets') : t('not trained')}</span>
+      {!(load[sel] > 0) && findExercises(sel)}
     </div>}
     {!sel && completedMuscles.map(m => <div key={m} className="mrow" data-muscle-volume={m}>
       <span className="nm">{t(MUSCLE_NAME[m])}</span>

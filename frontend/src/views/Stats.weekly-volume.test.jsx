@@ -290,4 +290,38 @@ describe('Stats — weekly planned vs completed volume', () => {
     expect(mocks.nav).toHaveBeenCalledWith('/muscles?m=' + chip.dataset.muscle, { state: { from: '/stats' } })
     expect(MUSCLES).toContain(chip.dataset.muscle)
   })
+
+  // #553: picking an untrained muscle on the map itself, not only its chip, leads to its exercises.
+  const find = () => host.querySelector('[data-find-exercises]')
+  const tapChest = () => act(() => host.querySelector('[data-body-map] button[aria-label="Chest"]').click())
+
+  it('an untrained muscle picked on the week map offers its exercises', () => {
+    mocks.nav = vi.fn()
+    mount()
+    expect(find()).toBeNull()
+    tapChest()
+    expect(row('chest')).toBeTruthy()
+    expect(find().dataset.findExercises).toBe('chest')
+    expect(find().getAttribute('aria-label')).toBe('Exercises for Chest')
+    act(() => find().click())
+    expect(mocks.nav).toHaveBeenCalledWith('/muscles?m=chest', { state: { from: '/stats' } })
+  })
+
+  it('an untrained muscle picked on the 30-day map offers its exercises, a trained one does not', () => {
+    mocks.nav = vi.fn()
+    mount()
+    act(() => [...host.querySelectorAll('button')].find(b => b.textContent === '30d').click())
+    tapChest()
+    expect(find().dataset.findExercises).toBe('chest')
+    act(() => find().click())
+    expect(mocks.nav).toHaveBeenCalledWith('/muscles?m=chest', { state: { from: '/stats' } })
+
+    act(() => root.unmount()); root = createRoot(host)
+    mocks.S = state({ workouts: [completed('2026-09-30', 'chest', 3)] })
+    mount()
+    act(() => [...host.querySelectorAll('button')].find(b => b.textContent === '30d').click())
+    tapChest()
+    expect(host.querySelector('[data-muscle-volume="chest"]')).toBeTruthy()
+    expect(find()).toBeNull()
+  })
 })

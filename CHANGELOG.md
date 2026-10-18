@@ -21,6 +21,9 @@ seconds at most) instead of nagging you anyway.
 rotation and the routine list) and today's session on Home now carry a tiny body, front and back,
 with the muscles it works lit up. No more opening Leg Day to remember it is, in fact, legs.
 
+- **Muscle balance**: tap a muscle you haven't trained right on the map and its row offers the
+  exercises for it, the same way the "Not trained" chips do (#553).
+
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
   counts), like adding another device does. A copied browser session can no longer mint a phone
