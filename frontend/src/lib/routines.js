@@ -196,7 +196,7 @@ function setupOf(entry) {
     restSec: Math.max(0, Math.round(Number(target.restSec)) || 0),
     note: String(target.note || '').trim().slice(0, NOTE_MAX),
   }
-  if (!isCardio(entry.id) && target.intensifier?.type !== 'restpause') {
+  if (modeOf({ ...target, id: entry.id }) !== 'cardio' && target.intensifier?.type !== 'restpause') {
     out.warmupSets = Math.min(MAX_PLANNED_WARMUPS, (entry.sets || []).filter(isWarmupRow).length)
   }
   return out

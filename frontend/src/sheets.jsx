@@ -1752,7 +1752,9 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   // No warm-up rest of its own: the profile's (Settings > Workout) when it has one, else the work rest.
   const warmAll = typeof st.warmupRestSec === 'number' ? st.warmupRestSec : null
   const warmLikeAll = warmAll === null ? t('Like the work sets') : t('Default ({0})', warmAll > 0 ? fmtRest(warmAll) : t('No timer'))
-  const cardio = isCardio(ex.id)
+  // A catalogue cardio exercise logs intervals by default, but it can be counted in sets x reps
+  // or timed like any other (#678): jumping jacks and burpees are cardio and reps both.
+  const cardioEx = isCardio(ex.id)
   const speedUnit = speedUnitOf(st)
   const seed = existing || initial || defaultConfig(ex.id)
   const [c, setC] = useState(() => {
@@ -1766,7 +1768,10 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   })
   // Cardio keeps its own duration+speed form; the reps/time choice (issue #16) is offered for
   // everything else, which is where the gap was — planks, hangs, wall sits, loaded carries.
-  const mode = cardio ? 'cardio' : modeOf({ ...c, id: ex.id })
+  // A cardio exercise gets Cardio as a third choice, and a slot that picked Reps or Time says so
+  // in its `mode` (modeOf reads it before the body part).
+  const mode = modeOf({ ...c, id: ex.id })
+  const cardio = cardioEx && mode === 'cardio'
   // Both default from the dataset and are then whatever the config says — see isBw.
   const bw = !cardio && isBw({ ...c, id: ex.id })
   const perSide = isPerSide(c)
@@ -1781,7 +1786,11 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   const triple = mode === 'reps' && activePolicy === 'triple'
   // Keep whatever the other mode already had (sets, weight) and fill only what is missing.
   const setMode = m => setC(x => {
-    const next = { ...defaultConfig(ex.id, m), ...x, mode: m }
+    // Intervals and sets count different things: crossing into or out of cardio starts from the
+    // new mode's own count instead of 1 set of 10 jumping jacks.
+    const { sets: _sets, ...rest } = x
+    const crossing = (m === 'cardio') !== (modeOf({ ...x, id: ex.id }) === 'cardio')
+    const next = { ...defaultConfig(ex.id, m), ...(crossing ? rest : x), mode: m }
     return m === 'reps' && climbsRange(policyFor({ ...next, id: ex.id }, routine, 'reps'))
       ? { ...next, ...normalizeRepRange(next.reps, next.repsMin, isPerSide(next) ? 2 : 1) }
       : next
@@ -1892,10 +1901,10 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         .map((s, i) => <span key={i} className="tag dim">{t(MUSCLE_NAME[s] || s)}</span>)}
     </div>
     {descFor(ex) && <div className="exnote">{descFor(ex)}</div>}
-    {!cardio && <div style={{ marginBottom: 14 }}>
+    <div style={{ marginBottom: 14 }}>
       <Segmented className="seg-range" value={mode} onChange={setMode}
-        options={[{ value: 'reps', label: t('Reps') }, { value: 'time', label: t('Time') }]} />
-    </div>}
+        options={[...(cardioEx ? [{ value: 'cardio', label: t('Cardio') }] : []), { value: 'reps', label: t('Reps') }, { value: 'time', label: t('Time') }]} />
+    </div>
     <div className="row cfgrow" style={{ marginBottom: mode === 'time' ? 8 : 18 }}>
       {cardio ? <>
         <Stepper label={t('Intervals')} value={c.sets} step={1} decimal={false} onChange={v => setC(x => ({ ...x, sets: v }))} />
