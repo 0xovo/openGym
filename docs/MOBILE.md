@@ -46,8 +46,9 @@ same app, not a different build or download.
 
 Passkeys can't be used for this: the app's WebView runs at its own origin, which never
 matches the real hostname WebAuthn needs. Instead you *pair* the device from a browser
-that's already signed in: Settings → Account → **"Pair the mobile app"** shows a one-time code (valid
-5 minutes); enter your server's address and that code in the app (same first-launch screen,
+that's already signed in: Settings → Account → **"Pair the mobile app"** first asks you to confirm
+it's you (your passkey, or your password where password sign-in is on), then shows a one-time
+code (valid 5 minutes, and a new one is a tap away once it runs out); enter your server's address and that code in the app (same first-launch screen,
 or Settings → Account → **"Connect to my server"** later) to finish. Notes:
 
 - Works offline too: the phone keeps its copy (and the file mirror) while connected, and

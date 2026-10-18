@@ -5,7 +5,9 @@ Short answers, with a link to the long one.
 ### What does it cost?
 
 Nothing. openGym is open source under the AGPL: no subscription, no paid tier, no ads. If you'd like
-to support it anyway, there's [Buy Me a Coffee](https://buymeacoffee.com/duartesantos).
+to support it anyway, there's [Buy Me a Coffee](https://buymeacoffee.com/duartesantos),
+[Ko-fi](https://ko-fi.com/opengym) and [GitHub Sponsors](https://github.com/sponsors/DuarteSantos8),
+also under Settings → About & updates in the app.
 
 ### Do I need my own server?
 
@@ -13,22 +15,24 @@ No, there are three ways to use it:
 
 - **Try it:** the [online demo](https://opengym.ch/demo/) runs entirely in your
   browser with example data.
-- **Phone only:** the Android app needs no server and no account; everything stays on the phone.
+- **Phone only:** the iPhone and Android apps need no server and no account; everything stays on
+  the phone.
   See [MOBILE.md](MOBILE.md).
 - **Your own instance:** `docker compose up` on any machine with Docker gives you sync between
   devices and profiles for friends and family. See [SELF_HOSTING.md](SELF_HOSTING.md).
 
 ### Is there an iPhone app?
 
-Not in the App Store, and Apple doesn't allow installing apps from anywhere else. On an iPhone you can
-self-host and add openGym to your home screen from Safari (it's a full PWA that works offline), or
-build the native app onto your own phone with Xcode. Both are described in [MOBILE.md](MOBILE.md).
-An App Store build is on the [roadmap](../ROADMAP.md).
+Yes, with an Apple Watch app, widgets and Apple Health. It is on its way into the App Store; until
+it is listed there, the [public TestFlight beta](https://testflight.apple.com/join/RKATb61k) is the
+same app. A self-hosted instance added to the home screen from Safari works too (a full PWA that
+works offline). See [MOBILE.md](MOBILE.md).
 
-### Why isn't it on the Play Store?
+### Is it on Google Play?
 
-That's deliberate. The APK is signed, published with a `.sha256` next to every release, and the app
-checks for updates itself. Get it from the
+It's coming: a new developer account has to run a closed test first (see the
+[roadmap](../ROADMAP.md)). Until then the APK is the way in. It is signed, published with a
+`.sha256` next to every release, and the app checks for updates itself. Get it from the
 [latest release](https://github.com/DuarteSantos8/openGym/releases/latest).
 
 ### Where is my data?

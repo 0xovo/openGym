@@ -63,6 +63,8 @@ if you want to try it before installing anything.
   browsable by muscle on a body map. Filter by the equipment you own.
 - Four starter plans (Push/Pull/Legs, Upper/Lower, Full Body, 5×5) that load as ordinary,
   editable routines.
+- Every session on the Plan page and today's on Home carries a tiny body map with the muscles it
+  works lit up, so you know Leg Day is legs before you open it.
 - Move a session to another day without touching the weekly plan. The week starts on Monday or
   Sunday, your choice.
 - Or skip the weekdays altogether: a **rotation** (A, B, C, A, ...) where the next session is
@@ -118,6 +120,8 @@ if you want to try it before installing anything.
 
 - Apps for iPhone, iPad and Android that work on their own (no server, no account) or connected to
   yours. Rest timer in the notification shade, reminders, and Health Connect or Apple Health.
+- A gym reminder, off by default: walk into one of your gyms and the phone nudges you to hit
+  Start. Once a day at most, never after you trained, and your gyms stay on the phone.
 - An Apple Watch app: tick off sets with the Digital Crown, a full-screen rest countdown, heart
   rate per set, and complications. Widgets and a Live Activity on the iPhone.
 
@@ -288,6 +292,7 @@ A release roughly every two weeks, each small and themed. The full plan is in
 | v1.4.0 | released Oct 2026 | A new exercise database with 5,632 exercises, plus two rounds of community work |
 | v1.4.1 | released Oct 2026 | Bug fixes for v1.4.0 |
 | v1.4.2 | Oct 2026 | The App Store, the Apple Watch, widgets, a Google Play build |
+| v1.4.3 | Nov 2026 | The gym reminder, health data read back, community features |
 | next | Nov 2026 to Apr 2027 | Programmes, the progression engine, cardio, sharing, accounts, Android and health, looks |
 | later | | Database storage |
 
@@ -340,12 +345,16 @@ the same way.
 ## Support
 
 openGym is free and stays free: AGPL, no paid tier, nothing held back for sponsors. If it replaced a
-paid tracker for you and you'd like to chip in, there's a coffee button below. A star, a bug report
-or a pull request helps just as much.
+paid tracker for you and you'd like to chip in, there's Buy Me a Coffee, Ko-fi and GitHub Sponsors
+(the app has the same three under Settings → About & updates, and on the iPhone a shortcut to
+leaving an App Store review). A star, a bug report or a pull request helps just as much.
 
 <a href="https://buymeacoffee.com/duartesantos" target="_blank">
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60" width="217">
 </a>
+<a href="https://ko-fi.com/opengym" target="_blank"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support openGym on Ko-fi" height="60"></a>
+
+[GitHub Sponsors](https://github.com/sponsors/DuarteSantos8)
 
 [![Star History Chart](https://api.star-history.com/svg?repos=duartesantos8/opengym&type=Date)](https://star-history.com/#DuarteSantos8/openGym&Date)
 
