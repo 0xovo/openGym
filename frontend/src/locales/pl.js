@@ -2549,4 +2549,8 @@ export default {
   'Workouts (CSV)': 'Treningi (CSV)',
   'Body weight & measurements (CSV)': 'Masa ciała i pomiary (CSV)',
   'CSV exported': 'Wyeksportowano CSV',
+  'New in this workout': 'Nowe w tym treningu',
+  'Added to “{0}”': 'Dodano do „{0}”',
+  'Add it to “{1}”': 'Dodaj do „{1}”',
+  'Add them to “{1}”': 'Dodaj wszystkie do „{1}”',
 }

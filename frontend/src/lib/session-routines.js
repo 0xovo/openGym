@@ -1,6 +1,6 @@
 import { uid } from './format.js'
 import { modeOf, defaultConfig, isPerSide, entryRoutineId, setsFromRows } from './history.js'
-import { isSideSet, isWarmupRow } from './workout-model.js'
+import { isSideSet, isWarmupRow, hasCompletedWork } from './workout-model.js'
 
 // A saved workout is evidence of what was logged, not a live routine. Copy only its flat
 // exercise setup on this explicit action; finishing a workout never calls this helper.
@@ -139,4 +139,36 @@ export function saveSessionAsRoutine(state, session, name) {
   const routine = routineFromSession(session, name, state.routines)
   state.routines.push(routine)
   return routine.id
+}
+
+// An exercise added in the middle of a routine's session (#592) is stamped `addedInSession` by
+// the workout screen's Add exercise. Finishing offers to keep it in that routine for next time,
+// once, on the summary; nothing is written unless that offer is taken (addToRoutine).
+// One group per routine (a combined day can add to two), only exercises the routine does not
+// have yet and that had a completed set: a skipped one was not part of the workout. A swap keeps
+// its slot and is not an addition.
+export function routineAdditions(active, routines = []) {
+  const groups = new Map()
+  for (const entry of sessionEntries(active)) {
+    if (entry?.addedInSession !== true || !entry.rid || !(entry.sets || []).some(hasCompletedWork)) continue
+    const routine = (Array.isArray(routines) ? routines : []).find(r => r?.id === entry.rid)
+    if (!routine || !Array.isArray(routine.ex) || routine.ex.some(x => x?.id === entry.id)) continue
+    if (!groups.has(routine.id)) groups.set(routine.id, { routine, entries: [] })
+    const list = groups.get(routine.id).entries
+    if (!list.some(e => e.id === entry.id)) list.push(entry)
+  }
+  // The setup copied the way Save as routine copies it (copiedEntry): sets, reps and weight as
+  // done today, never what only described today's session.
+  return [...groups.values()].map(({ routine, entries }) => ({
+    routineId: routine.id, name: routine.name, ex: groupIds(entries.map(e => copiedEntry(e, routine))),
+  }))
+}
+
+/** Append those exercises to the routine (a store draft), skipping any it has by now. Returns how many. */
+export function addToRoutine(routine, ex) {
+  if (!routine || !Array.isArray(routine.ex)) return 0
+  const fresh = (Array.isArray(ex) ? ex : []).filter(cfg => cfg?.id != null && !routine.ex.some(x => x?.id === cfg.id))
+  // groupIds again: a superset tag of the copies must not collide with one the routine has.
+  routine.ex.push(...groupIds(fresh.map(cfg => structuredClone(cfg))))
+  return fresh.length
 }

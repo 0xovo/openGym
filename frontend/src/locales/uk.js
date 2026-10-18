@@ -2546,4 +2546,8 @@ export default {
   'Workouts (CSV)': 'Тренування (CSV)',
   'Body weight & measurements (CSV)': 'Вага тіла й заміри (CSV)',
   'CSV exported': 'CSV експортовано',
+  'New in this workout': 'Нове в цьому тренуванні',
+  'Added to “{0}”': 'Додано до «{0}»',
+  'Add it to “{1}”': 'Додати до «{1}»',
+  'Add them to “{1}”': 'Додати всі до «{1}»',
 }

@@ -2549,4 +2549,8 @@ export default {
   'Workouts (CSV)': 'Antrenmanlar (CSV)',
   'Body weight & measurements (CSV)': 'Vücut ağırlığı ve ölçüler (CSV)',
   'CSV exported': 'CSV dışa aktarıldı',
+  'New in this workout': 'Bu antrenmanda yeni',
+  'Added to “{0}”': '“{0}” rutinine eklendi',
+  'Add it to “{1}”': '“{1}” rutinine ekle',
+  'Add them to “{1}”': 'Hepsini “{1}” rutinine ekle',
 }

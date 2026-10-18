@@ -2549,4 +2549,8 @@ export default {
   'Workouts (CSV)': 'वर्कआउट (CSV)',
   'Body weight & measurements (CSV)': 'शरीर का वज़न और माप (CSV)',
   'CSV exported': 'CSV एक्सपोर्ट हो गया',
+  'New in this workout': 'इस वर्कआउट में नया',
+  'Added to “{0}”': '“{0}” में जोड़ा गया',
+  'Add it to “{1}”': '“{1}” में जोड़ें',
+  'Add them to “{1}”': 'सभी को “{1}” में जोड़ें',
 }

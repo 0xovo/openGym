@@ -1617,6 +1617,9 @@ export const PT_BR_OVERRIDES = {
   'A tiny body that lights up as you tick sets. Tap it for the details.': 'Um corpinho que acende a cada série marcada. Toque para ver os detalhes.',
   'Export as spreadsheet (CSV)': 'Exportar como planilha (CSV)',
   'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': 'Uma linha por série, para o Excel, o Sheets, seu treinador ou outro app. O openGym também lê de volta.',
+  'Added to “{0}”': 'Adicionado a “{0}”',
+  'Add it to “{1}”': 'Adicionar a “{1}”',
+  'Add them to “{1}”': 'Adicionar todos a “{1}”',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

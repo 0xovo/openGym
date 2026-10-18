@@ -2560,4 +2560,8 @@ export default {
   'Workouts (CSV)': 'การออกกำลังกาย (CSV)',
   'Body weight & measurements (CSV)': 'น้ำหนักตัวและสัดส่วน (CSV)',
   'CSV exported': 'ส่งออก CSV แล้ว',
+  'New in this workout': 'ใหม่ในการออกกำลังกายนี้',
+  'Added to “{0}”': 'เพิ่มใน “{0}” แล้ว',
+  'Add it to “{1}”': 'เพิ่มใน “{1}”',
+  'Add them to “{1}”': 'เพิ่มทั้งหมดใน “{1}”',
 }

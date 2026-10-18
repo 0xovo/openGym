@@ -2549,4 +2549,8 @@ export default {
   'Workouts (CSV)': '운동 (CSV)',
   'Body weight & measurements (CSV)': '체중 및 신체 치수 (CSV)',
   'CSV exported': 'CSV를 내보냈어요',
+  'New in this workout': '이번 운동에 새로 추가됨',
+  'Added to “{0}”': '“{0}”에 추가했어요',
+  'Add it to “{1}”': '“{1}”에 추가',
+  'Add them to “{1}”': '모두 “{1}”에 추가',
 }

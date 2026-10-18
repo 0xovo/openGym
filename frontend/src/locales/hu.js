@@ -2552,4 +2552,8 @@ export default {
   'Workouts (CSV)': 'Edzések (CSV)',
   'Body weight & measurements (CSV)': 'Testsúly és testméretek (CSV)',
   'CSV exported': 'CSV exportálva',
+  'New in this workout': 'Új ebben az edzésben',
+  'Added to “{0}”': 'Hozzáadva ehhez: „{0}”',
+  'Add it to “{1}”': 'Hozzáadás ehhez: „{1}”',
+  'Add them to “{1}”': 'Mind hozzáadása ehhez: „{1}”',
 }

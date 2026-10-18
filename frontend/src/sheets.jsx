@@ -48,7 +48,7 @@ import { speedUnitOf, toSpeed, fromSpeed } from './lib/speed.js'
 import { buildCompletedWorkout, sessionEnd } from './lib/finish-workout.js'
 import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
-import { saveSessionAsRoutine } from './lib/session-routines.js'
+import { saveSessionAsRoutine, routineAdditions, addToRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
@@ -3470,7 +3470,29 @@ function CardioDone({ st, w }) {
   </div>
 }
 
-function FinishSummary({ w, prs, e1prs = [], close }) {
+// Exercises added during a routine's session, offered to that routine for next time (#592). One
+// tap adds them with today's setup; leaving the summary without it changes nothing.
+function KeepInRoutine({ additions }) {
+  const [added, setAdded] = useState({})
+  if (!additions?.length) return null
+  const keep = a => {
+    let n = 0
+    update(s => { n = addToRoutine(s.routines.find(r => r.id === a.routineId), a.ex) })
+    setAdded(x => ({ ...x, [a.routineId]: true }))
+    if (n) ui().toast(t('Routine updated'))
+  }
+  return <div style={{ textAlign: 'start', marginBottom: 14 }} data-keep-in-routine>
+    <h4 className="sec">{t('New in this workout')}</h4>
+    {additions.map(a => <div key={a.routineId} style={{ marginBottom: 8 }}>
+      <div className="small dim" style={{ marginBottom: 6 }}>{a.ex.map(cfg => EXIDX[cfg.id] ? exerciseNameText(EXIDX[cfg.id]) : cfg.id).join(', ')}</div>
+      {added[a.routineId]
+        ? <div className="small accent row" style={{ gap: 6 }}><Icon name="checkCircle" /><span>{t('Added to “{0}”', a.name)}</span></div>
+        : <Button icon="plusCircle" onClick={() => keep(a)}>{tn('Add it to “{1}”', 'Add them to “{1}”', a.ex.length, a.name)}</Button>}
+    </div>)}
+  </div>
+}
+
+function FinishSummary({ w, prs, e1prs = [], additions = [], close }) {
   const st = useStore(s => s.S)
   return <div style={{ textAlign: 'center', padding: '8px 0' }}>
     {/* Sticky, so the summary can be left from the top however far it has been scrolled. */}
@@ -3492,6 +3514,7 @@ function FinishSummary({ w, prs, e1prs = [], close }) {
     <div style={{ height: 14 }} />
     <LastAndNext st={st} w={w} />
     <CardioDone st={st} w={w} />
+    <KeepInRoutine additions={additions} />
     {/* The moment for a progress photo or the clip of a set: the workout is already saved, so
         what is added here goes straight onto its record. */}
     <div style={{ textAlign: 'start' }}><WorkoutMediaSection w={w} hint /></div>
@@ -3558,6 +3581,8 @@ function doFinishWorkout() {
     snapshotFor: e => isCustomEx(EXIDX[e.id]) ? exerciseMuscleSnapshot(EXIDX[e.id]) : null,
   })
   w.vol = workoutVolume(w)
+  // Read before the session is gone: the summary offers these to their routines (#592).
+  const additions = past ? [] : routineAdditions(A, st.routines)
   let shown = w
   update(s => {
     if (past) {
@@ -3588,5 +3613,5 @@ function doFinishWorkout() {
   // into s.active, which is gone. What it held is not logged, like any set left unchecked.
   useUI.getState().stopWork()
   beep(snd(), 880, 0.15); beep(snd(), 1100, 0.15, 0.18); beep(snd(), 1320, 0.3, 0.36)
-  ui().openSheet(close => <FinishSummary w={shown} prs={prs} e1prs={e1prs} close={close} />, { kind: 'center', locked: true, wide: true })
+  ui().openSheet(close => <FinishSummary w={shown} prs={prs} e1prs={e1prs} additions={additions} close={close} />, { kind: 'center', locked: true, wide: true })
 }

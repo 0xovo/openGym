@@ -49,6 +49,10 @@ drops, supersets, cardio distance and time) and, as a second file, body weight a
 Pick everything or a stretch of days. Opens in Excel or Sheets, makes your coach happy, and openGym
 reads it straight back in without losing a set. The importer also learned GymMane's CSV.
 
+**Keep what you added** (#592). Threw an extra exercise into a routine's workout? The finish
+summary lists it under "New in this workout" with one button to add it to the routine, sets, reps
+and weight as you did them. Ignore it and the routine stays exactly as it was.
+
 **Support openGym.** Settings → About & updates has the coffee jar: Buy Me a Coffee, Ko-fi and
 GitHub Sponsors, and on the iPhone a straight line to writing an App Store review. No pop-ups
 asking for anything, promise.

@@ -2542,4 +2542,8 @@ export default {
   'Workouts (CSV)': '訓練 (CSV)',
   'Body weight & measurements (CSV)': '體重和身體圍度 (CSV)',
   'CSV exported': 'CSV 已匯出',
+  'New in this workout': '本次訓練新增',
+  'Added to “{0}”': '已加入「{0}」',
+  'Add it to “{1}”': '加入「{1}」',
+  'Add them to “{1}”': '全部加入「{1}」',
 }
