@@ -39,6 +39,8 @@ GitHub Sponsors, and on the iPhone a straight line to writing an App Store revie
 asking for anything, promise.
 
 **Fixes**
+- **Rest days in the rotation**, and the same routine more than once (A → B → C → B → D): Add
+  offers a rest day and every routine, including the ones already in the loop (#536).
 - Cardio the Coach prescribes on a non-cardio exercise (kettlebell swings for 15 minutes) stays
   15 minutes instead of turning into sets with no target, in new plans, in review additions and
   in shared plan files (#640, thanks @rudycelekli for spotting the review side).
