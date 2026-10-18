@@ -17,6 +17,10 @@ battery use on Unrestricted (Settings shows it as "Quick arrival check"). And if
 workout on your laptop that your phone hasn't synced yet, the phone asks your server first (3
 seconds at most) instead of nagging you anyway.
 
+**See what a session hits before you start it.** Every routine on the Plan page (the week, the
+rotation and the routine list) and today's session on Home now carry a tiny body, front and back,
+with the muscles it works lit up. No more opening Leg Day to remember it is, in fact, legs.
+
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
   counts), like adding another device does. A copied browser session can no longer mint a phone

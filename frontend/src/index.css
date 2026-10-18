@@ -1682,6 +1682,13 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 }
 .bm-v{flex:1;min-width:0;height:auto;max-height:min(46vh,340px)}
 .bm-ph{height:200px}                       /* holds the space while the geometry loads */
+/* The thumbnail beside a routine's name (components/MiniBodyMap.jsx): front and back, row height. */
+.bm-mini-wrap{flex:none;display:flex}
+.bodymap.bm-mini{gap:2px;--bm-base:color-mix(in srgb,var(--label) 26%,var(--surface))}
+.bodymap.bm-mini .bm-v{flex:none;height:46px;width:auto;max-height:none}
+.bodymap.bm-mini .bm-ph{height:46px;width:44px}
+.bodymap.bm-mini .bm-sil{fill:color-mix(in srgb,var(--label) 34%,var(--surface))}
+.bodymap.bm-mini .bm-v path{stroke-width:3}
 .bm-sil{fill:color-mix(in srgb,var(--label) 18%,var(--surface))}
 .bm-m{fill:var(--bm-base);transition:fill var(--med) var(--ease)}
 .bm-m.l1{fill:color-mix(in srgb,var(--acc) 32%,var(--bm-base))}

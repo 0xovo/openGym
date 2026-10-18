@@ -12,6 +12,7 @@ import Icon from '../components/Icon.jsx'
 import { Button, Row, Section, Segmented } from '../components/ui.jsx'
 import SwipeRow from '../components/SwipeRow.jsx'
 import { copyRoutine, deleteRoutine, restoreRoutine, routineSnapshot } from '../lib/routines.js'
+import MiniBodyMap from '../components/MiniBodyMap.jsx'
 import { workoutControls } from '../lib/workout-controls.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { useListReorder, moved } from '../lib/use-list-reorder.js'
@@ -278,6 +279,7 @@ function Schedule({ S, update, nav, mode }) {
         <div className="tt">{rs.length ? deriveSessionName(rs.map(r => r.name)) : t('Rest day')}</div>
         <div className="ss">{rs.length === 1 ? exCount(rs[0].ex.length) : rs.length ? routineCount(rs.length) : t('Tap to plan something')}</div>
       </div>
+      {rs.length > 0 && <MiniBodyMap routines={rs} body={S.body} />}
       <Icon name="chevronRight" className="chev" />
     </div>
   }
@@ -353,6 +355,7 @@ function Schedule({ S, update, nav, mode }) {
               <div className="tt">{name}</div>
               <div className="ss">{item ? stateWord(item) : rest ? t('A day off before the next one') : r ? exCount(r.ex.length) : ''}</div>
             </div>
+            {r && !rest && !editing && <MiniBodyMap routines={[r]} body={S.body} />}
             {editing && seq.length > 1 && <button className="plan-handle" aria-label={t('Move {0}', name)} title={t('Drag to reorder')}
               {...loopReorder.handle(i)}><Icon name="chevronsUpDown" /></button>}
           </div>
@@ -460,6 +463,7 @@ function Routines({ S, update, nav }) {
           const row = <div key={r.id} className="item plan-routine" {...tappable(() => nav('/plan/r/' + r.id))}>
             <span className="lrow-i"><Icon name={glyphOf(r.emoji)} /></span>
             <div className="grow"><div className="tt">{r.name}</div><div className="ss">{sub(r)}</div></div>
+            <MiniBodyMap routines={[r]} body={S.body} />
             <Icon name="chevronRight" className="chev" /></div>
           // Swipe (v1.3.11, Settings → Swipe actions): toward the start deletes with an Undo,
           // toward the end duplicates. Edit's minus and the routine's own page stay the way in
