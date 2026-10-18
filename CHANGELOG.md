@@ -44,6 +44,10 @@ back and the page before slides back in. The tabs keep their soft fade.
 **iPhone first start.** The permission screens have one Continue that leads straight to the
 iPhone's own question, so the yes or no is yours to give there, once.
 
+**Fatigue, in numbers.** Tap a muscle on Stats → Fatigue and you get its fatigue in percent on a
+little Ready / Recovering / Fatigued bar, plus when it drops back to Recovering and to Ready if
+you leave it alone. Handy for deciding whether those legs are really ready (thanks @sg41).
+
 **Fixes**
 - **Rest days in the rotation**, and the same routine more than once (A → B → C → B → D): Add
   offers a rest day and every routine, including the ones already in the loop (#536).
