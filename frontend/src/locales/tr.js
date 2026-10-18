@@ -632,7 +632,7 @@ export default {
   'Shins': 'İncik',
   // --- import from another app ---
   'Import from another app': 'Başka uygulamadan içe aktar',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes, Strong, Hevy ya da Apple Health’ten vücut ağırlığı',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes, Strong, Hevy, GymMane, openGym CSV ya da Apple Health’ten vücut ağırlığı',
   'Import from {0}': '{0} uygulamasından içe aktar',
   'Import history': 'Geçmişi içe aktar',
   'Weigh-ins': 'Tartımlar',
@@ -2543,4 +2543,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym ücretsiz: reklam yok, abonelik yok, takip yok. Bir kahve bunu böyle tutar.',
   'Rate openGym on the App Store': 'openGym\'i App Store\'da değerlendir',
   'Buy me a coffee': 'Bana bir kahve ısmarla',
+  'Export as spreadsheet (CSV)': 'Tablo olarak dışa aktar (CSV)',
+  'Workouts, body weight and measurements': 'Antrenmanlar, vücut ağırlığı ve ölçüler',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': 'Set başına bir satır; Excel, Sheets, koçun ya da başka bir uygulama için. openGym da geri okuyabilir.',
+  'Workouts (CSV)': 'Antrenmanlar (CSV)',
+  'Body weight & measurements (CSV)': 'Vücut ağırlığı ve ölçüler (CSV)',
+  'CSV exported': 'CSV dışa aktarıldı',
 }

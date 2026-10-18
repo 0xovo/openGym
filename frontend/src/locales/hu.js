@@ -633,7 +633,7 @@ export default {
   'Shins': 'Sípcsont',
   // --- import from another app ---
   'Import from another app': 'Importálás másik appból',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes, Strong, Hevy vagy testsúly az Apple Healthből',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes, Strong, Hevy, GymMane, openGym CSV vagy testsúly az Apple Healthből',
   'Import from {0}': 'Importálás innen: {0}',
   'Import history': 'Előzmények importálása',
   'Weigh-ins': 'Mérések',
@@ -2546,4 +2546,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'Az openGym ingyenes: nincs reklám, előfizetés vagy követés. Egy kávé segít, hogy így maradjon.',
   'Rate openGym on the App Store': 'Értékeld az openGymet az App Store-ban',
   'Buy me a coffee': 'Hívj meg egy kávéra',
+  'Export as spreadsheet (CSV)': 'Exportálás táblázatként (CSV)',
+  'Workouts, body weight and measurements': 'Edzések, testsúly és testméretek',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': 'Szériánként egy sor, Excelhez, Sheetshez, az edződnek vagy egy másik appnak. Az openGym is vissza tudja olvasni.',
+  'Workouts (CSV)': 'Edzések (CSV)',
+  'Body weight & measurements (CSV)': 'Testsúly és testméretek (CSV)',
+  'CSV exported': 'CSV exportálva',
 }

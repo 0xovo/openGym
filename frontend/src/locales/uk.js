@@ -458,7 +458,7 @@ export default {
   'Shins': 'Гомілки',
   // --- import from another app ---
   'Import from another app': 'Імпорт з іншого застосунку',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes, Strong, Hevy або вага з Apple Health',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes, Strong, Hevy, GymMane, openGym CSV або вага з Apple Health',
   'Import from {0}': 'Імпорт з {0}',
   'Import history': 'Імпорт історії',
   'Weigh-ins': 'Зважування',
@@ -2540,4 +2540,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym безкоштовний: без реклами, підписок і стеження. Кава допомагає, щоб так і лишалося.',
   'Rate openGym on the App Store': 'Оцінити openGym в App Store',
   'Buy me a coffee': 'Пригостити кавою',
+  'Export as spreadsheet (CSV)': 'Експорт у таблицю (CSV)',
+  'Workouts, body weight and measurements': 'Тренування, вага тіла й заміри',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': 'Один рядок на підхід: для Excel, Sheets, тренера чи іншого застосунку. openGym теж уміє прочитати його назад.',
+  'Workouts (CSV)': 'Тренування (CSV)',
+  'Body weight & measurements (CSV)': 'Вага тіла й заміри (CSV)',
+  'CSV exported': 'CSV експортовано',
 }

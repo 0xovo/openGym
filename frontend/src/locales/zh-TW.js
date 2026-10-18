@@ -621,7 +621,7 @@ export default {
   'Shins': '脛前肌',
   // --- import from another app ---
   'Import from another app': '從其他 App 匯入',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes、Strong、Hevy，或 Apple 健康中的體重紀錄',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes、Strong、Hevy、GymMane、openGym CSV，或 Apple 健康中的體重紀錄',
   'Import from {0}': '從 {0} 匯入',
   'Import history': '匯入歷史紀錄',
   'Weigh-ins': '體重紀錄',
@@ -2536,4 +2536,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym 免費：沒有廣告、沒有訂閱、沒有追蹤。一杯咖啡讓它保持這樣。',
   'Rate openGym on the App Store': '在 App Store 為 openGym 評分',
   'Buy me a coffee': '請我喝杯咖啡',
+  'Export as spreadsheet (CSV)': '匯出為試算表 (CSV)',
+  'Workouts, body weight and measurements': '訓練、體重和身體圍度',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': '每組一列，可用於 Excel、Sheets、你的教練或其他 App。openGym 也能再讀回來。',
+  'Workouts (CSV)': '訓練 (CSV)',
+  'Body weight & measurements (CSV)': '體重和身體圍度 (CSV)',
+  'CSV exported': 'CSV 已匯出',
 }

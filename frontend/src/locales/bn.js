@@ -715,7 +715,7 @@ export default {
   'Shins': 'শিন',
   // --- import from another app ---
   'Import from another app': 'অন্য অ্যাপ থেকে ইমপোর্ট করুন',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes, Strong, Hevy, অথবা Apple Health থেকে শরীরের ওজন',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes, Strong, Hevy, GymMane, openGym CSV, অথবা Apple Health থেকে শরীরের ওজন',
   'Import from {0}': '{0} থেকে ইমপোর্ট করুন',
   'Import history': 'ইতিহাস ইমপোর্ট করুন',
   'Weigh-ins': 'ওজন মাপা',
@@ -2622,4 +2622,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym বিনামূল্যে: কোনো বিজ্ঞাপন, সাবস্ক্রিপশন বা ট্র্যাকিং নেই। এক কাপ কফি এটাকে এভাবেই রাখে।',
   'Rate openGym on the App Store': 'App Store-এ openGym-কে রেটিং দিন',
   'Buy me a coffee': 'আমাকে একটা কফি কিনে দিন',
+  'Export as spreadsheet (CSV)': 'স্প্রেডশিট হিসেবে এক্সপোর্ট করুন (CSV)',
+  'Workouts, body weight and measurements': 'ওয়ার্কআউট, শরীরের ওজন আর মাপ',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': 'প্রতি সেটে একটি সারি, Excel, Sheets, আপনার কোচ বা অন্য অ্যাপের জন্য। openGym-ও এটা আবার পড়তে পারে।',
+  'Workouts (CSV)': 'ওয়ার্কআউট (CSV)',
+  'Body weight & measurements (CSV)': 'শরীরের ওজন আর মাপ (CSV)',
+  'CSV exported': 'CSV এক্সপোর্ট হয়েছে',
 }

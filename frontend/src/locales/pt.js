@@ -632,7 +632,7 @@ export default {
   'Shins': 'Tibiais',
   // --- import from another app ---
   'Import from another app': 'Importar de outra app',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes, Strong, Hevy, ou o peso da Apple Saúde',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes, Strong, Hevy, GymMane, openGym CSV, ou o peso da Apple Saúde',
   'Import from {0}': 'Importar de {0}',
   'Import history': 'Importar histórico',
   'Weigh-ins': 'Pesagens',
@@ -2543,4 +2543,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'O openGym é grátis: sem anúncios, sem subscrições, sem rastreio. Um café ajuda a manter assim.',
   'Rate openGym on the App Store': 'Avaliar o openGym na App Store',
   'Buy me a coffee': 'Paga-me um café',
+  'Export as spreadsheet (CSV)': 'Exportar como folha de cálculo (CSV)',
+  'Workouts, body weight and measurements': 'Treinos, peso corporal e medidas',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': 'Uma linha por série, para o Excel, o Sheets, o teu treinador ou outra app. O openGym também a volta a ler.',
+  'Workouts (CSV)': 'Treinos (CSV)',
+  'Body weight & measurements (CSV)': 'Peso corporal e medidas (CSV)',
+  'CSV exported': 'CSV exportado',
 }

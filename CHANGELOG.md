@@ -43,6 +43,12 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - Push addresses that hide a private IPv4 address inside an IPv6 one are refused like the plain
   ones.
 
+**Export as a spreadsheet** (#647). Settings → Data & backup → Export as spreadsheet (CSV): your
+workouts with one row per set (date, workout, exercise, set, weight, reps, RPE or RIR, warm-ups,
+drops, supersets, cardio distance and time) and, as a second file, body weight and measurements.
+Pick everything or a stretch of days. Opens in Excel or Sheets, makes your coach happy, and openGym
+reads it straight back in without losing a set. The importer also learned GymMane's CSV.
+
 **Support openGym.** Settings → About & updates has the coffee jar: Buy Me a Coffee, Ko-fi and
 GitHub Sponsors, and on the iPhone a straight line to writing an App Store review. No pop-ups
 asking for anything, promise.

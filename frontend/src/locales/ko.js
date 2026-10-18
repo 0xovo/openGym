@@ -632,7 +632,7 @@ export default {
   'Shins': '정강이',
   // --- import from another app ---
   'Import from another app': '다른 앱에서 가져오기',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes, Strong, Hevy 또는 Apple 건강의 체중',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes, Strong, Hevy, GymMane, openGym CSV 또는 Apple 건강의 체중',
   'Import from {0}': '{0}에서 가져오기',
   'Import history': '기록 가져오기',
   'Weigh-ins': '체중 기록',
@@ -2543,4 +2543,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym은 무료예요: 광고도, 구독도, 추적도 없어요. 커피 한 잔이 계속 그렇게 지켜줘요.',
   'Rate openGym on the App Store': 'App Store에서 openGym 평가하기',
   'Buy me a coffee': '커피 한 잔 사주기',
+  'Export as spreadsheet (CSV)': '스프레드시트로 내보내기 (CSV)',
+  'Workouts, body weight and measurements': '운동, 체중, 신체 치수',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': '세트마다 한 줄, Excel, Sheets, 코치나 다른 앱에서 열 수 있어요. openGym도 다시 읽을 수 있어요.',
+  'Workouts (CSV)': '운동 (CSV)',
+  'Body weight & measurements (CSV)': '체중 및 신체 치수 (CSV)',
+  'CSV exported': 'CSV를 내보냈어요',
 }

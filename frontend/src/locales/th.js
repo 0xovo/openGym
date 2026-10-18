@@ -633,7 +633,7 @@ export default {
   'Shins': 'หน้าแข้ง',
   // --- import from another app ---
   'Import from another app': 'นำเข้าจากแอปอื่น',
-  'FitNotes, Strong, Hevy, or body weight from Apple Health': 'FitNotes, Strong, Hevy หรือน้ำหนักตัวจาก Apple Health',
+  'FitNotes, Strong, Hevy, GymMane, openGym CSV, or body weight from Apple Health': 'FitNotes, Strong, Hevy, GymMane, openGym CSV หรือน้ำหนักตัวจาก Apple Health',
   'Import from {0}': 'นำเข้าจาก {0}',
   'Import history': 'นำเข้าประวัติ',
   'Weigh-ins': 'บันทึกน้ำหนัก',
@@ -2554,4 +2554,10 @@ export default {
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'openGym ใช้ฟรี: ไม่มีโฆษณา ไม่มีสมาชิกรายเดือน ไม่มีการติดตาม กาแฟสักแก้วช่วยให้เป็นแบบนี้ต่อไป',
   'Rate openGym on the App Store': 'ให้คะแนน openGym ใน App Store',
   'Buy me a coffee': 'เลี้ยงกาแฟสักแก้ว',
+  'Export as spreadsheet (CSV)': 'ส่งออกเป็นสเปรดชีต (CSV)',
+  'Workouts, body weight and measurements': 'การออกกำลังกาย น้ำหนักตัว และสัดส่วน',
+  'One row per set, for Excel, Sheets, your coach or another app. openGym reads it back too.': 'หนึ่งแถวต่อเซ็ต สำหรับ Excel, Sheets, โค้ชของคุณ หรือแอปอื่น openGym ก็อ่านกลับได้เหมือนกัน',
+  'Workouts (CSV)': 'การออกกำลังกาย (CSV)',
+  'Body weight & measurements (CSV)': 'น้ำหนักตัวและสัดส่วน (CSV)',
+  'CSV exported': 'ส่งออก CSV แล้ว',
 }
