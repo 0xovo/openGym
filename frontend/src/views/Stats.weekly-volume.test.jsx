@@ -313,6 +313,8 @@ describe('Stats — weekly planned vs completed volume', () => {
     act(() => [...host.querySelectorAll('button')].find(b => b.textContent === '30d').click())
     tapChest()
     expect(find().dataset.findExercises).toBe('chest')
+    // says so in words, not "0 sets"
+    expect(host.querySelector('[data-muscle-volume="chest"] .v').textContent).toBe('not trained')
     act(() => find().click())
     expect(mocks.nav).toHaveBeenCalledWith('/muscles?m=chest', { state: { from: '/stats' } })
 

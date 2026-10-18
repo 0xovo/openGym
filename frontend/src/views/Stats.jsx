@@ -258,7 +258,7 @@ function MuscleBalance({ S }) {
   const completedRows = <>
     {sel && <div className="mrow" data-muscle-volume={sel} style={{ borderTop: 'var(--hair) solid var(--sep)', marginTop: 4, paddingTop: 10 }}>
       <span className="nm"><b>{t(MUSCLE_NAME[sel])}</b></span>
-      <span className="v">{sets(sel) ? t('{0} sets', sets(sel)) : on ? t('no hard sets') : t('not trained')}</span>
+      <span className="v">{load[sel] > 0 ? t('{0} sets', sets(sel)) : on ? t('no hard sets') : t('not trained')}</span>
       {!(load[sel] > 0) && findExercises(sel)}
     </div>}
     {!sel && completedMuscles.map(m => <div key={m} className="mrow" data-muscle-volume={m}>
