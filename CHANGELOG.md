@@ -58,6 +58,8 @@ iPhone's own question, so the yes or no is yours to give there, once.
   their settings now offer Cardio, Reps and Time, Cardio still the default (#678).
 - Add exercise → By muscle has the Favourites chip too, for the muscle you picked (#669).
 - Focus mode stays on the screen with lots of sets or a long exercise name (#655).
+- Chart dates under the graph say each day once over a short span, and months get their year
+  once a chart covers more than twelve of them (thanks @lodepav).
 
 ## v1.4.2 (2026-10-18)
 
