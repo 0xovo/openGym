@@ -12,6 +12,7 @@ let _db = undefined
 let _uid = null
 let _watcher = null
 let _loadedMtime = 0    // mtimeMs we last read at — used to catch watcher omissions
+let _seeded = false     // a test's in-memory state, never compared with the disk
 
 // null means one thing only: the file is not there (an account that never synced from a device).
 // Every other failure — no permission on the mount, a truncated or corrupt file — is a real fault,
@@ -119,8 +120,12 @@ export function getState() {
   // Re-read if the file's mtime changed since our last load — covers watcher omissions and
   // platforms with no fs.watch.
   let mtime
-  try { mtime = fs.statSync(file).mtimeMs } catch {
-    return _state === undefined ? null : _state
+  try { mtime = fs.statSync(file).mtimeMs } catch (e) {
+    if (_seeded) return _state
+    // Gone (the account was deleted, say): without a watcher the cached profile used to be
+    // served on and on. Anything else gets the read below, which reports it as the fault it is.
+    if (e.code === 'ENOENT') { _state = null; _loadedMtime = 0; return null }
+    mtime = NaN
   }
   if (_state === undefined || mtime !== _loadedMtime) {
     const fresh = readJsonOrNull(file)
@@ -129,8 +134,10 @@ export function getState() {
       // field the app added since the snapshot was last saved shows up undefined-safe.
       _state = Object.assign({}, defaultsShape(), fresh)
       _loadedMtime = mtime
-    } else if (_state === undefined) {
-      _state = null  // no state file at all — never signed in on a device
+    } else {
+      // No state file at all (never signed in on a device), or it went between stat and read.
+      _state = null
+      _loadedMtime = 0
     }
   }
   return _state
@@ -151,6 +158,7 @@ export function _seedStateForTests(state) {
   _db = { users: [{ id: _uid, name: 'Test', created: '2026-07-26T00:00:00.000Z' }], creds: [], subs: [], invites: [] }
   _state = state
   _loadedMtime = Number.MAX_SAFE_INTEGER   // never re-read from disk in a test
+  _seeded = true
   if (_watcher) { _watcher.close(); _watcher = null }
 }
 

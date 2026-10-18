@@ -44,6 +44,8 @@ asking for anything, promise.
   in shared plan files (#640, thanks @rudycelekli for spotting the review side).
 - A Coach review that adds a routine with an empty slot in it gets a second try instead of
   failing outright (thanks @rudycelekli).
+- The MCP server stops showing a profile whose data was deleted, also where the system can't
+  watch files (thanks @rudycelekli).
 
 ## v1.4.2 (2026-10-18)
 
