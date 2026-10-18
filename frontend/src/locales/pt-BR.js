@@ -1627,6 +1627,8 @@ export const PT_BR_OVERRIDES = {
   "Gain {0} to {1} a week.": "Ganhar de {0} a {1} por semana.",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Um cutting costuma ficar em 0,5 a 1 % por semana, um bulking limpo em 0,25 a 0,5 %.",
   "Remove range": "Remover faixa",
+
+  'Admin': 'Admin',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

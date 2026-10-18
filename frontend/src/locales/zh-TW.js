@@ -2516,4 +2516,5 @@ export default {
   "Gain {0} to {1} a week.": "每週增 {0} 到 {1}。",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "減脂期通常每週 0.5 到 1 %，乾淨增肌每週 0.25 到 0.5 %。",
   "Remove range": "移除範圍",
+  'Admin': '管理員',
 }

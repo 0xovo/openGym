@@ -2602,4 +2602,5 @@ export default {
   "Gain {0} to {1} a week.": "সপ্তাহে {0} থেকে {1} বাড়ানো।",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "কাটিং সাধারণত সপ্তাহে ০.৫ থেকে ১ %, লিন বাল্ক ০.২৫ থেকে ০.৫ %।",
   "Remove range": "সীমা সরান",
+  'Admin': 'অ্যাডমিন',
 }

@@ -2523,4 +2523,5 @@ export default {
   "Gain {0} to {1} a week.": "Prendre de {0} à {1} par semaine.",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Une sèche, c’est souvent 0,5 à 1 % par semaine, une prise de masse propre 0,25 à 0,5 %.",
   "Remove range": "Retirer la fourchette",
+  'Admin': 'Admin',
 }

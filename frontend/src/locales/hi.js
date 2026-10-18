@@ -2523,4 +2523,5 @@ export default {
   "Gain {0} to {1} a week.": "हर हफ़्ते {0} से {1} बढ़ाना।",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "कटिंग अक्सर हर हफ़्ते 0.5 से 1 % होती है, लीन बल्क 0.25 से 0.5 %।",
   "Remove range": "सीमा हटाएँ",
+  'Admin': 'एडमिन',
 }

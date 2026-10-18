@@ -2523,4 +2523,5 @@ export default {
   "Gain {0} to {1} a week.": "Przybierać od {0} do {1} tygodniowo.",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Redukcja to często 0,5 do 1 % tygodniowo, czysta masa 0,25 do 0,5 %.",
   "Remove range": "Usuń zakres",
+  'Admin': 'Admin',
 }

@@ -2523,4 +2523,5 @@ export default {
   "Gain {0} to {1} a week.": "Haftada {0} ile {1} arası al.",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Yağ yakımı genelde haftada %0,5 ile %1, temiz bulk %0,25 ile %0,5 arasıdır.",
   "Remove range": "Aralığı kaldır",
+  'Admin': 'Yönetici',
 }

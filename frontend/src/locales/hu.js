@@ -2526,4 +2526,5 @@ export default {
   "Gain {0} to {1} a week.": "Heti {0}–{1} hízás.",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Szálkásításnál gyakran heti 0,5–1 %, tiszta tömegnövelésnél 0,25–0,5 %.",
   "Remove range": "Tartomány törlése",
+  'Admin': 'Admin',
 }

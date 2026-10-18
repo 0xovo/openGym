@@ -2523,4 +2523,5 @@ export default {
   "Gain {0} to {1} a week.": "주당 {0}~{1} 증량.",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "감량기는 보통 주당 0.5~1 %, 린 벌크는 0.25~0.5 % 정도예요.",
   "Remove range": "범위 삭제",
+  'Admin': '관리자',
 }

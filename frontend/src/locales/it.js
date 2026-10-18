@@ -2523,4 +2523,5 @@ export default {
   "Gain {0} to {1} a week.": "Aumentare da {0} a {1} a settimana.",
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Una definizione è spesso 0,5-1 % a settimana, una massa pulita 0,25-0,5 %.",
   "Remove range": "Rimuovi intervallo",
+  'Admin': 'Admin',
 }
