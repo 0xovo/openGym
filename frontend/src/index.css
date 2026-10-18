@@ -1734,8 +1734,9 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .mrow .bar i{display:block;height:100%;background:var(--acc);border-radius:3px}
 .mrow .v{font-size:12px;color:var(--label-2);min-width:52px;text-align: end;flex:none}
 /* The Week view's "done/planned · %" (#573): wider than a set count, and as wide on every row, so
-   the bars line up the way they do in 30d, 90d and All. */
-.mrow .v.cmp{min-width:92px;font-variant-numeric:tabular-nums;white-space:nowrap}
+   the bars line up the way they do in 30d, 90d and All. coach.css has a `.cmp` of its own (the
+   Coach's comparison rows) with a rule line and padding, loaded on every page: reset both here. */
+.mrow .v.cmp{min-width:92px;font-variant-numeric:tabular-nums;white-space:nowrap;border-top:none;padding:0}
 /* Selected-muscle fatigue detail: the legend's three bands as one bar, the value above
    its marker, the 0–100% endpoints under it and each zone named beneath itself. Ready is
    the map's unshaded base, so the left zone stays neutral; margins leave room for the

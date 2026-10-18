@@ -27,6 +27,8 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 
 - **Muscle balance**: tap a muscle you haven't trained right on the map and its row offers the
   exercises for it, the same way the "Not trained" chips do (#553).
+- Stats' Week rows lose a stray line over each done/planned figure, which also sat a little
+  low next to its bar.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
