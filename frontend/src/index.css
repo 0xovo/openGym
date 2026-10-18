@@ -1689,6 +1689,13 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .bodymap.bm-mini .bm-ph{height:46px;width:44px}
 .bodymap.bm-mini .bm-sil{fill:color-mix(in srgb,var(--label) 34%,var(--surface))}
 .bodymap.bm-mini .bm-v path{stroke-width:3}
+/* The live session's body in the workout header (#670, components/SessionMuscles.jsx): no
+   taller than the icon buttons beside it, so the header keeps its height in every layout. */
+.iconbtn.whdr-map{width:auto;padding:0 4px;border-radius:10px}
+.whdr-map .bodymap.bm-mini .bm-v{height:30px}
+.whdr-map .bodymap.bm-mini .bm-ph{height:30px;width:29px}
+.sm-legend{justify-content:center;gap:6px;margin:10px 0 6px}
+.sm-legend .hm-c:not(:first-child){margin-inline-start:8px}
 .bm-sil{fill:color-mix(in srgb,var(--label) 18%,var(--surface))}
 .bm-m{fill:var(--bm-base);transition:fill var(--med) var(--ease)}
 .bm-m.l1{fill:color-mix(in srgb,var(--acc) 32%,var(--bm-base))}

@@ -1614,6 +1614,7 @@ export const PT_BR_OVERRIDES = {
   'Already in the loop: adds it again': 'Já está no ciclo: adiciona de novo',
   'openGym is free: no ads, no subscriptions, no tracking. A coffee keeps it that way.': 'O openGym é grátis: sem anúncios, sem assinaturas, sem rastreamento. Um café ajuda a manter assim.',
   'Buy me a coffee': 'Me pague um café',
+  'A tiny body that lights up as you tick sets. Tap it for the details.': 'Um corpinho que acende a cada série marcada. Toque para ver os detalhes.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

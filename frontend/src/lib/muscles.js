@@ -293,6 +293,33 @@ export const loadOfRoutine = (routine, exercises = {}) =>
   loadOf((routine?.ex || []).map(c => ({ id: c.id, ex: exercises[c.id] || c, sets: c.sets || 1 })))
 
 /**
+ * A running session's muscles (#670): `done` from the sets ticked so far, `planned` from every
+ * working set on the screen, done or not. Warm-ups count for neither, as in the finished
+ * workout's map, so a session that is all ticked shades exactly like its summary.
+ */
+export function sessionLoad(entries) {
+  const of = pick => loadOf((entries || []).map(e => ({
+    id: e.id, ex: e.exercise || e, sets: (e.sets || []).filter(s => !isWarmupRow(s) && pick(s)).length,
+  })))
+  return { done: of(s => s.done), planned: of(() => true) }
+}
+
+/**
+ * Shade steps for the live session map. A muscle still to come gets the faintest step (l1); one
+ * already worked starts a step above and climbs with its share of the session's busiest muscle,
+ * so the first set already reads as "done" and the map brightens as the session goes.
+ */
+export function sessionLevels({ done, planned }) {
+  const max = Math.max(0, ...MUSCLES.map(m => planned[m] || 0), ...MUSCLES.map(m => done[m] || 0))
+  const lv = {}
+  MUSCLES.forEach(m => {
+    const d = done[m] || 0
+    lv[m] = d > 0 && max > 0 ? Math.max(2, Math.min(4, 1 + Math.ceil(d / max * 3))) : (planned[m] || 0) > 0 ? 1 : 0
+  })
+  return lv
+}
+
+/**
  * Effective sets programmed by the live recurring week; overrides and history are not plans.
  * A floating week or rotation (S.queue, lib/queue.js) is the plan too: each of its sessions once,
  * beside your own weekday routines — the same split the Home streak card tallies (weekTally).
