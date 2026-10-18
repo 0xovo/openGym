@@ -60,6 +60,9 @@ iPhone's own question, so the yes or no is yours to give there, once.
 - Focus mode stays on the screen with lots of sets or a long exercise name (#655).
 - Chart dates under the graph say each day once over a short span, and months get their year
   once a chart covers more than twelve of them (thanks @lodepav).
+- Hevy import: 55 of Hevy's built-in exercises (Seated Leg Curl, Plank, Air Bike, Triceps Dip and
+  friends) land on the right openGym exercise instead of a cousin or a custom one, and the import
+  summary counts an exercise once even when it's in your workouts and your routines (thanks @lodepav).
 
 ## v1.4.2 (2026-10-18)
 
