@@ -38,6 +38,12 @@ with the muscles it works lit up. No more opening Leg Day to remember it is, in 
 GitHub Sponsors, and on the iPhone a straight line to writing an App Store review. No pop-ups
 asking for anything, promise.
 
+**Settings slides like Settings.** Tap into a settings page and it slides in from the right; go
+back and the page before slides back in. The tabs keep their soft fade.
+
+**iPhone first start.** The permission screens have one Continue that leads straight to the
+iPhone's own question, so the yes or no is yours to give there, once.
+
 **Fixes**
 - **Rest days in the rotation**, and the same routine more than once (A → B → C → B → D): Add
   offers a rest day and every routine, including the ones already in the loop (#536).

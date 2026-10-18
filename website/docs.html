@@ -31,7 +31,7 @@
 <!-- Umami web analytics for opengym.ch (self-hosted, cookieless). -->
 <script defer src="https://stats.duarte-santos.ch/script.js" data-website-id="db36019e-50f4-453c-9c56-d0588aefe233"></script>
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is openGym really free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — free as in cost and as in freedom (AGPL-3.0). No pro tier, no locked features, no ads, and the license keeps every fork open source too."}}, {"@type": "Question", "name": "Why isn't openGym on the Play Store or App Store?", "acceptedAnswer": {"@type": "Answer", "text": "By choice (and on iOS, by Apple's rules for sideloading). Store accounts cost money, impose terms that sit badly with the AGPL, and put a gatekeeper between you and an app whose whole point is that your data is yours. The signed Android APK is a direct download."}}, {"@type": "Question", "name": "Should I pick the mobile app or self-host?", "acceptedAnswer": {"@type": "Answer", "text": "To simply track your training: the mobile app. For data on your own hardware, synced across devices, with profiles for the people you train with: self-host with Docker. The backup file migrates everything between the two, or pair the app to your server."}}, {"@type": "Question", "name": "What's on the openGym roadmap?", "acceptedAnswer": {"@type": "Answer", "text": "A small, themed release roughly every two weeks: a session queue, programmes and phases, AMRAP/%1RM/5-3-1 progression, cardio intervals, then database storage (v1.4.0), better search, OIDC login, a trainer role and an App Store build. The full plan is in ROADMAP.md on GitHub."}}, {"@type": "Question", "name": "Was openGym written with AI?", "acceptedAnswer": {"@type": "Answer", "text": "openGym is developed with Claude Code, Anthropic's coding agent; a large share of the code, tests and docs is drafted that way, and every change is reviewed, tested and released by the maintainer. The app itself calls no AI service unless an admin switches on the optional AI coach."}}, {"@type": "Question", "name": "Where does the exercise database come from?", "acceptedAnswer": {"@type": "Answer", "text": "The exercise text lives in openGym's own catalogue in the repository, open to fixes and translations by pull request; the oldest entries came from ExerciseDB under MIT. The pictures and animations are licensed from Gym visual for use in openGym only and ship with it at 180 px. Reusing them anywhere else needs your own licence from gymvisual.com."}}, {"@type": "Question", "name": "What does the AGPL license mean for me?", "acceptedAnswer": {"@type": "Answer", "text": "You can self-host, use, modify and share openGym freely. Only if you run a modified version as a network service must you offer that version's source under the same license. Using or self-hosting it unmodified obliges you to nothing."}}]}
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is openGym really free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — free as in cost and as in freedom (AGPL-3.0). No pro tier, no locked features, no ads, and the license keeps every fork open source too."}}, {"@type": "Question", "name": "Is openGym in the App Store and on Google Play?", "acceptedAnswer": {"@type": "Answer", "text": "The iPhone app, with the Apple Watch app, is on its way into the App Store, and the public TestFlight beta is the same app until it is listed. Google Play follows once a new developer account has finished its closed test. On Android the signed APK is a direct download in the meantime."}}, {"@type": "Question", "name": "Should I pick the mobile app or self-host?", "acceptedAnswer": {"@type": "Answer", "text": "To simply track your training: the mobile app. For data on your own hardware, synced across devices, with profiles for the people you train with: self-host with Docker. The backup file migrates everything between the two, or pair the app to your server."}}, {"@type": "Question", "name": "What's on the openGym roadmap?", "acceptedAnswer": {"@type": "Answer", "text": "A small, themed release every two weeks: the gym reminder and health data read back from the phone (v1.4.3), then programmes and phases, Google Play with a new progression engine, cardio, better search, password and OIDC accounts, a trainer role, wearables, and database storage after that. The full plan is in ROADMAP.md on GitHub."}}, {"@type": "Question", "name": "Was openGym written with AI?", "acceptedAnswer": {"@type": "Answer", "text": "openGym is developed with Claude Code, Anthropic's coding agent; a large share of the code, tests and docs is drafted that way, and every change is reviewed, tested and released by the maintainer. The app itself calls no AI service unless an admin switches on the optional AI coach."}}, {"@type": "Question", "name": "Where does the exercise database come from?", "acceptedAnswer": {"@type": "Answer", "text": "The exercise text lives in openGym's own catalogue in the repository, open to fixes and translations by pull request; the oldest entries came from ExerciseDB under MIT. The pictures and animations are licensed from Gym visual for use in openGym only and ship with it at 180 px. Reusing them anywhere else needs your own licence from gymvisual.com."}}, {"@type": "Question", "name": "What does the AGPL license mean for me?", "acceptedAnswer": {"@type": "Answer", "text": "You can self-host, use, modify and share openGym freely. Only if you run a modified version as a network service must you offer that version's source under the same license. Using or self-hosting it unmodified obliges you to nothing."}}]}
 </script>
 </head>
 <body class="topnav dock">
@@ -205,7 +205,7 @@
   <p>One codebase, three ways to run it. Everything below applies to all of them unless a
      section says otherwise.</p>
   <table class="cfg">
-    <tr><td><b>Mobile app</b></td><td>A sideloadable Android APK (and a buildable iOS app). No account, no server, no sync — the phone <i>is</i> the account, data lives in the app's private storage, workout-day reminders are native notifications. Install-and-done.</td></tr>
+    <tr><td><b>Mobile app</b></td><td>The iPhone app (with the Apple Watch app) and the Android APK. No account, no server, no sync unless you want one: the phone <i>is</i> the account, data lives in the app's private storage, reminders are native notifications. Install and done, or <a href="#mobile-server">connect it to your server</a> later.</td></tr>
     <tr><td><b>Self-hosted</b></td><td>Two Docker containers on your own machine. Adds passkey profiles, sync across devices, installable as a home-screen PWA, optional admin dashboard, web push notifications. The flavor for households and training groups.</td></tr>
     <tr><td><b>Demo</b></td><td><a href="/demo/">The in-browser demo</a> — the real app seeded with example data, storing everything in your browser only. Useful to try before installing, and as a free plan editor (see <a href="#import">Import</a>).</td></tr>
   </table>
@@ -248,17 +248,21 @@
      away, stays quiet. The missed-workout nudge, when switched on, is scheduled the same way.</p>
 
   <h2 id="iphone">Use on iPhone</h2>
-  <p>Apple does not allow installing apps outside the App Store, so there is no iOS download —
-     that's a platform rule, not a choice we made. What works instead:</p>
+  <p>openGym has a native iPhone and iPad app, with an <b>Apple Watch</b> app, widgets, a Live
+     Activity and Apple Health. It is the same app as on Android: use it on its own or connect it
+     to your server.</p>
   <ul>
-    <li><b>Self-host + home screen (recommended):</b> open your own openGym instance in
-        Safari → <b>Share</b> → <b>Add to Home Screen</b>. You get a full-screen app with its
-        own icon, passkey sign-in and sync — no expiry, no fees.</li>
-    <li><b>Build it onto your own iPhone:</b> with a Mac and Xcode 15+, the native Capacitor
-        app runs on your device with a free Apple ID (Apple expires the signature after
-        7 days; re-run from Xcode to renew — <b>AltStore</b> can automate that re-signing over
-        Wi-Fi). See <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/MOBILE.md" rel="noopener">docs/MOBILE.md</a>.</li>
-    <li><b>Just looking?</b> Try the <a href="/demo/">in-browser demo</a> — the real app with
+    <li><b>The App Store:</b> the app is on its way in. Until it is listed there, the
+        <a href="https://testflight.apple.com/join/RKATb61k" rel="noopener">public TestFlight beta</a>
+        is the same app: install Apple's TestFlight, open the link, done. Your data stays when
+        the App Store version replaces it.</li>
+    <li><b>Self-host + home screen:</b> open your own openGym instance in Safari &rarr;
+        <b>Share</b> &rarr; <b>Add to Home Screen</b>. A full-screen app with its own icon,
+        passkey sign-in and sync.</li>
+    <li><b>Build it yourself</b> (a fork, say): open <code>frontend/ios</code> in Xcode with a free
+        Apple ID and run it on your phone (Apple expires that signature after 7 days). See
+        <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/MOBILE.md" rel="noopener">docs/MOBILE.md</a>.</li>
+    <li><b>Just looking?</b> Try the <a href="/demo/">in-browser demo</a>: the real app with
         example data, no account and nothing to install.</li>
   </ul>
 
@@ -269,6 +273,10 @@
   <ul>
     <li><b>A routine per weekday.</b> The home screen knows what day it is, shows this week
         with what's done and what's planned, and starts today's session with one tap.</li>
+    <li><b>See what a session hits.</b> Today's session on Home and every routine on the Plan
+        page (the week, the rotation and the routine list) carry a tiny body, front and back,
+        with the muscles it works lit up. No more opening Leg Day to check that it is, in fact,
+        legs.</li>
     <li><b>Reschedule any day.</b> Sick, missed a session, fewer gym days this week? Move a
         workout to another date without touching the weekly plan itself — the override applies
         to that date only.</li>
@@ -466,6 +474,18 @@
         get one nudge that evening, in the tone you picked: <i>Friendly</i>, <i>Guilt trip</i>
         (&ldquo;I miss you&rdquo;) or <i>Drill sergeant</i>. Rest days stay quiet, and after
         three missed days in a row it stops until your next workout.</li>
+    <li><b>Gym reminder</b> (phone app, off by default): add your gyms in Settings &rarr;
+        Reminders &rarr; Gym reminder, from where you stand or as a pin on a map, each with its
+        own radius and text. Walk into one and the phone nudges you to hit Start: once a day at
+        most, never after you trained, never mid-workout, and only between the hours you pick if
+        you like. Your gyms stay on the phone (not on your server, not in backups). Android uses
+        the system's own proximity alerts, no Google services needed; it can be slow to notice
+        you arrived, so with openGym's battery use on <i>Unrestricted</i> a short GPS look near
+        the gym ("Quick arrival check") nudges you at the door instead. A workout you logged on
+        your laptop that the phone hasn't synced yet counts too: a paired phone asks your server
+        first.</li>
+    <li><b>Settings that slide:</b> a settings page slides in from the right and back out, like
+        the iPhone's own Settings. On the iPhone a swipe from the left edge goes back.</li>
     <li><b>Installable PWA</b> (self-hosted): add it to your home screen from any browser and
         it opens full-screen with its own icon.</li>
   </ul>
@@ -663,14 +683,16 @@ ALLOW_GUEST=0              # remove "Continue without account"</code></pre>
   <p>Passkeys can't work inside the app's WebView (it never runs at your real hostname), so
      the device is <b>paired</b> instead:</p>
   <ol>
-    <li>In a browser that's already signed in: Settings → Account → <b>Pair the mobile app</b> — shows
-        a one-time code, valid 5 minutes.</li>
+    <li>In a browser that's already signed in: Settings &rarr; Account &rarr; <b>Pair the mobile app</b>.
+        Confirm it's you (your passkey, or your password where password sign-in is on), and it
+        shows a one-time code, valid 5 minutes.</li>
     <li>In the app: enter your server's address and that code. Done.</li>
   </ol>
   <p>Worth knowing: the pairing exchanges the code for a bearer token that is the same signed
      value a session cookie carries — so <b>"sign out everywhere"</b> in the browser revokes
-     paired apps too. Use an <code>https://</code> address: the phone blocks a plain
-     <code>http://</code> server before anything is sent. Pairing fails while the browser works?
+     paired apps too. Use an <code>https://</code> address where you can. A plain
+     <code>http://</code> server on your home network works too if you type the address with
+     <code>http://</code> in front (the app reminds you it is not encrypted). Pairing fails while the browser works?
      A reverse proxy or a login page in front of <code>/api/</code> is answering instead of
      openGym; see <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING.md#phone-app-and-cors" rel="noopener">Phone app and CORS</a>. A connected app keeps working without a network on the
      last copy it synced — it shows an "Offline" line under the header and pushes your changes
@@ -878,8 +900,10 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
      back — lives in pure functions under <code>frontend/src/lib/</code> with tests next to
      them; the MCP server and the mobile app import the very same functions. Every pull
      request runs the full suites (frontend, api, mcp) on GitHub Actions and builds and boots the
-     api images. After the merge, CI on the GitLab mirror builds the amd64+arm64 images, signs the
-     APK and publishes the release &mdash; tagging <code>vX.Y.Z</code> is what ships everything.</p>
+     api images. A published release builds the amd64+arm64 images; the APKs and the iPhone app
+     are signed on the release machine, because the sharper animations inside them may never
+     sit in a CI run (licence). The GitLab mirror's CI builds images and SBOMs for its own
+     registry.</p>
   <p>openGym is developed with <a href="https://claude.com/claude-code" rel="noopener">Claude Code</a>,
      Anthropic's coding agent: a large share of the code, tests and documentation is drafted in
      Claude Code sessions. What goes in, every review and every release is the maintainer's call,
@@ -902,8 +926,9 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
         Gradle + <code>zipalign</code> + <code>apksigner</code> with your own keystore
         (keep it — updates must carry the same signature). Step-by-step:
         <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/MOBILE.md" rel="noopener">docs/MOBILE.md</a>.</li>
-    <li><b>iOS app:</b> the Capacitor project in <code>frontend/ios</code> — open in Xcode,
-        set your (free) team, run on your device. Same doc.</li>
+    <li><b>iOS app:</b> the Capacitor project in <code>frontend/ios</code>: open it in Xcode,
+        set your (free) team, run it on your device. Same doc; how the App Store build is made
+        is in <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/APP_STORES.md" rel="noopener">docs/APP_STORES.md</a>.</li>
     <li><b>Development:</b> Node 20+; <code>npm test</code> in <code>frontend/</code>,
         <code>api/</code> and <code>mcp/</code> runs the suites. Contributions welcome —
         <a href="https://github.com/DuarteSantos8/openGym/blob/main/CONTRIBUTING.md" rel="noopener">CONTRIBUTING.md</a>.</li>
@@ -953,7 +978,8 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
   <ul>
     <li><b>The app collects nothing.</b> No telemetry, no analytics, no crash reporting, no
         accounts on anyone else's server. The exercise media are inside the mobile app.
-        It goes online only for what you set up (your server, the coach, Health Connect) and, in the
+        It goes online only for what you set up (your server, the coach, Health Connect, the gym
+        reminder's map and address search, which ask OpenStreetMap) and, in the
         APK from this site, for GitHub's public release list when you open Settings → About (the
         update check). The full policy: <a href="privacy.html">Privacy</a>. In the browser, a self-hosted instance talks only to your own server.</li>
     <li><b>Passkey private keys never leave your device</b> — the server stores only public
@@ -975,13 +1001,17 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
   <h3>Is it really free?</h3>
   <p>Yes — free as in cost <i>and</i> as in freedom (AGPL-3.0). No pro tier, no locked
      features, no ads, and the license keeps every fork open source too. If it replaced a
-     paid tracker for you, there's a <a href="https://buymeacoffee.com/duartesantos" rel="noopener">coffee button</a>
-     and a <a href="https://ko-fi.com/opengym" rel="noopener">Ko-fi page</a>,
-     though a star, a bug report or a pull request is worth just as much.</p>
-  <h3>Why isn't it on the Play Store / App Store?</h3>
-  <p>By choice (and on iOS, by Apple's rules for sideloading). Store accounts cost money,
-     impose terms that sit badly with the AGPL, and put a gatekeeper between you and an app
-     whose whole point is that your data is yours.</p>
+     paid tracker for you, there's a <a href="https://buymeacoffee.com/duartesantos" rel="noopener">coffee button</a>,
+     a <a href="https://ko-fi.com/opengym" rel="noopener">Ko-fi page</a> and
+     <a href="https://github.com/sponsors/DuarteSantos8" rel="noopener">GitHub Sponsors</a>
+     (the app has all three under Settings &rarr; About &amp; updates), though a star, a bug report or a pull request is worth just as much.</p>
+  <h3>Is it in the App Store and on Google Play?</h3>
+  <p>The iPhone app (Apple Watch included) is on its way into the App Store; until it is listed,
+     the <a href="https://testflight.apple.com/join/RKATb61k" rel="noopener">public TestFlight beta</a>
+     is the same app. Google Play comes once a new developer account has run its closed test.
+     On Android the <a href="#android">signed APK</a> is the way in until then, and the same key
+     signs both, so moving to Play later keeps your data. The store apps are the same AGPL code,
+     with nothing collected and nothing to buy.</p>
   <h3>Mobile app or self-hosted — which one should I pick?</h3>
   <p>If you just want to track your training: the mobile app. If you want your data on your
      own hardware, synced across devices, with profiles for the people you train with:
@@ -989,11 +1019,11 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
      migrates everything, or <a href="#mobile-server">pair the app to your server</a> and
      keep using it.</p>
   <h3>What's on the roadmap?</h3>
-  <p>A small, themed release roughly every two weeks. Next up: a session queue beside the
-     fixed week, programmes and phases, a second round on the progression engine (AMRAP,
-     %1RM and 5/3/1-style waves), cardio intervals; then the move to a database (v1.4.0, the one
-     compatibility break), better search, OIDC login, a trainer role and an App Store build for
-     iPhone. The full plan with dates is in
+  <p>A small, themed release every two weeks. Next up: the gym reminder and heart rate and
+     weigh-ins read back from Health Connect and Apple Health (v1.4.3), then programmes and
+     phases, Google Play with a new progression engine (AMRAP, %1RM and 5/3/1-style waves),
+     cardio, better search, password and OIDC accounts, a trainer role, wearables, and database
+     storage after that. The full plan with dates is in
      <a href="https://github.com/DuarteSantos8/openGym/blob/main/ROADMAP.md" rel="noopener">ROADMAP.md</a>;
      ideas and pull requests welcome.</p>
   <h3>Was openGym written with AI?</h3>
