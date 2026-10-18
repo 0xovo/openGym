@@ -39,6 +39,12 @@ vi.mock('@capacitor/local-notifications', () => ({
   },
 }))
 
+// Transforming what rest-alert.js pulls in (mobile.js → history.js → exercises.js and its 1 MB
+// table) takes seconds on a cold worker, and a busy machine pushed that past the first test's
+// timeout. Done here, while the file is collected, no test is billed for it; vi.resetModules()
+// below runs the modules again but keeps their transform, so every import stays a fresh start.
+await Promise.all([import('./mobile.js'), import('./accent.js'), import('./rest-sounds.js')])
+
 const settle = async () => { for (let i = 0; i < 10; i++) await new Promise(r => setTimeout(r, 0)) }
 
 const unhandled = []
@@ -281,14 +287,19 @@ describe('the notification permission never holds the rest alarm back', () => {
         : async () => ({ remove: async () => {} }),
     }))
     const alert = await import('./rest-alert.js')
-    alert.holdRestAlert(30, 60)                       // a slow bridge call ahead in the chain
-    const late = alert.armRestAlert(Date.now() + 30, { totalSec: 1 })
-    await new Promise(r => setTimeout(r, 60))
-    release()
-    await expect(late).resolves.toBe(false)
-    expect(schedule).not.toHaveBeenCalled()
-    await expect(alert.armRestAlert(Date.now() + 60_000, { totalSec: 60 })).resolves.toBe(true)
-    expect(schedule).toHaveBeenCalledTimes(1)
+    // Only the clock is faked: the chain runs on real promises. Moving it past the end is what
+    // a slow bridge call does, without sleeping for it.
+    vi.useFakeTimers({ toFake: ['Date'] })
+    try {
+      alert.holdRestAlert(30, 60)                     // a slow bridge call ahead in the chain
+      const late = alert.armRestAlert(Date.now() + 30, { totalSec: 1 })
+      vi.setSystemTime(Date.now() + 60)
+      release()
+      await expect(late).resolves.toBe(false)
+      expect(schedule).not.toHaveBeenCalled()
+      await expect(alert.armRestAlert(Date.now() + 60_000, { totalSec: 60 })).resolves.toBe(true)
+      expect(schedule).toHaveBeenCalledTimes(1)
+    } finally { vi.useRealTimers() }
   })
 
   it('asks once, and after a "Don\'t allow" never again, not even after a restart', async () => {
