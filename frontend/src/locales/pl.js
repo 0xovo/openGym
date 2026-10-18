@@ -2552,5 +2552,5 @@ export default {
   'New in this workout': 'Nowe w tym treningu',
   'Added to “{0}”': 'Dodano do „{0}”',
   'Add it to “{1}”': 'Dodaj do „{1}”',
-  'Add them to “{1}”': 'Dodaj wszystkie do „{1}”',
+  'Add them to “{1}”': { one: 'Dodaj do „{1}”', few: 'Dodaj wszystkie do „{1}”', many: 'Dodaj wszystkie do „{1}”' },
 }
