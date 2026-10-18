@@ -69,6 +69,8 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   summary counts an exercise once even when it's in your workouts and your routines (thanks @lodepav).
 - German step-by-step instructions for 1,213 more exercises, so all the exercises from before
   v1.4 explain themselves in German now (#645, thanks @junkerderprovinz).
+- In the Compact and List layouts the exercise chips at the top follow along: the one you tap
+  lights up, and so does the one you scroll to (#323, thanks @Space-Hermes).
 
 ## v1.4.2 (2026-10-18)
 
