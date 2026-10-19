@@ -106,6 +106,18 @@ export async function scheduledReview() {
   if (target && !target.local && !await hasAiConsent(target)) return null
   return (await local()).localScheduled(S())
 }
+// A phone paired with a server leaves the reviews to the server's tick, and the server tells
+// people about a proposal by web push, which the phone app does not have. So the phone asks once
+// when it comes to the foreground, and says it once per proposal.
+const ANNOUNCED_KEY = 'gym_coach_announced'
+export async function scheduledNotice() {
+  if (DEMO || LOCAL() || !MOBILE) return null
+  const p = (await api('/api/coach/status'))?.pending
+  if (!p || p.trigger !== 'scheduled') return null
+  try { if (localStorage.getItem(ANNOUNCED_KEY) === p.id) return null; localStorage.setItem(ANNOUNCED_KEY, p.id) } catch { /* said again next time, at worst */ }
+  await announceProposal(p)
+  return p
+}
 // "The Coach has something for you", for a proposal nobody is looking at yet: a toast while the
 // app is on screen, a notification when it went to the background meanwhile (a review takes a
 // minute or two). Never a permission prompt: notifications were allowed in Settings, or not.

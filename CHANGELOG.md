@@ -119,6 +119,9 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   then nothing ever ran them, because only a server ran them. Now the phone does it while the app
   is open: right after the workout that completes the count, or the first time you open it after
   your weekly slot. It only speaks up when it has something to suggest.
+- A phone app connected to your server now hears about a suggestion the server's automatic
+  review left. The server only knew how to say it by web push, which the app doesn't have, so the
+  review ran and the phone stayed quiet. Now the app tells you when you next open it.
 
 ## v1.4.2 (2026-10-18)
 

@@ -467,7 +467,9 @@ The App-Store build has no server of its own, so the Coach there is a choice mad
 - **Use my self-hosted openGym.** Pair the phone with your instance (the same pairing flow as
   syncing — **Settings → Account → Pair the mobile app** on the site, then the address and code on the
   phone). A paired phone is an ordinary profile: the Coach runs on your server with whatever
-  provider the admin configured, under the rules above, and nothing on the phone changes.
+  provider the admin configured, under the rules above, and nothing on the phone changes. The
+  one thing the server cannot do is push to the app, so a suggestion its automatic review left
+  is announced by the app itself, once, when it next comes to the foreground.
 - **Bring my own API key.** The phone calls Anthropic, OpenAI, Gemini or a compatible endpoint
   directly, with a key you paste. It runs the same payload allowlist, the same validator and
   the same single repair round as the server, in the app. The key is kept in the platform's

@@ -4071,6 +4071,7 @@ components:
                   oneOf: [{ type: string }, { type: 'null' }]
                   description: e.g. `provider`, `unusable`, `restart`, `forgotten`, `consent`, `noworkout`.
                 at: { type: integer, description: Epoch ms. }
+                trigger: { type: string, enum: [scheduled], description: Present when it was an automatic review. }
                 reading: { type: string, description: "Present on `nochange`: why there was nothing to change." }
             - type: 'null'
 
@@ -4088,6 +4089,7 @@ components:
         expiresAt: { type: integer, description: Epoch ms. }
         planHash: { type: string, description: The plan this was written against. A later edit makes it stale. }
         iteration: { type: integer, description: "1, or higher after a refine." }
+        trigger: { type: string, enum: [scheduled], description: "Present when an automatic review made it, which nobody was watching for." }
         summary: { type: string, maxLength: 1200 }
         changes:
           type: array
