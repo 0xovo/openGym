@@ -113,6 +113,12 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   v1.4 explain themselves in German now (#645, thanks @junkerderprovinz).
 - In the Compact and List layouts the exercise chips at the top follow along: the one you tap
   lights up, and so does the one you scroll to (#323, thanks @Space-Hermes).
+- **Rest after this set**: tap a set's number and give just that set its own rest for today,
+  a long one before the top set or none after a light one. Default, No timer or Pick a time
+  (#609, thanks @Space-Hermes).
+- A timed per-side hold can drop its 10 second switch-sides pause without losing the set's rest:
+  Rest between sides → No timer. And changing an exercise's settings mid-set no longer forgets a
+  side you already ticked (#636, thanks @Space-Hermes).
 - The install tip in About on a Windows or Linux browser points at Chrome's install icon,
   not at an iPhone's Share menu you don't have.
 - The Coach answers questions now. Type "how many sets of dips is that?" in the chat and you get
