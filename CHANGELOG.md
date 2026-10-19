@@ -25,6 +25,10 @@ tiny body, faint where the session is headed and lit up where you've already tic
 layout and without moving a single set row (#670). Tap it for the big map and done/planned sets
 per muscle. Settings → Workout → Fine-tuning turns it off.
 
+- **Faster on long histories.** Home and Stats do far less work per open (Stats about a third
+  less on 800 workouts), the main script a start parses is a quarter smaller, the installed web app stops asking
+  the server about every file on each launch, and other languages load their words in one go
+  instead of three trips.
 - **Muscle balance**: tap a muscle you haven't trained right on the map and its row offers the
   exercises for it, the same way the "Not trained" chips do (#553).
 - Stats' Week rows lose a stray line over each done/planned figure, which also sat a little
