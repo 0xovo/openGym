@@ -381,7 +381,17 @@ function EffortCard({ S }) {
     () => anchorsByWorkout(S.workouts, opts),
     [S.workouts, opts],
   )
-  const resolve = (s, w, e) => resolveSetRir(s, s, e, w, anchors.get(w), opts)
+  // The summary, the weekly curve and the histogram each walk the same sets; a set's reading
+  // depends only on the anchors and options, so it is worked out once per set, not three times.
+  const resolve = useMemo(() => {
+    const seen = new WeakMap()
+    return (s, w, e) => {
+      if (seen.has(s)) return seen.get(s)
+      const r = resolveSetRir(s, s, e, w, anchors.get(w), opts)
+      seen.set(s, r)
+      return r
+    }
+  }, [anchors, opts])
   const sum = effortSummary(S, win, resolve)
   const weeks = effortWeeks(S, win, resolve)
   const hist = effortHistogram(S, win, resolve)

@@ -5,7 +5,7 @@ import { Window } from 'happy-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EXIDX } from '../lib/exercises.js'
 import { MUSCLES, levelsOf } from '../lib/muscles.js'
-import { FATIGUE_STATES, STRENGTH_FLOOR, fatigueHalfLifeOf, FATIGUE_SETS_PER_UNIT } from '../lib/recovery.js'
+import { FATIGUE_STATES, STRENGTH_FLOOR, fatigueHalfLifeOf, FATIGUE_SETS_PER_UNIT, resolveSetRir } from '../lib/recovery.js'
 import { fatigueStateOf } from '../lib/recovery-view.js'
 import Stats from './Stats.jsx'
 import Modals from '../components/Modals.jsx'
@@ -27,6 +27,12 @@ const mocks = vi.hoisted(() => ({
     bodyweight: [], routines: [], workouts: [],
   },
 }))
+
+// Passed through untouched; the spy only counts how often the Effort card reads a set.
+vi.mock('../lib/recovery.js', async importOriginal => {
+  const actual = await importOriginal()
+  return { ...actual, resolveSetRir: vi.fn(actual.resolveSetRir) }
+})
 
 vi.mock('../store/useStore.js', () => ({
   useStore: selector => selector({ S: mocks.S }),
@@ -379,6 +385,19 @@ describe('Stats estimated effort', () => {
     // Six self-anchored sets estimate RIR 0: a real average with an honest badge.
     expect(head.textContent).toContain('estimated')
     expect(container.textContent).toContain('0 rated')
+  })
+
+  // The summary, the weekly curve and the histogram share one reading per set.
+  it('reads each set once for the whole card', async () => {
+    resetFixture([workout('unrated', BASE_NOW, [
+      entry('0025', Array.from({ length: 6 }, () => set(true, { w: 80, r: 8 }))),
+    ])])
+    resolveSetRir.mockClear()
+    await mountStats()
+    expect(effortHead().textContent).toContain('estimated')
+    const sets = resolveSetRir.mock.calls.map(c => c[0])
+    expect(sets.length).toBeGreaterThan(0)
+    expect(new Set(sets).size).toBe(sets.length)
   })
 
   it('keeps the logged view badge-free on rated history', async () => {
