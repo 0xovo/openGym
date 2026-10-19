@@ -848,6 +848,7 @@ export default {
   'Automatic reviews': 'Otomatik değerlendirmeler',
   'Off. The Coach only looks when you ask.': 'Kapalı. Koç yalnızca sen istediğinde bakar.',
   'You are only notified when the Coach actually has something to suggest.': 'Yalnızca Koç’un gerçekten önerecek bir şeyi olduğunda bildirim alırsın.',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'Bu telefonda Koç yalnızca uygulama açıkken bakabilir: bir antrenmandan hemen sonra ya da uygulamayı bir sonraki açışında.',
   'When': 'Ne zaman',
   'Weekly': 'Haftalık',
   'On a day and time you choose': 'Seçtiğin gün ve saatte',

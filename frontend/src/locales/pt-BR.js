@@ -508,6 +508,7 @@ export const PT_BR_OVERRIDES = {
   'Review': 'Revisar',
   'Off. The Coach only looks when you ask.': 'Desligado. O Treinador só olha quando você pede.',
   'You are only notified when the Coach actually has something to suggest.': 'Você só é avisado quando o Treinador realmente tem algo a sugerir.',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'Neste celular o Treinador só consegue olhar enquanto o app está aberto: logo depois de um treino, ou na próxima vez que você abrir.',
   'On a day and time you choose': 'No dia e hora que você escolher',
   'As soon as you have logged enough': 'Assim que você tiver registrado o suficiente',
   'Your plan': 'Seu plano',

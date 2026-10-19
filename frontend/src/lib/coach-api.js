@@ -9,7 +9,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { api } from './api.js'
 import { DEMO } from './demo.js'
 import { MOBILE } from './mobile.js'
-import { t, getLang } from './i18n.js'
+import { t, tn, getLang } from './i18n.js'
 import { useStore } from '../store/useStore.js'
 import { todayForCoach } from './coach-context.js'
 import { useUI } from '../store/useUI.js'
@@ -40,6 +40,9 @@ const local = async () => {
     // There is no admin card on a phone: the user is the operator, so failures go to them.
     localMod.setNotifier(ev => {
       const toast = useUI.getState().toast
+      // An automatic review speaks only when it has something to suggest, like the server's
+      // (api/coach/cadence.js): a skip, a failure or "nothing to change" nobody asked for is noise.
+      if (ev.scheduled) { if (ev.kind === 'ready') announceProposal(ev.pending); return }
       if (ev.kind === 'failed') toast(jobErrorText(ev.errorClass, ev.detail))
       else if (ev.kind === 'nochange') toast(t('Nothing to change right now: {0}', String(ev.reading || '').slice(0, 140)))
     })
@@ -92,6 +95,36 @@ export const requestDebrief = (...a) => asked(_requestDebrief)(...a).then(track)
 // (lib/coach-context.js): the server never holds it.
 const _askCoach = async text => DEMO ? (await demo()).demoAsk(S(), text) : LOCAL() ? (await local()).localAsk(S(), text, todayForCoach(S())) : api('/api/coach/ask', { method: 'POST', body: JSON.stringify({ text, today: todayForCoach(S()), lang: getLang() }) })
 export const askCoach = (...a) => asked(_askCoach)(...a).then(track)
+// An automatic review, if one is due (lib/coach-schedule.js asks while the app is open). Only a
+// phone with its own key runs them here; a server runs its own on its tick. The data-sharing
+// question was asked when they were switched on, and nobody is there to ask it now: a "yes"
+// withdrawn since (Coach menu, AI data sharing) means no run, not a dialog out of nowhere.
+export async function scheduledReview() {
+  if (DEMO || !LOCAL()) return null
+  const { consentTarget, hasAiConsent } = await import('./coach-consent.js')
+  const target = consentTarget(await disclosure(), 'device')
+  if (target && !target.local && !await hasAiConsent(target)) return null
+  return (await local()).localScheduled(S())
+}
+// "The Coach has something for you", for a proposal nobody is looking at yet: a toast while the
+// app is on screen, a notification when it went to the background meanwhile (a review takes a
+// minute or two). Never a permission prompt: notifications were allowed in Settings, or not.
+const PROPOSAL_NOTIFICATION_ID = 3100
+async function announceProposal(pending) {
+  const n = (pending?.changes || []).length
+  if (!n) return
+  const body = tn('{0} suggestion', '{0} suggestions', n)
+  if (typeof document === 'undefined' || document.visibilityState !== 'hidden') {
+    useUI.getState().toast(t('Coach') + ': ' + body)
+    return
+  }
+  try {
+    const { LocalNotifications } = await import('@capacitor/local-notifications')
+    if ((await LocalNotifications.checkPermissions()).display !== 'granted') return
+    await LocalNotifications.schedule({ notifications: [{ id: PROPOSAL_NOTIFICATION_ID, title: t('Coach'), body, schedule: { at: new Date(Date.now() + 1000) } }] })
+  } catch { /* no notification plugin: the proposal still waits in the Coach tab */ }
+}
+
 // The room: anonymous medians across the profiles on this instance that opted in. Only a
 // server has a room; a phone with its own key and the demo both answer locally.
 export const cohortStats = async () => DEMO ? (await demo()).demoCohort(S()) : LOCAL() ? { ok: false, enabled: false } : api('/api/coach/cohort')

@@ -18,6 +18,7 @@
 import * as payloadLib from '../../../api/coach/core/payload.js'
 import { runPipeline } from '../../../api/coach/core/pipeline.js'
 import { waitingProposal } from '../../../api/coach/core/pending.js'
+import { isDue } from '../../../api/coach/core/due.js'
 import { HTTP_PROVIDERS, baseUrlFor } from '../../../api/coach/core/providers.js'
 import anthropic from '../../../api/coach/core/adapters/anthropic.js'
 import openai from '../../../api/coach/core/adapters/openai.js'
@@ -98,13 +99,40 @@ export const localRefine = async (S, text) => {
 }
 export const localDebrief = (S, workoutId) => start(S, 'debrief', { workoutId: workoutId || null })
 export const localAsk = (S, text, today) => start(S, 'ask', { note: String(text || '').slice(0, 1000), today: today || null })
+
+/* Automatic reviews. On a server the cadence tick runs them (api/coach/cadence.js); a phone with
+   its own key has no server, and for a long time nothing ran them at all: the setting saved, the
+   reviews never came (Discord, 10-19). So the phone asks the same question, with the same rule
+   (core/due.js), whenever the app is open (lib/coach-schedule.js): right after a workout, and on
+   the first open after a weekly slot. `reviewedAt` in the device file is the run marker, kept
+   the way the server keeps its job history: a review the model answered counts, whether it
+   proposed something, found nothing to change, or answered unusably (paid for all the same).
+   Returns the started job, or null when nothing is due. Never throws: a skip is silent. */
+export async function localScheduled(S, now = new Date()) {
+  const cadence = S?.coach?.cadence
+  if (job || !cadence || cadence === 'off' || !S?.coach?.consent?.agreedAt) return null
+  const d = await loadCoachDevice()
+  if (d.mode !== 'byok' || !ADAPTERS[d.provider]) return null
+  // A proposal nobody has answered is not replaced by the next one, as on the server.
+  if (d.pending && !(d.pending.expiresAt && d.pending.expiresAt < now.getTime())) return null
+  if ((await capState()).used >= LOCAL_DAILY_CAP) return null
+  const tz = deviceZone()
+  if (!isDue(S.coach, S, wallClock(now), d.reviewedAt || 0, tz)) return null
+  try { return await start(S, 'review', { scheduled: true }) } catch { return null }
+}
+// The phone's own clock, in the shape the server's userNow() hands the tick.
+export function wallClock(now) {
+  const p = n => String(n).padStart(2, '0')
+  return { date: `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}`, hhmm: `${p(now.getHours())}:${p(now.getMinutes())}`, weekday: now.getDay() }
+}
+const deviceZone = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null } catch { return null } }
 // A read answer gives back the proposal it was asked beside, as the server does.
 export async function localResolve() {
   const d = await loadCoachDevice()
   await saveCoachDevice({ pending: d.pending?.kind === 'ask' ? waitingProposal(d.pending.prev) : null })
   return { ok: true }
 }
-export async function localForget() { job = null; lastError = null; await saveCoachDevice({ pending: null, daily: null }); return { ok: true } }
+export async function localForget() { job = null; lastError = null; await saveCoachDevice({ pending: null, daily: null, reviewedAt: null }); return { ok: true } }
 
 export async function localDisclosure() {
   const d = await loadCoachDevice()
@@ -139,7 +167,7 @@ async function start(S, kind, opts) {
   if (cap.used >= cap.limit) throw Object.assign(new Error(t('The Coach is taking a breather. You’ve used today’s {0} runs on this phone.', cap.limit)), { status: 429, code: 'cap' })
 
   await bumpDaily()
-  job = { id: 'local-' + Date.now().toString(36), kind, state: 'running', startedAt: Date.now() }
+  job = { id: 'local-' + Date.now().toString(36), kind, state: 'running', startedAt: Date.now(), ...(opts.scheduled ? { trigger: 'scheduled' } : {}) }
   lastError = null
   // Not awaited: the screens poll, exactly as they do against a server.
   run(S, kind, opts, d, adapter).catch(e => { lastError = { errorClass: 'internal', detail: String(e && e.message || e) } }).finally(() => { job = null })
@@ -165,12 +193,14 @@ async function run(S, kind, opts, d, adapter) {
       : null)
     lastError = { errorClass: attempt.errorClass, detail }
     last = { id: job.id, kind, outcome: 'failed', errorClass: attempt.errorClass, at: Date.now() }
-    if (notify) notify({ kind: 'failed', errorClass: attempt.errorClass, detail })
+    if (kind === 'review' && attempt.errorClass === 'unusable') await markReviewed()
+    if (notify) notify({ kind: 'failed', errorClass: attempt.errorClass, detail, scheduled: !!opts.scheduled })
     return
   }
   if (attempt.nochange) {
     last = { id: job.id, kind, outcome: 'nochange', errorClass: null, at: Date.now(), reading: attempt.reading }
-    if (notify) notify({ kind: 'nochange', reading: attempt.reading })
+    if (kind === 'review') await markReviewed()
+    if (notify) notify({ kind: 'nochange', reading: attempt.reading, scheduled: !!opts.scheduled })
     return
   }
   const pending = {
@@ -180,10 +210,12 @@ async function run(S, kind, opts, d, adapter) {
     ...(kind === 'ask' ? { prev: waitingProposal((await loadCoachDevice()).pending) } : {}),
     ...attempt.result
   }
-  await saveCoachDevice({ pending })
+  await saveCoachDevice({ pending, ...(kind === 'review' ? { reviewedAt: Date.now() } : {}) })
   last = { id: job.id, kind, outcome: 'ready', errorClass: null, at: Date.now() }
-  if (notify) notify({ kind: 'ready', pending })
+  if (notify) notify({ kind: 'ready', pending, scheduled: !!opts.scheduled })
 }
+// Any review the model read counts as the latest one, asked for or scheduled, as on the server.
+const markReviewed = () => saveCoachDevice({ reviewedAt: Date.now() })
 
 // The session a debrief is about, in the shape the card reads. The core builds it for the
 // server; the fallback covers a core that predates it.

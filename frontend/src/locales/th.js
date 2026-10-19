@@ -1014,6 +1014,7 @@ export default {
   'Automatic reviews': 'รีวิวอัตโนมัติ',
   'Off. The Coach only looks when you ask.': 'ปิดอยู่ โค้ชจะดูเฉพาะตอนที่คุณขอเท่านั้น',
   'You are only notified when the Coach actually has something to suggest.': 'คุณจะได้รับแจ้งเตือนเฉพาะเมื่อโค้ชมีข้อเสนอแนะจริง ๆ',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'บนโทรศัพท์เครื่องนี้ โค้ชดูได้เฉพาะตอนที่แอปเปิดอยู่: ทันทีหลังออกกำลังกาย หรือครั้งถัดไปที่คุณเปิดแอป',
   'When': 'เมื่อไร',
   'Weekly': 'รายสัปดาห์',
   'On a day and time you choose': 'ในวันและเวลาที่คุณเลือก',

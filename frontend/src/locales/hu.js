@@ -1006,6 +1006,7 @@ export default {
   'Automatic reviews': 'Automatikus áttekintések',
   'Off. The Coach only looks when you ask.': 'Ki. Az Edző csak akkor néz rá, ha kéred.',
   'You are only notified when the Coach actually has something to suggest.': 'Csak akkor kapsz értesítést, ha az Edzőnek tényleg van javaslata.',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'Ezen a telefonon az Edző csak akkor tud ránézni, amikor az app nyitva van: rögtön egy edzés után, vagy amikor legközelebb megnyitod.',
   'When': 'Mikor',
   'Weekly': 'Hetente',
   'On a day and time you choose': 'Az általad választott napon és időben',

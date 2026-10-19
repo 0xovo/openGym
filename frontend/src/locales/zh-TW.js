@@ -840,6 +840,7 @@ export default {
   'Automatic reviews': '定期自動檢討',
   'Off. The Coach only looks when you ask.': '已關閉。教練只在你開口時才會看。',
   'You are only notified when the Coach actually has something to suggest.': '僅在教練有實質性調整建議時才會主動發出通知。',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': '在這支手機上，教練只能在 App 開著時查看：剛練完的時候，或你下次打開 App 時。',
   'When': '時機',
   'Weekly': '每週定期',
   'On a day and time you choose': '在自訂的特定日期與時間',

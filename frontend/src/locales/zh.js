@@ -848,6 +848,7 @@ export default {
   'Automatic reviews': '自动复盘',
   'Off. The Coach only looks when you ask.': '已关闭。教练只在你开口时才看。',
   'You are only notified when the Coach actually has something to suggest.': '只有当教练确实有建议时才会通知你。',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': '在这部手机上，教练只能在应用打开时查看：刚练完的时候，或者你下次打开应用时。',
   'When': '时间',
   'Weekly': '每周',
   'On a day and time you choose': '在你选定的日期和时间',

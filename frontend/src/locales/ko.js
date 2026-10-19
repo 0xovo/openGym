@@ -848,6 +848,7 @@ export default {
   'Automatic reviews': '자동 리뷰',
   'Off. The Coach only looks when you ask.': '꺼짐. 코치는 요청할 때만 살펴봐요.',
   'You are only notified when the Coach actually has something to suggest.': '코치가 실제로 제안할 것이 있을 때만 알림이 옵니다.',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': '이 폰에서는 앱이 열려 있을 때만 코치가 살펴볼 수 있어요: 운동 직후, 또는 다음에 앱을 열 때.',
   'When': '시점',
   'Weekly': '매주',
   'On a day and time you choose': '내가 고른 요일과 시각에',

@@ -848,6 +848,7 @@ export default {
   'Automatic reviews': 'Bilans automatiques',
   'Off. The Coach only looks when you ask.': 'Désactivés. Le Coach ne regarde que si tu le lui demandes.',
   'You are only notified when the Coach actually has something to suggest.': 'Tu n’es prévenu que lorsque le Coach a vraiment quelque chose à proposer.',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'Sur ce téléphone, le Coach ne peut regarder que quand l’app est ouverte : juste après une séance, ou la prochaine fois que tu l’ouvres.',
   'When': 'Quand',
   'Weekly': 'Hebdomadaire',
   'On a day and time you choose': 'Le jour et à l’heure de ton choix',

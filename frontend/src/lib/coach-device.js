@@ -3,7 +3,8 @@
 // Deliberately NOT part of S. S is the training log — it syncs to a paired server, travels in
 // the JSON export, and is what "back up your data" means. Which provider this phone talks to,
 // the pseudonym it uses, today's run count and a proposal waiting to be looked at are device
-// facts, so they live in their own file next to the remote-pairing one. The API key itself is
+// facts, so they live in their own file next to the remote-pairing one. So is when it last ran a
+// review (`reviewedAt`): the marker its automatic reviews are timed from (coach-local.js). The API key itself is
 // not even here: see coach-secrets.js.
 //
 // This module is intentionally light. The setup screen imports it before the user has chosen
@@ -14,7 +15,7 @@ const FILE = 'opengym-coach.json'
 
 export const COACH_MODES = ['off', 'server', 'byok']
 
-const DEFAULTS = { mode: 'off', provider: null, model: null, baseUrl: null, handle: null, daily: null, pending: null }
+const DEFAULTS = { mode: 'off', provider: null, model: null, baseUrl: null, handle: null, daily: null, pending: null, reviewedAt: null }
 
 let cache = null
 export async function loadCoachDevice() {

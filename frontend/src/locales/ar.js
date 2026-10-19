@@ -804,6 +804,7 @@ export default {
   'Automatic reviews': 'مراجعات تلقائية',
   'Off. The Coach only looks when you ask.': 'متوقف. لا ينظر المدرب إلا عندما تطلب منه.',
   'You are only notified when the Coach actually has something to suggest.': 'لا يصلك إشعار إلا عندما يكون لدى المدرب ما يقترحه فعلًا.',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'على هذا الهاتف لا يستطيع المدرب النظر إلا والتطبيق مفتوح: بعد التمرين مباشرة، أو في المرة التالية التي تفتحه فيها.',
   'When': 'متى',
   'Weekly': 'أسبوعيًا',
   'On a day and time you choose': 'في يوم ووقت تختارهما',

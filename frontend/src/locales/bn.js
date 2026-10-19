@@ -930,6 +930,7 @@ export default {
   'Automatic reviews': 'স্বয়ংক্রিয় রিভিউ',
   'Off. The Coach only looks when you ask.': 'বন্ধ। আপনি চাইলে তবেই কোচ দেখে।',
   'You are only notified when the Coach actually has something to suggest.': 'কোচের সত্যিই কোনো পরামর্শ থাকলে তবেই আপনাকে জানানো হয়।',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'এই ফোনে অ্যাপ খোলা থাকলেই কোচ দেখতে পারে: ওয়ার্কআউটের ঠিক পরে, বা পরের বার আপনি অ্যাপটি খুললে।',
   'When': 'কখন',
   'Weekly': 'সাপ্তাহিক',
   'On a day and time you choose': 'আপনার বেছে নেওয়া দিন ও সময়ে',

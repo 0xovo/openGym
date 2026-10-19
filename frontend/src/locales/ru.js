@@ -829,6 +829,7 @@ export default {
   'Automatic reviews': 'Автоматические разборы',
   'Off. The Coach only looks when you ask.': 'Выключено. Тренер смотрит, только когда вы просите.',
   'You are only notified when the Coach actually has something to suggest.': 'Уведомление приходит, только если Тренеру действительно есть что предложить.',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'На этом телефоне Тренер может посмотреть, только пока приложение открыто: сразу после тренировки или при следующем открытии.',
   'When': 'Когда',
   'Weekly': 'Еженедельно',
   'On a day and time you choose': 'В выбранный день и час',

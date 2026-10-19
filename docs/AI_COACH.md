@@ -476,6 +476,12 @@ The App-Store build has no server of its own, so the Coach there is a choice mad
   says which host each request goes to and what leaves the device before you choose, and a
   local daily cap stands in for the one an admin would have set.
 
+  Automatic reviews (weekly, or after every few workouts) run on the phone too, by the server's
+  rule (`api/coach/core/due.js`), but only while the app is open: there is no server to run them
+  and an app does not run JavaScript while it is closed. So a review that is due runs right after
+  the workout that completes the count, or on the first open after the weekly slot, and says
+  something only when it has a suggestion. Up to v1.4.2 nothing ran them on a phone at all.
+
   A compatible endpoint has to be **`https://`** here. Android does not let apps send
   unencrypted `http://` traffic, so a model on your LAN at `http://ollama.lan:11434` cannot be
   reached from the phone, and the setup screen says so as soon as such an address is typed.

@@ -848,6 +848,7 @@ export default {
   'Automatic reviews': 'स्वचालित समीक्षाएँ',
   'Off. The Coach only looks when you ask.': 'बंद। कोच तभी देखता है जब आप कहें।',
   'You are only notified when the Coach actually has something to suggest.': 'सूचना तभी मिलती है जब कोच के पास वाकई कुछ सुझाने को हो।',
+  'On this phone the Coach can only look while the app is open: right after a workout, or the next time you open it.': 'इस फ़ोन पर कोच तभी देख सकता है जब ऐप खुला हो: वर्कआउट के ठीक बाद, या अगली बार जब आप इसे खोलें।',
   'When': 'कब',
   'Weekly': 'साप्ताहिक',
   'On a day and time you choose': 'आपके चुने दिन और समय पर',

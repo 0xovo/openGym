@@ -115,6 +115,10 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - The Coach answers questions now. Type "how many sets of dips is that?" in the chat and you get
   an answer in words instead of a whole revised plan, and a suggestion you were asking about is
   still there afterwards (#660, thanks @TheBlackSide243).
+- Automatic Coach reviews on a phone with its own API key finally happen. The setting saved and
+  then nothing ever ran them, because only a server ran them. Now the phone does it while the app
+  is open: right after the workout that completes the count, or the first time you open it after
+  your weekly slot. It only speaks up when it has something to suggest.
 
 ## v1.4.2 (2026-10-18)
 
