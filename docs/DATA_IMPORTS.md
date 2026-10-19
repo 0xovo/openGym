@@ -8,7 +8,7 @@ Everything here lives in the app under **Settings → Data & backup**, except pl
 | Bring your workout history from another app | **Import from another app** (CSV) |
 | Pull workouts, routines and weigh-ins from Hevy Pro | **Import from Hevy** (API key) |
 | Bring body weight over from an iPhone | **Import from another app** with the Apple Health export |
-| Give someone your routines | **Plan → Share your plan → Export plan file** |
+| Give someone your routines | **Plan → share button (top right) → Export plan file** |
 | Back up or move everything | **Export backup** / **Import backup** |
 
 ## Workout history from another app
