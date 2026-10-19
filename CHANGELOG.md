@@ -106,6 +106,9 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - Hevy import: 55 of Hevy's built-in exercises (Seated Leg Curl, Plank, Air Bike, Triceps Dip and
   friends) land on the right openGym exercise instead of a cousin or a custom one, and the import
   summary counts an exercise once even when it's in your workouts and your routines (thanks @lodepav).
+- Imports that convert pounds and kilos keep the weight to the hundredth: 45 lb comes in as
+  20.41 kg and reads back as 45, not 44.97. Hevy notes keep their line breaks instead of a
+  literal "\\n" (thanks @lodepav).
 - German step-by-step instructions for 1,213 more exercises, so all the exercises from before
   v1.4 explain themselves in German now (#645, thanks @junkerderprovinz).
 - In the Compact and List layouts the exercise chips at the top follow along: the one you tap
