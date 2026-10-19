@@ -42,9 +42,12 @@
 .focus-pager{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px}
 .focus-pager>button{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--sep);border-radius:50%;color:var(--label)}
 .focus-pager>button:disabled{opacity:.3}
-/* Many sets (a superset with warm-ups is easily nine) squeeze the dots, then wrap. */
+/* Many sets (a superset with warm-ups is easily nine) squeeze the dots, then wrap. A wrapping
+   row breaks at each item's basis before anything shrinks, so the basis is the 24px floor and
+   the dots grow back to 44px where there is room: with a 44px basis four sets already took two
+   rows on a 320px phone, and nine took three. */
 .focus-dots{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px}
-.focus-dots button{position:relative;flex:0 1 44px;min-width:24px;height:44px}
+.focus-dots button{position:relative;flex:1 1 24px;min-width:24px;max-width:44px;height:44px}
 .focus-dots button::after{content:'';position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:var(--label-3);transform:translate(-50%,-50%)}
 .focus-dots button.active::after{width:9px;height:9px;background:var(--acc)}
 .focus-dots button.done::after{box-shadow:0 0 0 2px var(--acc-line)}

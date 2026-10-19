@@ -18,7 +18,10 @@ describe('Focus mode stays on the screen (#655)', () => {
   it('squeezes and then wraps the set dots', () => {
     expect(rule('.focus-dots')).toMatch(/flex-wrap:wrap/)
     const dot = rule('.focus-dots button')
-    expect(dot).toMatch(/flex:0 1 44px/)
+    // a wrapping row breaks at the basis, before anything shrinks: the basis is the floor, and the
+    // dots grow back to 44px (in Chrome at 320px a 44px basis put four sets on two rows)
+    expect(dot).toMatch(/flex:1 1 24px/)
+    expect(dot).toMatch(/max-width:44px/)
     expect(dot).not.toMatch(/(^|;)width:44px/)
   })
 
