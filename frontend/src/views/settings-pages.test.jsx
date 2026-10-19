@@ -212,6 +212,16 @@ describe('the search lands on a row', () => {
     expect(searchSettings('backup folder', { ...guestWeb, mobile: true, android: true }, tr)).toEqual([])
   })
 
+  // Checked in Chrome, signed in on the web: "gym" offered the Gym reminder page, a phone-only
+  // page whose tap only bounced back to Settings. Its parent (Reminders) is there on the web.
+  it('never offers a page this device does not have, even under a parent it has', () => {
+    const tr = s => s
+    const web = { ...guestWeb, user: { id: 'u' }, synced: true, pushOK: true }
+    expect(pageVisible('reminders', web)).toBe(true)
+    expect(searchSettings('gym reminder', web, tr).map(h => h.title)).not.toContain('Gym reminder')
+    expect(searchSettings('gym reminder', { ...web, mobile: true }, tr).map(h => h.title)).toContain('Gym reminder')
+  })
+
   it('a web reminder row waits for push to answer, and flashes Push notifications when it stays off', async () => {
     vi.useFakeTimers()
     try {

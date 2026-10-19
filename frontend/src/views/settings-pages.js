@@ -202,8 +202,9 @@ export function searchSettings(query, ctx, tr = t) {
     hits.push({ ...entry, label: title, trail: isPage ? tr('Settings') : pageTrail(entry.page, tr), isPage, rank })
   }
   for (const id of PAGE_IDS) {
+    // The page itself too: Gym reminder hangs under Reminders, which the web has, but is the phone's.
     const top = PAGES[id].parent ? PAGES[id].parent : id
-    if (!pageVisible(top, ctx) || id === 'advanced') continue
+    if (!pageVisible(top, ctx) || !pageVisible(id, ctx) || id === 'advanced') continue
     consider({ page: id, title: PAGES[id].title, icon: PAGES[id].icon, tint: PAGES[id].tint }, true)
   }
   for (const e of SEARCH) {
