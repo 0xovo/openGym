@@ -23,6 +23,7 @@ vi.mock('./capacitor-fetch.js', () => ({
 const local = await import('./coach-local.js')
 const { _resetCoachDevice, loadCoachDevice } = await import('./coach-device.js')
 const { EXERCISES } = await import('../../../api/coach/core/library-data.js')
+const { todayISO } = await import('./format.js')
 
 const EX = EXERCISES[0].id
 const chat = content => ({ status: 200, body: { choices: [{ finish_reason: 'stop', message: { content } }] } })
@@ -107,6 +108,16 @@ describe('automatic reviews on a phone with its own key', () => {
     wire.answer = chat(JSON.stringify(NOCHANGE))
     const S = state({ weekly: { day: 0, time: '18:00' } }, [workout('w1', at(14))], { at: at(11, 18, 5).getTime() })
     expect(await local.localScheduled(S, at(20, 7, 45))).toBeTruthy()   // Tuesday morning
+    await settle()
+    expect(wire.calls).toHaveLength(1)
+  })
+
+  it('respects the daily runs dial from Advanced, where 0 is no limit (#527)', async () => {
+    const two = [workout('w1', at(12)), workout('w2', at(13))]
+    device.data = { ...device.data, daily: { d: todayISO(), n: 10 } }
+    expect(await local.localScheduled(state({ everyWorkouts: 1 }, two), at(14))).toBeNull()
+    device.data = { ...device.data, limits: { daily: 0 } }; _resetCoachDevice()
+    expect(await local.localScheduled(state({ everyWorkouts: 1 }, two), at(14))).toBeTruthy()
     await settle()
     expect(wire.calls).toHaveLength(1)
   })

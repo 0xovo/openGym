@@ -102,7 +102,10 @@ export const localRefine = async (S, text) => {
   return start(S, 'create', { refine: String(text || '').slice(0, coachLimits(d).maxMessageLen), previous: pendingCreate?.bundle || null, iteration: (pendingCreate?.iteration || 1) + 1 })
 }
 export const localDebrief = (S, workoutId) => start(S, 'debrief', { workoutId: workoutId || null })
-export const localAsk = (S, text, today) => start(S, 'ask', { note: String(text || '').slice(0, 1000), today: today || null })
+export const localAsk = async (S, text, today) => {
+  const d = await loadCoachDevice()
+  return start(S, 'ask', { note: String(text || '').slice(0, coachLimits(d).maxMessageLen), today: today || null })
+}
 
 /* Automatic reviews. On a server the cadence tick runs them (api/coach/cadence.js); a phone with
    its own key has no server, and for a long time nothing ran them at all: the setting saved, the
@@ -119,7 +122,8 @@ export async function localScheduled(S, now = new Date()) {
   if (d.mode !== 'byok' || !ADAPTERS[d.provider]) return null
   // A proposal nobody has answered is not replaced by the next one, as on the server.
   if (d.pending && !(d.pending.expiresAt && d.pending.expiresAt < now.getTime())) return null
-  if ((await capState()).used >= LOCAL_DAILY_CAP) return null
+  const cap = await capState()
+  if (cap.limit > 0 && cap.used >= cap.limit) return null
   const tz = deviceZone()
   if (!isDue(S.coach, S, wallClock(now), d.reviewedAt || 0, tz)) return null
   try { return await start(S, 'review', { scheduled: true }) } catch { return null }

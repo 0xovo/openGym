@@ -192,6 +192,16 @@ describe('the Coach on a phone with its own key', () => {
     expect(sent).not.toContain('x'.repeat(COACH_LIMITS.maxMessageLen.min + 1))
   })
 
+  it('a question is clipped to the same message dial', async () => {
+    await saveCoachDevice({ limits: { maxMessageLen: 2400 } })
+    wire.answer = chat(JSON.stringify({ coach_contract: 1, answer: 'Yes.' }))
+    await local.localAsk(state(), 'q'.repeat(3000), null)
+    await settle()
+    const sent = wire.calls.at(-1).body.messages[1].content
+    expect(sent).toContain('q'.repeat(2400))
+    expect(sent).not.toContain('q'.repeat(2401))
+  })
+
   it('a proposal waits in the device file, expires, and is cleared by resolve', async () => {
     await local.localReview(state())
     await settle()

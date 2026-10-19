@@ -2474,7 +2474,7 @@ export default {
   'Max output tokens': 'Макс. токенов вывода',
   'The ceiling on one answer. Reasoning models count its hidden thinking against it, so raise it if a plan is cut off.': 'Потолок одного ответа. Рассуждающие модели учитывают в нём свои скрытые размышления, поэтому увеличьте его, если план обрывается.',
   'Daily runs': 'Запусков в день',
-  'Every Coach run is one request on your provider account. 0 means no limit.': 'Каждый запуск Тренера — один запрос на вашем аккаунте провайдера. 0 означает без ограничений.',
+  'Every Coach run is one request on your provider account. 0 means no limit.': 'Каждый запуск Тренера это один запрос с вашего аккаунта у провайдера. 0 означает без ограничений.',
   'Max message length': 'Макс. длина сообщения',
   'How long a message, refinement or review note can be.': 'Насколько длинным может быть сообщение, просьба о доработке или заметка к разбору.',
 }
