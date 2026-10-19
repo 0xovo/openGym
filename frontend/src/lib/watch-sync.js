@@ -18,14 +18,14 @@ import { MOBILE, nativePlatform } from './mobile.js'
 import { EXIDX, gifSrc, figureOf, isAssisted } from './exercises.js'
 import { packId, packDrawingId } from './anim-quality.js'
 import { getState as animPacks } from './anim-packs.js'
-import { exerciseNameFor, getLang, baseLang, onLangChange } from './i18n.js'
+import { getLang, baseLang, onLangChange } from './i18n.js'
 import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds, isBw, isPerSide } from './history.js'
 import { isWarmupRow, isSideSet, syncSideAggregate } from './workout-model.js'
 import { bestSetFor } from './exercise-history.js'
 import { weightIncrement } from './progression.js'
 import { sessionHistory } from './backfill.js'
 import { buildCombinedEntries, deriveSessionName } from './session-merge.js'
-import { todayISO } from './format.js'
+import { todayISO, exerciseNameText } from './format.js'
 import { sanitizeHr } from './heart-rate.js'
 import { readWatchPrefs, settingsForWatch, writeWatchStatus, onWatchPrefs } from './watch-settings.js'
 
@@ -91,7 +91,8 @@ function watchEntry (e, H, S) {
   const best = S ? bestFor(S, e.id, mode) : null
   return {
     id: e.id,
-    name: ex ? exerciseNameFor(ex) : String(target.name || e.name || e.id),
+    // Title-cased as on the phone; the watch has no CSS to do it (lib/format.js exerciseNameText).
+    name: ex ? exerciseNameText(ex) : String(target.name || e.name || e.id),
     mode,
     restSec: num(target.restSec),
     last,

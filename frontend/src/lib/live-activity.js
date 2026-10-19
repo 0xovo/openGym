@@ -18,7 +18,8 @@
 // Text only: no exercise animations or pictures (Gym visual licence). iPhone app only.
 import { MOBILE, nativePlatform } from './mobile.js'
 import { EXIDX } from './exercises.js'
-import { exerciseNameFor, t } from './i18n.js'
+import { t } from './i18n.js'
+import { exerciseNameText } from './format.js'
 import { setLabel, supersetUnits } from './history.js'
 import { isWarmupRow } from './workout-model.js'
 import { restSecFor } from './supersetFlow.js'
@@ -74,7 +75,9 @@ function setView (S, A, { entryIdx, setIdx, restAfter }) {
     exId: String(e.id),
     entryIdx,
     setIdx,
-    exName: EXIDX[e.id] ? exerciseNameFor(EXIDX[e.id]) : String(target.name || e.name || e.id),
+    // Cased as the workout screen shows it: the stored names are lower-case and only CSS title-cases
+    // them in the app, which the Lock Screen never sees (Discord).
+    exName: EXIDX[e.id] ? exerciseNameText(EXIDX[e.id]) : String(target.name || e.name || e.id),
     setLine: warmup ? t('Warm-up') + ' ' + n : t('Set {0} of {1}', n, work.length),
     target: label,
     restAfter: Math.max(0, Math.round(restAfter || 0)),

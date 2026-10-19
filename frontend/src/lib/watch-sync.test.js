@@ -28,8 +28,8 @@ describe('the snapshot', () => {
     expect(snap.active.entries).toHaveLength(2)
     const [a, b] = snap.active.entries
     expect(a).toMatchObject({ id: '0025', mode: 'reps', restSec: null, last: null })
-    expect(typeof a.name).toBe('string')
-    expect(a.name.length).toBeGreaterThan(0)
+    // Title-cased like the phone shows it, not the stored lower-case name.
+    expect(a.name).toBe('Barbell Bench Press')
     expect(a.sets).toEqual([{ w: 60, r: 8, sec: null, done: true, warmup: false }, { w: 60, r: 8, sec: null, done: false, warmup: false }])
     expect(b.restSec).toBe(120)
     expect(b.sets[0].warmup).toBe(true)

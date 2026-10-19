@@ -41,6 +41,9 @@ describe('buildLiveActivity', () => {
     expect(live.state.cur.target).toMatch(/62[.,]5/)
     expect(live.state.ahead.map(x => [x.entryIdx, x.setIdx])).toEqual([[0, 2], [1, 0]])
     expect(live.state.ahead[1].exName).toBe('Cable thing')
+    // Title-cased the way the workout screen shows it (CSS capitalize there), not the stored
+    // lower-case name (Discord: lower-case on the Lock Screen).
+    expect(live.state.cur.exName).toBe('Barbell Bench Press')
     expect(live.state).toMatchObject({ done: 1, total: 4, restEndsAt: null, restLeft: null })
   })
   it('carries the rest: its end while it runs, what is left while paused, nothing once over', () => {
