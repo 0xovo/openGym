@@ -169,6 +169,23 @@ describe('the Coach on a phone with its own key', () => {
     expect(device.data.pending).toBeNull()
   })
 
+  it('answers a question in words, and the review waiting beside it comes back once read (#660)', async () => {
+    await local.localReview(state()); await settle()
+    expect(device.data.pending.kind).toBe('review')
+    wire.answer = chat(JSON.stringify({ coach_contract: 1, answer: 'Two to three minutes between heavy sets.' }))
+    await local.localAsk(state(), 'how long should I rest?', null)
+    const s = await settle()
+    expect(s.pending.kind).toBe('ask')
+    expect(s.pending.answer).toBe('Two to three minutes between heavy sets.')
+    expect(s.pending.changes).toBeUndefined()
+    expect(wire.calls.at(-1).body.messages[1].content).toContain('how long should I rest?')
+    await local.localResolve()
+    expect(device.data.pending.kind).toBe('review')
+    expect(device.data.pending.changes).toHaveLength(1)
+    await local.localResolve()
+    expect(device.data.pending).toBeNull()
+  })
+
   it('creates a plan from an intake, and refines it against the previous bundle', async () => {
     const plan = { coach_contract: 1, opengym_plan: 1, name: 'P', summary: 's', basedOn: 'b', week: { 1: 'r1', 3: 'r2', 5: 'r1' },
       routines: [

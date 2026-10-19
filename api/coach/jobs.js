@@ -23,6 +23,7 @@ import { runPipeline } from './core/pipeline.js';
 import { extractJSON } from './core/parse.js';
 import { hashPlan } from './core/plan-hash.js';
 import { buildPrompt } from './core/prompt.js';
+import { waitingProposal } from './core/pending.js';
 import { handleFor } from './handle.js';
 import { fetchFor } from './node-fetch.js';
 import { privilegeRefusal, unprivilegedIds } from './adapters/spawn.js';
@@ -395,6 +396,7 @@ async function execute(job) {
       iteration: job.refine ? (pendingCreate?.iteration || 1) + 1 : 1,
       // A debrief names the session it read, so the card can show it after the fact.
       ...(job.kind === 'debrief' ? { workout: payloadLib.workoutMeta(S, job.workoutId) } : {}),
+      ...(job.kind === 'ask' ? { prev: waitingProposal(readUser(job.uid).pending) } : {}),
       ...attempt.result
     };
     return finish(job, { outcome: 'ready', pending });
@@ -415,9 +417,12 @@ export function resolvePending(uid, { accepted = [], rejected = [], dismissed = 
     outcome: dismissed ? 'dismissed' : 'applied',
     accepted: accepted.length, rejected: rejected.length, at: Date.now()
   }].slice(-HISTORY_MAX);
-  writeUser(uid, { ...rec, pending: null, history });
+  // A read answer gives back the proposal it was asked beside (core/pending.js).
+  const back = rec.pending.kind === 'ask' ? waitingProposal(rec.pending.prev) : null;
+  writeUser(uid, { ...rec, pending: back, history });
   return { ok: true };
 }
+
 
 /* ---------- admin test + boot recovery ---------- */
 

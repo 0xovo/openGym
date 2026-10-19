@@ -92,6 +92,9 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   lights up, and so does the one you scroll to (#323, thanks @Space-Hermes).
 - The install tip in About on a Windows or Linux browser points at Chrome's install icon,
   not at an iPhone's Share menu you don't have.
+- The Coach answers questions now. Type "how many sets of dips is that?" in the chat and you get
+  an answer in words instead of a whole revised plan, and a suggestion you were asking about is
+  still there afterwards (#660, thanks @TheBlackSide243).
 
 ## v1.4.2 (2026-10-18)
 

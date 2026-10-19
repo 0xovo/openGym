@@ -17,6 +17,7 @@
 //     riding into a backup or a sync.
 import * as payloadLib from '../../../api/coach/core/payload.js'
 import { runPipeline } from '../../../api/coach/core/pipeline.js'
+import { waitingProposal } from '../../../api/coach/core/pending.js'
 import { HTTP_PROVIDERS, baseUrlFor } from '../../../api/coach/core/providers.js'
 import anthropic from '../../../api/coach/core/adapters/anthropic.js'
 import openai from '../../../api/coach/core/adapters/openai.js'
@@ -97,7 +98,12 @@ export const localRefine = async (S, text) => {
 }
 export const localDebrief = (S, workoutId) => start(S, 'debrief', { workoutId: workoutId || null })
 export const localAsk = (S, text, today) => start(S, 'ask', { note: String(text || '').slice(0, 1000), today: today || null })
-export async function localResolve() { await saveCoachDevice({ pending: null }); return { ok: true } }
+// A read answer gives back the proposal it was asked beside, as the server does.
+export async function localResolve() {
+  const d = await loadCoachDevice()
+  await saveCoachDevice({ pending: d.pending?.kind === 'ask' ? waitingProposal(d.pending.prev) : null })
+  return { ok: true }
+}
 export async function localForget() { job = null; lastError = null; await saveCoachDevice({ pending: null, daily: null }); return { ok: true } }
 
 export async function localDisclosure() {
@@ -171,6 +177,7 @@ async function run(S, kind, opts, d, adapter) {
     id: job.id, kind, createdAt: Date.now(), expiresAt: Date.now() + PENDING_DAYS * 86400000,
     planHash: planHash(S), iteration: opts.iteration || 1,
     ...(kind === 'debrief' ? { workout: workoutMetaOf(S, opts.workoutId) } : {}),
+    ...(kind === 'ask' ? { prev: waitingProposal((await loadCoachDevice()).pending) } : {}),
     ...attempt.result
   }
   await saveCoachDevice({ pending })
