@@ -81,6 +81,8 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   their settings now offer Cardio, Reps and Time, Cardio still the default (#678).
 - Add exercise → By muscle has the Favourites chip too, for the muscle you picked (#669).
 - A weight change too small to show (say 0.03 kg) reads 0 instead of a lonely "-0".
+- Admin → AI Coach: the Remove button for the stored key is red now, like every other button
+  that deletes something for good.
 - Focus mode stays on the screen with lots of sets or a long exercise name (#655).
 - Chart dates under the graph say each day once over a short span, and months get their year
   once a chart covers more than twelve of them (thanks @lodepav).

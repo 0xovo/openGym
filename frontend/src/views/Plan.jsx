@@ -346,7 +346,7 @@ function Schedule({ S, update, nav, mode }) {
           // nothing to copy. The row the reorder measures is the swipe's outer element.
           const reorderProps = { 'data-reorder-row': '', style: loopReorder.rowStyle(i) }
           const name = rest ? t('Rest day') : r?.name ?? id
-          const row = <div {...(swipe ? {} : { key, ...reorderProps })} className={'item rotation-row' + (item?.state === 'done' ? ' is-done' : '') + (rest ? ' is-rest' : '')}>
+          const row = <div key={swipe ? undefined : key} {...(swipe ? {} : reorderProps)} className={'item rotation-row' + (item?.state === 'done' ? ' is-done' : '') + (rest ? ' is-rest' : '')}>
             {editing && <button className="plan-minus" aria-label={t('Remove {0}', name)} title={t('Remove')}
               onClick={() => takeOut(i)}><Icon name="minus" /></button>}
             <span className={'plan-order' + (item?.state === 'next' ? ' next' : '')}>{item?.state === 'done' ? <Icon name="check" /> : i + 1}</span>
