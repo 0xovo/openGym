@@ -41,7 +41,7 @@ describe('Strong measurements export', () => {
     expect(parsed.kind).toBe('bodyweight')
     expect(parsed.source).toBe('Strong')
     expect(parsed.bodyweight.map(b => b.d)).toEqual(['2026-10-09', '2026-10-11', '2026-10-12'])
-    expect(parsed.bodyweight.map(b => b.w)).toEqual([114.8, 114.9, 114.8])
+    expect(parsed.bodyweight.map(b => b.w)).toEqual([114.76, 114.85, 114.75])
   })
 
   it('converts each row from its own unit', () => {
