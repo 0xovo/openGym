@@ -2035,7 +2035,7 @@ export default {
   'View measurements': 'Открыть замеры',
   'since previous': 'с прошлого раза',
   '{0} measurement': '{0} замер',
-  '{0} measurements': 'замеров: {0}',
+  '{0} measurements': { one: '{0} замер', few: '{0} замера', many: '{0} замеров' },
   'Custom measurement': 'Свой замер',
   'Fields': 'Поля',
   'Torso': 'Корпус',

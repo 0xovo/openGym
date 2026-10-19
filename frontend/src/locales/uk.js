@@ -2048,7 +2048,7 @@ export default {
   'View measurements': 'Переглянути виміри',
   'since previous': 'з минулого разу',
   '{0} measurement': '{0} вимір',
-  '{0} measurements': '{0} вимірів',
+  '{0} measurements': { one: '{0} вимір', few: '{0} виміри', many: '{0} вимірів' },
   'Custom measurement': 'Власний вимір',
   'Fields': 'Поля',
   'Torso': 'Торс',

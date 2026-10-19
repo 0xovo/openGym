@@ -2031,7 +2031,7 @@ export default {
   'View measurements': 'Zobacz pomiary',
   'since previous': 'od poprzedniego',
   '{0} measurement': '{0} pomiar',
-  '{0} measurements': 'pomiary: {0}',
+  '{0} measurements': { one: '{0} pomiar', few: '{0} pomiary', many: '{0} pomiarów' },
   'Custom measurement': 'Własny pomiar',
   'Fields': 'Pola',
   'Torso': 'Tułów',
