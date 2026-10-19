@@ -1593,8 +1593,10 @@ function ActiveWorkout() {
         // by hand keeps its prescription, so its Undo leaves the numbers it should count at.
         const built = buildPlannedEntry(sessionHistory(s), full, activeRoutine, { noProg: builtOutOfProgression(activeEntry, activeRoutine) })
         const fresh = built.sets
-        const doneWarm = activeEntry.sets.filter(x => x.done && isWarmupRow(x))
-        const doneWork = activeEntry.sets.filter(x => x.done && !isWarmupRow(x))
+        // A per-side set with one side ticked is logged work too, not a row to rebuild.
+        const logged = x => x.done || x.sides?.L?.done || x.sides?.R?.done
+        const doneWarm = activeEntry.sets.filter(x => logged(x) && isWarmupRow(x))
+        const doneWork = activeEntry.sets.filter(x => logged(x) && !isWarmupRow(x))
         const freshWarm = fresh.filter(isWarmupRow)
         const freshWork = fresh.filter(x => !isWarmupRow(x))
         activeEntry.target = built.target

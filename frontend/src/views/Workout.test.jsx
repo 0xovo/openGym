@@ -1197,6 +1197,19 @@ describe('progression settings rebuild the rows like a session start', () => {
     expect(saved.sets.map(s => s.r)).toEqual([15, 15])
     expect(saved.target.reps).toBe(10)
   })
+
+  // A per-side set with only its left side ticked is logged work too: a rebuild dropped it (#636).
+  it('keeps a per-side set that has only one side done', async () => {
+    const half = { w: 20, r: 10, done: false, sides: { L: { w: 20, r: 10, done: true }, R: { w: 20, r: 10, done: false } } }
+    await mount([exercise('plain-bench', [false, false], { plan, target: { mode: 'reps', sets: 2, reps: 10, weight: 20, side: true },
+      sets: [half, { w: 20, r: 10, done: false, sides: { L: { w: 20, r: 10, done: false }, R: { w: 20, r: 10, done: false } } }] })], 0)
+    await pressProgression()
+    const save = mocks.exConfigSheet.mock.calls.at(-1)[2]
+    await act(async () => { save({ mode: 'reps', sets: 3, reps: 8, weight: 20, side: true }) })
+    const sets = mocks.S.active.entries[0].sets
+    expect(sets).toHaveLength(3)
+    expect(sets[0].sides.L).toMatchObject({ done: true, r: 10 })
+  })
 })
 
 // The settings sheet edits the plan, so it opens at the plan's sets and reps, not at today's
