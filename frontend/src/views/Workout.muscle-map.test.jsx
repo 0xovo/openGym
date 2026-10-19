@@ -117,13 +117,26 @@ describe('Session muscles sheet (#670)', () => {
     const rows = () => [...container.querySelectorAll('[data-muscle-session]')]
     expect(rows()[0].dataset.muscleSession).toBe(CHEST)
     const w = musclesOf(EXIDX[BENCH])[CHEST]
-    const r1 = v => String(Math.round(v * 10) / 10)
+    const r = v => String(Math.round(v))
     const value = m => container.querySelector(`[data-muscle-session="${m}"] .v`).textContent
-    expect(value(CHEST)).toBe(`${r1(w)}/${r1(w * 3)}`)
+    expect(value(CHEST)).toBe(`${r(w)}/${r(w * 3)}`)
     expect(value(QUADS)).toMatch(/^0\//)
     edit(s => { s.active.entries[1].sets[0].done = true })
     expect(value(QUADS)).not.toMatch(/^0\//)
     expect(container.textContent).toContain('Already worked')
     expect(container.textContent).toContain('Still to come')
+  })
+
+  it('shows whole sets, not the fractions a secondary muscle adds up to', () => {
+    // Bench is 0.4 of a set for the shoulders: one ticked of three is 0.4/1.2, a single set 0/0.4.
+    const shoulder = Object.entries(musclesOf(EXIDX[BENCH])).find(([, v]) => v > 0 && v < 0.5)[0]
+    setActive([entry(BENCH, [row(true), row(), row()])])
+    render(<SessionMuscles close={() => {}} />)
+    const value = m => container.querySelector(`[data-muscle-session="${m}"] .v`).textContent
+    expect(value(shoulder)).toBe('<1/1')
+    for (const el of container.querySelectorAll('[data-muscle-session] .v')) expect(el.textContent).not.toMatch(/\./)
+    edit(s => { s.active.entries[0].sets = [row()] })
+    expect(value(shoulder)).toBe('0/<1')
+    expect(value(CHEST)).toBe('0/1')
   })
 })

@@ -34,7 +34,10 @@ export function SessionMapButton({ entries, body }) {
   </button>
 }
 
-const r1 = v => Math.round(v * 10) / 10
+// A secondary muscle counts as part of a set (bench is 0.4 of a set for the shoulders), which is
+// right for the bar but reads odd as "1/11.2". The numbers say whole sets; a little that would
+// round to nothing says "<1", so a muscle on the list never reads as 0 planned.
+const sets = v => (v > 0 && v < 0.5 ? '<1' : fmtNum(Math.round(v)))
 const ROWS = 6
 
 // The sheet reads the live session itself, so a set ticked behind it (the watch, another tab)
@@ -58,13 +61,13 @@ export function SessionMuscles({ close }) {
       <span className="hm-c l4" />{t('Already worked')}<span className="hm-c l1" />{t('Still to come')}
     </div>
     {(all ? muscles : muscles.slice(0, ROWS)).map(m => {
-      const d = r1(done[m] || 0)
-      const p = r1(planned[m])
+      const d = done[m] || 0
+      const p = planned[m]
       return <div className="mrow" key={m} data-muscle-session={m}>
         <span className="nm">{t(MUSCLE_NAME[m])}</span>
         <span className="bar"><i style={{ width: Math.round(Math.min(d / p, 1) * 100) + '%' }} /></span>
-        <span className="v sess" aria-label={`${t('Completed')} ${t('{0} sets', fmtNum(d))} · ${t('Planned')} ${t('{0} sets', fmtNum(p))}`}>
-          {fmtNum(d)}/{fmtNum(p)}
+        <span className="v sess" aria-label={`${t('Completed')} ${t('{0} sets', sets(d))} · ${t('Planned')} ${t('{0} sets', sets(p))}`}>
+          {sets(d)}/{sets(p)}
         </span>
       </div>
     })}
