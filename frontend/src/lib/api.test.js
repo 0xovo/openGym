@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { webauthnOK, bio, vault, BIO, VAULT, passkeyError } from './api.js'
+import { webauthnOK, bio, BIO, passkeyError } from './api.js'
 import de from '../locales/de.js'
 import { _setLangState } from './i18n-core.js'
 
@@ -176,14 +176,12 @@ describe('passkeyAssertion', () => {
 
 // QA 1.3.9: "confirm with {0}" was translated and {0} was not — a German sign-in page read
 // "…bestätige mit your fingerprint, face or PIN".
-describe('bio / vault', () => {
+describe('bio', () => {
   afterEach(() => _setLangState('en', {}, null, null))
   it('reads the platform phrase in the UI language', () => {
     expect(bio()).toBe(BIO)
-    expect(vault()).toBe(VAULT)
-    _setLangState('de', { [BIO]: 'BIO-de', [VAULT]: 'VAULT-de' }, null, null)
+    _setLangState('de', { [BIO]: 'BIO-de' }, null, null)
     expect(bio()).toBe('BIO-de')
-    expect(vault()).toBe('VAULT-de')
   })
 })
 

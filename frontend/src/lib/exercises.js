@@ -137,8 +137,7 @@ function isSubsequence(needle, hay) {
 // field prefix, then word-boundary starts, then substrings (closer to the start scores
 // better), and finally typo-tolerant ordered subsequences. Fields are weighted - the name
 // dominates, target/equipment matter, muscles and description are supporting evidence.
-// 0 means no match, so matchesExerciseSearch stays a boolean filter while the picker can
-// rank results by score.
+// 0 means no match, so a filter can test `> 0` while the picker ranks results by score.
 export function searchScore(exercise, query) {
   const needle = searchableText(query).toLowerCase().trim()
   if (!needle) return 1
@@ -165,10 +164,6 @@ export function searchScore(exercise, query) {
     total += best
   }
   return total
-}
-
-export function matchesExerciseSearch(exercise, query) {
-  return searchScore(exercise, query) > 0
 }
 
 // Media normally sits next to the app (img/ and gif/, mounted into the web container).

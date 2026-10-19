@@ -18,7 +18,6 @@ import { isAssisted } from './exercises.js'
 import { weighInAt } from './bodyweight.js'
 import { isoOf, todayISO, weekKey, weekStartOf } from './format.js'
 
-export const REPORT_RANGES = ['7d', '4w', '3m', 'custom']
 const DAY = 86400000
 
 const dateOf = iso => new Date(iso + 'T12:00:00')

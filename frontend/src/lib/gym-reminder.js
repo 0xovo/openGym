@@ -165,11 +165,6 @@ const gymPlugin = () => pluginP || (pluginP = (async () => {
   return { GymReminder: registerPlugin('GymReminder'), platform: p }
 })().catch(() => null))
 
-/** Whether this device can have a gym reminder at all: the phone app, nothing else. */
-export async function gymReminderAvailable() {
-  return !!(await gymPlugin())
-}
-
 /**
  * The config as the native side holds it (it outlives an evicted WebView storage), falling back
  * to this page's mirror. Returns { config, permission }.
