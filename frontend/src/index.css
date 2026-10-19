@@ -2000,6 +2000,12 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;
 }
 
+/* Below 360px the mini body map and the Start tag leave the name about 120px, so "Push Day"
+   already wrapped in ru. The map is a nice-to-have there; the name is what the row is for. */
+@media (max-width:359px){
+  .today-row .bm-mini-wrap{display:none}
+}
+
 /* Only where a pointer really hovers — on a phone :hover sticks to the row after the tap.
    Lighter than :active, which goes all the way to --surface-3, so the two stay distinct. */
 @media (hover:hover){
