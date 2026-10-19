@@ -290,7 +290,6 @@ h4.sec{
   font-size:13px;font-weight:400;letter-spacing:-.004em;color:var(--label-2);
   text-transform:none;margin:0 0 12px;
 }
-.divider{height:var(--hair);background:var(--sep);margin:14px 0;border:0}
 .row{display:flex;align-items:center;gap:12px}
 .row.between{justify-content:space-between}
 /* The body-weight card header (Home and Stats): title on the left, Goal + Log on the right. In
@@ -668,12 +667,6 @@ body.chips-dragging *{cursor:inherit}
 .measure-select{margin-bottom:10px;background:var(--surface-2)}
 .measure-preview{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:11px;padding-top:10px;border-top:1px solid var(--sep);font-size:12px;color:var(--label-2)}
 .measure-preview b{color:var(--label);font-weight:500}
-.measure-home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.measure-home-grid button{background:var(--surface-2);border-radius:10px;padding:10px;text-align:left;min-width:0}
-.measure-home-grid span,.measure-home-grid i{display:block;font-size:11px;color:var(--label-2);font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.measure-home-grid b{display:block;font-size:16px;margin:3px 0;white-space:nowrap}
-.measure-empty{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;color:var(--label-2);font-size:13px;gap:10px}
-.measure-empty .icn{flex:none}
 .exnote{
   background:var(--surface);border-radius:var(--r);padding:13px 15px;
   line-height:1.45;white-space:pre-wrap;font-size:15px;margin-bottom:10px;color:var(--label-2);

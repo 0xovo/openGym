@@ -97,8 +97,6 @@
 .msg.coach .bub{border-bottom-left-radius:6px}
 .msg.user .bub{background:var(--acc);color:var(--on-acc);border-bottom-right-radius:6px}
 .bub.err{background:color-mix(in srgb,var(--red) 14%,var(--surface));color:var(--label)}
-.bub.sys{background:none;color:var(--label-2);font-size:13px;text-align:center;padding:4px 8px;align-self:center;max-width:100%}
-.msg.sys{align-self:center;max-width:100%;align-items:center}
 .bub ul{margin:6px 0 0;padding-left:18px}
 .bub li{margin:2px 0}
 .msg-t{font-size:11px;color:var(--label-3);margin:4px 8px 0}
