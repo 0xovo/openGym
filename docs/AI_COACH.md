@@ -38,6 +38,25 @@ configuration. (On the server, that is. The phone app's own-key Coach needs `htt
 Nothing here is an environment variable or a restart — the whole point of the admin card is that
 enabling the Coach is a decision you make in the app.
 
+### From zero to a working Coach (self-hosted)
+
+The one thing that does need `.env` is being an admin, because the switch lives in the admin
+dashboard. If **Settings → Account → Admin dashboard** isn't there for you, that's why the Coach
+"isn't showing up".
+
+1. **Be an admin.** Either `FIRST_USER_ADMIN=1` in `.env` *before* you create the very first
+   profile, or, if you already have one, copy **Settings → Account → Account ID** into
+   `ADMIN_UIDS=<that id>`. Then `docker compose up -d` (not `restart`, which keeps the old
+   environment) and reload the app. Details: [SELF_HOSTING.md §4](SELF_HOSTING.md#4-multiple-users).
+2. **Connect a provider.** **Settings → Account → Admin dashboard**, the **AI Coach** card:
+   **Set up the Coach**, pick a provider, paste its API key (or the endpoint, for a local
+   model), **Test the Coach**. Anthropic, OpenAI, Gemini and OpenAI-compatible endpoints work on
+   the default image; leave `API_TARGET` alone unless you want the Claude Agent SDK or Codex
+   (see [below](#with-a-runtime-in-the-container-claude-agent-sdk-codex-cli)).
+3. **Check the switch at the top of the card is on**, and that `COACH_DISABLED` isn't set.
+4. **Open it:** the menu at the top right of **Plan**, last entry, **Coach**. Everyone else on
+   the instance sees it after they reload.
+
 ### Where people find it
 
 The Coach has one door: the **Coach** entry in the **Plan** menu (the button in the top-right

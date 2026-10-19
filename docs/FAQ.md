@@ -28,6 +28,21 @@ it is listed there, the [public TestFlight beta](https://testflight.apple.com/jo
 same app. A self-hosted instance added to the home screen from Safari works too (a full PWA that
 works offline). See [MOBILE.md](MOBILE.md).
 
+### How do I use it on my iPhone right now?
+
+As a web app, which takes a minute:
+
+1. Open your openGym address in **Safari**. It has to be `https://` (see
+   [the passkey question](#passkeys-dont-work-on-plain-http-or-my-laptop-has-no-fingerprint-reader)
+   below); just looking around? The [demo](https://opengym.ch/demo/) works too, data stays in
+   the browser.
+2. **Share → Add to Home Screen.**
+3. Open it from the new icon and create your profile. Face ID makes the passkey.
+
+From the icon it runs full screen, works offline and can send notifications (iOS only allows web
+push from a home-screen app, not from a Safari tab). The native App Store app is coming; when it
+lands it can connect to the same server, so nothing you log now is wasted.
+
 ### Is it on Google Play?
 
 It's coming: a new developer account has to run a closed test first (see the
@@ -84,6 +99,30 @@ gives your device a new passkey. Running the server yourself? `docker compose ex
 recover.js "Your name"` prints one, the owner's included. Details in
 [SELF_HOSTING.md](SELF_HOSTING.md#recovery-codes-when-every-way-in-is-gone).
 
+### Passkeys don't work on plain http, or my laptop has no fingerprint reader.
+
+Two separate things, both fixable:
+
+- **Plain `http://192.168.1.20:8080` (or any `http://ip:port`).** Browsers only do passkeys over
+  HTTPS, plus `http://localhost` on the machine itself. No setting in openGym changes that, and
+  an SSH tunnel doesn't help unless the browser ends up on `localhost`. Put HTTPS in front:
+  [SELF_HOSTING.md §3](SELF_HOSTING.md#3-expose-it-over-https-on-your-own-domain) for a domain or
+  Tailscale Serve, [SELF_HOSTING_HTTPS.md](SELF_HOSTING_HTTPS.md) for a real certificate on a
+  LAN-only address.
+- **No fingerprint reader.** You don't need one. A passkey can live in lots of places: your phone
+  (the browser shows a QR code, scan it, confirm on the phone), a password manager such as
+  Bitwarden, 1Password or Proton Pass, a security key, or Windows Hello with a PIN. If the browser
+  only ever asks for a fingerprint, look for "use another device" or "use a phone" in that dialog.
+  Already signed in on your phone? **Settings → Account → Add another device** gives the laptop
+  a passkey of its own. More in
+  [which passkey providers work](SELF_HOSTING.md#which-passkey-providers-work).
+
+Rather skip passkeys on that device? Put `PASSWORD_LOGIN=1` in `.env`, then `docker compose up -d`
+(not `restart`). The sign-in screen then offers **Sign in with password**, and **Create new
+profile** can use a password instead of a passkey. A profile you already made with a passkey gets
+its password under **Settings → Account → Password**, confirmed with that passkey once. Over plain
+http the password crosses your network unencrypted, so keep that to a network you trust.
+
 ### Can I use a password instead of a passkey?
 
 Yes, if the instance allows it: set `PASSWORD_LOGIN=1`. It's off by default. See
@@ -94,6 +133,45 @@ Yes, if the instance allows it: set `PASSWORD_LOGIN=1`. It's off by default. See
 Yes. Everyone creates their own profile and sees only their own data. You can make signup
 invite-only and give yourself an admin dashboard; see
 [multiple users](SELF_HOSTING.md#4-multiple-users).
+
+### The AI Coach doesn't show up on my server.
+
+There's no setting in `.env` that turns it on: an admin switches it on in the app. So the usual
+missing piece is that nobody is admin yet (`FIRST_USER_ADMIN` is off by default). If **Settings →
+Account → Admin dashboard** isn't there for you:
+
+1. Copy your id from **Settings → Account → Account ID**, put `ADMIN_UIDS=<that id>` in `.env`,
+   run `docker compose up -d` (not `restart`) and reload the app.
+2. **Admin dashboard → AI Coach → Set up the Coach**: pick a provider, paste the key (or a local
+   model's address), **Test the Coach**, and make sure the switch at the top of the card is on.
+3. The Coach is the last entry in the menu at the top right of **Plan**.
+
+API-key providers and local models run on the normal image; `API_TARGET=coach` is only for the
+Claude Agent SDK and Codex. The full walk-through is in
+[AI_COACH.md](AI_COACH.md#from-zero-to-a-working-coach-self-hosted).
+
+### How do I serve it under a subpath like `/gym` with nginx?
+
+Two working setups, pick one: nginx passes `/gym/` through to the container and `.env` has
+`BASE_PATH=/gym`, or nginx strips it (`proxy_pass http://127.0.0.1:8080/;`, trailing slash) and
+`BASE_PATH` stays empty. Never both. `ORIGIN` is just `https://example.com`, no `/gym`, and leave
+out `proxy_cookie_path`: it breaks the session cookie over https. Copy-paste configs for both, and
+what each mistake looks like, are in
+[SELF_HOSTING.md](SELF_HOSTING.md#nginx-under-gym-both-ways).
+
+### Can I move my data from the phone app to my own server?
+
+Yes, two ways:
+
+- **Connect the app to the server** (the easy one). On the server's website, in a browser where
+  you're signed in: **Settings → Account → Pair the mobile app**. In the phone app: **Settings →
+  Account → Connect to my server**, enter the address and the code. The app asks whether to add
+  this device's workouts to your profile; say **Add them**. From then on the phone syncs with the
+  server. See [MOBILE.md](MOBILE.md#connecting-the-app-to-your-own-server).
+- **Export and import a file.** In the phone app: **Settings → Data & backup → Export backup
+  (JSON)** (or the .zip, if your own exercises have photos). On the server, signed in: **Settings →
+  Data & backup → Import backup**. If the profile there already has workouts the file doesn't,
+  it asks whether to replace or merge them in.
 
 ### How do I update?
 

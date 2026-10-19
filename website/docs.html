@@ -517,8 +517,11 @@ curl http://localhost:8080/api/health      # {"ok":true,...}</code></pre>
      <b>cannot</b> use <code>http://192.168.x.x:8080</code> — that's neither localhost nor
      HTTPS, and the passkey prompt won't appear. To use openGym from your phone you need a
      real HTTPS hostname (below). Until then, LAN devices can still use <b>guest mode</b>
-     (data stays in that browser) or the <a href="#mobile-server">mobile app's pairing
-     mode</a>.</p>
+     (data stays in that browser), <a href="#admin-signin">password sign-in</a>
+     (<code>PASSWORD_LOGIN=1</code>) or the <a href="#mobile-server">mobile app's pairing
+     mode</a>. No fingerprint reader on your laptop is a different story and needs none of
+     that: a passkey can sit on your phone (scan the browser's QR code), in a password manager
+     or on a security key.</p>
 
   <h3 id="sh-https">HTTPS on your own domain</h3>
   <p>Put anything that terminates TLS in front of the <code>web</code> container. Pick
@@ -529,6 +532,11 @@ curl http://localhost:8080/api/health      # {"ok":true,...}</code></pre>
     <li><b>Caddy</b> (automatic Let's Encrypt): <code>gym.example.com { reverse_proxy localhost:8080 }</code></li>
     <li><b>Traefik / nginx / Nginx Proxy Manager:</b> route the HTTPS hostname to
         <code>web:80</code> or <code>&lt;docker-host&gt;:8080</code>. Any proxy works.</li>
+    <li><b>Tailscale Serve</b> (no domain, nothing on the internet):
+        <code>tailscale serve --bg http://127.0.0.1:8080</code> gives the host a
+        <code>https://&lt;name&gt;.&lt;tailnet&gt;.ts.net</code> address with a real certificate;
+        use that name as <code>RP_ID</code>/<code>ORIGIN</code>. Phones need the Tailscale app.
+        Steps in <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING.md#option-d--tailscale-serve-no-domain-nothing-on-the-internet" rel="noopener">SELF_HOSTING.md</a>.</li>
   </ul>
   <p>Then set the domain in <code>.env</code> and apply it:</p>
   <pre><code># .env
@@ -585,6 +593,29 @@ docker compose up -d   # restart alone does NOT re-read .env</code></pre>
      <code>.env</code> settings — <code>WEB_PORT</code>, <code>NGINX_PORT</code>,
      <code>BACKEND</code>, <code>PORT</code>. The web image renders its nginx config from
      these <i>at container start</i>, so they work on a prebuilt image, no rebuild.</p>
+  <p>Under a <b>subpath</b> such as <code>https://example.com/gym/</code>, with nginx passing
+     the prefix through:</p>
+  <pre><code>location = /gym { return 301 /gym/; }
+location /gym/ {
+    proxy_pass http://127.0.0.1:8080;   # no trailing slash
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    client_max_body_size 48m;
+    proxy_read_timeout 300s;
+}
+
+# .env
+BASE_PATH=/gym
+RP_ID=example.com
+ORIGIN=https://example.com          # no /gym here</code></pre>
+  <p>Prefer <code>proxy_pass http://127.0.0.1:8080/;</code> (trailing slash, prefix stripped)?
+     Then leave <code>BASE_PATH</code> empty and add <code>proxy_redirect / /gym/;</code>.
+     Stripping <i>and</i> setting <code>BASE_PATH</code> loads the page but 404s every API call.
+     And skip <code>proxy_cookie_path</code>: over https the session cookie is a
+     <code>__Host-</code> cookie, which browsers drop when its path isn't <code>/</code>, so you'd
+     sign up and still not be signed in. Both setups are in
+     <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING.md#nginx-under-gym-both-ways" rel="noopener">SELF_HOSTING.md</a>.</p>
 
   <h3 id="sh-update">Updating</h3>
   <pre><code>git pull                  # picks up compose/config changes
@@ -611,7 +642,8 @@ docker compose up -d</code></pre>
     <tr><td><code>BACKEND</code></td><td>Name of the API service <code>/api</code> is proxied to — change it if yours isn't called <code>api</code>.</td></tr>
     <tr><td><code>PORT</code></td><td>Port the API listens on; the web container proxies to the same value. Default <code>3000</code>.</td></tr>
     <tr><td><code>SESSION_DAYS</code></td><td>How long a sign-in lasts, in days. Default <code>90</code>.</td></tr>
-    <tr><td><code>ADMIN_UIDS</code></td><td>Comma-separated user ids that get the <a href="#admin">admin dashboard</a>. Default: none — a fresh instance has no admin.</td></tr>
+    <tr><td><code>ADMIN_UIDS</code></td><td>Comma-separated user ids that get the <a href="#admin">admin dashboard</a> (your id: Settings → Account → Account ID). Default: none, so a fresh instance has no admin.</td></tr>
+    <tr><td><code>FIRST_USER_ADMIN</code></td><td>Set <code>1</code> and the first profile created on an instance with no profiles becomes its admin. Has no effect once profiles exist. Default: off.</td></tr>
     <tr><td><code>INVITE_ONLY</code></td><td>Set <code>1</code> and new profiles need an invite code you generate from the dashboard. Existing accounts keep working. Default: off.</td></tr>
     <tr><td><code>ALLOW_GUEST</code></td><td>Set <code>0</code> to remove <b>Continue without account</b>. Guest data isn't deleted — it stays in that browser and returns if you re-enable guests, or moves into a profile created on the same device. Default: on.</td></tr>
     <tr><td><code>AUDIT_LOG</code></td><td>Record sign-ins and admin actions to the <a href="#admin-log">activity log</a> — set <code>0</code> to record nothing. Default: on.</td></tr>
@@ -621,7 +653,7 @@ docker compose up -d</code></pre>
     <tr><td><code>PASSWORD_LOGIN</code></td><td>Set <code>1</code> to offer <a href="#admin-signin">name-and-password sign-in</a> next to passkeys. Default: off.</td></tr>
     <tr><td><code>TRUST_PROXY</code></td><td>Let the sign-in throttle read the visitor's address from proxy headers. <code>1</code> in <code>docker-compose.yml</code>, where the web container is the only way to the API; leave it off if you run the API without it.</td></tr>
     <tr><td><code>DEFAULT_LANG</code></td><td>Language of the sign-in screen and of new profiles, e.g. <code>de</code> or <code>pt-BR</code>. Default: the visitor's browser language.</td></tr>
-    <tr><td><code>BASE_PATH</code></td><td>Serve openGym under a subpath such as <code>/gym</code>, no trailing slash. Default: the site root.</td></tr>
+    <tr><td><code>BASE_PATH</code></td><td>Serve openGym under a subpath such as <code>/gym</code>, no trailing slash, when your proxy passes that prefix through. A proxy that strips it needs this empty. Default: the site root. See <a href="#sh-stack">existing stack</a>.</td></tr>
     <tr><td><code>MEDIA_UPLOADS</code></td><td>Set <code>0</code> to turn off photo and video uploads (custom-exercise pictures, workout photos); the link field stays. Default: on.</td></tr>
     <tr><td><code>MEDIA_QUOTA_MB</code></td><td>Upload space per profile in MB; <code>0</code> for no cap. Default <code>200</code>. Lower it on an instance with open signup.</td></tr>
     <tr><td><code>MEDIA_MIN_FREE_MB</code></td><td>Uploads are refused while the disk under <code>./data</code> has less free space than this. Default <code>512</code>. Size limits per file type are in <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING.md#photos-and-videos-of-custom-exercises" rel="noopener">SELF_HOSTING.md</a>.</td></tr>
@@ -639,11 +671,17 @@ docker compose up -d</code></pre>
   <h2 id="admin">Multiple users, admin &amp; the activity log</h2>
   <p>Anyone who can reach the URL can create their own profile — each gets isolated data.
      That's the default: open signup, no admin. To control who gets in:</p>
-  <pre><code>ADMIN_UIDS=youruserid      # your id is in ./data/db.json under users[].id
+  <pre><code>FIRST_USER_ADMIN=1         # the first profile on an empty instance becomes admin
+ADMIN_UIDS=youruserid      # or name admins by id: Settings → Account → Account ID
 INVITE_ONLY=1              # new profiles need an invite code
 ALLOW_GUEST=0              # remove "Continue without account"</code></pre>
-  <p>Register your own passkey profile <i>first</i>, then put your id in
-     <code>ADMIN_UIDS</code>. You'll get an <b>Admin dashboard</b> link in Settings → Account: who's
+  <p>On a brand-new instance, set <code>FIRST_USER_ADMIN=1</code> before anyone signs up and
+     register your own profile first. Already registered? <code>FIRST_USER_ADMIN</code> only ever
+     applies to the very first profile, so copy your id from <b>Settings → Account → Account
+     ID</b> into <code>ADMIN_UIDS</code>, run <code>docker compose up -d</code> (a plain
+     <code>restart</code> keeps the old <code>.env</code>) and reload the app. You'll get an
+     <b>Admin dashboard</b> link in Settings → Account (it's also where the <a href="#coach">AI
+     Coach</a> is switched on): who's
      training right now, each user's workout history and body weight, disabling an account
      (signed out and locked out everywhere until re-enabled), and — with invite-only on —
      generating and revoking invite codes. Admin access rides on your passkey and is enforced
@@ -732,7 +770,9 @@ ALLOW_GUEST=0              # remove "Continue without account"</code></pre>
 
   <h3 id="coach-providers">Providers</h3>
   <p>It is <b>off by default</b>. An admin turns it on in <b>Settings → Account → Admin dashboard</b>,
-     on the <b>AI Coach</b> card, and picks who answers:</p>
+     on the <b>AI Coach</b> card, and picks who answers. No admin dashboard in your Settings?
+     Then nobody is admin yet, and that comes first: <a href="#admin">make yourself admin</a>.
+     There's no <code>.env</code> switch for the Coach itself.</p>
   <table class="cfg">
     <tr><td><b>Anthropic, OpenAI, Google&nbsp;Gemini</b></td><td>Paste an API key from the provider's console. Plain HTTPS from the api process — runs on the default image.</td></tr>
     <tr><td><b>OpenAI-compatible endpoint</b></td><td>Any server that speaks the Chat Completions API: <b>Ollama</b>, <b>LM Studio</b>, <b>vLLM</b>, <b>OpenRouter</b>, a gateway of your own. A key only if the endpoint wants one. Also the default image.</td></tr>
@@ -1012,6 +1052,40 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
      On Android the <a href="#android">signed APK</a> is the way in until then, and the same key
      signs both, so moving to Play later keeps your data. The store apps are the same AGPL code,
      with nothing collected and nothing to buy.</p>
+  <h3>How do I use it on my iPhone right now?</h3>
+  <p>As a web app: open your openGym address (it has to be <code>https://</code>) in
+     <b>Safari</b>, tap <b>Share → Add to Home Screen</b>, open the new icon and create your
+     profile; Face ID makes the passkey. It runs full screen, works offline and can send
+     notifications from there. The native App Store app is coming and can connect to the same
+     server, so nothing you log now is wasted. Just curious? The <a href="/demo/">demo</a> works
+     in Safari too.</p>
+  <h3>Passkeys don't work on plain http, or my laptop has no fingerprint reader.</h3>
+  <p>Browsers only do passkeys over HTTPS (and on <code>http://localhost</code>), so
+     <code>http://ip:port</code> never gets a passkey prompt, whatever you set. Put HTTPS in
+     front (<a href="#sh-https">see above</a>, Tailscale Serve included, or a LAN certificate via
+     <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING_HTTPS.md" rel="noopener">SELF_HOSTING_HTTPS.md</a>).
+     A fingerprint reader is not required: any passkey works, from your phone via the browser's
+     QR code, a password manager, a security key or a Windows Hello PIN. Or switch on passwords
+     with <code>PASSWORD_LOGIN=1</code> in <code>.env</code> and <code>docker compose up -d</code>:
+     the sign-in screen then offers <b>Sign in with password</b> and new profiles can use one.</p>
+  <h3>The AI Coach doesn't show up on my server.</h3>
+  <p>Nothing in <code>.env</code> switches it on; an admin does, in the app. If Settings →
+     Account has no <b>Admin dashboard</b>, nobody is admin yet: copy <b>Settings → Account →
+     Account ID</b> into <code>ADMIN_UIDS</code>, <code>docker compose up -d</code>, reload.
+     Then <b>Admin dashboard → AI Coach → Set up the Coach</b>, connect a provider, test it, and
+     the Coach appears in the menu at the top right of <b>Plan</b>.
+     <a href="#coach-providers">More on providers</a>.</p>
+  <h3>How do I serve it under /gym with nginx?</h3>
+  <p>Either nginx passes <code>/gym/</code> through and <code>.env</code> has
+     <code>BASE_PATH=/gym</code>, or nginx strips it and <code>BASE_PATH</code> stays empty;
+     never both. <code>ORIGIN</code> has no path, and leave out <code>proxy_cookie_path</code>.
+     A working config is under <a href="#sh-stack">Fitting it into an existing stack</a>.</p>
+  <h3>Can I move my data from the phone app to my server?</h3>
+  <p>Yes. Easiest: pair the app with the server (<a href="#mobile-server">how</a>) and answer
+     <b>Add them</b> when it asks about this device's workouts. Or export a backup in the app
+     (<b>Settings → Data &amp; backup → Export backup</b>) and import it on the server, signed in,
+     under <b>Settings → Data &amp; backup → Import backup</b>; it asks before replacing anything
+     the server has that the file doesn't.</p>
   <h3>Mobile app or self-hosted — which one should I pick?</h3>
   <p>If you just want to track your training: the mobile app. If you want your data on your
      own hardware, synced across devices, with profiles for the people you train with:

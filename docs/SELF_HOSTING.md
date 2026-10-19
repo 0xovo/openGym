@@ -256,6 +256,18 @@ out and locked out everywhere until you re-enable it), and — with `INVITE_ONLY
 revoking invite codes. Existing accounts keep working when you switch invite-only on. Admin access
 is gated by your passkey and enforced server-side, so it needs no separate login.
 
+**Already registered and there's no Admin dashboard?** That's the usual way to find out
+`FIRST_USER_ADMIN` was off when you signed up (it is by default). It only ever applies to the very
+first profile, so switching it on now does nothing. Do this instead:
+
+1. Copy your id from **Settings → Account → Account ID** (tap it to copy).
+2. Put it in `.env`: `ADMIN_UIDS=<that id>`.
+3. `docker compose up -d`. Not `docker compose restart`: that keeps the old environment.
+4. Reload the app. **Settings → Account → Admin dashboard** is there now.
+
+The [AI Coach](AI_COACH.md#turning-it-on), invite codes and recovery codes all live in that
+dashboard, so this is step one for each of them.
+
 ### Default language
 
 An instance whose people share a language can start everyone in it:
@@ -543,6 +555,71 @@ Either way, keep `ORIGIN` and `RP_ID` pointing at the address in the browser's b
 (`ORIGIN=https://example.com`, `RP_ID=example.com`). Passkeys key on the host, not the path, so a
 subpath changes nothing about section 2 — but it does mean two instances under one hostname share
 a passkey scope and can see each other's credentials. Give each its own hostname if that matters.
+
+#### nginx under `/gym`, both ways
+
+Pick one of these two and keep `.env` in step with it. Both were run against the shipped web
+container's config behind nginx with TLS, with a passkey sign-up and a password sign-up going
+through each. `8080` is `WEB_PORT`; use yours.
+
+**Passing the prefix through** (nothing after the port in `proxy_pass`), with `BASE_PATH=/gym`:
+
+```nginx
+location = /gym { return 301 /gym/; }
+
+location /gym/ {
+    proxy_pass http://127.0.0.1:8080;   # no trailing slash: the container sees /gym/...
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    client_max_body_size 48m;           # photos and videos of custom exercises
+    proxy_read_timeout 300s;            # a Coach request can take minutes
+}
+```
+
+```bash
+# .env
+BASE_PATH=/gym
+RP_ID=example.com
+ORIGIN=https://example.com
+```
+
+**Stripping the prefix** (a slash after the port), with `BASE_PATH` left empty:
+
+```nginx
+location = /gym { return 301 /gym/; }
+
+location /gym/ {
+    proxy_pass http://127.0.0.1:8080/;  # trailing slash: the container sees /...
+    proxy_redirect / /gym/;             # keeps the container's own redirects under /gym
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    client_max_body_size 48m;
+    proxy_read_timeout 300s;
+}
+```
+
+```bash
+# .env
+BASE_PATH=
+RP_ID=example.com
+ORIGIN=https://example.com
+```
+
+Then `docker compose up -d` (a plain `restart` does not re-read `.env`). The three ways this
+goes wrong, so you can spot them:
+
+- **Stripping and `BASE_PATH=/gym` at the same time.** The page loads, so it looks fine, but
+  every `/api` call answers 404: no profile can be created and nothing signs in. One or the
+  other, never both.
+- **A path in `ORIGIN`.** `ORIGIN=https://example.com/gym` makes every passkey fail with
+  *Unexpected registration response origin*. An origin never has a path; the prefix lives in
+  `BASE_PATH` and in the proxy.
+- **`proxy_cookie_path / "/gym; Secure";`** Leave it out. Over https the session cookie is
+  called `__Host-gymsid`, and browsers throw away any `__Host-` cookie whose path isn't `/`. The
+  profile gets created, then the app insists you're not signed in. The cookie is already
+  `Secure`, `HttpOnly` and tied to its host without help.
 
 ### Photos and videos of custom exercises
 
@@ -878,6 +955,8 @@ browser (see section 2).
 | No "Reminders" page in Settings | Requires a signed-in profile and HTTPS (or `localhost`) — guest mode and plain HTTP over LAN can't subscribe. |
 | Day reminder fires at the wrong time | Toggle it off and on in Settings → Reminders so it re-detects your browser's timezone (also happens automatically on every app load — see section 7). |
 | Notifications switch is off although I turned it on | The server no longer holds the subscription (rebuilt `data/db.json`, regenerated `vapid.json`); the app re-registers on the next start, or switch it on again. On iOS, push only works from the Home Screen icon. |
+| No Admin dashboard in Settings, so no AI Coach either | Nobody is admin yet. Put your **Settings → Account → Account ID** in `ADMIN_UIDS`, `docker compose up -d`, reload. See [§4](#4-multiple-users). |
+| Under a subpath: the page loads but no profile can be created, or you sign up and are "not signed in" | `BASE_PATH` doesn't match what the proxy does, or `proxy_cookie_path` rewrote the session cookie. See [nginx under /gym](#nginx-under-gym-both-ways). |
 | Want to reset a stuck login | Delete the cookie in your browser; sessions are just signed cookies. |
 | The app says "Your server no longer accepts this phone" (or "this browser") | The server answered 401. Usual causes: "sign out everywhere" was used, the account was disabled, `data/secret` was lost or replaced when the stack was moved (every session and pairing dies with it), or a proxy with its own login rejects requests that carry `Authorization: Bearer`. Nothing on the device is lost: pair the phone again (browser: Settings → "Pair the mobile app"), or sign in again in the browser, and what the device kept is merged into the account. |
 | The app says the server "answered with something other than openGym (HTTP 200)" | Something other than the API answered `/api/*` with a success page — an auth proxy's sign-in page, or a catch-all route serving `index.html`. Every API answer is JSON; forward `/api/*` to the API unchanged. |

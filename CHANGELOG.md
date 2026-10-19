@@ -122,6 +122,10 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - A phone app connected to your server now hears about a suggestion the server's automatic
   review left. The server only knew how to say it by web push, which the app doesn't have, so the
   review ran and the phone stayed quiet. Now the app tells you when you next open it.
+- Self-hosting docs for the questions Discord asked this week: getting from zero to a working
+  AI Coach (it starts with making yourself admin), nginx under `/gym` in both flavours with the
+  three mistakes that break it, passkeys without a fingerprint reader or on plain http, the
+  iPhone web app, and moving your phone's data onto your own server. All in the FAQ too.
 
 ## v1.4.2 (2026-10-18)
 
