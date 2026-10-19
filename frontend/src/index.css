@@ -1753,7 +1753,11 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 [dir="rtl"] .fbarwrap .fval{transform:translateX(50%)}
 .fends{display:flex;justify-content:space-between;font-size:10px;color:var(--label-3);margin-top:3px}
 .fzones{display:flex;font-size:10px;color:var(--label-3);line-height:1.2}
-.fzones .z{text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* A zone is a quarter of the bar, 64px on a 320px phone: "Восстанавливается" or "En
+   recuperación" don't fit and were cut to "Восстанав…". A name may spill past its zone instead,
+   centred on it, and Ready starts at the bar's start so the middle one has room on both sides. */
+.fzones .z{display:flex;justify-content:center;white-space:nowrap}
+.fzones .z.ready{justify-content:flex-start}
 .fzones .z.ready{width:25%}
 .fzones .z.recovering{width:25%}
 .fzones .z.fatigued{width:50%}
