@@ -42,15 +42,8 @@ import Login from './views/Login.jsx'
 import MobileOnboarding from './views/MobileOnboarding.jsx'
 import PermissionSteps from './views/PermissionSteps.jsx'
 import Home from './views/Home.jsx'
-import CheckIn from './views/CheckIn.jsx'
 import Plan from './views/Plan.jsx'
-import RoutineEdit from './views/RoutineEdit.jsx'
 import Workout from './views/Workout.jsx'
-import Stats from './views/Stats.jsx'
-import History from './views/History.jsx'
-import Library from './views/Library.jsx'
-import Muscles from './views/Muscles.jsx'
-import { SettingsRoute } from './views/Settings.jsx'
 
 // Screens most sessions never open (the Coach, the admin dashboard, photos, measurements, the
 // balance check) are their own chunks rather than part of the code every start parses: ~200 KB
@@ -74,6 +67,15 @@ const CoachIntake = lazyView(() => import('./views/CoachIntake.jsx'))
 const CoachSetup = lazyView(() => import('./views/CoachSetup.jsx'))
 const StructuralBalance = lazyView(() => import('./views/StructuralBalance.jsx'))
 const ProgressPhotos = lazyView(() => import('./views/ProgressPhotos.jsx'))
+// The tabs and screens past Home (Stats, History, the Library, Settings, ...) as well: a start
+// only needs Home, and these are fetched right behind it the same way.
+const CheckIn = lazyView(() => import('./views/CheckIn.jsx'))
+const RoutineEdit = lazyView(() => import('./views/RoutineEdit.jsx'))
+const Stats = lazyView(() => import('./views/Stats.jsx'))
+const History = lazyView(() => import('./views/History.jsx'))
+const Library = lazyView(() => import('./views/Library.jsx'))
+const Muscles = lazyView(() => import('./views/Muscles.jsx'))
+const SettingsRoute = lazyView(() => import('./views/Settings.jsx').then(m => ({ default: m.SettingsRoute })))
 let viewsPrefetched = false
 const prefetchViews = () => {
   if (viewsPrefetched) return
