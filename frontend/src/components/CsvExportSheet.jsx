@@ -54,12 +54,17 @@ export function CsvExportSheet({ close }) {
         <input type="date" className="timef" value={to} min={from} max={today} onChange={e => setTo(e.target.value)} /></Row>
     </div>}
     <div className="small dim" style={{ margin: '10px 2px 14px' }} data-csv-summary>
-      {(range === 'all' ? t('All') : r.from === r.to ? fmtDate(r.from, true, true) : fmtDate(r.from, false, true) + ' – ' + fmtDate(r.to, false, true))
-        + ' · ' + tn('{0} workout', '{0} workouts', counts.workouts) + ' · ' + tn('{0} set', '{0} sets', counts.sets)}
+      {range === 'all' ? t('All') : r.from === r.to ? fmtDate(r.from, true, true) : fmtDate(r.from, false, true) + ' – ' + fmtDate(r.to, false, true)}
     </div>
+    {/* Each file says what it holds: sets don't go into the body file, weigh-ins don't go into the workouts one. */}
     <Button variant="primary" icon="share" onClick={() => save('workouts')}>{t('Workouts (CSV)')}</Button>
-    <div style={{ height: 8 }} />
+    <div className="small dim" style={{ margin: '4px 2px 12px' }} data-csv-count="workouts">
+      {tn('{0} workout', '{0} workouts', counts.workouts) + ' · ' + tn('{0} set', '{0} sets', counts.sets)}
+    </div>
     <Button icon="share" onClick={() => save('body')}>{t('Body weight & measurements (CSV)')}</Button>
+    <div className="small dim" style={{ margin: '4px 2px 0' }} data-csv-count="body">
+      {tn('{0} weigh-in', '{0} weigh-ins', counts.weighIns) + ' · ' + tn('{0} measurement', '{0} measurements', counts.measurements)}
+    </div>
   </>
 }
 

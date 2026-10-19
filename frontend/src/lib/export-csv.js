@@ -132,8 +132,14 @@ export function bodyCSV(S, { from = null, to = null } = {}) {
   return csvText(header, rows)
 }
 
-/** How many rows each file would have, for the sheet's summary line. */
-export const csvCounts = (S, range) => ({
-  workouts: workoutsIn(S, range?.from, range?.to).length,
-  sets: workoutRows(S, range).length,
-})
+/** What each file would hold, for the line under its button: workouts and sets, weigh-ins and measurements. */
+export function csvCounts(S, range) {
+  const from = range?.from, to = range?.to
+  const inside = d => d && (!from || d >= from) && (!to || d <= to)
+  return {
+    workouts: workoutsIn(S, from, to).length,
+    sets: workoutRows(S, range).length,
+    weighIns: (S.bodyweight || []).filter(b => inside(b?.d) && b.w > 0).length,
+    measurements: (S.measurements || []).filter(m => inside(m?.d)).length,
+  }
+}

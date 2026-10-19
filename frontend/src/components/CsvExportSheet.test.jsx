@@ -42,15 +42,25 @@ afterEach(() => { act(() => root.unmount()); host.remove() })
 
 const button = text => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === text)
 const summary = () => host.querySelector('[data-csv-summary]').textContent
+const count = kind => host.querySelector(`[data-csv-count="${kind}"]`).textContent
 const flush = () => act(async () => { await Promise.resolve() })
 
 describe('CsvExportSheet', () => {
   it('starts on everything and counts workouts and sets', () => {
     expect(button('All').getAttribute('aria-pressed')).toBe('true')
-    expect(summary()).toContain('2 workouts')
-    expect(summary()).toContain('4 sets')
+    expect(summary()).toBe('All')
+    expect(count('workouts')).toBe('2 workouts · 4 sets')
     act(() => button('4 weeks').click())
-    expect(summary()).toContain('1 workout')
+    expect(count('workouts')).toContain('1 workout')
+  })
+
+  it('counts weigh-ins and measurements under the body file, not sets', () => {
+    mocks.S = { ...mocks.S, bodyweight: [{ d: iso(1), w: 80 }, { d: iso(300), w: 82 }], measurements: [{ d: iso(3), waist: 80 }] }
+    act(() => root.render(<CsvExportSheet close={close} />))
+    expect(count('body')).toBe('2 weigh-ins · 1 measurement')
+    expect(count('body')).not.toContain('set')
+    act(() => button('4 weeks').click())
+    expect(count('body')).toBe('1 weigh-in · 1 measurement')
   })
 
   it('shares the workouts file on the phone, named by the day', async () => {
