@@ -2476,4 +2476,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': 'Minden Edző-futtatás egy kérés a szolgáltatói fiókodon. A 0 azt jelenti, nincs korlát.',
   'Max message length': 'Max. üzenethossz',
   'How long a message, refinement or review note can be.': 'Milyen hosszú lehet egy üzenet, finomítási kérés vagy elemzési megjegyzés.',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': 'Pihenő e sorozat után',
 }

@@ -2477,4 +2477,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': 'Каждый запуск Тренера это один запрос с вашего аккаунта у провайдера. 0 означает без ограничений.',
   'Max message length': 'Макс. длина сообщения',
   'How long a message, refinement or review note can be.': 'Насколько длинным может быть сообщение, просьба о доработке или заметка к разбору.',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': 'Отдых после этого подхода',
 }

@@ -2473,4 +2473,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': '코치 실행은 매번 제공자 계정으로 보내는 한 번의 요청입니다. 0은 무제한을 뜻합니다.',
   'Max message length': '최대 메시지 길이',
   'How long a message, refinement or review note can be.': '메시지, 수정 요청 또는 리뷰 메모의 최대 길이입니다.',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': '이 세트 후 휴식',
 }

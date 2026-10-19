@@ -141,6 +141,15 @@ export function warmupRestSecFor(entry, setIdx, workRestSec, profileSec) {
 }
 
 /**
+ * One set's own rest, picked from its set menu for this session (#609), or null for none.
+ * 0 is a real choice ("No timer"), so only a missing or broken field means "as the exercise".
+ */
+export function ownSetRest(row) {
+  const v = row?.restSec
+  return typeof v === 'number' && Number.isFinite(v) && v >= 0 ? Math.round(v) : null
+}
+
+/**
  * The break between the two sides of one per-side set, or null for none. An exercise may set its
  * own `sideRestSec` (optional, Discord "set-specific rest timers"). Without it nothing changes:
  * a timed hold pauses `switchSec` (capped at the set's rest, and none with the rest switched off),

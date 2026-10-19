@@ -2473,4 +2473,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': '教练每次运行都会向你的提供商账户发送一次请求。0 表示不限制。',
   'Max message length': '最大消息长度',
   'How long a message, refinement or review note can be.': '消息、修改要求或点评备注可以有多长。',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': '这一组后的休息',
 }

@@ -17,7 +17,7 @@ import { pinState } from '../lib/queue.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { api, beacon } from '../lib/api.js'
 import { pyramidRestFor, maxRecordAt, isPyramid, pyramidLabel } from '../lib/pyramid.js'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex, advanceAfterTimedRest } from '../lib/supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, ownSetRest, stepUnitIndex, advanceAfterTimedRest } from '../lib/supersetFlow.js'
 import Media from '../components/Media.jsx'
 import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
@@ -130,6 +130,21 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     const on = !isFailureSet(e.sets[i])
     for (let j = start; j < start + count; j++) if (isFailureSet(e.sets[j]) !== on) e.sets[j] = toggleFailure(e.sets[j])
   }, true)
+  // One set's own rest for this session (#609): null takes it away, 0 is "No timer". It sits on
+  // the set's first row, the one the rest flow reads (ownSetRest). The wheel may outlive the
+  // set it was opened for, so a Done after the rows moved or the workout changed does nothing.
+  const setRestAt = (i, sec) => {
+    const at = useStore.getState().S.active
+    const ref = { id: at?.id, entryId: at?.entries?.[entryIdx]?.id, rows: at?.entries?.[entryIdx]?.sets?.length }
+    return () => update(s => {
+      const e = s.active?.entries?.[entryIdx]
+      if (!e || s.active.id !== ref.id || e.id !== ref.entryId || e.sets.length !== ref.rows) return
+      const row = e.sets[setSpanAt(e.sets, i)[0]]
+      if (!row) return
+      if (sec == null) delete row.restSec
+      else row.restSec = Math.max(0, Math.min(REST_MAX, Math.round(sec)))
+    }, true)
+  }
   const addDropRow = i => mutSet(i, row => {
     // A unilateral set drops per side (issue #60): addSideDrop seeds each side from its own weight.
     if (isSideSet(row)) {
@@ -435,9 +450,34 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   // counting every row and making the second half look like an extra set.
   const setNumOf = (s, i) => setNumberAt(entry.sets, i)
   const sideTagOf = s => s.side === 'L' ? t('Left') : s.side === 'R' ? t('Right') : null
+  // What a set rests without a rest of its own, as the flow works it out (restSecFor,
+  // warmupRestSecFor), so the set menu can name it.
+  const setRestDefault = i => {
+    const all = S.active?.entries || []
+    const unit = supersetUnits(all).find(u => u.includes(entryIdx)) || [entryIdx]
+    const work = restSecFor(all, unit, S.restSec, { idx: entryIdx, sec: pyramidRestFor(entry.target, entry.sets, i) })
+    return warmupRestSecFor(entry, i, work, S.warmupRestSec)
+  }
+  const openSetRest = i => {
+    const start = setSpanAt(entry.sets, i)[0]
+    const own = ownSetRest(entry.sets[start])
+    const dflt = t('Default ({0})', fmtRest(setRestDefault(start)))
+    menuSheet({
+      title: t('Rest after this set'),
+      items: [
+        { icon: 'timer', label: dflt, on: own == null, onClick: setRestAt(start, null) },
+        { icon: 'pause', label: t('No timer'), on: own === 0, onClick: setRestAt(start, 0) },
+        { icon: 'clock', label: t('Pick a time'), on: own > 0, onClick: () => {
+          const save = sec => setRestAt(start, sec > 0 ? sec : 0)()
+          durationSheet({ title: t('Rest after this set'), value: own > 0 ? own : setRestDefault(start), max: REST_MAX, off: t('No timer'), onDone: save })
+        } },
+      ],
+    })
+  }
   const openSetMenu = (s, i) => {
     const warm = isWarmupRow(s)
     const sideTag = sideTagOf(s)
+    const ownRestHere = ownSetRest(entry.sets[setSpanAt(entry.sets, i)[0]])
     menuSheet({
       title: warm ? t('Warm-up') : sideTag ? t('Set {0} ({1})', setNumOf(s, i), sideTag) : t('Set {0}', setNumOf(s, i)),
       subtitle: setLabel(entry.id, s, entry.target, speedUnit),
@@ -452,6 +492,8 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
           // as RIR 0 wherever effort is read, unless a rating was logged on the set. A timed
           // per-side pair is one set, so both halves get it.
           !warm && mode !== 'cardio' && { icon: 'gauge', label: t('Taken to failure'), sub: t('Nothing left in the tank'), on: isFailureSet(s), onClick: () => toggleFailureAt(i) },
+          // Just this set's rest, this session (#609): a long one before the top set, none after a light one.
+          !editing && { icon: 'timer', label: t('Rest after this set'), sub: ownRestHere == null ? t('Default ({0})', fmtRest(setRestDefault(i))) : ownRestHere === 0 ? t('No timer') : fmtRest(ownRestHere), onClick: () => openSetRest(i) },
         ] },
         { title: t('Add to this set'), items: [
           !warm && mode === 'reps' && !isRestPauseSet(s) && { icon: 'arrowDown', label: t('Drop set'), sub: t('+ Drop'), onClick: () => addDropRow(i) },
@@ -1777,7 +1819,9 @@ function ActiveWorkout() {
       const restSec = restSecFor(fresh.entries, freshUnit || [idx], S.restSec, setRest)
       // A warm-up ramp set may rest shorter than a work set (the exercise's warmupRestSec, else the
       // profile's); the last ramp set, into the first work set, still gets the working rest.
-      const restAfter = warmupRestSecFor(fresh.entries[idx], i, restSec, useStore.getState().S.warmupRestSec)
+      // A set given its own rest in its menu (#609) keeps it, whatever the exercise would rest.
+      const ownRest = ownSetRest(fresh.entries[idx].sets[setSpanAt(fresh.entries[idx].sets, i)[0]])
+      const restAfter = ownRest ?? warmupRestSecFor(fresh.entries[idx], i, restSec, useStore.getState().S.warmupRestSec)
 
       // A re-check of finished work must not navigate or reopen a sheet, but it may still owe
       // you a rest — see restOnRecheck, and the other half of issue #3. A rest that already ran

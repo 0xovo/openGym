@@ -2552,4 +2552,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': 'কোচের প্রতিটি রান আপনার প্রদানকারীর অ্যাকাউন্টে একটি অনুরোধ। 0 মানে কোনো সীমা নেই।',
   'Max message length': 'সর্বোচ্চ বার্তার দৈর্ঘ্য',
   'How long a message, refinement or review note can be.': 'একটি বার্তা, পরিমার্জনার অনুরোধ বা পর্যালোচনা নোট কত দীর্ঘ হতে পারে।',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': 'এই সেটের পরে বিশ্রাম',
 }

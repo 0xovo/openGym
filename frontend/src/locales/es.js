@@ -2473,4 +2473,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': 'Cada ejecución del Entrenador es una solicitud en tu cuenta del proveedor. 0 significa sin límite.',
   'Max message length': 'Longitud máxima del mensaje',
   'How long a message, refinement or review note can be.': 'Cuánto puede tener un mensaje, una petición de refinamiento o una nota de análisis.',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': 'Descanso tras esta serie',
 }

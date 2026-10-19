@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, stepUnitIndex, advanceAfterTimedRest } from './supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, ownSetRest, stepUnitIndex, advanceAfterTimedRest } from './supersetFlow.js'
 
 const entry = done => ({ sets: done.map(value => ({ done: value })) })
 
@@ -155,6 +155,12 @@ describe('set-specific rests (Discord: rest for warm-ups and between sides)', ()
     expect(sideRestFor(undefined, { timed: true, restAfter: 90, switchSec: 10 })).toBe(10)
     expect(sideRestFor({}, { timed: true, restAfter: 5, switchSec: 10 })).toBe(5)
     expect(sideRestFor({ sideRestSec: 0 }, { timed: true, restAfter: 0, switchSec: 10 })).toBeNull()
+  })
+  it('a set\'s own rest: a number of 0 or more, anything else is none (#609)', () => {
+    expect(ownSetRest({ restSec: 0 })).toBe(0)
+    expect(ownSetRest({ restSec: 90.4 })).toBe(90)
+    for (const v of [undefined, null, -5, '60', NaN]) expect(ownSetRest({ restSec: v }), String(v)).toBeNull()
+    expect(ownSetRest(undefined)).toBeNull()
   })
   it('"no timer" between sides turns a hold\'s switch pause off, set rest or not (#636)', () => {
     expect(sideRestFor({ sideRestOff: true }, { timed: true, restAfter: 90, switchSec: 10 })).toBeNull()

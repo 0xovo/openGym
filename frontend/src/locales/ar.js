@@ -2528,4 +2528,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': 'كل تشغيل للمدرب هو طلب واحد على حساب مزودك. تعني 0 بلا حد.',
   'Max message length': 'الحد الأقصى لطول الرسالة',
   'How long a message, refinement or review note can be.': 'كم يمكن أن يطول نص رسالة أو طلب تعديل أو ملاحظة مراجعة.',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': 'الراحة بعد هذه المجموعة',
 }

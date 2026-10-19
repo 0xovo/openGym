@@ -2484,4 +2484,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': 'โค้ชแต่ละครั้งคือหนึ่งคำขอในบัญชีผู้ให้บริการของคุณ 0 หมายถึงไม่จำกัด',
   'Max message length': 'ความยาวข้อความสูงสุด',
   'How long a message, refinement or review note can be.': 'ข้อความ คำขอปรับแก้ หรือบันทึกการวิเคราะห์ยาวได้เท่าใด',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': 'พักหลังเซ็ตนี้',
 }

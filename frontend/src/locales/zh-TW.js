@@ -2466,4 +2466,6 @@ export default {
   'Every Coach run is one request on your provider account. 0 means no limit.': '教練每執行一次，就會向你的提供商帳戶發出一次請求。0 代表不限制。',
   'Max message length': '最大訊息長度',
   'How long a message, refinement or review note can be.': '訊息、修改要求或評論備註可以有多長。',
+  // --- one set's own rest (#609) ---
+  'Rest after this set': '這一組後的休息',
 }
