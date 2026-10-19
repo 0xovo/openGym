@@ -94,6 +94,8 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   session opens at it unless last time had a grade of its own, and it travels in shared plans.
 - Exercise names on the Lock Screen, in the Dynamic Island, on the Apple Watch and in the widgets
   are title-cased like in the app, instead of whispering "barbell bench press".
+- Focus mode: the exercise's ⋯ menu has Add set and Add warm-up set, so one more set no longer
+  means a trip to the Cards layout.
 - A weight change too small to show (say 0.03 kg) reads 0 instead of a lonely "-0".
 - Admin → AI Coach: the Remove button for the stored key is red now, like every other button
   that deletes something for good.

@@ -108,7 +108,7 @@ function PlateBadge({ S, entry, set }) {
 
 export default function FocusView({
   entryIdx, unit, onToggle, onToggleSide, onField, onMutateSet, onStartTimed,
-  onAddWarmup, onRemoveSetAt, onProgressionSettings, onSwap, onRemoveExercise,
+  onAddSet, onAddWarmup, onRemoveSetAt, onProgressionSettings, onSwap, onRemoveExercise,
   onNoProg, busy, onSelectEntry, onAdvanceUnit, onPairPrev, onPairNext, onUnpair, pointerEpoch,
 }) {
   const S = useStore(state => state.S)
@@ -219,9 +219,15 @@ export default function FocusView({
 
   const openEffort = () => effortPickerSheet(effort, effortValue, value => onField(setIdx, effortField, value))
 
+  // One more set, or a warm-up in front, like the Cards layout's buttons (Discord: "how do I add an
+  // extra set?"). The set on screen goes back to the next one to do, which is the new set once the
+  // others are done; a stored pointer would also sit on the wrong row after a warm-up goes in front.
+  const addRow = add => () => { add(); clearPointer(entryIdx) }
   const openExerciseMenu = () => menuSheet({
     title: exerciseNameFor(exOr(entry.id)),
     items: [
+      { icon: 'plus', label: t('Add set'), onClick: addRow(onAddSet) },
+      { icon: 'sunrise', label: t('Add warm-up set'), onClick: addRow(onAddWarmup) },
       { icon: 'pencil', label: entry.note ? t('Edit note') : t('Add note'), onClick: () => exerciseNoteSheet(entryIdx) },
       { icon: 'info', label: t('Details'), onClick: () => exerciseDetailSheet(exOr(entry.id)) },
       { icon: 'history', label: t('History'), onClick: () => exerciseHistorySheet(entry.id) },
