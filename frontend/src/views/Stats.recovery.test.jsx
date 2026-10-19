@@ -104,13 +104,13 @@ function lifecycleWorkouts(now = BASE_NOW) {
   ]
 }
 
-function allFatiguedWorkout(now = BASE_NOW) {
+function allFatiguedWorkout(now = BASE_NOW, wid = 'all-fatigued') {
   const ids = [
     '1018', '1012', '1167', '1013', '3011', '1413', '1399', '1016', '1005',
     '1010', '1003', '1001', '1511', '1494', '1002', '1000', '1396',
   ]
   return workout(
-    'all-fatigued',
+    wid,
     now,
     ids.map(id => entry(id, Array.from({ length: 12 }, () => set(true)))),
   )
@@ -324,7 +324,7 @@ describe('Stats muscle recovery view runtime', () => {
   it('renders fixed absolute bands through the actual Fatigue and Strength views', async () => {
     // Two back-to-back full sessions: even 0.4-weighted secondary movers accumulate
     // 2 x 12 x 0.4 / 8 = 1.2 raw units, clearing the top band everywhere.
-    resetFixture([allFatiguedWorkout(), allFatiguedWorkout()])
+    resetFixture([allFatiguedWorkout(), allFatiguedWorkout(BASE_NOW, 'all-fatigued-2')])
     await mountStats()
     await click(viewButton('Fatigue'))
     const fatigueMap = lastMap()

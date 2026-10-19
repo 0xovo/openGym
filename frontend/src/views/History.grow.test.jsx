@@ -40,6 +40,7 @@ const rows = host => host.querySelectorAll('.list .item').length
 describe('History grows as it is scrolled', () => {
   let History, PAGE
   beforeEach(async () => {
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
     vi.resetModules()
     observers = []
     window.IntersectionObserver = FakeIO

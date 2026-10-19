@@ -21,6 +21,8 @@ function renderTopSheet() {
   mounted.push(root)
   act(() => root.render(sheet.render(() => useUI.getState().closeSheet(sheet.id))))
 }
+// The photo section asks the media store whether it can keep files; let that answer land.
+const settle = () => act(async () => {})
 const button = text => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === text)
 
 function install(entries) {
@@ -36,6 +38,7 @@ const bench = { id: '0025', rid: 'r1', target: { sets: 1, reps: 5, weight: 60 },
 const raise = { id: '0334', rid: 'r1', addedInSession: true, target: { sets: 2, reps: 12, weight: 8 }, sets: [{ w: 8, r: 12, done: true }, { w: 8, r: 12, done: true }] }
 
 beforeEach(() => {
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
   localStorage.clear()
   useUI.setState({ sheets: [], timer: null, work: null })
 })
@@ -45,10 +48,11 @@ afterEach(() => {
 })
 
 describe('finish summary: keep an added exercise in the routine', () => {
-  it('offers it, and one tap adds it with the setup of the session', () => {
+  it('offers it, and one tap adds it with the setup of the session', async () => {
     install([clone(bench), clone(raise)])
     act(() => finishWorkoutNow())
     renderTopSheet()
+    await settle()
     expect(host.querySelector('[data-keep-in-routine]')).toBeTruthy()
     // Nothing changed yet: the offer is only an offer.
     expect(S().routines[0].ex.map(x => x.id)).toEqual(['0025'])
@@ -60,10 +64,11 @@ describe('finish summary: keep an added exercise in the routine', () => {
     expect(JSON.stringify(S().workouts.at(-1))).not.toContain('addedInSession')
   })
 
-  it('says nothing when the session added nothing', () => {
+  it('says nothing when the session added nothing', async () => {
     install([clone(bench)])
     act(() => finishWorkoutNow())
     renderTopSheet()
+    await settle()
     expect(host.querySelector('[data-keep-in-routine]')).toBeNull()
   })
 })
