@@ -108,6 +108,16 @@ describe('the workout CSV', () => {
     expect(hold[col('reps')]).toBe('')
   })
 
+  it('rounds the distance instead of writing float noise, but never so far the speed changes', () => {
+    const km = sets => parseCSV(workoutsCSV({ unit: 'kg', workouts: [{ id: 'c', d: '2026-03-04', start: 1, entries: [{ id: '3666', sets }] }] }))
+      .slice(1).map(r => r[col('distance_km')])
+    // 25 min at 11.3 km/h is 4.708333 km; a one-minute set at 9.4 needs four to read 9.4 again.
+    expect(km([{ min: 25, speed: 11.3, done: true }, { min: 1, speed: 9.4, done: true }, { min: 30, speed: 10, done: true }]))
+      .toEqual(['4.71', '0.1567', '5'])
+    const back = parseWorkoutCSV(workoutsCSV({ unit: 'kg', workouts: [{ id: 'c', d: '2026-03-04', start: 1, entries: [{ id: '3666', sets: [{ min: 25, speed: 11.3, done: true }, { min: 1, speed: 9.4, done: true }, { min: 0.5, speed: 12.5, done: true }] }] }] }), { unit: 'kg' })
+    expect(back.workouts[0].entries[0].sets.map(s => s.speed)).toEqual([11.3, 9.4, 12.5])
+  })
+
   it('survives commas, quotes and line breaks in names and notes', () => {
     const grip = body.find(r => r[col('exercise_id')] === 'cx1')
     expect(grip[col('exercise')]).toBe('Grip Trainer, "Heavy"')

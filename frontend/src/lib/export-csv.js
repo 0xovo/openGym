@@ -47,6 +47,23 @@ const stamp = ms => {
   return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}`
 }
 
+/**
+ * A cardio set's distance, as short as it can be: speed × minutes is 4.708333 km for 25 minutes at
+ * 11.3, which nobody wants in a spreadsheet. Two decimals (ten metres) mostly do; a short set
+ * gets more, as many as our importer needs to read the same speed back (it rounds to 0.01 km/h).
+ */
+function distanceKm(s) {
+  const min = Number(s.min) || 0, speed = Number(s.speed) || 0
+  const km = speed * min / 60
+  if (!(km > 0)) return '0'
+  const back = x => Math.round(x / (min / 60) * 100)
+  for (let d = 2; d < 6; d++) {
+    const r = Math.round(km * 10 ** d) / 10 ** d
+    if (back(r) === Math.round(speed * 100)) return String(r)
+  }
+  return n(km)
+}
+
 /** Workouts whose day falls inside [from, to] (ISO days, either may be null for open), oldest first. */
 const workoutsIn = (S, from, to) => (S.workouts || [])
   .filter(w => { const d = workoutDay(w); return d && (!from || d >= from) && (!to || d <= to) })
@@ -85,8 +102,7 @@ export function workoutRows(S, { from = null, to = null } = {}) {
         no++
         const type = isWarmupRow(s) ? 'warmup' : isFailureSet(s) ? 'failure' : 'normal'
         if (cardio(s)) {
-          const km = (Number(s.speed) || 0) * (Number(s.min) || 0) / 60
-          push([no, type, '', '', unit, '', '', '', n(km) || '0', n(Math.round((Number(s.min) || 0) * 60)), s.incline != null ? n(s.incline) : ''])
+          push([no, type, '', '', unit, '', '', '', distanceKm(s), n(Math.round((Number(s.min) || 0) * 60)), s.incline != null ? n(s.incline) : ''])
           continue
         }
         const effort = x => [x.rpe != null ? n(x.rpe) : '', x.rir != null ? n(x.rir) : '']
