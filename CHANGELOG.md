@@ -70,6 +70,14 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 **Fixes**
 - **Rest days in the rotation**, and the same routine more than once (A → B → C → B → D): Add
   offers a rest day and every routine, including the ones already in the loop (#536).
+- Your lats show up: the upper back is "Lats & upper back" in Stats, on the body map and in the
+  custom exercise muscle picker (#607, thanks @Parth-Vasave).
+- Coach questionnaire: the weekdays picked for you follow the number of training days, and days
+  you picked yourself stay put (#620, thanks @Jul11us).
+- German: the three lever leg curls say Beinbeugen now, not Beinstrecken like the leg extension
+  (#631, thanks @AkashBhat14 and @choksi2212).
+- Collapse completed exercises: a finished exercise folds up and the ones after it move up with
+  it, no more black gap (#642, thanks @dpatrongomez).
 - Cardio the Coach prescribes on a non-cardio exercise (kettlebell swings for 15 minutes) stays
   15 minutes instead of turning into sets with no target, in new plans, in review additions and
   in shared plan files (#640, thanks @rudycelekli for spotting the review side).
