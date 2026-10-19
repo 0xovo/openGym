@@ -1621,6 +1621,8 @@ export const PT_BR_OVERRIDES = {
   'Added to “{0}”': 'Adicionado a “{0}”',
   'Add it to “{1}”': 'Adicionar a “{1}”',
   'Add them to “{1}”': 'Adicionar todos a “{1}”',
+  'Thinking about your question…': 'Pensando na sua pergunta…',
+  'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Esta é a demo, então não há nenhum modelo de IA por trás de mim. No seu próprio servidor eu respondo perguntas como “{0}” com o seu plano, suas últimas sessões e o treino que você está fazendo agora.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

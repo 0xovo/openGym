@@ -2554,4 +2554,6 @@ export default {
   'Added to “{0}”': '“{0}” rutinine eklendi',
   'Add it to “{1}”': '“{1}” rutinine ekle',
   'Add them to “{1}”': 'Hepsini “{1}” rutinine ekle',
+  'Thinking about your question…': 'Sorunu düşünüyorum…',
+  'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'Bu bir demo, yani arkamda bir yapay zekâ modeli yok. Kendi sunucunda “{0}” gibi sorulara planın, son antrenmanların ve şu anda yaptığın antrenmanla cevap veririm.',
 }

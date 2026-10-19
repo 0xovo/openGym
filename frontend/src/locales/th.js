@@ -2565,4 +2565,6 @@ export default {
   'Added to “{0}”': 'เพิ่มใน “{0}” แล้ว',
   'Add it to “{1}”': 'เพิ่มใน “{1}”',
   'Add them to “{1}”': 'เพิ่มทั้งหมดใน “{1}”',
+  'Thinking about your question…': 'กำลังคิดเรื่องคำถามของคุณ…',
+  'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'นี่คือเดโม จึงไม่มีโมเดล AI อยู่เบื้องหลัง บนเซิร์ฟเวอร์ของคุณเอง ฉันจะตอบคำถามอย่าง “{0}” โดยใช้แผน เซสชันล่าสุด และการออกกำลังกายที่คุณกำลังทำอยู่',
 }

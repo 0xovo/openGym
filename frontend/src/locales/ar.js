@@ -2609,4 +2609,6 @@ export default {
   'Added to “{0}”': 'أُضيف إلى «{0}»',
   'Add it to “{1}”': 'أضِفه إلى «{1}»',
   'Add them to “{1}”': 'أضِفها إلى «{1}»',
+  'Thinking about your question…': 'أفكر في سؤالك…',
+  'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'هذا هو العرض التجريبي، لذا لا يوجد نموذج ذكاء اصطناعي خلفي. على خادمك الخاص أجيب عن أسئلة مثل «{0}» بالاعتماد على خطتك وجلساتك الأخيرة والتمرين الذي تقوم به الآن.',
 }

@@ -2554,4 +2554,6 @@ export default {
   'Added to “{0}”': '已加入「{0}」',
   'Add it to “{1}”': '加入「{1}」',
   'Add them to “{1}”': '全部加入「{1}」',
+  'Thinking about your question…': '正在思考你的问题…',
+  'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': '这是演示版，我背后没有 AI 模型。在你自己的服务器上，我会结合你的计划、最近几次训练和你正在进行的训练，回答像“{0}”这样的问题。',
 }

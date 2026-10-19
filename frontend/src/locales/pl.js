@@ -2554,4 +2554,6 @@ export default {
   'Added to “{0}”': 'Dodano do „{0}”',
   'Add it to “{1}”': 'Dodaj do „{1}”',
   'Add them to “{1}”': { one: 'Dodaj do „{1}”', few: 'Dodaj wszystkie do „{1}”', many: 'Dodaj wszystkie do „{1}”' },
+  'Thinking about your question…': 'Myślę nad Twoim pytaniem…',
+  'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'To jest demo, więc nie stoi za mną żaden model AI. Na Twoim własnym serwerze odpowiadam na pytania w rodzaju „{0}”, korzystając z Twojego planu, ostatnich sesji i treningu, który właśnie robisz.',
 }

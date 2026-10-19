@@ -2554,4 +2554,6 @@ export default {
   'Added to “{0}”': '“{0}” में जोड़ा गया',
   'Add it to “{1}”': '“{1}” में जोड़ें',
   'Add them to “{1}”': 'सभी को “{1}” में जोड़ें',
+  'Thinking about your question…': 'आपके सवाल पर सोच रहा हूँ…',
+  'This is the demo, so there is no AI model behind me. On your own server I answer questions like “{0}” with your plan, your last sessions and the workout you are doing right now.': 'यह डेमो है, इसलिए मेरे पीछे कोई AI मॉडल नहीं है। आपके अपने सर्वर पर मैं “{0}” जैसे सवालों का जवाब आपकी योजना, पिछले सेशन और अभी चल रहे वर्कआउट के आधार पर देता हूँ।',
 }
