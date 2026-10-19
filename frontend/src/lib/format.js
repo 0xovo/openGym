@@ -72,7 +72,8 @@ export const setWeightDecimals = n => { decimals = n === 2 ? 2 : 1 }
 export const weightDecimals = () => decimals
 export const fmtNum = n => {
   const p = decimals === 2 ? 100 : 10
-  return formatter(Intl.NumberFormat, dateLocale(), decimals === 2 ? NUM_2 : NUM_1).format(Math.round(n * p) / p)
+  // `+ 0` turns a -0 into 0: a change that rounds away ("-0.03") printed "-0".
+  return formatter(Intl.NumberFormat, dateLocale(), decimals === 2 ? NUM_2 : NUM_1).format(Math.round(n * p) / p + 0)
 }
 const NUM_1 = { maximumFractionDigits: 1 }
 const NUM_2 = { maximumFractionDigits: 2 }
