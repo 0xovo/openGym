@@ -471,6 +471,7 @@ export default {
   'Import failed: {0}': '匯入失敗：{0}',
   'Tip': '秘訣提示',
   'In Chrome: ⋮ menu → Add to Home screen': '在 Chrome 中：點擊選單 ⋮ → 加入主畫面',
+  'In Chrome or Edge: the install icon in the address bar': '在 Chrome 或 Edge 中：網址列中的安裝圖示',
   'In Safari: Share → Add to Home Screen': '在 Safari 中：點擊分享按鈕 → 加入主畫面',
   'to install openGym as a full-screen app.': '即可將 openGym 當作全螢幕 App 安裝使用。',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': '你的資料會隨個人檔案同步。在任何地方登入，資料都在。',

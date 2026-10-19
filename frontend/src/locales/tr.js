@@ -479,6 +479,7 @@ export default {
   'Import failed: {0}': 'İçe aktarma başarısız: {0}',
   'Tip': 'İpucu',
   'In Chrome: ⋮ menu → Add to Home screen': 'Chrome’da: ⋮ menü → Ana ekrana ekle',
+  'In Chrome or Edge: the install icon in the address bar': 'Chrome veya Edge’de: adres çubuğundaki yükle simgesi',
   'In Safari: Share → Add to Home Screen': 'Safari’de: Paylaş → Ana Ekrana Ekle',
   'to install openGym as a full-screen app.': 'ile openGym’i tam ekran uygulama olarak kurabilirsin.',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': 'Verilerin profilinle eşitlenir. Nereden giriş yaparsan yap, oradadır.',

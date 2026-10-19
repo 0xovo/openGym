@@ -479,6 +479,7 @@ export default {
   'Import failed: {0}': 'Importação falhou: {0}',
   'Tip': 'Dica',
   'In Chrome: ⋮ menu → Add to Home screen': 'No Chrome: menu ⋮ → Adicionar ao ecrã principal',
+  'In Chrome or Edge: the install icon in the address bar': 'No Chrome ou Edge: o ícone de instalar na barra de endereço',
   'In Safari: Share → Add to Home Screen': 'No Safari: Partilhar → Adicionar ao ecrã principal',
   'to install openGym as a full-screen app.': 'para instalar o openGym como app em ecrã inteiro.',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': 'Os teus dados sincronizam com o teu perfil. Inicia sessão em qualquer lado e estão lá.',

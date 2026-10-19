@@ -476,6 +476,7 @@ export default {
   'Import failed: {0}': 'Az importálás sikertelen: {0}',
   'Tip': 'Tipp',
   'In Chrome: ⋮ menu → Add to Home screen': 'Chrome-ban: ⋮ menü → Hozzáadás a kezdőképernyőhöz',
+  'In Chrome or Edge: the install icon in the address bar': 'Chrome-ban vagy Edge-ben: a címsorban lévő telepítés ikon',
   'In Safari: Share → Add to Home Screen': 'Safariban: Megosztás → Hozzáadás a kezdőképernyőhöz',
   'to install openGym as a full-screen app.': 'hogy az openGym-et teljes képernyős appként telepítsd.',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': 'Az adataid szinkronizálódnak a profiloddal. Jelentkezz be bárhol, és ott lesznek.',

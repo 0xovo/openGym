@@ -479,6 +479,7 @@ export default {
   'Import failed: {0}': '가져오기 실패: {0}',
   'Tip': '팁',
   'In Chrome: ⋮ menu → Add to Home screen': 'Chrome에서: ⋮ 메뉴 → 홈 화면에 추가',
+  'In Chrome or Edge: the install icon in the address bar': 'Chrome 또는 Edge에서: 주소창의 설치 아이콘',
   'In Safari: Share → Add to Home Screen': 'Safari에서: 공유 → 홈 화면에 추가',
   'to install openGym as a full-screen app.': '하면 openGym을 전체 화면 앱으로 설치할 수 있어요.',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': '데이터가 프로필과 동기화돼요. 어디서 로그인해도 그대로 있어요.',

@@ -476,6 +476,7 @@ export default {
   'Import failed: {0}': 'นำเข้าไม่สำเร็จ: {0}',
   'Tip': 'เคล็ดลับ',
   'In Chrome: ⋮ menu → Add to Home screen': 'ใน Chrome: เมนู ⋮ → เพิ่มไปยังหน้าจอหลัก',
+  'In Chrome or Edge: the install icon in the address bar': 'ใน Chrome หรือ Edge: ไอคอนติดตั้งในแถบที่อยู่',
   'In Safari: Share → Add to Home Screen': 'ใน Safari: แชร์ → เพิ่มไปยังหน้าจอโฮม',
   'to install openGym as a full-screen app.': 'เพื่อติดตั้ง openGym เป็นแอปเต็มหน้าจอ',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': 'ข้อมูลของคุณซิงค์กับโปรไฟล์ เข้าสู่ระบบที่ไหนก็เจอข้อมูล',

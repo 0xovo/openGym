@@ -479,6 +479,7 @@ export default {
   'Import failed: {0}': 'आयात विफल: {0}',
   'Tip': 'सुझाव',
   'In Chrome: ⋮ menu → Add to Home screen': 'Chrome में: ⋮ मेनू → होम स्क्रीन पर जोड़ें',
+  'In Chrome or Edge: the install icon in the address bar': 'Chrome या Edge में: एड्रेस बार में इंस्टॉल आइकन',
   'In Safari: Share → Add to Home Screen': 'Safari में: शेयर → होम स्क्रीन पर जोड़ें',
   'to install openGym as a full-screen app.': 'से openGym को फुल-स्क्रीन ऐप के रूप में इंस्टॉल करें।',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': 'आपका डेटा प्रोफ़ाइल से सिंक होता है। कहीं भी साइन इन करें, सब वहीं मिलेगा।',

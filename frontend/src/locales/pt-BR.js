@@ -163,6 +163,7 @@ export const PT_BR_OVERRIDES = {
   'This replaces all current data with the backup file.': 'Isso substitui todos os dados atuais pelo arquivo de backup.',
   'Backup imported': 'Backup importado',
   'In Chrome: ⋮ menu → Add to Home screen': 'No Chrome: menu ⋮ → Adicionar à tela inicial',
+  'In Chrome or Edge: the install icon in the address bar': 'No Chrome ou Edge: o ícone de instalar na barra de endereço',
   'In Safari: Share → Add to Home Screen': 'No Safari: Compartilhar → Adicionar à Tela de Início',
   'Your data syncs with your profile. Sign in anywhere and it’s there.': 'Seus dados sincronizam com o seu perfil. Entre em qualquer lugar e eles estão lá.',
   'Guest data stays on this device, so export a backup now and then!': 'Os dados de visitante ficam neste dispositivo, então exporte um backup de vez em quando!',
