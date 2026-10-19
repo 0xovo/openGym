@@ -63,7 +63,7 @@ export function CsvExportSheet({ close }) {
     </div>
     <Button icon="share" onClick={() => save('body')}>{t('Body weight & measurements (CSV)')}</Button>
     <div className="small dim" style={{ margin: '4px 2px 0' }} data-csv-count="body">
-      {tn('{0} weigh-in', '{0} weigh-ins', counts.weighIns) + ' · ' + tn('{0} measurement', '{0} measurements', counts.measurements)}
+      {tn('{0} weigh-in', '{0} weigh-ins', counts.weighIns) + (counts.measurements ? ' · ' + tn('{0} measurement', '{0} measurements', counts.measurements) : '')}
     </div>
   </>
 }

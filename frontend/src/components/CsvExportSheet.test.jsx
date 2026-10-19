@@ -63,6 +63,10 @@ describe('CsvExportSheet', () => {
     expect(count('body')).toBe('1 weigh-in · 1 measurement')
   })
 
+  it('leaves measurements out of the line when there are none', () => {
+    expect(count('body')).toBe('1 weigh-in')
+  })
+
   it('shares the workouts file on the phone, named by the day', async () => {
     act(() => button('4 weeks').click())
     act(() => button('Workouts (CSV)').click())
