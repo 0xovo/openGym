@@ -93,6 +93,10 @@ export function registerCustom(list) {
   xs.forEach(e => { EXIDX[e.id] = e })
 }
 
+// A built-in catalogue entry itself (never a copy, a snapshot or a custom one). Those objects never
+// change while the app runs, so what is derived from them alone can be remembered (muscles.js).
+export const isBuiltinEx = ex => BUILTIN.has(ex)
+
 // Whether an exercise is one of the user's own (#378, #358). Where it lives decides, not the
 // `custom` flag alone: a plan import before 1.3.8 (a shared plan file, a plan from the AI coach)
 // stored its exercises without the flag, and those were left with no Edit, no Delete and a

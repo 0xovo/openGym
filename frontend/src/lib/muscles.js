@@ -8,7 +8,7 @@
 // ankles, "cardiovascular system") maps to null and is dropped rather than guessed at.
 
 import { isWarmupRow } from './workout-model.js'
-import { EXIDX, smOf } from './exercises.js'
+import { EXIDX, smOf, isBuiltinEx } from './exercises.js'
 import { todayISO, weekKey, MONDAY } from './format.js'
 import { queueOf } from './queue.js'
 import { workoutAt } from './history.js'
@@ -186,9 +186,24 @@ export function matchesMuscleGroups(ex, requested) {
   return wanted.some(group => groups.has(group))
 }
 
+// Fatigue, strength and the balance map ask for the muscles of every entry of every workout on
+// each Stats render. A catalogue exercise always answers the same, so its answer is kept (and
+// handed out as a copy, since callers are free to change what they get).
+const builtinWeights = new WeakMap()
+const builtinMuscles = new WeakMap()
+
 /** Complete muscle-weight metadata, including explicit zero-credit associations. */
 export function muscleWeightsOf(ex) {
   if (!ex) return {}
+  if (isBuiltinEx(ex)) {
+    let w = builtinWeights.get(ex)
+    if (!w) builtinWeights.set(ex, w = weightsOf(ex))
+    return { ...w }
+  }
+  return weightsOf(ex)
+}
+
+function weightsOf(ex) {
   const sourceEx = metadataOf(ex)
   if (sourceEx !== ex) return muscleWeightsOf(sourceEx)
   if (ex.muscleWeights && typeof ex.muscleWeights === 'object' && !Array.isArray(ex.muscleWeights)) {
@@ -223,8 +238,14 @@ export function muscleWeightsOf(ex) {
 
 /** Muscles one exercise trains: positive effective stimulus only. */
 export function musclesOf(ex) {
-  return Object.fromEntries(Object.entries(muscleWeightsOf(ex)).filter(([, weight]) => weight > 0))
+  if (ex && isBuiltinEx(ex)) {
+    let m = builtinMuscles.get(ex)
+    if (!m) builtinMuscles.set(ex, m = positiveOf(muscleWeightsOf(ex)))
+    return { ...m }
+  }
+  return positiveOf(muscleWeightsOf(ex))
 }
+const positiveOf = weights => Object.fromEntries(Object.entries(weights).filter(([, weight]) => weight > 0))
 
 /** Snapshot display and weighted muscle metadata into a completed history entry. */
 export function exerciseMuscleSnapshot(ex) {

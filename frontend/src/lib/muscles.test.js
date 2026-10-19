@@ -302,3 +302,24 @@ describe('MUSCLE_NAME as i18n keys', () => {
     }
   })
 })
+
+// Catalogue answers are remembered for Stats (muscleWeightsOf/musclesOf run per entry of every
+// workout); what a caller gets is still its own object, and anything not built in is read fresh.
+describe('remembered catalogue muscles', () => {
+  it('hands out an equal copy each time, so a caller changing it changes nothing', () => {
+    const ex = EXIDX['0025']
+    const a = musclesOf(ex), b = muscleWeightsOf(ex)
+    expect(Object.keys(a).length).toBeGreaterThan(0)
+    a.chest = 99; b.chest = 99; a.made_up = 1
+    expect(musclesOf(ex)).not.toBe(a)
+    expect(musclesOf(ex)).toEqual(musclesOf({ ...ex }))
+    expect(muscleWeightsOf(ex)).toEqual(muscleWeightsOf({ ...ex }))
+  })
+
+  it('reads an exercise of your own again after you edit it', () => {
+    const own = { id: 'c-q1', n: 'Mine', tg: 'pectorals' }
+    expect(Object.keys(musclesOf(own))).toEqual(['chest'])
+    own.tg = 'biceps'
+    expect(Object.keys(musclesOf(own))).toEqual(['biceps'])
+  })
+})
