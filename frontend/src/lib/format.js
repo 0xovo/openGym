@@ -151,7 +151,22 @@ export function startOfWeek(iso, ws = MONDAY) {
  * to be an ISO week number, and being one would be a liability here: "2026-35" is defined
  * Monday-first, and there is no Sunday-first equivalent to fall back to.
  */
-export const weekKey = (iso, ws = MONDAY) => isoOf(startOfWeek(iso, ws))
+//
+// Memoised: Home's streak and week tally and Stats' weekly charts ask it for every workout on
+// every render, and each call parses a Date. The answer only depends on the calendar date and
+// the week start (noon local, so not on the time zone), so a string date is safe to remember.
+const weekKeys = new Map()
+export const weekKey = (iso, ws = MONDAY) => {
+  if (typeof iso !== 'string') return isoOf(startOfWeek(iso, ws))
+  const k = ws + '|' + iso
+  let v = weekKeys.get(k)
+  if (v === undefined) {
+    if (weekKeys.size >= 20000) weekKeys.clear()
+    v = isoOf(startOfWeek(iso, ws))
+    weekKeys.set(k, v)
+  }
+  return v
+}
 
 export const localTZ = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' } catch { return 'UTC' } }
 
