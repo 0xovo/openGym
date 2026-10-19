@@ -90,6 +90,8 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - Jumping jacks, burpees and the other cardio moves can be counted in sets x reps (or timed):
   their settings now offer Cardio, Reps and Time, Cardio still the default (#678).
 - Add exercise → By muscle has the Favourites chip too, for the muscle you picked (#669).
+- A treadmill's incline can be set in its settings in the routine, not only mid-workout. The
+  session opens at it unless last time had a grade of its own, and it travels in shared plans.
 - A weight change too small to show (say 0.03 kg) reads 0 instead of a lonely "-0".
 - Admin → AI Coach: the Remove button for the stored key is red now, like every other button
   that deletes something for good.

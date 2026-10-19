@@ -21,6 +21,7 @@ import { uid, todayISO, DAYN, weekOrder, weekStartOf, exCount, routineCount } fr
 import { t, exerciseNameFor, exerciseNameClass } from './i18n-core.js'
 import { convertWeight } from './units.js'
 import { fmtSpeed, speedUnitOf } from './speed.js'
+import { clampIncline, hasIncline } from './incline.js'
 import { MUSCLES, inMuscleOrder } from './muscles.js'
 import { SG_NAME_MAX } from './superset-meta.js'
 import { esc, printShell, printDocument, probeMarks } from './print-doc.js'
@@ -79,6 +80,7 @@ function cleanEx(e) {
     o.mode = 'cardio'
     if (e.min != null) o.min = e.min
     if (e.speed != null) o.speed = e.speed
+    if (hasIncline(e)) o.incline = clampIncline(e.incline)
   } else if (mode === 'time') {
     // Written out even though 'reps' is the fallback for a non-cardio id: a plan file that
     // dropped the mode would turn a 45-second plank into a 45-rep one at the other end.
@@ -273,6 +275,7 @@ export function parsePlan(raw, destinationUnit = 'kg') {
       const warmRest = cleanRestSec(e.warmupRestSec)
       const warmOff = e.warmupRestOff === true
       const sideRest = cleanRestSec(e.sideRestSec)
+      const incline = clampIncline(e.incline)
       // Planned substitutes: the catalogue's only, as they are exported.
       const subs = cleanBackups(Array.isArray(e.subs) ? e.subs.map(x => (typeof x === 'string' ? canonicalExId(x) : x)) : [], known.has(e.id) ? e.id : canonicalExId(e.id), x => !known.has(x) && !!EXIDX[x] && !isCustomEx(EXIDX[x]))
       // Superset meta only means something on a member of a superset; on a lone exercise it is dropped.
@@ -281,9 +284,9 @@ export function parsePlan(raw, destinationUnit = 'kg') {
       const pyramid = normalizePyramid(e.pyramid)
       const pyramidRest = pyramid.length ? normalizePyramidRest(e.pyramidRest, pyramid.length) : []
       const pyramidWeight = pyramid.length ? normalizePyramidWeight(e.pyramidWeight, pyramid.length) : []
-      const { warmupSets, intensifier, restSec, warmupRestSec, warmupRestOff: _warmOff, sideRestSec: _sideRest, subs: _subs, pyramid: _pyramid, pyramidRest: _pyramidRest, pyramidWeight: _pyramidWeight, sgName: _sgName, sgRest: _sgRest, ...passthrough } = e
+      const { warmupSets, intensifier, restSec, warmupRestSec, warmupRestOff: _warmOff, sideRestSec: _sideRest, subs: _subs, pyramid: _pyramid, pyramidRest: _pyramidRest, pyramidWeight: _pyramidWeight, sgName: _sgName, sgRest: _sgRest, incline: _incline, ...passthrough } = e
       if (!known.has(passthrough.id)) passthrough.id = canonicalExId(passthrough.id)
-      return convertedExercise({ ...passthrough, ...(pyramid.length ? { pyramid } : {}), ...(pyramidRest.length ? { pyramidRest } : {}), ...(pyramidWeight.length ? { pyramidWeight } : {}), ...(warm ? { warmupSets: warm } : {}), ...(intens ? { intensifier: intens } : {}), ...(rest ? { restSec: rest } : {}), ...(warmOff ? { warmupRestOff: true } : warmRest ? { warmupRestSec: warmRest } : {}), ...(sideRest ? { sideRestSec: sideRest } : {}), ...(subs.length ? { subs } : {}), ...(sgName ? { sgName } : {}), ...(sgRest ? { sgRest } : {}) }, sourceUnit || destination, destination)
+      return convertedExercise({ ...passthrough, ...(pyramid.length ? { pyramid } : {}), ...(pyramidRest.length ? { pyramidRest } : {}), ...(pyramidWeight.length ? { pyramidWeight } : {}), ...(warm ? { warmupSets: warm } : {}), ...(intens ? { intensifier: intens } : {}), ...(rest ? { restSec: rest } : {}), ...(warmOff ? { warmupRestOff: true } : warmRest ? { warmupRestSec: warmRest } : {}), ...(sideRest ? { sideRestSec: sideRest } : {}), ...(subs.length ? { subs } : {}), ...(sgName ? { sgName } : {}), ...(sgRest ? { sgRest } : {}), ...(incline > 0 ? { incline } : {}) }, sourceUnit || destination, destination)
     })
   }))
   return {
