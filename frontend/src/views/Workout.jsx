@@ -1807,6 +1807,8 @@ function ActiveWorkout() {
       if (m === 'time' && partner && !partner.done) {
         const pause = sideRestFor(fresh.entries[idx].target, { timed: true, restAfter, switchSec: SWITCH_SIDES_SEC })
         if (pause > 0) { startRest(pause, idx, { kind: 'switch', forSet: i }); return }
+        // "No timer" between sides: straight on to the other side, the set's rest still to come.
+        if (fresh.entries[idx].target?.sideRestOff === true) { stopRest(); return }
       }
 
       // Singleton units are ordinary exercises: they rest between sets and after the closing

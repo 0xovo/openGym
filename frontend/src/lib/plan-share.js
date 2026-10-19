@@ -133,7 +133,8 @@ function cleanEx(e) {
   const subs = cleanBackups(e.subs, e.id, id => !!EXIDX[id] && !isCustomEx(EXIDX[id]))
   if (subs.length) o.subs = subs
   if (e.warmupRestOff === true) o.warmupRestOff = true
-  if (e.side && e.sideRestSec > 0) o.sideRestSec = e.sideRestSec
+  if (e.side && e.sideRestOff === true) o.sideRestOff = true
+  else if (e.side && e.sideRestSec > 0) o.sideRestSec = e.sideRestSec
   if (e.sg) {
     o.sg = e.sg
     // A superset's name and its rest between rounds (#292) ride on every member, so they travel
@@ -275,6 +276,7 @@ export function parsePlan(raw, destinationUnit = 'kg') {
       const warmRest = cleanRestSec(e.warmupRestSec)
       const warmOff = e.warmupRestOff === true
       const sideRest = cleanRestSec(e.sideRestSec)
+      const sideOff = !!e.side && e.sideRestOff === true
       const incline = clampIncline(e.incline)
       // Planned substitutes: the catalogue's only, as they are exported.
       const subs = cleanBackups(Array.isArray(e.subs) ? e.subs.map(x => (typeof x === 'string' ? canonicalExId(x) : x)) : [], known.has(e.id) ? e.id : canonicalExId(e.id), x => !known.has(x) && !!EXIDX[x] && !isCustomEx(EXIDX[x]))
@@ -284,9 +286,9 @@ export function parsePlan(raw, destinationUnit = 'kg') {
       const pyramid = normalizePyramid(e.pyramid)
       const pyramidRest = pyramid.length ? normalizePyramidRest(e.pyramidRest, pyramid.length) : []
       const pyramidWeight = pyramid.length ? normalizePyramidWeight(e.pyramidWeight, pyramid.length) : []
-      const { warmupSets, intensifier, restSec, warmupRestSec, warmupRestOff: _warmOff, sideRestSec: _sideRest, subs: _subs, pyramid: _pyramid, pyramidRest: _pyramidRest, pyramidWeight: _pyramidWeight, sgName: _sgName, sgRest: _sgRest, incline: _incline, ...passthrough } = e
+      const { warmupSets, intensifier, restSec, warmupRestSec, warmupRestOff: _warmOff, sideRestSec: _sideRest, sideRestOff: _sideOff, subs: _subs, pyramid: _pyramid, pyramidRest: _pyramidRest, pyramidWeight: _pyramidWeight, sgName: _sgName, sgRest: _sgRest, incline: _incline, ...passthrough } = e
       if (!known.has(passthrough.id)) passthrough.id = canonicalExId(passthrough.id)
-      return convertedExercise({ ...passthrough, ...(pyramid.length ? { pyramid } : {}), ...(pyramidRest.length ? { pyramidRest } : {}), ...(pyramidWeight.length ? { pyramidWeight } : {}), ...(warm ? { warmupSets: warm } : {}), ...(intens ? { intensifier: intens } : {}), ...(rest ? { restSec: rest } : {}), ...(warmOff ? { warmupRestOff: true } : warmRest ? { warmupRestSec: warmRest } : {}), ...(sideRest ? { sideRestSec: sideRest } : {}), ...(subs.length ? { subs } : {}), ...(sgName ? { sgName } : {}), ...(sgRest ? { sgRest } : {}), ...(incline > 0 ? { incline } : {}) }, sourceUnit || destination, destination)
+      return convertedExercise({ ...passthrough, ...(pyramid.length ? { pyramid } : {}), ...(pyramidRest.length ? { pyramidRest } : {}), ...(pyramidWeight.length ? { pyramidWeight } : {}), ...(warm ? { warmupSets: warm } : {}), ...(intens ? { intensifier: intens } : {}), ...(rest ? { restSec: rest } : {}), ...(warmOff ? { warmupRestOff: true } : warmRest ? { warmupRestSec: warmRest } : {}), ...(sideOff ? { sideRestOff: true } : sideRest ? { sideRestSec: sideRest } : {}), ...(subs.length ? { subs } : {}), ...(sgName ? { sgName } : {}), ...(sgRest ? { sgRest } : {}), ...(incline > 0 ? { incline } : {}) }, sourceUnit || destination, destination)
     })
   }))
   return {

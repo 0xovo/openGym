@@ -129,6 +129,13 @@ describe('what survives a shared plan', () => {
     }
   })
 
+  it('carries a hold\'s "no timer" between sides, over a time, and only on a per-side exercise (#636)', () => {
+    const out = roundTrip({ side: true, mode: 'time', sec: 30, sideRestOff: true, sideRestSec: 20 })
+    expect(out.sideRestOff).toBe(true)
+    expect('sideRestSec' in out).toBe(false)
+    for (const e of [{ sideRestOff: true }, { side: true, sideRestOff: 'yes' }]) expect('sideRestOff' in roundTrip(e), JSON.stringify(e)).toBe(false)
+  })
+
   // The absence has to survive too: writing a 0 would pin the recipient's timer to "off"
   // instead of letting the exercise keep inheriting whatever their own default is.
   it('leaves an exercise that set no rest free of the field', () => {

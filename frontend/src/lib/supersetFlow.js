@@ -144,9 +144,11 @@ export function warmupRestSecFor(entry, setIdx, workRestSec, profileSec) {
  * The break between the two sides of one per-side set, or null for none. An exercise may set its
  * own `sideRestSec` (optional, Discord "set-specific rest timers"). Without it nothing changes:
  * a timed hold pauses `switchSec` (capped at the set's rest, and none with the rest switched off),
- * and a reps set has no break between its sides, as before the field existed.
+ * and a reps set has no break between its sides, as before the field existed. `sideRestOff`
+ * is "no timer" for a hold that wants its switch pause gone but keeps its set rest (#636).
  */
 export function sideRestFor(target, { timed, restAfter, switchSec }) {
+  if (target?.sideRestOff === true) return null
   const own = Math.round(Number(target?.sideRestSec)) || 0
   if (own > 0) return own
   if (timed && restAfter > 0) return Math.min(switchSec, restAfter)

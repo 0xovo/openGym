@@ -1754,6 +1754,8 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   // No warm-up rest of its own: the profile's (Settings > Workout) when it has one, else the work rest.
   const warmAll = typeof st.warmupRestSec === 'number' ? st.warmupRestSec : null
   const warmLikeAll = warmAll === null ? t('Like the work sets') : t('Default ({0})', warmAll > 0 ? fmtRest(warmAll) : t('No timer'))
+  // A hold's switch-sides pause when it has none of its own (Workout.jsx SWITCH_SIDES_SEC).
+  const sideDefault = t('Default ({0})', fmtRest(10))
   // A catalogue cardio exercise logs intervals by default, but it can be counted in sets x reps
   // or timed like any other (#678): jumping jacks and burpees are cardio and reps both.
   const cardioEx = isCardio(ex.id)
@@ -1848,7 +1850,8 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     const withSubs = withBackups(c.subs, ex.id, id => !!EXIDX[id])
     const withSetRests = {
       ...(c.warmupRestOff === true ? { warmupRestOff: true } : c.warmupRestSec > 0 ? { warmupRestSec: Math.round(c.warmupRestSec) } : {}),
-      ...(perSide && c.sideRestSec > 0 ? { sideRestSec: Math.round(c.sideRestSec) } : {}),
+      ...(perSide && mode === 'time' && c.sideRestOff === true ? { sideRestOff: true }
+        : perSide && c.sideRestSec > 0 ? { sideRestSec: Math.round(c.sideRestSec) } : {}),
     }
     // The treadmill's grade, only when it has one, so a flat slot keeps the shape it had.
     const incline = clampIncline(c.incline)
@@ -2049,12 +2052,24 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         switch pause for a hold, as before. */}
     {!cardio && perSide && <>
       <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
+        {/* A reps set has no break by default, so 0:00 on the wheel is its "no timer". A hold's
+            default is the 10 s switch, so it gets the warm-ups' three choices to turn it off (#636). */}
         <Row icon="sides" iconTint="var(--blue)" title={t('Rest between sides')} accessory="chevron"
-          value={c.sideRestSec > 0 ? fmtRest(c.sideRestSec) : mode === 'time' ? t('Default ({0})', fmtRest(10)) : t('No timer')}
-          onClick={() => durationSheet({
+          value={mode === 'time' && c.sideRestOff === true ? t('No timer') : c.sideRestSec > 0 ? fmtRest(c.sideRestSec) : mode === 'time' ? sideDefault : t('No timer')}
+          onClick={() => mode === 'time' ? menuSheet({
+            title: t('Rest between sides'),
+            items: [
+              { icon: 'timer', label: sideDefault, on: c.sideRestOff !== true && !(c.sideRestSec > 0), onClick: () => setC(x => { const { sideRestOff, sideRestSec, ...rest } = x; return rest }) },
+              { icon: 'pause', label: t('No timer'), on: c.sideRestOff === true, onClick: () => setC(x => { const { sideRestSec, ...rest } = x; return { ...rest, sideRestOff: true } }) },
+              { icon: 'clock', label: t('Pick a time'), on: c.sideRestOff !== true && c.sideRestSec > 0, onClick: () => durationSheet({
+                title: t('Rest between sides'), value: c.sideRestSec > 0 ? c.sideRestSec : 10, max: REST_MAX, off: t('No timer'),
+                onDone: v => setC(x => { const { sideRestOff, sideRestSec, ...rest } = x; return v > 0 ? { ...rest, sideRestSec: v } : { ...rest, sideRestOff: true } }),
+              }) },
+            ],
+          }) : durationSheet({
             title: t('Rest between sides'), value: c.sideRestSec > 0 ? c.sideRestSec : 0, max: REST_MAX,
-            off: mode === 'time' ? t('Default ({0})', fmtRest(10)) : t('No timer'),
-            onDone: v => setC(x => { const { sideRestSec, ...rest } = x; return v > 0 ? { ...rest, sideRestSec: v } : rest }),
+            off: t('No timer'),
+            onDone: v => setC(x => { const { sideRestSec, sideRestOff, ...rest } = x; return v > 0 ? { ...rest, sideRestSec: v } : rest }),
           })} />
       </div>
       <div className="small dim" style={{ marginBottom: 18 }}>

@@ -136,4 +136,25 @@ describe('exercise settings: rest for warm-ups and between sides', () => {
     const out = onSave.mock.calls[0][0]
     expect('warmupRestOff' in out || 'warmupRestSec' in out).toBe(false)
   })
+
+  it('a per-side hold can turn its switch pause off on its own; a reps set never writes that (#636)', () => {
+    const onSave = vi.fn()
+    exConfigSheet(ex, { sets: 3, sec: 30, weight: 0, mode: 'time', side: true, restSec: 60 }, onSave)
+    const host = render(useUI.getState().sheets.at(-1))
+    expect(row(host, 'Rest between sides').querySelector('.lrow-v').textContent).toBe('Default (10s)')
+    act(() => row(host, 'Rest between sides').click())
+    const menu = render(lastMenuItems())
+    act(() => [...menu.querySelectorAll('.menu-item')].find(b => b.textContent.includes('No timer')).click())
+    expect(row(host, 'Rest between sides').querySelector('.lrow-v').textContent).toBe('No timer')
+    act(() => save(host))
+    expect(onSave.mock.calls[0][0]).toMatchObject({ mode: 'time', side: true, sideRestOff: true, restSec: 60 })
+    expect('sideRestSec' in onSave.mock.calls[0][0]).toBe(false)
+
+    const reps = vi.fn()
+    exConfigSheet(ex, { sets: 3, reps: 10, weight: 40, mode: 'reps', side: true, sideRestOff: true }, reps)
+    const host2 = render(useUI.getState().sheets.at(-1))
+    expect(row(host2, 'Rest between sides').querySelector('.lrow-v').textContent).toBe('No timer')
+    act(() => save(host2))
+    expect('sideRestOff' in reps.mock.calls[0][0]).toBe(false)
+  })
 })

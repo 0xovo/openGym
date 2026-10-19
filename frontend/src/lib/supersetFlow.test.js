@@ -156,6 +156,11 @@ describe('set-specific rests (Discord: rest for warm-ups and between sides)', ()
     expect(sideRestFor({}, { timed: true, restAfter: 5, switchSec: 10 })).toBe(5)
     expect(sideRestFor({ sideRestSec: 0 }, { timed: true, restAfter: 0, switchSec: 10 })).toBeNull()
   })
+  it('"no timer" between sides turns a hold\'s switch pause off, set rest or not (#636)', () => {
+    expect(sideRestFor({ sideRestOff: true }, { timed: true, restAfter: 90, switchSec: 10 })).toBeNull()
+    expect(sideRestFor({ sideRestOff: true, sideRestSec: 20 }, { timed: true, restAfter: 90, switchSec: 10 })).toBeNull()
+    for (const v of [false, 'true', 1]) expect(sideRestFor({ sideRestOff: v }, { timed: true, restAfter: 90, switchSec: 10 })).toBe(10)
+  })
 })
 
 describe('warmupRestSecFor', () => {
