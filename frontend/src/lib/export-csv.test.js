@@ -186,9 +186,9 @@ describe('the round trip: our export through our own importer', () => {
   it('converts to the profile unit, drops and sides included', () => {
     const lb = parseWorkoutCSV(workoutsCSV(S), { unit: 'lb' })
     const curl = lb.workouts[0].entries.find(e => e.id === '0294')
-    expect(curl.sets[0].w).toBe(30.9)
-    expect(curl.sets[0].drops[0].w).toBe(22)
-    expect(curl.sets[1].sides.R.w).toBe(26.5)
+    expect(curl.sets[0].w).toBe(30.86)
+    expect(curl.sets[0].drops[0].w).toBe(22.05)
+    expect(curl.sets[1].sides.R.w).toBe(26.46)
     expect(lb.converted).toBe(true)
   })
 
