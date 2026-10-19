@@ -303,6 +303,8 @@ describe('Stats — weekly planned vs completed volume', () => {
     expect(row('chest')).toBeTruthy()
     expect(find().dataset.findExercises).toBe('chest')
     expect(find().getAttribute('aria-label')).toBe('Exercises for Chest')
+    // the row may wrap the chip onto a line of its own on a narrow phone (index.css .has-find)
+    expect(row('chest').classList.contains('has-find')).toBe(true)
     act(() => find().click())
     expect(mocks.nav).toHaveBeenCalledWith('/muscles?m=chest', { state: { from: '/stats' } })
   })
@@ -315,6 +317,7 @@ describe('Stats — weekly planned vs completed volume', () => {
     expect(find().dataset.findExercises).toBe('chest')
     // says so in words, not "0 sets"
     expect(host.querySelector('[data-muscle-volume="chest"] .v').textContent).toBe('not trained')
+    expect(host.querySelector('[data-muscle-volume="chest"]').classList.contains('has-find')).toBe(true)
     act(() => find().click())
     expect(mocks.nav).toHaveBeenCalledWith('/muscles?m=chest', { state: { from: '/stats' } })
 

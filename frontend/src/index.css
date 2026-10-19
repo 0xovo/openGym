@@ -1764,8 +1764,16 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .mchip{font-size:12px;padding:4px 9px;border-radius:99px;background:var(--surface-2);color:var(--label-2)}
 .mchip.miss{background:color-mix(in srgb,var(--orange) 16%,transparent);color:var(--orange)}
 button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
-/* "Exercises ›" on an untrained muscle picked on the map (#553), at the end of its row. */
-.mchip.mfind{flex:none;display:inline-flex;align-items:center;gap:2px;padding-inline-end:6px}
+/* "Exercises ›" on an untrained muscle picked on the map (#553), at the end of its row. On a
+   narrow phone the row has no room for it (the name shrank to nothing at 320 and 360px, and the
+   Russian chip poked out of the card), so it wraps to a line of its own, still at the end; the
+   name keeps enough width to be read. The ::after stretches the tap area to 33px without making
+   the chip look any bigger. */
+.mchip.mfind{flex:none;display:inline-flex;align-items:center;gap:2px;padding-inline-end:6px;position:relative}
+.mchip.mfind::after{content:"";position:absolute;inset:-5px 0}
+.mrow.has-find{flex-wrap:wrap;row-gap:4px}
+.mrow.has-find .nm{flex-basis:0;min-width:64px}
+.mrow.has-find .mfind{margin-inline-start:auto}
 
 /* --- stat tiles --- */
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}

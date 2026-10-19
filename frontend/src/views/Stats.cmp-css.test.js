@@ -19,3 +19,14 @@ describe('Stats Week figures keep clear of the Coach .cmp rule', () => {
     expect(own).toMatch(/padding:0/)
   })
 })
+
+// Checked in Chrome at 320 and 360px: with "Exercises ›" in a Week row the muscle name shrank to
+// 0px, and the Russian chip poked 27px out of the card.
+describe('Stats rows and the fatigue bar on a narrow phone', () => {
+  const css = strip('src/index.css')
+  it('a row with the Exercises chip wraps it rather than squeezing the name away', () => {
+    expect(rule(css, '.mrow.has-find')).toMatch(/flex-wrap:wrap/)
+    expect(rule(css, '.mrow.has-find .nm')).toMatch(/min-width:\d+px/)
+  })
+})
+

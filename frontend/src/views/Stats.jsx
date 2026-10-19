@@ -226,14 +226,15 @@ function MuscleBalance({ S }) {
     const fill = target > 0 ? Math.round(Math.min(completed / target, 1) * 100) : completed > 0 ? 100 : 0
     const completedSets = t('{0} sets', fmtNum(completed))
     const plannedSets = t('{0} sets', fmtNum(target))
-    return <div className="mrow" data-muscle-volume={muscle} key={muscle}>
+    const find = sel === muscle && !completed
+    return <div className={find ? 'mrow has-find' : 'mrow'} data-muscle-volume={muscle} key={muscle}>
       <span className="nm">{sel === muscle ? <b>{t(MUSCLE_NAME[muscle])}</b> : t(MUSCLE_NAME[muscle])}</span>
       <span className="bar"><i style={{ width: fill + '%' }} /></span>
       <span className="v cmp"
         aria-label={`${t('Completed')} ${completedSets} · ${t('Planned')} ${plannedSets}`}>
         {fmtNum(completed)}/{fmtNum(target)}{percentage == null ? '' : ` · ${percentage}%`}
       </span>
-      {sel === muscle && !completed && findExercises(muscle)}
+      {find && findExercises(muscle)}
     </div>
   })
   const completionSummary = <>
@@ -256,7 +257,7 @@ function MuscleBalance({ S }) {
     </Button>
   </>
   const completedRows = <>
-    {sel && <div className="mrow" data-muscle-volume={sel} style={{ borderTop: 'var(--hair) solid var(--sep)', marginTop: 4, paddingTop: 10 }}>
+    {sel && <div className={load[sel] > 0 ? 'mrow' : 'mrow has-find'} data-muscle-volume={sel} style={{ borderTop: 'var(--hair) solid var(--sep)', marginTop: 4, paddingTop: 10 }}>
       <span className="nm"><b>{t(MUSCLE_NAME[sel])}</b></span>
       <span className="v">{load[sel] > 0 ? t('{0} sets', sets(sel)) : on ? t('no hard sets') : t('not trained')}</span>
       {!(load[sel] > 0) && findExercises(sel)}
