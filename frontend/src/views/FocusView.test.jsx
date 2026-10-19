@@ -125,6 +125,11 @@ describe('Focus workout view', () => {
     expect(sets().filter(row => row.phase === 'warmup' || row.warmup)).toHaveLength(1)
   })
 
+  it('title-cases the exercise menu\'s heading like the Cards layout does', () => {
+    mount({ id: SQUAT, target: { sets: 1, reps: 5, weight: 95 }, sets: [{ w: 95, r: 5, done: false }] })
+    expect(openMenu().querySelector('h3').className).toBe('capitalize')
+  })
+
   it('uses the exercise rest-pause duration for a new burst', () => {
     mount({
       id: SQUAT,

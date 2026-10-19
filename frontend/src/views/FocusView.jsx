@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { exOr } from '../lib/exercises.js'
 import { clampIncline, hasIncline, inclineFits, INCLINE_MAX, INCLINE_STEP } from '../lib/incline.js'
-import { exerciseNameFor, t } from '../lib/i18n.js'
+import { exerciseNameClass, exerciseNameFor, t } from '../lib/i18n.js'
 import { fmtDate, fmtNum, fmtPlate } from '../lib/format.js'
 import { EFFORT, effortOf, modeOf } from '../lib/history.js'
 import { lastEntryFor, pinnedNoteFor, setsRepsOf } from '../lib/history.js'
@@ -225,6 +225,8 @@ export default function FocusView({
   const addRow = add => () => { add(); clearPointer(entryIdx) }
   const openExerciseMenu = () => menuSheet({
     title: exerciseNameFor(exOr(entry.id)),
+    // Title-cased like the card's own heading and the Cards layout's menu, not the stored lower case.
+    titleClass: exerciseNameClass(exOr(entry.id)),
     items: [
       { icon: 'plus', label: t('Add set'), onClick: addRow(onAddSet) },
       { icon: 'sunrise', label: t('Add warm-up set'), onClick: addRow(onAddWarmup) },
