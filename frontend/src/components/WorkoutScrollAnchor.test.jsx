@@ -119,3 +119,15 @@ it('cancels an older sheet correction when restoring the workout anchor', async 
   await render('0', [['0', 100, 200], ['1', 300, 650]])
   expect(cancel).toHaveBeenCalledOnce()
 })
+
+it('leaves no blank strip when a tile at the page end folds while scrolled to the bottom (Discord)', async () => {
+  // Scrolled all the way down, a finished exercise at the end of the list folds. Holding its top
+  // would need trailing space under it; letting the page settle keeps its summary in view instead.
+  scrollY = 1800
+  await render('', [['0', 100, 700], ['1', 800, 700], ['2', 1500, 900]])
+  await render('2', [['0', 100, 700], ['1', 800, 700], ['2', 1500, 100]], 1600)
+  expect(container.firstChild.style.paddingBottom).toBe('')
+  expect(window.scrollY).toBe(1000)
+  expect(tileTop('2')).toBe(500)
+  expect(tileTop('2') + 100).toBeLessThanOrEqual(window.innerHeight)
+})

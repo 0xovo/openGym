@@ -77,7 +77,9 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - German: the three lever leg curls say Beinbeugen now, not Beinstrecken like the leg extension
   (#631, thanks @AkashBhat14 and @choksi2212).
 - Collapse completed exercises: a finished exercise folds up and the ones after it move up with
-  it, no more black gap (#642, thanks @dpatrongomez).
+  it, no more black gap (#642, thanks @dpatrongomez). That goes for the last exercise in the
+  list too when you're scrolled all the way down: the page settles instead of keeping a blank
+  strip under it.
 - Cardio the Coach prescribes on a non-cardio exercise (kettlebell swings for 15 minutes) stays
   15 minutes instead of turning into sets with no target, in new plans, in review additions and
   in shared plan files (#640, thanks @rudycelekli for spotting the review side).
