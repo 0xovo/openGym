@@ -2282,6 +2282,8 @@ export default {
   'No Apple Watch paired with this iPhone': 'Aucune Apple Watch jumelée à cet iPhone',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym n’est pas encore sur ton Apple Watch. Installe-le dans l’app Watch.',
   'openGym is on your Apple Watch': 'openGym est sur ton Apple Watch',
+  'Last heard from the watch: {0}': 'Dernières nouvelles de la montre : {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': 'La montre ne s’est pas encore manifestée. Ouvre openGym dessus une fois.',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Non autorisé sur la montre. Autorise-le dans l’app Santé de ton iPhone.',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Le pouls pendant la séance et à côté de chaque série, et la séance enregistrée dans Santé. La montre demande une fois.',
   'Apple Health': 'Apple Santé',

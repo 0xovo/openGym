@@ -2361,6 +2361,8 @@ export default {
   'No Apple Watch paired with this iPhone': 'এই iPhone-এর সাথে কোনো Apple Watch যুক্ত নেই',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym এখনও আপনার Apple Watch-এ নেই। Watch অ্যাপ থেকে ইনস্টল করুন।',
   'openGym is on your Apple Watch': 'openGym আপনার Apple Watch-এ আছে',
+  'Last heard from the watch: {0}': 'ঘড়ি থেকে শেষ সাড়া: {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': 'ঘড়ি এখনো সাড়া দেয়নি। ঘড়িতে openGym একবার খুলুন।',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'ঘড়িতে অনুমতি নেই। iPhone-এর Health অ্যাপে অনুমতি দিন।',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'ওয়ার্কআউটের সময় আর প্রতিটি সেটের পাশে হার্ট রেট, আর ওয়ার্কআউট Apple Health-এ সেভ। ঘড়ি একবার জিজ্ঞেস করে।',
   'Apple Health': 'Apple Health',

@@ -2293,6 +2293,8 @@ export default {
   'No Apple Watch paired with this iPhone': 'ไม่มี Apple Watch ที่จับคู่กับ iPhone นี้',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'ยังไม่มี openGym บน Apple Watch ติดตั้งได้ในแอป Watch',
   'openGym is on your Apple Watch': 'มี openGym บน Apple Watch แล้ว',
+  'Last heard from the watch: {0}': 'ได้ยินจากนาฬิกาล่าสุด: {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': 'นาฬิกายังไม่ได้ติดต่อมา เปิด openGym บนนาฬิกาสักครั้ง',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'ไม่ได้รับอนุญาตบนนาฬิกา อนุญาตได้ในแอปสุขภาพบน iPhone',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'อัตราการเต้นของหัวใจระหว่างฝึกและข้างแต่ละเซ็ต และบันทึกการฝึกลงในสุขภาพ นาฬิกาจะถามครั้งเดียว',
   'Apple Health': 'Apple Health',

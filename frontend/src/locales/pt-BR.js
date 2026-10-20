@@ -1455,6 +1455,8 @@ export const PT_BR_OVERRIDES = {
   'No Apple Watch paired with this iPhone': 'Nenhum Apple Watch pareado com este iPhone',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'O openGym ainda não está no seu Apple Watch. Instale pelo app Watch.',
   'openGym is on your Apple Watch': 'O openGym está no seu Apple Watch',
+  'Last heard from the watch: {0}': 'Último contato do relógio: {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': 'O relógio ainda não deu sinal. Abra o openGym nele uma vez.',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Não permitido no relógio. Permita no app Saúde do seu iPhone.',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'A frequência cardíaca durante o treino e ao lado de cada série, e o treino salvo no Saúde. O relógio pergunta uma vez.',
   'Write to Apple Health': 'Salvar no Apple Saúde',

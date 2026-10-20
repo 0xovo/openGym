@@ -2282,6 +2282,8 @@ export default {
   'No Apple Watch paired with this iPhone': 'Bu iPhone ile eşlenmiş Apple Watch yok',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym henüz Apple Watch’unda değil. Watch uygulamasından yükle.',
   'openGym is on your Apple Watch': 'openGym Apple Watch’unda',
+  'Last heard from the watch: {0}': 'Saatten son haber: {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': 'Saat henüz ses vermedi. openGym’i saatte bir kez aç.',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Saatte izin verilmedi. iPhone’undaki Sağlık uygulamasından izin ver.',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Antrenman sırasında ve her setin yanında nabız, antrenman Sağlık’a kaydedilir. Saat bir kez sorar.',
   'Apple Health': 'Apple Sağlık',

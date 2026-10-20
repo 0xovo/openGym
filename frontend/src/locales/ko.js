@@ -2282,6 +2282,8 @@ export default {
   'No Apple Watch paired with this iPhone': '이 iPhone과 페어링된 Apple Watch가 없어요',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': '아직 Apple Watch에 openGym이 없어요. Watch 앱에서 설치하세요.',
   'openGym is on your Apple Watch': 'Apple Watch에 openGym이 있어요',
+  'Last heard from the watch: {0}': '워치와 마지막 연결: {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': '워치가 아직 연결되지 않았어요. 워치에서 openGym을 한 번 열어 주세요.',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': '워치에서 허용되지 않았어요. iPhone의 건강 앱에서 허용하세요.',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': '운동 중과 각 세트 옆의 심박수, 그리고 건강 앱에 저장되는 운동. 워치가 한 번 물어봐요.',
   'Apple Health': 'Apple 건강',

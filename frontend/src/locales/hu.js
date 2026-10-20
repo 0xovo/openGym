@@ -2285,6 +2285,8 @@ export default {
   'No Apple Watch paired with this iPhone': 'Nincs Apple Watch párosítva ezzel az iPhone-nal',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'Az openGym még nincs az Apple Watchodon. Telepítsd a Watch appban.',
   'openGym is on your Apple Watch': 'Az openGym rajta van az Apple Watchodon',
+  'Last heard from the watch: {0}': 'Utoljára jelentkezett az óra: {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': 'Az óra még nem jelentkezett. Nyisd meg rajta egyszer az openGymet.',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'Nincs engedélyezve az órán. Engedélyezd az iPhone Egészség appjában.',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Pulzus edzés közben és minden sorozat mellett, az edzés az Egészség appba mentve. Az óra egyszer kérdez.',
   'Apple Health': 'Apple Egészség',

@@ -27,7 +27,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 
 - **Apple Watch keeps up.** The watch could miss the phone right after launch and then hear
   nothing until you reopened the app, a freshly installed watch app could wait for your next change
-  before it got your routines, and one odd routine could hide all of them. All fixed.
+  before it got your routines, and one odd routine could hide all of them. All fixed. Until the
+  phone has sent anything the watch now says "Not synced yet" and what to do about it, and
+  Settings → Apple Watch on the phone tells you when it last heard from the watch.
 - **Faster on long histories.** Home and Stats do far less work per open (Stats about a third
   less on 800 workouts), the main script a start parses is a quarter smaller, the installed web app stops asking
   the server about every file on each launch, and other languages load their words in one go

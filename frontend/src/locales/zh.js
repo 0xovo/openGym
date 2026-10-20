@@ -2282,6 +2282,8 @@ export default {
   'No Apple Watch paired with this iPhone': '没有与这台 iPhone 配对的 Apple Watch',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': '你的 Apple Watch 上还没有 openGym。请在 Watch App 中安装。',
   'openGym is on your Apple Watch': 'openGym 已在你的 Apple Watch 上',
+  'Last heard from the watch: {0}': '上次收到手表消息：{0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': '手表还没有联系过。请在手表上打开一次 openGym。',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': '手表上未获允许。请在 iPhone 的“健康”App 中允许。',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': '训练中及每组旁的心率，以及保存到“健康”的训练。手表只会询问一次。',
   'Apple Health': 'Apple 健康',

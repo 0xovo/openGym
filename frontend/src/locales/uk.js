@@ -2279,6 +2279,8 @@ export default {
   'No Apple Watch paired with this iPhone': 'До цього iPhone не під’єднано Apple Watch',
   'openGym is not on your Apple Watch yet. Install it in the Watch app.': 'openGym ще немає на твоєму Apple Watch. Установи його в програмі Watch.',
   'openGym is on your Apple Watch': 'openGym є на твоєму Apple Watch',
+  'Last heard from the watch: {0}': 'Остання звістка від годинника: {0}',
+  'The watch hasn’t checked in yet. Open openGym on it once.': 'Годинник ще не озивався. Відкрий на ньому openGym один раз.',
   'Not allowed on the watch. Allow it in the Health app on your iPhone.': 'На годиннику не дозволено. Дозволь у програмі «Здоров’я» на iPhone.',
   'Heart rate during the workout and next to each set, and the workout saved to Apple Health. The watch asks once.': 'Пульс під час тренування і біля кожного підходу, тренування зберігається у «Здоров’ї». Годинник спитає один раз.',
   'Apple Health': 'Apple Здоров’я',
