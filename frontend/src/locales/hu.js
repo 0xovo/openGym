@@ -2489,4 +2489,8 @@ export default {
   'How long a message, refinement or review note can be.': 'Milyen hosszú lehet egy üzenet, finomítási kérés vagy elemzési megjegyzés.',
   // --- one set's own rest (#609) ---
   'Rest after this set': 'Pihenő e sorozat után',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "Mértékegység",
+  "Logged values keep their type. Add a new measurement to use a different type.": "A rögzített értékek típusa megmarad. Más típushoz adj hozzá új mérést.",
+  "{0} must be between 0 and 100%.": "{0} értékének 0 és 100% között kell lennie.",
 }

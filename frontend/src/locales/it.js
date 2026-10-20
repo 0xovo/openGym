@@ -2486,4 +2486,8 @@ export default {
   'How long a message, refinement or review note can be.': 'Quanto può essere lungo un messaggio, una richiesta di revisione o una nota di analisi.',
   // --- one set's own rest (#609) ---
   'Rest after this set': 'Recupero dopo questa serie',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "Unità di misura",
+  "Logged values keep their type. Add a new measurement to use a different type.": "I valori registrati mantengono il proprio tipo. Aggiungi una nuova misura per usare un tipo diverso.",
+  "{0} must be between 0 and 100%.": "{0} deve essere tra 0 e 100%.",
 }

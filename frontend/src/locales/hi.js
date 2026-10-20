@@ -2486,4 +2486,8 @@ export default {
   'How long a message, refinement or review note can be.': 'संदेश, सुधार अनुरोध या समीक्षा नोट कितना लंबा हो सकता है।',
   // --- one set's own rest (#609) ---
   'Rest after this set': 'इस सेट के बाद आराम',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "माप की इकाई",
+  "Logged values keep their type. Add a new measurement to use a different type.": "दर्ज किए गए मानों का प्रकार बना रहता है। दूसरे प्रकार के लिए नया माप जोड़ें।",
+  "{0} must be between 0 and 100%.": "{0} का मान 0 से 100% के बीच होना चाहिए।",
 }

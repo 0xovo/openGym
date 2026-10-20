@@ -2541,4 +2541,8 @@ export default {
   'How long a message, refinement or review note can be.': 'كم يمكن أن يطول نص رسالة أو طلب تعديل أو ملاحظة مراجعة.',
   // --- one set's own rest (#609) ---
   'Rest after this set': 'الراحة بعد هذه المجموعة',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "وحدة القياس",
+  "Logged values keep their type. Add a new measurement to use a different type.": "تحتفظ القيم المسجلة بنوعها. أضف قياسًا جديدًا لاستخدام نوع مختلف.",
+  "{0} must be between 0 and 100%.": "يجب أن تكون قيمة {0} بين 0 و100٪.",
 }

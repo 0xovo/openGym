@@ -2486,4 +2486,8 @@ export default {
   'How long a message, refinement or review note can be.': 'Bir mesajın, iyileştirme isteğinin veya inceleme notunun ne kadar uzun olabileceği.',
   // --- one set's own rest (#609) ---
   'Rest after this set': 'Bu setten sonra dinlenme',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "Ölçü birimi",
+  "Logged values keep their type. Add a new measurement to use a different type.": "Kaydedilen değerler türlerini korur. Farklı bir tür için yeni bir ölçüm ekle.",
+  "{0} must be between 0 and 100%.": "{0}, %0 ile %100 arasında olmalı.",
 }

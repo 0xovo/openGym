@@ -2490,4 +2490,8 @@ export default {
   'How long a message, refinement or review note can be.': 'Насколько длинным может быть сообщение, просьба о доработке или заметка к разбору.',
   // --- one set's own rest (#609) ---
   'Rest after this set': 'Отдых после этого подхода',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "Единица измерения",
+  "Logged values keep their type. Add a new measurement to use a different type.": "Тип записанных значений сохраняется. Для другого типа добавьте новое измерение.",
+  "{0} must be between 0 and 100%.": "Значение «{0}» должно быть от 0 до 100%.",
 }

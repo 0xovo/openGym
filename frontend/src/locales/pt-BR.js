@@ -1592,6 +1592,10 @@ export const PT_BR_OVERRIDES = {
   'Every Coach run is one request on your provider account. 0 means no limit.': 'Cada execução do Treinador é uma requisição na sua conta do provedor. 0 significa sem limite.',
   'Max message length': 'Comprimento máximo da mensagem',
   'How long a message, refinement or review note can be.': 'Quanto pode ter uma mensagem, um pedido de refinamento ou uma nota de análise.',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "Unidade de medida",
+  "Logged values keep their type. Add a new measurement to use a different type.": "Os valores salvos mantêm seu tipo. Adicione uma nova medida para usar outro tipo.",
+  "{0} must be between 0 and 100%.": "{0} deve estar entre 0 e 100%.",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

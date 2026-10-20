@@ -93,6 +93,14 @@ machine, never in CI (see "Exercise media" below and docs/APP_STORES.md).
     `anim-quality.js` / `anim-packs.js` (animation sizes in the store apps).
   - CONTRIBUTING.md is explicit: **anything that decides what you lift next, or reads a logged
     session back, is a pure helper here with a unit test beside it.**
+- **Body measurements (`lib/measurements.js`, `views/Measurements.jsx`)**: one check-in per day.
+  Built-in circumferences and legacy custom fields store cm and follow the profile's cm/in
+  display. Custom definitions may specify `unit: 'cm' | 'in' | '%' | 'kg' | 'lb'`; that
+  display choice stays fixed when the profile switches kg/lb. Custom values store canonical cm, kg
+  (to 0.001 kg so a tenth of a pound round-trips), or percent (0 to 100). Each
+  custom reading also carries its unit, preserving its meaning in backups without definitions.
+  Once values exist, the unit selector permits cm/in or kg/lb conversions within the recorded
+  type; a different type needs a new field.
 - **`views/`**: one file per screen, routed by `react-router-dom` from `App.jsx`.
 - **`sheets.jsx`**: the bottom sheets (exercise picker, exercise config, workout detail, plan
   import...). It is large; a new sheet can go into `components/` as its own file.

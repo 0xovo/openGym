@@ -2497,4 +2497,8 @@ export default {
   'How long a message, refinement or review note can be.': 'ข้อความ คำขอปรับแก้ หรือบันทึกการวิเคราะห์ยาวได้เท่าใด',
   // --- one set's own rest (#609) ---
   'Rest after this set': 'พักหลังเซ็ตนี้',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "หน่วยวัด",
+  "Logged values keep their type. Add a new measurement to use a different type.": "ค่าที่บันทึกไว้จะคงประเภทเดิม หากต้องการประเภทอื่น ให้เพิ่มรายการวัดใหม่",
+  "{0} must be between 0 and 100%.": "{0} ต้องอยู่ระหว่าง 0 ถึง 100%",
 }

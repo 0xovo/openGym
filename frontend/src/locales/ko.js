@@ -2486,4 +2486,8 @@ export default {
   'How long a message, refinement or review note can be.': '메시지, 수정 요청 또는 리뷰 메모의 최대 길이입니다.',
   // --- one set's own rest (#609) ---
   'Rest after this set': '이 세트 후 휴식',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "측정 단위",
+  "Logged values keep their type. Add a new measurement to use a different type.": "기록된 값의 유형은 유지됩니다. 다른 유형을 사용하려면 새 측정 항목을 추가하세요.",
+  "{0} must be between 0 and 100%.": "{0} 값은 0~100% 사이여야 합니다.",
 }

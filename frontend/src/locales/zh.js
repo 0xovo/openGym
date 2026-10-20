@@ -2486,4 +2486,8 @@ export default {
   'How long a message, refinement or review note can be.': '消息、修改要求或点评备注可以有多长。',
   // --- one set's own rest (#609) ---
   'Rest after this set': '这一组后的休息',
+  // --- custom measurement units (#699) ---
+  "Measurement unit": "测量单位",
+  "Logged values keep their type. Add a new measurement to use a different type.": "已记录的数值会保留原有类型。如需其他类型，请添加新的测量项。",
+  "{0} must be between 0 and 100%.": "{0}必须在 0% 到 100% 之间。",
 }
