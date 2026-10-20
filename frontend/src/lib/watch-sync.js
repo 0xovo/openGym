@@ -90,7 +90,9 @@ function watchEntry (e, H, S) {
   } catch { last = null }
   const best = S ? bestFor(S, e.id, mode) : null
   return {
-    id: e.id,
+    // A string always: the watch reads the whole snapshot or nothing (WatchCore Model.swift), and
+    // one id that came in as a number (an import) would leave it with nothing at all.
+    id: String(e.id),
     // Title-cased as on the phone; the watch has no CSS to do it (lib/format.js exerciseNameText).
     name: ex ? exerciseNameText(ex) : String(target.name || e.name || e.id),
     mode,
@@ -116,10 +118,17 @@ function watchEntry (e, H, S) {
 export function buildReady (S, today = todayISO()) {
   let H = null
   try { H = sessionHistory(S) } catch { H = null }
+  // One routine that cannot be built is left out, not the whole list with it.
   const session = ids => {
-    const { entries, routineIds, routines } = buildCombinedEntries(S, ids)
-    if (!routines.length) return null
-    return { routineIds, name: deriveSessionName(routines.map(r => r.name)) || '', entries: entries.map(e => watchEntry(e, H, S)) }
+    try {
+      const { entries, routineIds, routines } = buildCombinedEntries(S, ids)
+      if (!routines.length) return null
+      return {
+        routineIds: routineIds.map(String),
+        name: String(deriveSessionName(routines.map(r => r.name)) || ''),
+        entries: entries.filter(e => e && e.id != null).map(e => watchEntry(e, H, S)),
+      }
+    } catch { return null }
   }
   let todayIds = []
   try { todayIds = effectiveRoutineIds({ ...S, routines: S.routines || [], week: S.week || {}, dayPlan: S.dayPlan || {} }, today, today) || [] } catch { todayIds = [] }
@@ -151,7 +160,7 @@ export function buildSnapshot(S, { timer = null, ready = null } = {}) {
       restSec: num(S.restSec) || 0,
       // a rest running on the phone, so the watch counts down the same one
       rest: timer && !timer.paused && !timer.ready && num(timer.endsAt) ? { endsAt: timer.endsAt } : null,
-      entries: A.entries.map(e => watchEntry(e, H, S)),
+      entries: A.entries.filter(e => e && e.id != null).map(e => watchEntry(e, H, S)),
     },
   }
 }
@@ -448,7 +457,11 @@ export async function startWatchSync ({ useStore, useUI }) {
   // change. Without one nothing below runs at all: no snapshot, no clips, no bridge call per tick.
   let linked = false
   const checkLink = async () => {
+    const was = linked
     try { const st = await p.WatchBridge.status(); linked = !!(st && st.paired && st.installed) } catch { linked = false }
+    // A watch that is new here (the app just installed on it, or reinstalled): it has nothing yet,
+    // so the snapshot goes again even when it is the same as the last one sent.
+    if (linked && !was) lastSent = null
     return linked
   }
   await checkLink()
@@ -511,9 +524,14 @@ export async function startWatchSync ({ useStore, useUI }) {
   const sub = await p.WatchBridge.addListener('watchEvent', () => { drainWatchEvents() })
   // The link itself changed (the session finished activating after launch, a watch was paired, the
   // app was installed on it): asked again, and the snapshot sent when there is a watch now.
-  const subLink = await Promise.resolve(p.WatchBridge.addListener('watchState', () => { checkLink().then(() => schedule()) })).catch(() => null)
+  // Sent again even when unchanged: a reinstalled watch app starts with nothing.
+  const subLink = await Promise.resolve(p.WatchBridge.addListener('watchState', () => { checkLink().then(() => { lastSent = null; schedule() }) })).catch(() => null)
   const onVisible = () => { if (document.visibilityState === 'visible') { drainWatchEvents(); checkLink().then(() => schedule()) } }
   document.addEventListener('visibilitychange', onVisible)
+  // Asked once more now that the listeners are there: the link may have come up (watchState) while
+  // the first answer above was on its way, and that event had no one to hear it. Without this the
+  // watch heard nothing until the app went to the background and came back.
+  if (!linked) await checkLink()
   schedule()
   drainWatchEvents()
   return () => { offStore(); offUI(); offPrefs(); offHealth(); offLang(); sub?.remove?.(); subLink?.remove?.(); document.removeEventListener('visibilitychange', onVisible); clearTimeout(tm) }

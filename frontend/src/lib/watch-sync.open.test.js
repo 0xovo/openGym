@@ -126,6 +126,41 @@ describe('startWatchSync', () => {
     } finally { vi.useRealTimers() }
   })
 
+  // The link came up (WCSession activated) while the first status() was on its way: that
+  // watchState event had no listener yet. The watch heard nothing until the app was reopened.
+  it('sends to the watch when the link comes up during startup, before anyone listened', async () => {
+    vi.useFakeTimers()
+    try {
+      const b = bridge()
+      b.status.mockResolvedValueOnce({ activated: false, paired: false, installed: false })
+      _setWatchPluginForTest(b)
+      const stop = await startWatchSync({ useStore: store({ S: S0 }), useUI: ui })
+      await vi.runAllTimersAsync()
+      expect(b.sendSnapshot).toHaveBeenCalled()
+      stop()
+    } finally { vi.useRealTimers() }
+  })
+
+  // A watch app installed or reinstalled while the phone app runs starts with nothing: the same
+  // snapshot goes again (the native side stamps it, so iOS delivers it although it is unchanged).
+  it('sends the same snapshot again when the watch link changes', async () => {
+    vi.useFakeTimers()
+    try {
+      const b = bridge()
+      const heard = {}
+      b.addListener = vi.fn(async (name, fn) => { heard[name] = fn; return { remove: () => {} } })
+      _setWatchPluginForTest(b)
+      const stop = await startWatchSync({ useStore: store({ S: S0 }), useUI: ui })
+      await vi.runAllTimersAsync()
+      expect(b.sendSnapshot).toHaveBeenCalledTimes(1)
+      heard.watchState({ installed: true })
+      await vi.runAllTimersAsync()
+      expect(b.sendSnapshot).toHaveBeenCalledTimes(2)
+      expect(b.sendSnapshot.mock.calls[1][0].json).toBe(b.sendSnapshot.mock.calls[0][0].json)
+      stop()
+    } finally { vi.useRealTimers() }
+  })
+
   it('tells the watch the phone\'s Apple Health switch, and again when it changes', async () => {
     vi.useFakeTimers()
     try {

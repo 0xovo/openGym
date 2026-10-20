@@ -151,6 +151,16 @@ describe('starting and finishing on the watch', () => {
     expect(snap.ready.today.name).toBe('Push')
   })
 
+  // The watch reads a snapshot whole or not at all: one odd routine must not cost it the others,
+  // and an id that came in as a number must still reach it as text.
+  it('one routine that cannot be built is left out, and every id goes as text', () => {
+    const odd = [{ id: 'r-odd', name: 'Odd' }, { id: 7, name: 'Imported', ex: [{ id: 25, sets: 1, reps: 5 }] }, ...routines]
+    const ready = buildReady({ unit: 'kg', workouts: [], routines: odd, week: { 2: 'r-push' }, dayPlan: {} }, '2026-10-13')
+    expect(ready.today).toMatchObject({ routineIds: ['r-push'] })
+    expect(ready.others.map(o => o.routineIds)).toEqual([['7'], ['r-pull']])
+    expect(ready.others[0].entries[0].id).toBe('25')
+  })
+
   it('a start from the watch starts the session with the watch\'s id and time, once; the sets after it wait for the workout screen', () => {
     let S = { active: null }
     const start = vi.fn((ids, opts) => { S = { active: { id: opts.id, entries: [{ id: '0025', sets: [{ w: 60, r: 8, done: false }] }] } } })

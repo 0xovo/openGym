@@ -112,7 +112,10 @@ public class WatchBridgePlugin: CAPPlugin, CAPBridgedPlugin, WCSessionDelegate {
             call.resolve(["sent": false])
             return
         }
-        let payload: [String: Any] = ["snapshot": json]
+        // Stamped: iOS does not deliver an application context equal to the last one, and the page
+        // sends the same snapshot again on purpose when the watch app was (re)installed. The watch
+        // reads only "snapshot".
+        let payload: [String: Any] = ["snapshot": json, "at": Date().timeIntervalSince1970]
         do {
             try s.updateApplicationContext(payload)
         } catch {

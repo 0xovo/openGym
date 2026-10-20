@@ -25,6 +25,9 @@ tiny body, faint where the session is headed and lit up where you've already tic
 layout and without moving a single set row (#670). Tap it for the big map and done/planned sets
 per muscle. Settings → Workout → Fine-tuning turns it off.
 
+- **Apple Watch keeps up.** The watch could miss the phone right after launch and then hear
+  nothing until you reopened the app, a freshly installed watch app could wait for your next change
+  before it got your routines, and one odd routine could hide all of them. All fixed.
 - **Faster on long histories.** Home and Stats do far less work per open (Stats about a third
   less on 800 workouts), the main script a start parses is a quarter smaller, the installed web app stops asking
   the server about every file on each launch, and other languages load their words in one go
