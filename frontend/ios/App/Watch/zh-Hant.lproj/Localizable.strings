@@ -30,6 +30,8 @@
 "More" = "較多";
 "Last time: %@" = "上次: %@";
 "No workout running" = "沒有進行中的訓練";
+"Not synced yet" = "尚未同步";
+"Open openGym on your iPhone once and your routines show up here." = "在 iPhone 上打開一次 openGym，你的訓練計畫就會出現在這裡。";
 "Start one on your iPhone and it shows up here." = "在 iPhone 上開始，它就會出現在這裡。";
 "All sets done" = "所有組已完成";
 "measuring" = "測量中 …";

@@ -30,6 +30,8 @@
 "More" = "มาก";
 "Last time: %@" = "ครั้งก่อน: %@";
 "No workout running" = "ไม่มีการฝึกที่กำลังทำอยู่";
+"Not synced yet" = "ยังไม่ได้ซิงค์";
+"Open openGym on your iPhone once and your routines show up here." = "เปิด openGym บน iPhone สักครั้ง แล้วรูทีนของคุณจะแสดงที่นี่";
 "Start one on your iPhone and it shows up here." = "เริ่มบน iPhone แล้วจะแสดงที่นี่";
 "All sets done" = "ครบทุกเซ็ตแล้ว";
 "measuring" = "กำลังวัด …";

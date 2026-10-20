@@ -84,6 +84,10 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     /// Whether the phone is in reach now, and how many of this watch's events still wait for it.
     @Published private(set) var reachable = true
     @Published private(set) var queued = 0
+    /// Whether a snapshot from the phone ever arrived on this watch. The phone sends only while
+    /// openGym runs there, so until then the start screen says to open it once.
+    @Published private(set) var heardFromPhone = UserDefaults.standard.bool(forKey: SessionStore.heardKey)
+    private static let heardKey = "heardFromPhone"
     @Published private(set) var restEndsAt: Date?
     @Published private(set) var restStartedAt: Date?
     /// A set picked by hand in an exercise (entry index → set index); otherwise the first not done.
@@ -295,8 +299,16 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
 
     func apply(json: String) {
         guard let data = json.data(using: .utf8),
-              let snap = try? JSONDecoder().decode(Snapshot.self, from: data) else { return }
+              let snap = try? JSONDecoder().decode(Snapshot.self, from: data) else {
+            // Shown on the hidden debug screen: a snapshot this build cannot read is otherwise silent.
+            log("a snapshot from the phone could not be read")
+            return
+        }
         DispatchQueue.main.async {
+            if !self.heardFromPhone {
+                self.heardFromPhone = true
+                if !self.isDemo { UserDefaults.standard.set(true, forKey: SessionStore.heardKey) }
+            }
             let before = self.state
             let next = SessionCore.applySnapshot(before, snap)
             self.state = next

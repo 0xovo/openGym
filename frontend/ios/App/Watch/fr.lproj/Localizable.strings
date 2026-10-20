@@ -30,6 +30,8 @@
 "More" = "Plus";
 "Last time: %@" = "La dernière fois: %@";
 "No workout running" = "Aucune séance en cours";
+"Not synced yet" = "Pas encore synchronisé";
+"Open openGym on your iPhone once and your routines show up here." = "Ouvre openGym une fois sur ton iPhone et tes routines apparaissent ici.";
 "Start one on your iPhone and it shows up here." = "Lance-en une sur ton iPhone et elle apparaît ici.";
 "All sets done" = "Toutes les séries faites";
 "measuring" = "mesure …";

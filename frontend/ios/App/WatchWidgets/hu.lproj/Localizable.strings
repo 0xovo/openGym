@@ -30,6 +30,8 @@
 "More" = "Több";
 "Last time: %@" = "Legutóbb: %@";
 "No workout running" = "Nincs folyamatban edzés";
+"Not synced yet" = "Még nincs szinkronizálva";
+"Open openGym on your iPhone once and your routines show up here." = "Nyisd meg egyszer az openGymet az iPhone-on, és itt lesznek a rutinjaid.";
 "Start one on your iPhone and it shows up here." = "Indíts egyet az iPhone-on, és itt megjelenik.";
 "All sets done" = "Minden sorozat kész";
 "measuring" = "mérés …";

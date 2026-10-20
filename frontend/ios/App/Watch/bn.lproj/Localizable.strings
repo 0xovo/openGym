@@ -30,6 +30,8 @@
 "More" = "বেশি";
 "Last time: %@" = "গতবার: %@";
 "No workout running" = "কোনো ওয়ার্কআউট চলছে না";
+"Not synced yet" = "এখনো সিঙ্ক হয়নি";
+"Open openGym on your iPhone once and your routines show up here." = "iPhone-এ openGym একবার খুলুন, আপনার রুটিন এখানে দেখা যাবে।";
 "Start one on your iPhone and it shows up here." = "iPhone-এ একটি শুরু করুন, এখানে দেখা যাবে।";
 "All sets done" = "সব সেট শেষ";
 "measuring" = "মাপা হচ্ছে …";
