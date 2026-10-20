@@ -1757,10 +1757,11 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   // A hold's switch-sides pause when it has none of its own (Workout.jsx SWITCH_SIDES_SEC).
   const sideDefault = t('Default ({0})', fmtRest(10))
   // A catalogue cardio exercise logs intervals by default, but it can be counted in sets x reps
-  // or timed like any other (#678): jumping jacks and burpees are cardio and reps both.
-  const cardioEx = isCardio(ex.id)
+  // or timed like any other (#678). A saved duration/speed plan keeps its cardio form even after
+  // the catalogue moved its exercise out of cardio (jumping jacks, #717).
   const speedUnit = speedUnitOf(st)
   const seed = existing || initial || pickedExerciseConfig(ex.id)
+  const cardioEx = isCardio(ex.id) || modeOf({ ...seed, id: ex.id }) === 'cardio'
   const [c, setC] = useState(() => {
     const cfg = { ...seed }
     // A session's target carries the meaning of its dumbbell weight as a stamp (lib/dumbbells.js);
