@@ -2540,4 +2540,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "ช่วงลดไขมันมักอยู่ที่ 0.5 ถึง 1 % ต่อสัปดาห์ ช่วงเพิ่มกล้ามแบบลีนอยู่ที่ 0.25 ถึง 0.5 %",
   "Remove range": "ลบช่วง",
   'Admin': 'ผู้ดูแล',
+  'Heaviest set as a share of body weight, per workout': 'เซ็ตที่หนักที่สุดเทียบกับน้ำหนักตัว ต่อการเทรนแต่ละครั้ง',
+  'Estimated 1RM as a share of body weight, per workout': '1RM โดยประมาณเทียบกับน้ำหนักตัว ต่อการเทรนแต่ละครั้ง',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'น้ำหนักตัวในช่วงนี้: {0} → {1} ท่าที่ใช้น้ำหนักตัวและท่าที่มีตัวช่วยจะนับน้ำหนักตัวของคุณเป็นส่วนหนึ่งของน้ำหนักที่ยก',
 }

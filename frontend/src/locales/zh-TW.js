@@ -2522,4 +2522,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "減脂期通常每週 0.5 到 1 %，乾淨增肌每週 0.25 到 0.5 %。",
   "Remove range": "移除範圍",
   'Admin': '管理員',
+  'Heaviest set as a share of body weight, per workout': '每次訓練中最重一組佔體重的比例',
+  'Estimated 1RM as a share of body weight, per workout': '每次訓練的預估 1RM 佔體重的比例',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': '此期間的體重：{0} → {1}。徒手與輔助動作會把你的體重計入負重。',
 }

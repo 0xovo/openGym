@@ -2608,4 +2608,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "কাটিং সাধারণত সপ্তাহে ০.৫ থেকে ১ %, লিন বাল্ক ০.২৫ থেকে ০.৫ %।",
   "Remove range": "সীমা সরান",
   'Admin': 'অ্যাডমিন',
+  'Heaviest set as a share of body weight, per workout': 'প্রতি ওয়ার্কআউটে শরীরের ওজনের অনুপাতে সবচেয়ে ভারী সেট',
+  'Estimated 1RM as a share of body weight, per workout': 'প্রতি ওয়ার্কআউটে শরীরের ওজনের অনুপাতে আনুমানিক 1RM',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'এই সময়ে শরীরের ওজন: {0} → {1}। বডিওয়েট ও অ্যাসিস্টেড ব্যায়ামে আপনার শরীরের ওজন লোডের অংশ হিসেবে ধরা হয়।',
 }

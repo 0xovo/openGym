@@ -2526,4 +2526,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Сушка часто йде по 0,5–1 % на тиждень, чистий набір по 0,25–0,5 %.",
   "Remove range": "Прибрати діапазон",
   'Admin': 'Адмін',
+  'Heaviest set as a share of body weight, per workout': 'Найважчий підхід як частка ваги тіла, за тренуваннями',
+  'Estimated 1RM as a share of body weight, per workout': 'Розрахунковий 1ПМ як частка ваги тіла, за тренуваннями',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Вага тіла за цей період: {0} → {1}. У вправах із власною вагою та з допомогою вага вашого тіла входить у навантаження.',
 }

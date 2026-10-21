@@ -2529,4 +2529,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Yağ yakımı genelde haftada %0,5 ile %1, temiz bulk %0,25 ile %0,5 arasıdır.",
   "Remove range": "Aralığı kaldır",
   'Admin': 'Yönetici',
+  'Heaviest set as a share of body weight, per workout': 'Antrenman başına vücut ağırlığına oranla en ağır set',
+  'Estimated 1RM as a share of body weight, per workout': 'Antrenman başına vücut ağırlığına oranla tahmini 1RM',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Bu dönemdeki vücut ağırlığı: {0} → {1}. Vücut ağırlığı ve destekli egzersizlerde vücut ağırlığın yükün bir parçası sayılır.',
 }

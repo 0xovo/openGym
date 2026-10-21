@@ -2549,4 +2549,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Eine Diät liegt oft bei 0,5 bis 1 % pro Woche, ein sauberer Aufbau bei 0,25 bis 0,5 %.",
   "Remove range": "Bereich entfernen",
   'Admin': 'Admin',
+  'Heaviest set as a share of body weight, per workout': 'Schwerster Satz im Verhältnis zum Körpergewicht, pro Training',
+  'Estimated 1RM as a share of body weight, per workout': 'Geschätztes 1RM im Verhältnis zum Körpergewicht, pro Training',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Körpergewicht in diesem Zeitraum: {0} → {1}. Bei Körpergewichts- und assistierten Übungen zählt dein Körpergewicht als Teil der Last.',
 }

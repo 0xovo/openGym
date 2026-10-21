@@ -2529,4 +2529,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "कटिंग अक्सर हर हफ़्ते 0.5 से 1 % होती है, लीन बल्क 0.25 से 0.5 %।",
   "Remove range": "सीमा हटाएँ",
   'Admin': 'एडमिन',
+  'Heaviest set as a share of body weight, per workout': 'प्रति वर्कआउट शरीर के वज़न के अनुपात में सबसे भारी सेट',
+  'Estimated 1RM as a share of body weight, per workout': 'प्रति वर्कआउट शरीर के वज़न के अनुपात में अनुमानित 1RM',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'इस अवधि में शरीर का वज़न: {0} → {1}। बॉडीवेट और असिस्टेड व्यायामों में आपके शरीर का वज़न लोड का हिस्सा माना जाता है।',
 }

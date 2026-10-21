@@ -2529,4 +2529,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "감량기는 보통 주당 0.5~1 %, 린 벌크는 0.25~0.5 % 정도예요.",
   "Remove range": "범위 삭제",
   'Admin': '관리자',
+  'Heaviest set as a share of body weight, per workout': '운동별 체중 대비 가장 무거운 세트',
+  'Estimated 1RM as a share of body weight, per workout': '운동별 체중 대비 추정 1RM',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': '이 기간의 체중: {0} → {1}. 맨몸 운동과 보조 운동에서는 체중이 부하의 일부로 계산됩니다.',
 }

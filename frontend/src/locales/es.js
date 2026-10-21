@@ -2529,4 +2529,7 @@ export default {
   "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Una definición suele ir de 0,5 a 1 % por semana, un volumen limpio de 0,25 a 0,5 %.",
   "Remove range": "Quitar rango",
   'Admin': 'Admin',
+  'Heaviest set as a share of body weight, per workout': 'Serie más pesada como proporción del peso corporal, por entrenamiento',
+  'Estimated 1RM as a share of body weight, per workout': '1RM estimado como proporción del peso corporal, por entrenamiento',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Peso corporal en este periodo: {0} → {1}. En los ejercicios con peso corporal y asistidos, tu peso corporal cuenta como parte de la carga.',
 }

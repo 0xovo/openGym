@@ -2576,4 +2576,7 @@ export default {
   'A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.': 'En deff är ofta 0,5 till 1 % i veckan, en lean bulk 0,25 till 0,5 %.',
   'Remove range': 'Ta bort intervall',
   'Admin': 'Admin',
+  'Heaviest set as a share of body weight, per workout': 'Tyngsta setet som andel av kroppsvikten, per pass',
+  'Estimated 1RM as a share of body weight, per workout': 'Uppskattat 1RM som andel av kroppsvikten, per pass',
+  'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Kroppsvikt under perioden: {0} → {1}. I kroppsviktsövningar och assisterade övningar räknas din kroppsvikt som en del av belastningen.',
 }
