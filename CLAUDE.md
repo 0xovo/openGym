@@ -23,7 +23,8 @@ api/        Backend: server.js (plain node:http) plus small testable modules bes
 web/        Multi-stage Dockerfile (builds frontend, adds catalogue/media, serves with nginx) and
             nginx.conf.template (serves the app, proxies /api).
 catalogue/  The exercise database: exercises/<id>.json, i18n/, licensed 180 px media/.
-mcp/        Optional read-only stdio MCP server over DATA_DIR. Not in the Docker build.
+mcp/        Optional stdio MCP server: reads DATA_DIR, and its one write tool (log_workout)
+            saves through the api. Not in the Docker build.
 scripts/    Build, CI and release helpers (scripts/README.md).
 website/    opengym.ch, plain HTML/CSS/JS, deployed separately.
 helm/, kubernetes/, contrib/nix/   Other ways to deploy.
@@ -140,9 +141,12 @@ together: `lib/sync-merge.js` and `api/sync-stamps.js` (parity test), `lib/glyph
 
 ### MCP server (`mcp/src`)
 
-Read-only stdio MCP bridge (`@modelcontextprotocol/sdk`) that reads one user's data straight from
-`DATA_DIR`. `state.js` loads and derives the data, `tools.js` defines the tools (zod schemas),
-`labels.js` maps keys to readable labels, `index.js` wires it together. See `mcp/README.md`.
+Stdio MCP bridge (`@modelcontextprotocol/sdk`) that reads one user's data straight from
+`DATA_DIR`. `state.js` loads and derives the data, `tools.js` defines the read tools (zod schemas),
+`labels.js` maps keys to readable labels, `index.js` wires it together. The one write tool,
+`log_workout` (`write-tools.js`), never writes the file: it builds the workout with
+`frontend/src/lib/log-workout.js` and saves it with `PUT /api/data` over a paired-session token
+(`api-client.js`, `scripts/pair.mjs`), the way a device syncs. See `mcp/README.md`.
 
 ### Passkeys and self-hosting constraints
 
