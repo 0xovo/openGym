@@ -2497,4 +2497,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "A munkasorozatok elé kerülnek. Beleszámítanak a volumenedbe (Beállítások), de a rekordokból és a progresszióból kimaradnak. Mindegyik a felére zárja a különbséget a munkasúlyhoz, rúddal végzett gyakorlatnál soha nem könnyebb az üres rúdnál, és edzés közben is bármelyiket módosíthatod.",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "Mérés törölve",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "Nincs mértékegység",
+  "{0} measurement check-in imported": "{0} méretfelvétel importálva",
+  "{0} measurement check-ins imported": "{0} méretfelvétel importálva",
 }

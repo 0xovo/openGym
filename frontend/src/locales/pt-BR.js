@@ -1600,6 +1600,10 @@ export const PT_BR_OVERRIDES = {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "Entram antes das suas séries de trabalho. Contam no seu volume (Ajustes), mas ficam de fora dos recordes e da progressão. Cada uma fecha metade da distância até o peso de trabalho, nunca abaixo da barra vazia em um exercício com barra, e você ainda pode mudar qualquer uma no meio do treino.",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "Pesagem excluída",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "Sem unidade",
+  "{0} measurement check-in imported": "{0} registro de medidas importado",
+  "{0} measurement check-ins imported": "{0} registros de medidas importados",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

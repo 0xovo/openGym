@@ -23,6 +23,10 @@
 
 import { EXDB, EXIDX, canonicalExId, isCardio as isCardioEx } from './exercises.js'
 import { uid } from './format.js'
+import {
+  MEASUREMENT_FIELDS, builtinCsvColumn, parseCustomCsvColumn, fromCsvUnit, sameMeasurementKind,
+  emptyMeasurement, measurementEntryHasValues, normalizeMeasurementEntry, normalizeMeasurementsState,
+} from './measurements.js'
 import { isWarmupRow, completedVolumeOf, syncSideAggregate } from './workout-model.js'
 import { HEVY_TITLE_MAP } from './hevy-id-map.js'
 import { clampIncline, inclineFrom } from './incline.js'
@@ -790,7 +794,7 @@ export function parseWorkoutCSV(text, { unit = 'kg', customEx = [] } = {}) {
 export function parseBodyweight(text, { unit = 'kg' } = {}) {
   const s = String(text)
   const out = new Map()          // iso date -> { w, t }  (one weigh-in per day, the last)
-  let fileUnit = '', source = 'Apple Health'
+  let fileUnit = '', source = 'Apple Health', measurements = []
 
   if (s.includes('HKQuantityTypeIdentifierBodyMass')) {
     const re = /<Record[^>]*type="HKQuantityTypeIdentifierBodyMass"[^>]*>/g
@@ -835,6 +839,7 @@ export function parseBodyweight(text, { unit = 'kg' } = {}) {
     const wCol = map.weightKg ?? map.weightLb ?? map.weight
     const dCol = map.date ?? map.startTime
     if (wCol === undefined || dCol === undefined) return { error: 'unrecognised' }
+    measurements = bodyCsvMeasurements(rows)
     if (map.weightKg !== undefined) fileUnit = 'kg'
     else if (map.weightLb !== undefined) fileUnit = 'lb'
     for (let i = 1; i < rows.length; i++) {
@@ -845,13 +850,39 @@ export function parseBodyweight(text, { unit = 'kg' } = {}) {
     }
   }
 
-  return finishBodyweight(out, unit, source, fileUnit)
+  return finishBodyweight(out, unit, source, fileUnit, measurements)
+}
+
+// Our own body CSV (lib/export-csv.js bodyCSV) carries the measurements too (#718): a column per
+// built-in field (`waist_cm`) and per custom field ("Muscle ratio (%)", lib/measurements.js). Only
+// a file with our header is read this way, so another app's Notes column never turns into a
+// measurement. Values stay in their column's unit here; mergeImport files them.
+function bodyCsvMeasurements(rows) {
+  const head = rows[0].map(h => String(h ?? '').trim())
+  if (head[0]?.toLowerCase() !== 'date' || !/^weight_(kg|lb)$/.test(head[1] || '')) return []
+  const builtin = new Map(MEASUREMENT_FIELDS.map(f => [builtinCsvColumn(f), f.key]))
+  const cols = head.slice(2).map((h, i) => builtin.has(h) ? { i: i + 2, key: builtin.get(h) } : { i: i + 2, ...parseCustomCsvColumn(h) })
+    .filter(c => c.key || c.name)
+  const days = []
+  for (const r of rows.slice(1)) {
+    const when = parseWhen(String(r[0] ?? ''))
+    if (!when) continue
+    const values = {}, other = []
+    for (const c of cols) {
+      const raw = String(r[c.i] ?? '').trim()
+      const v = parseFloat(raw.replace(',', '.'))
+      if (raw === '' || !Number.isFinite(v)) continue
+      if (c.key) values[c.key] = v; else other.push({ name: c.name, unit: c.unit, value: v })
+    }
+    if (Object.keys(values).length || other.length) days.push({ d: when.d, values, other })
+  }
+  return days
 }
 
 /** The weigh-ins collected per day, converted to `unit` — each in its own record's unit if it
- *  had one, else the file's. */
-function finishBodyweight(out, unit, source, fileUnit = '') {
-  if (!out.size) return { error: 'unrecognised' }
+ *  had one, else the file's. Measurements from our own body CSV ride along as they are. */
+function finishBodyweight(out, unit, source, fileUnit = '', measurements = []) {
+  if (!out.size && !measurements.length) return { error: 'unrecognised' }
   const units = new Set([...out.values()].map(b => b.unit || fileUnit).filter(Boolean))
   fileUnit = [...units].sort().join(' / ')
   const converted = [...units].some(sourceUnit => sourceUnit !== unit)
@@ -863,15 +894,54 @@ function finishBodyweight(out, unit, source, fileUnit = '') {
     return roundWeight(w)
   }
   const dates = [...out.keys()].sort()
+  const all = [...new Set([...dates, ...measurements.map(m => m.d)])].sort()
   return {
     kind: 'bodyweight', source,
     bodyweight: dates.map(d => ({ d, w: conv(out.get(d)), t: out.get(d).t || new Date(d).getTime() })),
-    fileUnit, converted, from: dates[0], to: dates[dates.length - 1],
+    ...(measurements.length ? { measurements } : {}),
+    fileUnit, converted, from: all[0], to: all[all.length - 1],
   }
 }
 
 /** A weigh-in a person could have: above zero and below MAX_BODY_KG in the given unit. */
 const bodyOk = (w, u) => w > 0 && w <= (u === 'lb' ? MAX_BODY_KG / LB_TO_KG : MAX_BODY_KG)
+
+/**
+ * Measurements read from our own body CSV (bodyCsvMeasurements), into state the way weigh-ins
+ * go: a day that already has a check-in keeps it. A custom column goes to the field of the same
+ * name, made with the column's unit if there is none; one whose unit is another kind than that
+ * field's (kg into a % field) is left out rather than relabelled. Returns how many days came in.
+ */
+function mergeMeasurements(S, days) {
+  normalizeMeasurementsState(S)
+  const have = new Set(S.measurements.map(e => e.d))
+  const fresh = days.filter(m => !have.has(m.d))
+  const byName = new Map(S.customMeasurements.map(c => [c.name.toLowerCase(), c]))
+  for (const m of fresh) for (const o of m.other) {
+    if (byName.has(o.name.toLowerCase())) continue
+    const field = { id: uid(), name: o.name.slice(0, 60), enabled: true, unit: o.unit }
+    S.customMeasurements.push(field)
+    byName.set(o.name.toLowerCase(), field)
+  }
+  let n = 0
+  for (const m of fresh) {
+    const entry = emptyMeasurement(m.d, S.customMeasurements)
+    for (const [key, v] of Object.entries(m.values)) entry[key] = v
+    for (const o of m.other) {
+      const field = byName.get(o.name.toLowerCase())
+      if (!sameMeasurementKind(field.unit, o.unit)) continue
+      const item = entry.other.find(x => x.id === field.id)
+      if (item) item.value = fromCsvUnit(o.value, o.unit)
+    }
+    // Normalizing drops what no field could hold (a 140 % or a negative); nothing left, no day.
+    const clean = normalizeMeasurementEntry(entry, S.customMeasurements)
+    if (!measurementEntryHasValues(clean)) continue
+    S.measurements.push(clean)
+    n++
+  }
+  normalizeMeasurementsState(S)
+  return n
+}
 
 /** Sniff the file and parse it as whatever it is. */
 export function parseImport(text, opts) {
@@ -898,7 +968,9 @@ export function mergeImport(S, parsed) {
     // Connect (lib/health-connect.js healthRecords), where it would land a second time.
     const fresh = parsed.bodyweight.filter(b => !have.has(b.d)).map(b => ({ ...b, src: b.src || 'import' }))
     S.bodyweight = [...S.bodyweight, ...fresh].sort((a, b) => (a.d < b.d ? -1 : 1))
-    return { added: fresh.length, skipped: parsed.bodyweight.length - fresh.length }
+    const res = { added: fresh.length, skipped: parsed.bodyweight.length - fresh.length }
+    if (parsed.measurements?.length) res.measurements = mergeMeasurements(S, parsed.measurements)
+    return res
   }
   const have = new Set(S.workouts.map(w => w.d))
   // Every parse invents fresh ids for the names it cannot match, and a later export of the same

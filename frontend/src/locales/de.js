@@ -2514,4 +2514,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "Kommen vor deine Arbeitssätze. Sie zählen in dein Volumen (Einstellungen), aber nicht für Rekorde und Progression. Jeder halbiert den Abstand zum Arbeitsgewicht, bei Langhantelübungen nie leichter als die leere Stange, und im Training kannst du jeden davon trotzdem ändern.",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "Wiegung gelöscht",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "Ohne Einheit",
+  "{0} measurement check-in imported": "{0} Messung importiert",
+  "{0} measurement check-ins imported": "{0} Messungen importiert",
 }

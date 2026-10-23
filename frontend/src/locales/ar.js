@@ -2549,4 +2549,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "تُضاف قبل مجموعات العمل. تُحتسب في حجمك (الإعدادات)، لكنها لا تُحتسب في الأرقام القياسية أو التدرج. كل واحدة تقلص الفجوة إلى وزن العمل إلى النصف، ولا تقل أبدًا عن وزن البار في تمارين البار، ويمكنك تعديل أي منها أثناء الجلسة.",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "تم حذف الوزن",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "بدون وحدة",
+  "{0} measurement check-in imported": "تم استيراد {0} تسجيل قياسات",
+  "{0} measurement check-ins imported": "تم استيراد {0} تسجيلات قياسات",
 }

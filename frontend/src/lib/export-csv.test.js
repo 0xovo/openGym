@@ -208,7 +208,7 @@ describe('the body CSV', () => {
   const rows = parseCSV(text)
 
   it('has a row per day with weight and measurements, in cm and percent', () => {
-    expect(rows[0]).toEqual(['date', 'weight_kg', 'waist_cm', 'upper_arm_left_cm', 'body_fat_percent', 'Neck, relaxed'])
+    expect(rows[0]).toEqual(['date', 'weight_kg', 'waist_cm', 'upper_arm_left_cm', 'body_fat_percent', 'Neck, relaxed (cm)'])
     expect(rows.slice(1)).toEqual([
       ['2026-03-01', '80.4', '', '', '', ''],
       ['2026-03-04', '80.1', '84.5', '36', '17.2', '39'],

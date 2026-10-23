@@ -1,5 +1,6 @@
-// Canonical storage: lengths in cm, masses in kg, percentages as-is. A custom field's unit
-// selects its display unit. Legacy fields without one still follow the profile's cm/in choice.
+// Canonical storage: lengths in cm, masses in kg, percentages and plain numbers as-is. A custom
+// field's unit selects its display unit ('none' is a score or a count with no unit at all).
+// Legacy fields without one still follow the profile's cm/in choice.
 
 export const MEASUREMENT_FIELDS = [
   { key: 'neck', label: 'Neck', group: 'Torso' },
@@ -28,13 +29,17 @@ export const DEFAULT_MEASUREMENT_KEYS = MEASUREMENT_FIELDS.filter(f => !f.option
 
 const round = n => Math.round(n * 10) / 10
 const valid = (v, unit) => v != null && v !== '' && Number.isFinite(+v) &&
-  (unit === '%' ? +v >= 0 && +v <= 100 : +v > 0)
+  (unit === '%' ? +v >= 0 && +v <= 100 : unit === 'none' ? +v >= 0 : +v > 0)
   ? (unit === 'kg' || unit === 'lb' ? Math.round(+v * 1000) / 1000 : round(+v)) : null
 const LB_PER_KG = 2.2046226218
-export const CUSTOM_MEASUREMENT_UNITS = ['cm', 'in', '%', 'kg', 'lb']
+export const CUSTOM_MEASUREMENT_UNITS = ['cm', 'in', '%', 'kg', 'lb', 'none']
 const unitOf = field => CUSTOM_MEASUREMENT_UNITS.includes(field?.unit) ? field.unit : null
 const withUnit = field => unitOf(field) ? { unit: field.unit } : {}
-const unitKind = unit => unit === '%' ? 'percent' : unit === 'kg' || unit === 'lb' ? 'mass' : 'length'
+const unitKind = unit => unit === '%' ? 'percent' : unit === 'none' ? 'none' : unit === 'kg' || unit === 'lb' ? 'mass' : 'length'
+// What goes after the number: nothing for a unitless field.
+export const measurementUnitLabel = unit => unit === 'none' ? '' : unit
+// A unit where 0 is a reading, not an empty field: 0 % or a score of 0.
+export const zeroIsReading = unit => unit === '%' || unit === 'none'
 
 export const measurementUnit = (unit, field) => field?.key === 'bodyFat' ? '%' : unitOf(field) || (unit === 'lb' ? 'in' : 'cm')
 export const toMeasurementDisplay = (value, unit, field) => {
@@ -177,3 +182,22 @@ export function measurementEntryHasValues(entry) {
   return MEASUREMENT_KEYS.some(k => valid(entry?.[k], k === 'bodyFat' ? '%' : null) != null) ||
     (entry?.other || []).some(o => valid(o?.value, unitOf(o)) != null)
 }
+
+// ---- CSV columns (lib/export-csv.js bodyCSV, read back by lib/import-csv.js parseBodyweight) ----
+// A built-in field is a fixed snake_case column in cm (body fat in percent). A custom field's
+// column is its name with its unit in brackets, "Muscle ratio (%)", its values in that unit; a
+// legacy field without a unit stores cm, so its column says cm. A unitless field is its bare name.
+export const builtinCsvColumn = f => f.kind === 'percent' ? 'body_fat_percent' : f.key.replace(/[A-Z]/g, c => '_' + c.toLowerCase()) + '_cm'
+export const customCsvColumn = (name, unit) => unit === 'none' ? name : `${name} (${unitOf({ unit }) || 'cm'})`
+export function parseCustomCsvColumn(header) {
+  const h = String(header ?? '').trim()
+  const m = /^(.*\S)\s*\((cm|in|%|kg|lb)\)$/.exec(h)
+  return m ? { name: m[1], unit: m[2] } : { name: h, unit: 'none' }
+}
+// A value in a column's unit, into canonical storage (cm, kg, percent or the plain number).
+export const fromCsvUnit = (v, unit) => unit === 'in' ? v * 2.54 : unit === 'lb' ? v / LB_PER_KG : v
+// Whether readings in `a` can be shown in `b` (cm and in, kg and lb), with a legacy field's
+// missing unit counting as a length.
+export const sameMeasurementKind = (a, b) => unitKind(unitOf({ unit: a })) === unitKind(unitOf({ unit: b }))
+// A custom reading as the field shows it: in the field's unit, or cm for a legacy field.
+export const customDisplayValue = (value, unit) => unitOf({ unit }) ? toMeasurementDisplay(value, 'kg', { unit }) : value

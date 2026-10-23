@@ -2494,4 +2494,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "작업 세트 앞에 추가됩니다. 볼륨에는 포함되지만(설정), 기록과 진행에는 포함되지 않습니다. 각 세트는 작업 중량까지의 차이를 절반으로 줄이고 바벨 운동에서는 빈 바보다 가벼워지지 않으며, 운동 중에도 언제든 바꿀 수 있어요.",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "체중 기록 삭제됨",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "단위 없음",
+  "{0} measurement check-in imported": "측정 기록 {0}개를 가져왔습니다",
+  "{0} measurement check-ins imported": "측정 기록 {0}개를 가져왔습니다",
 }

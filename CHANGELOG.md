@@ -90,6 +90,11 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   light day keep their own numbers.
 - **Deleted a weigh-in by mistake? Undo.** Deleting one now shows a toast with Undo, on the log
   sheet and in All weigh-ins, and the weigh-in comes back as if nothing happened (#756).
+- **Custom measurements get their own unit** (#699, #718, thanks @zykll18). Muscle ratio in %,
+  lean mass in kg or lb, a calf in cm or in, or no unit at all for a visceral fat score. The chart,
+  the history and backups keep it, and your old custom fields stay in cm like before. The body
+  CSV export says each field's unit in its column, and importing that file now brings the
+  measurements back too, not just the weigh-ins.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that

@@ -2487,4 +2487,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "排在正式組之前。會列入你的總訓練量（設定），但不列入個人紀錄與漸進計算。每組都會把與正式重量的差距縮小一半，槓鈴動作不會低於空槓，訓練中仍可隨時修改任何一組。",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "已刪除體重紀錄",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "無單位",
+  "{0} measurement check-in imported": "已匯入 {0} 筆身體測量紀錄",
+  "{0} measurement check-ins imported": "已匯入 {0} 筆身體測量紀錄",
 }

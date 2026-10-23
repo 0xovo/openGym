@@ -2494,4 +2494,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "Çalışma setlerinden önce eklenir. Hacmine sayılır (Ayarlar), ama rekor ve ilerlemeye sayılmaz. Her biri çalışma ağırlığına kalan farkı yarıya indirir, halter hareketlerinde boş barın altına hiç inmez ve antrenman sırasında hâlâ istediğini değiştirebilirsin.",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "Tartım silindi",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "Birimsiz",
+  "{0} measurement check-in imported": "{0} ölçüm kaydı içe aktarıldı",
+  "{0} measurement check-ins imported": "{0} ölçüm kaydı içe aktarıldı",
 }

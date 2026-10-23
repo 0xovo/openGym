@@ -145,7 +145,7 @@ describe('custom measurement units (#699)', () => {
     expect(customMeasurementUnits(length.customMeasurements[0], length.measurements)).toEqual(['cm', 'in'])
     const percent = state('%', [0])
     expect(customMeasurementUnits(percent.customMeasurements[0], percent.measurements)).toEqual(['%'])
-    expect(customMeasurementUnits(field('cm'), [])).toEqual(['cm', 'in', '%', 'kg', 'lb'])
+    expect(customMeasurementUnits(field('cm'), [])).toEqual(['cm', 'in', '%', 'kg', 'lb', 'none'])
     const before = structuredClone(mass.measurements)
     mass.customMeasurements[0].unit = 'lb'
     normalizeMeasurementsState(mass)

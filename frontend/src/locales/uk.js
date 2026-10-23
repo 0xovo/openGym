@@ -2491,4 +2491,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "Додаються перед робочими підходами. Вони враховуються у твоєму обсязі (Налаштування), але не в рекордах і прогресії. Кожен удвічі скорочує розрив до робочої ваги, але у вправах зі штангою ніколи не легший за порожній гриф, і будь-який із них можна змінити під час тренування.",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "Зважування видалено",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "Без одиниці",
+  "{0} measurement check-in imported": "Імпортовано {0} вимір",
+  "{0} measurement check-ins imported": {"one":"Імпортовано {0} вимір","few":"Імпортовано {0} виміри","many":"Імпортовано {0} вимірів","other":"Імпортовано {0} виміру"},
 }

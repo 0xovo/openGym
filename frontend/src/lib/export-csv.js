@@ -13,7 +13,7 @@
 
 import { EXIDX } from './exercises.js'
 import { capWords } from './format.js'
-import { MEASUREMENT_FIELDS } from './measurements.js'
+import { MEASUREMENT_FIELDS, builtinCsvColumn, customCsvColumn, customDisplayValue } from './measurements.js'
 import { hasCompletedWork, isWarmupRow, isFailureSet, isSideSet, dropsOf } from './workout-model.js'
 import { workoutDay } from './history.js'
 
@@ -125,7 +125,8 @@ export const workoutsCSV = (S, range) => csvText(WORKOUT_COLUMNS, workoutRows(S,
 /**
  * Body weight and measurements, one row per day. Weight in the profile's unit (the header says
  * which, so the importer needs no unit column), measurements in centimetres the way they are
- * stored, body fat in percent. Custom measurement fields get a column each, under their own name.
+ * stored, body fat in percent. Custom measurement fields get a column each, under their own name
+ * with their unit in brackets and their values in it (#718; lib/measurements.js customCsvColumn).
  */
 export function bodyCSV(S, { from = null, to = null } = {}) {
   const unit = S.unit === 'lb' ? 'lb' : 'kg'
@@ -135,15 +136,20 @@ export function bodyCSV(S, { from = null, to = null } = {}) {
   for (const b of S.bodyweight || []) if (inside(b?.d) && b.w > 0) at(b.d).w = b.w
   for (const m of S.measurements || []) if (inside(m?.d)) at(m.d).m = m
   const fields = MEASUREMENT_FIELDS.filter(f => [...days.values()].some(v => v.m && v.m[f.key] != null))
+  // The field's own name and unit where it still exists, else what the reading carries.
+  const defs = new Map((S.customMeasurements || []).filter(c => c?.id).map(c => [c.id, c]))
   const custom = new Map()
-  for (const v of days.values()) for (const o of v.m?.other || []) if (o?.id && o.value != null && !custom.has(o.id)) custom.set(o.id, o.name || 'Other')
-  const header = ['date', 'weight_' + unit,
-    ...fields.map(f => f.kind === 'percent' ? 'body_fat_percent' : f.key.replace(/[A-Z]/g, c => '_' + c.toLowerCase()) + '_cm'),
-    ...custom.values()]
+  for (const v of days.values()) for (const o of v.m?.other || []) {
+    if (!o?.id || o.value == null || custom.has(o.id)) continue
+    const def = defs.get(o.id)
+    custom.set(o.id, { name: def?.name || o.name || 'Other', unit: def?.unit || o.unit })
+  }
+  const header = ['date', 'weight_' + unit, ...fields.map(builtinCsvColumn),
+    ...[...custom.values()].map(c => customCsvColumn(c.name, c.unit))]
   const rows = [...days.keys()].sort().map(d => {
     const { w, m } = days.get(d)
     return [d, w != null ? n(w) : '', ...fields.map(f => (m && m[f.key] != null ? n(m[f.key]) : '')),
-      ...[...custom.keys()].map(id => { const o = (m?.other || []).find(x => x?.id === id); return o?.value != null ? n(o.value) : '' })]
+      ...[...custom].map(([id, c]) => { const o = (m?.other || []).find(x => x?.id === id); return o?.value != null ? n(customDisplayValue(o.value, c.unit)) : '' })]
   })
   return csvText(header, rows)
 }

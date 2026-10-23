@@ -2573,4 +2573,8 @@ export default {
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "ওয়ার্ক সেটের আগে যোগ হয়। আপনার ভলিউমে গোনা হয় (সেটিংস), কিন্তু রেকর্ড আর প্রগ্রেশনে নয়। প্রতিটি ওয়ার্ক ওয়েটের দূরত্বের অর্ধেক কমায়, বারবেল লিফটে বারের নিচে কখনো নামে না, আর সেশনের মাঝেও যেকোনোটা বদলাতে পারবেন।",
   // --- weigh-in undo (#756) ---
   "Weigh-in deleted": "ওজন মুছে ফেলা হয়েছে",
+  // --- unitless custom measurements, measurements from the body CSV (#718) ---
+  "No unit": "কোনো একক নেই",
+  "{0} measurement check-in imported": "{0}টি মাপের রেকর্ড ইমপোর্ট হয়েছে",
+  "{0} measurement check-ins imported": "{0}টি মাপের রেকর্ড ইমপোর্ট হয়েছে",
 }
