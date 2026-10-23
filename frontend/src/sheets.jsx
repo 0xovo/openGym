@@ -22,7 +22,7 @@ import Stepper from './components/Stepper.jsx'
 import { durationSheet } from './components/DurationWheel.jsx'
 import { cleanBackups, withBackups, MAX_BACKUPS } from './lib/routine-backups.js'
 import { SG_NAME_MAX } from './lib/superset-meta.js'
-import { REST_MAX, fmtRest } from './lib/duration.js'
+import { REST_MAX, fmtRest, restWheelValue } from './lib/duration.js'
 import Icon from './components/Icon.jsx'
 import { Button, Slider, Switch, Segmented, SelectRow, Row, TextField, NumberField, MultiSelectRow } from './components/ui.jsx'
 import { glyphOf, GLYPH_GROUPS, DEFAULT_GLYPH } from './lib/glyphs.js'
@@ -49,6 +49,7 @@ import { clampIncline, inclineFits, INCLINE_MAX, INCLINE_STEP } from './lib/incl
 import { buildCompletedWorkout, sessionEnd } from './lib/finish-workout.js'
 import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
+import { ownExerciseRest } from './lib/supersetFlow.js'
 import { saveSessionAsRoutine, routineAdditions, addToRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
@@ -1758,6 +1759,8 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   const warmLikeAll = warmAll === null ? t('Like the work sets') : t('Default ({0})', warmAll > 0 ? fmtRest(warmAll) : t('No timer'))
   // A hold's switch-sides pause when it has none of its own (Workout.jsx SWITCH_SIDES_SEC).
   const sideDefault = t('Default ({0})', fmtRest(10))
+  // No rest of its own: the default rest timer's, which may itself be off.
+  const restLikeAll = t('Default ({0})', fmtRest(st.restSec))
   // A catalogue cardio exercise logs intervals by default, but it can be counted in sets x reps
   // or timed like any other (#678). A saved duration/speed plan keeps its cardio form even after
   // the catalogue moved its exercise out of cardio (jumping jacks, #717).
@@ -1782,6 +1785,9 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   // Both default from the dataset and are then whatever the config says — see isBw.
   const bw = !cardio && isBw({ ...c, id: ex.id })
   const perSide = isPerSide(c)
+  // What a warm-up rests without one of its own, for its wheel to open on (#735): the profile's,
+  // else the work sets' (lib/supersetFlow.js warmupRestSecFor).
+  const warmApplies = warmAll !== null ? warmAll : ownExerciseRest(c) ?? st.restSec
   // Pyramid sets: one rep target per set, in place of the flat Sets × Reps (CONTEXT.md).
   const pyramid = mode === 'reps' && isPyramid({ ...c, mode })
   const setPyramidAt = (i, v) => setC(x => ({ ...x, pyramid: x.pyramid.map((p, j) => (j === i ? v : p)) }))
@@ -1837,8 +1843,9 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     // Per-exercise rest (issue #10): written only when a positive value was set, so 0 keeps
     // inheriting the global rest timer and a config that never touched it stays the shape it
     // was. Mode-independent — a heavy triple, a plank and a cardio interval all rest.
+    // "No timer" is its own `restOff` rather than a 0, which has always meant the default.
     const restSec = Math.max(0, Math.round(c.restSec) || 0)
-    const withRest = restSec ? { restSec } : {}
+    const withRest = restSec ? { restSec } : c.restOff === true ? { restOff: true } : {}
     // What a dumbbell weight means in this slot (lib/dumbbells.js): written only when the slot
     // picked its own, so every other config stays the shape it was.
     const dbLoad = isBellEx(ex) && !bw ? dbLoadOf(c.dbLoad) : null
@@ -2014,20 +2021,25 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     {/* Per-exercise rest (issue #10). Its own full-width row, like the other steppers with an
         explanation under them, and outside every mode branch because a heavy triple, a plank
         and a cardio interval all rest — they just do not all want the same break. */}
-    {/* On the same wheel as the default rest timer (v1.3.11): 0:00 is "no rest of its own", so
-        the default applies, and the row says which default that is. */}
+    {/* The default rest, no timer, or a time of its own: the warm-ups' three choices. The wheel
+        opens on the rest that applies now (#735), and 0:00 on it is no timer. */}
     <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
       <Row icon="timer" iconTint="var(--orange)" title={t('Rest for this exercise')} accessory="chevron"
-        value={c.restSec > 0 ? fmtRest(c.restSec) : t('Default ({0})', fmtRest(st.restSec))}
-        onClick={() => durationSheet({
-          title: t('Rest for this exercise'), value: c.restSec > 0 ? c.restSec : 0, max: REST_MAX,
-          off: t('Default ({0})', fmtRest(st.restSec)),
-          footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
-          onDone: v => setC(x => ({ ...x, restSec: v })),
+        value={c.restSec > 0 ? fmtRest(c.restSec) : c.restOff === true ? t('No timer') : restLikeAll}
+        onClick={() => menuSheet({
+          title: t('Rest for this exercise'),
+          items: [
+            { icon: 'timer', label: restLikeAll, on: !(c.restSec > 0) && c.restOff !== true, onClick: () => setC(x => { const { restOff, restSec, ...rest } = x; return rest }) },
+            { icon: 'pause', label: t('No timer'), on: !(c.restSec > 0) && c.restOff === true, onClick: () => setC(x => { const { restSec, ...rest } = x; return { ...rest, restOff: true } }) },
+            { icon: 'clock', label: t('Pick a time'), on: c.restSec > 0, onClick: () => durationSheet({
+              title: t('Rest for this exercise'), value: restWheelValue(c.restSec, c.restOff === true ? 0 : st.restSec), max: REST_MAX, off: t('No timer'),
+              onDone: v => setC(x => { const { restOff, restSec, ...rest } = x; return v > 0 ? { ...rest, restSec: v } : { ...rest, restOff: true } }),
+            }) },
+          ],
         })} />
     </div>
     <div className="small dim" style={{ marginBottom: 18 }}>
-      {t('Rest after each set of this exercise. 0:00 means your default rest.')}
+      {t('Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.')}
     </div>
     {/* The warm-ups' own rest: the profile's or like the work sets (no field, as always), no timer,
         or a time of their own. The last warm-up still rests the full work rest before the first work set. */}
@@ -2041,7 +2053,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
               { icon: 'timer', label: warmLikeAll, on: !(c.warmupRestOff === true) && !(c.warmupRestSec > 0), onClick: () => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return rest }) },
               { icon: 'pause', label: t('No timer'), on: c.warmupRestOff === true, onClick: () => setC(x => { const { warmupRestSec, ...rest } = x; return { ...rest, warmupRestOff: true } }) },
               { icon: 'clock', label: t('Pick a time'), on: c.warmupRestOff !== true && c.warmupRestSec > 0, onClick: () => durationSheet({
-                title: t('Rest between warm-ups'), value: c.warmupRestSec > 0 ? c.warmupRestSec : 30, max: REST_MAX, off: t('No timer'),
+                title: t('Rest between warm-ups'), value: restWheelValue(c.warmupRestSec, warmApplies), max: REST_MAX, off: t('No timer'),
                 onDone: v => setC(x => { const { warmupRestOff, warmupRestSec, ...rest } = x; return v > 0 ? { ...rest, warmupRestSec: v } : { ...rest, warmupRestOff: true } }),
               }) },
             ],

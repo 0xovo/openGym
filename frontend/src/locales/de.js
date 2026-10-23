@@ -192,7 +192,7 @@ export default {
   'Remove drop': 'Dropsatz entfernen',
   'Remove burst': 'Burst entfernen',
   'Rest (s)': 'Pause (s)',
-  'Rest after each set of this exercise. 0:00 means your default rest.': 'Pause nach jedem Satz dieser Übung. Bei 0:00 gilt deine Standard-Pause.',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': 'Pause nach jedem Satz dieser Übung. Kein Timer heißt kein Countdown, du legst los, wenn du bereit bist.',
   'Drop-set / rest-pause': 'Dropsatz / Rest-Pause',
   'Intensifier': 'Intensivierungstechnik',
   'None': 'Keine',

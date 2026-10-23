@@ -184,7 +184,7 @@ export default {
   'Remove drop': 'Retirer le drop set',
   'Remove burst': 'Retirer la rafale',
   'Rest (s)': 'Repos (s)',
-  'Rest after each set of this exercise. 0:00 means your default rest.': 'Repos après chaque série de cet exercice. À 0:00, c’est ton repos par défaut.',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': 'Repos après chaque série de cet exercice. Pas de minuteur, pas de compte à rebours : tu repars quand tu es prêt.',
   'Drop-set / rest-pause': 'Drop-set / rest-pause',
   'Intensifier': 'Intensificateur',
   'None': 'Aucun',

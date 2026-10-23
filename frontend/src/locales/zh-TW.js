@@ -180,7 +180,7 @@ export default {
   'Remove drop': '移除遞減組',
   'Remove burst': '移除爆發組',
   'Rest (s)': '休息（秒）',
-  'Rest after each set of this exercise. 0:00 means your default rest.': '此動作每組結束後的休息時間。設為 0:00 即使用預設休息。',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': '此動作每組結束後的休息時間。選「不計時」就沒有倒數，準備好就繼續。',
   'Drop-set / rest-pause': '遞減組 / 休息暫停組',
   'Intensifier': '強化技巧',
   'None': '無',

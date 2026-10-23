@@ -178,7 +178,7 @@ export default {
   'Remove drop': 'Убрать дроп-сет',
   'Remove burst': 'Убрать серию',
   'Rest (s)': 'Отдых (с)',
-  'Rest after each set of this exercise. 0:00 means your default rest.': 'Отдых после каждого подхода этого упражнения. 0:00 значит ваш отдых по умолчанию.',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': 'Отдых после каждого подхода этого упражнения. Без таймера нет обратного отсчёта, продолжайте, когда будете готовы.',
   'Drop-set / rest-pause': 'Дроп-сет / рест-пауза',
   'Intensifier': 'Интенсификатор',
   'None': 'Нет',

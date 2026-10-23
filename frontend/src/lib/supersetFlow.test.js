@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, ownSetRest, stepUnitIndex, advanceAfterTimedRest } from './supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, ownSetRest, ownExerciseRest, stepUnitIndex, advanceAfterTimedRest } from './supersetFlow.js'
 
 const entry = done => ({ sets: done.map(value => ({ done: value })) })
 
@@ -288,3 +288,32 @@ describe('advanceAfterTimedRest (#532)', () => {
   })
 })
 
+
+// Discord (lajawi): an exercise can say "No timer" for itself (`restOff`), where a 0 rest has
+// always meant "the default".
+describe('an exercise on "No timer"', () => {
+  const ex = (target, sets = [{ done: true }, { done: false }]) => ({ target, sets })
+  it('rests nothing after its sets, whatever the default is', () => {
+    expect(restSecFor([ex({ restOff: true })], [0], 90)).toBe(0)
+    expect(restSecFor([ex({ restSec: 0 })], [0], 90)).toBe(90)
+    expect(restSecFor([ex({})], [0], 90)).toBe(90)
+  })
+  it('in a superset the other member’s rest still applies, the longest as always', () => {
+    expect(restSecFor([ex({ restOff: true, sg: 'a' }), ex({ sg: 'a' })], [0, 1], 90)).toBe(90)
+    expect(restSecFor([ex({ restOff: true, sg: 'a' }), ex({ restOff: true, sg: 'a' })], [0, 1], 90)).toBe(0)
+  })
+  it('a pyramid set’s own rest still stands in for it', () => {
+    expect(restSecFor([ex({ restOff: true })], [0], 90, { idx: 0, sec: 45 })).toBe(45)
+  })
+  it('a time picked next to it on an older app wins, and garbage reads as the default', () => {
+    expect(ownExerciseRest({ restOff: true, restSec: 120 })).toBe(120)
+    expect(ownExerciseRest({ restOff: true })).toBe(0)
+    expect(ownExerciseRest({ restOff: 'yes' })).toBeNull()
+    expect(ownExerciseRest({ restSec: -5 })).toBeNull()
+    expect(ownExerciseRest(undefined)).toBeNull()
+  })
+  it('its last warm-up goes into the first work set without a timer too', () => {
+    const e = { target: { restOff: true }, sets: [{ phase: 'warmup', done: true }, { done: false }] }
+    expect(warmupRestSecFor(e, 0, restSecFor([e], [0], 90), undefined)).toBe(0)
+  })
+})

@@ -184,7 +184,7 @@ export default {
   'Remove drop': '移除递减组',
   'Remove burst': '移除爆发组',
   'Rest (s)': '休息（秒）',
-  'Rest after each set of this exercise. 0:00 means your default rest.': '这个动作每组之后的休息时间。设为 0:00 就用默认休息。',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': '这个动作每组之后的休息时间。选“不计时”就没有倒计时，准备好了就继续。',
   'Drop-set / rest-pause': '递减组 / 歇息暂停组',
   'Intensifier': '强化技巧',
   'None': '无',

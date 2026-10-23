@@ -17,7 +17,7 @@ import { pinState } from '../lib/queue.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { api, beacon } from '../lib/api.js'
 import { pyramidRestFor, maxRecordAt, isPyramid, pyramidLabel } from '../lib/pyramid.js'
-import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, ownSetRest, stepUnitIndex, advanceAfterTimedRest } from '../lib/supersetFlow.js'
+import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor, sideRestFor, ownSetRest, ownExerciseRest, stepUnitIndex, advanceAfterTimedRest } from '../lib/supersetFlow.js'
 import Media from '../components/Media.jsx'
 import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
@@ -26,7 +26,7 @@ import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
 import { workoutSettingsSheet } from '../components/WorkoutSettingsSheet.jsx'
 import { SessionMapButton } from '../components/SessionMuscles.jsx'
 import { durationSheet } from '../components/DurationWheel.jsx'
-import { REST_MAX, fmtRest } from '../lib/duration.js'
+import { REST_MAX, fmtRest, restWheelValue } from '../lib/duration.js'
 import { startFlow, exercisePicker, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet, finishWorkoutNow } from '../sheets.jsx'
 import { afterScrollRestore, scrollRestorePending } from '../components/Modals.jsx'
 import { effortColor } from '../lib/effort.js'
@@ -410,8 +410,8 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   // in groups since v1.3.11: what you change today, what you look up, the exercise's settings,
   // the order of the session, and Remove on its own at the end.
   // The exercise's own rest, or the default it falls back to (lib/supersetFlow.js restSecFor).
-  const ownRest = entry.target?.restSec > 0 ? entry.target.restSec : 0
-  const restSub = ownRest ? fmtRest(ownRest) : t('Default ({0})', fmtRest(S.restSec))
+  const ownRest = ownExerciseRest(entry.target)
+  const restSub = ownRest === 0 ? t('No timer') : ownRest ? fmtRest(ownRest) : t('Default ({0})', fmtRest(S.restSec))
   const openMore = () => menuSheet({
     title: exerciseNameFor(ex),
     titleClass: exerciseNameClass(ex),
@@ -1366,7 +1366,7 @@ function ActiveWorkout() {
   // edits it (lib/session-routines.js). This is the explicit way to keep them — an item in the
   // exercise's ⋯ menu, there only while the routine's slot says something else than the session
   // did. Sets, reps and weight are not part of it (routineChangesFromEntry).
-  const restWord = v => (Number(v) > 0 ? fmtRest(v) : t('Default ({0})', fmtRest(S.restSec)))
+  const restWord = v => (Number(v) > 0 ? fmtRest(v) : Number(v) < 0 ? t('No timer') : t('Default ({0})', fmtRest(S.restSec)))
   const routineUpdateFor = idx => {
     const entry = A.entries[idx]
     const routine = !editing && entry?.rid ? S.routines.find(r => r.id === entry.rid) : null
@@ -1570,25 +1570,33 @@ function ActiveWorkout() {
       ] },
     ],
   })
-  // An exercise's own rest, from its ⋯ menu: the same wheel as the default rest timer, where 0:00
-  // means "no rest of its own", so the default applies. Like everything edited on the exercise
-  // from inside the session it is this session's; the menu's Update routine offers to keep it.
+  // An exercise's own rest, from its ⋯ menu: the default, no timer, or a time of its own, as on
+  // its settings sheet. Like everything edited on the exercise from inside the session it is this
+  // session's; the menu's Update routine offers to keep it.
   const openExerciseRest = idx => {
     const state = useStore.getState().S
     const entry = state.active?.entries?.[idx]
     if (!entry) return
     const activeId = state.active.id
     const entryId = entry.id
-    durationSheet({
+    const own = ownExerciseRest(entry.target)
+    const setRest = sec => update(s => {
+      const e = s.active?.id === activeId ? s.active.entries?.[idx] : null
+      if (!e || e.id !== entryId) return
+      const { restSec: _sec, restOff: _off, ...target } = e.target || {}
+      e.target = sec == null ? target : sec > 0 ? { ...target, restSec: sec } : { ...target, restOff: true }
+    })
+    menuSheet({
       title: t('Rest for this exercise'),
-      value: entry.target?.restSec > 0 ? entry.target.restSec : 0, max: REST_MAX,
-      off: t('Default ({0})', fmtRest(state.restSec)),
-      footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
-      onDone: v => update(s => {
-        const e = s.active?.id === activeId ? s.active.entries?.[idx] : null
-        if (!e || e.id !== entryId) return
-        e.target = { ...(e.target || {}), restSec: v }
-      }),
+      items: [
+        { icon: 'timer', label: t('Default ({0})', fmtRest(state.restSec)), on: own == null, onClick: () => setRest(null) },
+        { icon: 'pause', label: t('No timer'), on: own === 0, onClick: () => setRest(0) },
+        // The wheel opens on the rest that applies now (#735), 0:00 on it is no timer.
+        { icon: 'clock', label: t('Pick a time'), on: own > 0, onClick: () => durationSheet({
+          title: t('Rest for this exercise'), value: restWheelValue(own, state.restSec), max: REST_MAX, off: t('No timer'),
+          onDone: v => setRest(v > 0 ? v : 0),
+        }) },
+      ],
     })
   }
   const openProgressionSettings = idx => {

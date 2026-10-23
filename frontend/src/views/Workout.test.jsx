@@ -3551,22 +3551,35 @@ describe('the workout screen chrome (v1.3.11)', () => {
     ])
   })
 
-  it('sets an exercise’s own rest on the wheel, 0:00 meaning the default', async () => {
+  it('sets an exercise’s own rest: the default, no timer, or a time on a wheel that opens on the rest that applies (#735)', async () => {
     await mount([exercise('plain-bench', [false])])
     await openMore()
     expect(item('Rest timer').sub).toBe('Default (1:30)')
     item('Rest timer').onClick()
+    const restItems = () => menuItemsOf(lastMenu())
+    expect(restItems().map(it => [it.label, !!it.on])).toEqual([['Default (1:30)', true], ['No timer', false], ['Pick a time', false]])
+    restItems()[2].onClick()
     const opts = mocks.durationSheet.mock.calls.at(-1)[0]
-    expect(opts).toMatchObject({ title: 'Rest for this exercise', value: 0, max: 900, off: 'Default (1:30)' })
+    // Not 0:00: the dials sit on the 1:30 that applies, and 0:00 on them is no timer.
+    expect(opts).toMatchObject({ title: 'Rest for this exercise', value: 90, max: 900, off: 'No timer' })
     await act(async () => { opts.onDone(135) })
     expect(mocks.S.active.entries[0].target.restSec).toBe(135)
     await rerender()
     await openMore()
     expect(item('Rest timer').sub).toBe('2:15')
     item('Rest timer').onClick()
+    restItems()[2].onClick()
     expect(mocks.durationSheet.mock.calls.at(-1)[0].value).toBe(135)
+    // 0:00 on the wheel is "No timer" now, stored as restOff, never as a 0 that reads as the default.
     await act(async () => { mocks.durationSheet.mock.calls.at(-1)[0].onDone(0) })
-    expect(mocks.S.active.entries[0].target.restSec).toBe(0)
+    expect(mocks.S.active.entries[0].target).toMatchObject({ restOff: true })
+    expect('restSec' in mocks.S.active.entries[0].target).toBe(false)
+    await rerender()
+    await openMore()
+    expect(item('Rest timer').sub).toBe('No timer')
+    item('Rest timer').onClick()
+    await act(async () => { restItems()[0].onClick() })
+    expect('restOff' in mocks.S.active.entries[0].target || 'restSec' in mocks.S.active.entries[0].target).toBe(false)
   })
 
   it('has no rest item in the editor of a saved workout', async () => {

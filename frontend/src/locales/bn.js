@@ -215,7 +215,7 @@ export default {
   'Remove drop': 'ড্রপ সরান',
   'Remove burst': 'বার্স্ট সরান',
   'Rest (s)': 'বিশ্রাম (সে.)',
-  'Rest after each set of this exercise. 0:00 means your default rest.': 'এই ব্যায়ামের প্রতিটি সেটের পরে বিশ্রাম। 0:00 মানে আপনার ডিফল্ট বিশ্রাম।',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': 'এই ব্যায়ামের প্রতিটি সেটের পরে বিশ্রাম। টাইমার নেই মানে কোনো কাউন্টডাউন নেই, তৈরি হলেই শুরু করুন।',
   'Drop-set / rest-pause': 'ড্রপ সেট / রেস্ট-পজ',
   'Intensifier': 'ইনটেনসিফায়ার',
   'None': 'কিছু না',

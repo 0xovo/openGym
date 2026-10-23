@@ -184,7 +184,7 @@ export default {
   'Remove drop': 'Quitar bajada',
   'Remove burst': 'Quitar ráfaga',
   'Rest (s)': 'Descanso (s)',
-  'Rest after each set of this exercise. 0:00 means your default rest.': 'Descanso tras cada serie de este ejercicio. Con 0:00 se usa tu descanso por defecto.',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': 'Descanso tras cada serie de este ejercicio. Sin temporizador no hay cuenta atrás, sigues cuando estés listo.',
   'Drop-set / rest-pause': 'Series descendentes / rest-pause',
   'Intensifier': 'Intensificador',
   'None': 'Ninguno',

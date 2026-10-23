@@ -110,6 +110,15 @@ describe('what survives a shared plan', () => {
     expect(roundTrip({ restSec: 180 }).restSec).toBe(180)
   })
 
+  // Discord (lajawi): an exercise's own "No timer" is part of the prescription too.
+  it('carries an exercise’s "No timer", and only a real one', () => {
+    expect(roundTrip({ restOff: true })).toMatchObject({ restOff: true })
+    expect('restSec' in roundTrip({ restOff: true })).toBe(false)
+    expect(roundTrip({ restOff: true, restSec: 120 })).toMatchObject({ restSec: 120 })
+    expect('restOff' in roundTrip({ restOff: true, restSec: 120 })).toBe(false)
+    for (const e of [{}, { restOff: false }, { restOff: 'yes' }]) expect('restOff' in roundTrip(e), JSON.stringify(e)).toBe(false)
+  })
+
   // The ramp's own rest is the same kind of prescription: a shared plan whose warm-up sets
   // arrive resting the full working rest is not the plan that was written.
   it('carries a per-exercise warm-up rest, and leaves it out when unset', () => {

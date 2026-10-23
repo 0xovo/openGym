@@ -64,6 +64,12 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   (#736, thanks @lodepav). Jumping jacks, burpees, star jumps and tuck jumps start as sets × reps
   instead of minutes and speed (#717, thanks @zykll18). Only fresh picks: what's already in your
   routines and history stays exactly as you set it up.
+- **"No timer" for a single exercise.** Rest for this exercise now has the same three choices as
+  the warm-ups: your default, No timer, or a time of its own. Stretches and carries can finally
+  skip the countdown while your squats keep theirs. Saved in routines, shared plans and backups.
+- **The rest wheel starts where your rest is.** Pick a time opens on the rest that applies right
+  now (the exercise's, the warm-ups', or your default) instead of sitting at 0:00 (#735, thanks
+  @lodepav).
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that

@@ -73,7 +73,8 @@ function Prescription({ entry, setIdx, unit, fallbackRest, children }) {
   const rpe = target.rpeMin > 0
     ? `RPE ${fmtNum(target.rpeMin)}${target.rpeMax > target.rpeMin ? `–${fmtNum(target.rpeMax)}` : ''}`
     : ''
-  const rest = target.restSec > 0 ? `Rest ${target.restSec}s` : fallbackRest > 0 ? `Rest ${fallbackRest}s` : ''
+  // An exercise on 'No timer' (restOff) shows no rest, whatever the default is.
+  const rest = target.restOff === true ? '' : target.restSec > 0 ? `Rest ${target.restSec}s` : fallbackRest > 0 ? `Rest ${fallbackRest}s` : ''
   const badges = [reps && `${reps} Reps`, load, rpe, rest, target.tempo].filter(Boolean)
 
   return <div className="focus-prescription">

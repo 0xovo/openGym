@@ -184,7 +184,7 @@ export default {
   'Remove drop': 'ड्रॉप सेट हटाएं',
   'Remove burst': 'बर्स्ट हटाएं',
   'Rest (s)': 'आराम (सेकंड)',
-  'Rest after each set of this exercise. 0:00 means your default rest.': 'इस एक्सरसाइज़ के हर सेट के बाद आराम। 0:00 पर आपका डिफ़ॉल्ट आराम लागू होता है।',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': 'इस एक्सरसाइज़ के हर सेट के बाद आराम। कोई टाइमर नहीं यानी कोई काउंटडाउन नहीं, जब तैयार हों तब शुरू करें।',
   'Drop-set / rest-pause': 'ड्रॉप सेट / रेस्ट-पॉज़',
   'Intensifier': 'इंटेंसिफायर',
   'None': 'कोई नहीं',

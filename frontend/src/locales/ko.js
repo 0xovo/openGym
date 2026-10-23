@@ -184,7 +184,7 @@ export default {
   'Remove drop': '드롭세트 제거',
   'Remove burst': '버스트 제거',
   'Rest (s)': '휴식(초)',
-  'Rest after each set of this exercise. 0:00 means your default rest.': '이 운동의 세트마다 갖는 휴식이에요. 0:00이면 기본 휴식을 써요.',
+  'Rest after each set of this exercise. No timer means no countdown, you go when you’re ready.': '이 운동의 세트마다 갖는 휴식이에요. 타이머 없음이면 카운트다운 없이 준비되면 바로 시작해요.',
   'Drop-set / rest-pause': '드롭세트 / 레스트포즈',
   'Intensifier': '강도 기법',
   'None': '없음',
