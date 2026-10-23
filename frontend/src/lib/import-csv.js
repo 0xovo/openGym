@@ -893,7 +893,10 @@ export function parseImport(text, opts) {
 export function mergeImport(S, parsed) {
   if (parsed.kind === 'bodyweight') {
     const have = new Set(S.bodyweight.map(b => b.d))
-    const fresh = parsed.bodyweight.filter(b => !have.has(b.d))
+    // Marked as imported (`src`, as lib/health-read.js marks what it reads): mostly another app's
+    // or the health hub's own export, so it is never written back to Apple Health or Health
+    // Connect (lib/health-connect.js healthRecords), where it would land a second time.
+    const fresh = parsed.bodyweight.filter(b => !have.has(b.d)).map(b => ({ ...b, src: b.src || 'import' }))
     S.bodyweight = [...S.bodyweight, ...fresh].sort((a, b) => (a.d < b.d ? -1 : 1))
     return { added: fresh.length, skipped: parsed.bodyweight.length - fresh.length }
   }
