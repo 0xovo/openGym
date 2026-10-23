@@ -2492,4 +2492,6 @@ export default {
   "{0} must be between 0 and 100%.": "{0}, %0 ile %100 arasında olmalı.",
   // --- warm-ups counted in volume (#719) ---
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "Çalışma setlerinden önce eklenir. Hacmine sayılır (Ayarlar), ama rekor ve ilerlemeye sayılmaz. Her biri çalışma ağırlığına kalan farkı yarıya indirir, halter hareketlerinde boş barın altına hiç inmez ve antrenman sırasında hâlâ istediğini değiştirebilirsin.",
+  // --- weigh-in undo (#756) ---
+  "Weigh-in deleted": "Tartım silindi",
 }

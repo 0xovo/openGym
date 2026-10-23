@@ -1598,6 +1598,8 @@ export const PT_BR_OVERRIDES = {
   "{0} must be between 0 and 100%.": "{0} deve estar entre 0 e 100%.",
   // --- warm-ups counted in volume (#719) ---
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "Entram antes das suas séries de trabalho. Contam no seu volume (Ajustes), mas ficam de fora dos recordes e da progressão. Cada uma fecha metade da distância até o peso de trabalho, nunca abaixo da barra vazia em um exercício com barra, e você ainda pode mudar qualquer uma no meio do treino.",
+  // --- weigh-in undo (#756) ---
+  "Weigh-in deleted": "Pesagem excluída",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

@@ -2492,4 +2492,6 @@ export default {
   "{0} must be between 0 and 100%.": "{0} का मान 0 से 100% के बीच होना चाहिए।",
   // --- warm-ups counted in volume (#719) ---
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "ये आपके वर्क सेट से पहले जुड़ते हैं। ये आपके वॉल्यूम में गिने जाते हैं (सेटिंग्स), लेकिन रिकॉर्ड और प्रोग्रेशन में नहीं। हर सेट वर्क वज़न तक बची दूरी को आधा कर देता है, बारबेल लिफ़्ट में कभी खाली बार से हल्का नहीं होता, और कसरत के बीच भी आप इनमें से किसी को बदल सकते हैं।",
+  // --- weigh-in undo (#756) ---
+  "Weigh-in deleted": "वज़न हटाया गया",
 }

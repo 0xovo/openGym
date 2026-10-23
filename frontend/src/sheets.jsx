@@ -366,8 +366,22 @@ export function bwSheet(opts = {}) {
 // The full list asks first (`confirm`): it is months of history scrolled through on a phone, and a
 // stray tap on one of its trash buttons took a past weigh-in with nothing to bring it back. The log
 // sheet's three are the ones just typed, where taking back a typo in one tap is the point.
+// Either way the toast offers Undo (#756): the weigh-in comes back as it was, and the store
+// records it as added back (stampDeletions), so a device that synced the removal keeps it too.
 function WeighInRow({ b, unit, confirm = false }) {
-  const delEntry = () => update(s => { s.bodyweight = s.bodyweight.filter(x => x.d !== b.d) })
+  const delEntry = () => {
+    const kept = { ...b }
+    update(s => { s.bodyweight = s.bodyweight.filter(x => x.d !== b.d) })
+    ui().toast(t('Weigh-in deleted'), {
+      action: t('Undo'),
+      onAction: () => update(s => {
+        // A weigh-in logged for that day since is the newer word on it.
+        if (s.bodyweight.some(x => x.d === kept.d)) return
+        s.bodyweight.push(kept)
+        s.bodyweight.sort((x, y) => (x.d < y.d ? -1 : 1))
+      }),
+    })
+  }
   const ask = () => confirmSheet({
     title: t('Delete weigh-in?'), message: `${fmtDate(b.d, true)} · ${fmtNum(b.w)} ${unit}`,
     confirmText: t('Delete'), danger: true, onConfirm: delEntry,

@@ -2492,4 +2492,6 @@ export default {
   "{0} must be between 0 and 100%.": "{0} tem de estar entre 0 e 100 %.",
   // --- warm-ups counted in volume (#719) ---
   "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "São acrescentadas antes das tuas séries de trabalho. Contam no teu volume (Definições), mas ficam de fora dos recordes e da progressão. Cada uma reduz a metade a distância até ao peso de trabalho, nunca abaixo da barra vazia num exercício com barra, e podes alterar qualquer uma a meio da sessão.",
+  // --- weigh-in undo (#756) ---
+  "Weigh-in deleted": "Pesagem eliminada",
 }

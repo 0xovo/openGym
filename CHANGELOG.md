@@ -88,6 +88,8 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   Fine-tuning → Last time means → Any workout lets Thursday start from Monday, for the rows, the
   "last time" line and progression alike. The default stays per routine, so a heavy day and a
   light day keep their own numbers.
+- **Deleted a weigh-in by mistake? Undo.** Deleting one now shows a toast with Undo, on the log
+  sheet and in All weigh-ins, and the weigh-in comes back as if nothing happened (#756).
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
