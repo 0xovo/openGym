@@ -1,8 +1,5 @@
 // Ukrainian UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "Інші назви",
-  "Alternative names for search. Separate with commas.": "Інші назви для пошуку. Розділяйте комами.",
-  "Save aliases": "Зберегти назви",
   'Confirm': 'Підтвердити',
   'Cancel': 'Скасувати',
   'Press back again to exit': 'Натисни «Назад» ще раз, щоб вийти',
@@ -367,6 +364,11 @@ export default {
   'Create your own exercise': 'Створити свою вправу',
   'Edit custom exercise': 'Змінити свою вправу',
   'Exercise name': 'Назва вправи',
+  'Other names': 'Інші назви',
+  'The search finds it by these too. Separate them with commas.': 'Пошук знайде вправу і за ними. Розділяйте комами.',
+  'Add another name': 'Додати іншу назву',
+  'Also called {0}': 'Також називають: {0}',
+  'Save names': 'Зберегти назви',
   'Create exercise': 'Створити вправу',
   'Give it a name': 'Задай назву',
   'Pick a body part': 'Вибери частину тіла',

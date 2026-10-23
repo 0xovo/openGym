@@ -1,4 +1,3 @@
-import { normalizeAliases } from './exercise-aliases.js'
 // Share a weekly plan.
 //
 // Two jobs:
@@ -26,6 +25,7 @@ import { clampIncline, hasIncline } from './incline.js'
 import { MUSCLES, inMuscleOrder } from './muscles.js'
 import { SG_NAME_MAX } from './superset-meta.js'
 import { esc, printShell, printDocument, probeMarks } from './print-doc.js'
+import { normalizeAliases } from './exercise-aliases.js'
 
 const PLAN_FMT = 1
 const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 0]   // every getDay() index; only the reader's own

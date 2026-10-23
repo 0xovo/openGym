@@ -1,8 +1,5 @@
 // Thai UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "ชื่ออื่น",
-  "Alternative names for search. Separate with commas.": "ชื่ออื่นสำหรับการค้นหา คั่นด้วยเครื่องหมายจุลภาค",
-  "Save aliases": "บันทึกชื่ออื่น",
   // --- generic ---
   'Confirm': 'ยืนยัน',
   'Cancel': 'ยกเลิก',
@@ -534,6 +531,11 @@ export default {
   'Create your own exercise': 'สร้างท่าออกกำลังกายของตัวเอง',
   'Edit custom exercise': 'แก้ไขท่าที่สร้างเอง',
   'Exercise name': 'ชื่อท่าออกกำลังกาย',
+  'Other names': 'ชื่ออื่น',
+  'The search finds it by these too. Separate them with commas.': 'ค้นหาด้วยชื่อเหล่านี้ก็เจอเหมือนกัน คั่นด้วยเครื่องหมายจุลภาค',
+  'Add another name': 'เพิ่มชื่ออื่น',
+  'Also called {0}': 'เรียกอีกอย่างว่า {0}',
+  'Save names': 'บันทึกชื่อ',
   'Create exercise': 'สร้างท่าออกกำลังกาย',
   'Give it a name': 'ตั้งชื่อให้',
   'Pick a body part': 'เลือกส่วนร่างกาย',

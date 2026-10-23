@@ -1,8 +1,5 @@
 // Italian UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "Nomi alternativi",
-  "Alternative names for search. Separate with commas.": "Nomi alternativi per la ricerca. Separali con virgole.",
-  "Save aliases": "Salva nomi alternativi",
   'Confirm': 'Conferma',
   'Cancel': 'Annulla',
   'Press back again to exit': 'Premi di nuovo indietro per uscire',
@@ -530,6 +527,11 @@ export default {
   'Create your own exercise': 'Crea il tuo esercizio',
   'Edit custom exercise': 'Modifica esercizio personalizzato',
   'Exercise name': 'Nome esercizio',
+  'Other names': 'Altri nomi',
+  'The search finds it by these too. Separate them with commas.': 'La ricerca lo trova anche con questi. Separali con virgole.',
+  'Add another name': 'Aggiungi un altro nome',
+  'Also called {0}': 'Detto anche {0}',
+  'Save names': 'Salva i nomi',
   'Create exercise': 'Crea esercizio',
   'Give it a name': 'Dagli un nome',
   'Pick a body part': 'Scegli una parte del corpo',

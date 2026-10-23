@@ -1,8 +1,5 @@
 // Simplified Chinese UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "别名",
-  "Alternative names for search. Separate with commas.": "用于搜索的其他名称，请用逗号分隔。",
-  "Save aliases": "保存别名",
   'Confirm': '确认',
   'Cancel': '取消',
   'Press back again to exit': '再按一次返回退出',
@@ -530,6 +527,11 @@ export default {
   'Create your own exercise': '创建自己的动作',
   'Edit custom exercise': '编辑自定义动作',
   'Exercise name': '动作名称',
+  'Other names': '其他名称',
+  'The search finds it by these too. Separate them with commas.': '搜索时也能用这些名称找到它。用逗号分隔。',
+  'Add another name': '添加别名',
+  'Also called {0}': '也叫{0}',
+  'Save names': '保存名称',
   'Create exercise': '创建动作',
   'Give it a name': '请输入名称',
   'Pick a body part': '请选择身体部位',

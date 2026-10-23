@@ -1,8 +1,5 @@
 // Hindi UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "वैकल्पिक नाम",
-  "Alternative names for search. Separate with commas.": "खोज के लिए वैकल्पिक नाम। कॉमा से अलग करें।",
-  "Save aliases": "वैकल्पिक नाम सहेजें",
   'Confirm': 'पुष्टि करें',
   'Cancel': 'रद्द करें',
   'Press back again to exit': 'बाहर निकलने के लिए फिर से बैक दबाएँ',
@@ -530,6 +527,11 @@ export default {
   'Create your own exercise': 'अपनी एक्सरसाइज़ बनाएं',
   'Edit custom exercise': 'कस्टम एक्सरसाइज़ संपादित करें',
   'Exercise name': 'एक्सरसाइज़ का नाम',
+  'Other names': 'दूसरे नाम',
+  'The search finds it by these too. Separate them with commas.': 'खोज इन नामों से भी इसे ढूंढ लेती है। इन्हें कॉमा से अलग करें।',
+  'Add another name': 'एक और नाम जोड़ें',
+  'Also called {0}': 'इसे {0} भी कहते हैं',
+  'Save names': 'नाम सेव करें',
   'Create exercise': 'एक्सरसाइज़ बनाएं',
   'Give it a name': 'कोई नाम दें',
   'Pick a body part': 'एक बॉडी पार्ट चुनें',

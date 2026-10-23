@@ -1,8 +1,5 @@
 // Arabic UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "أسماء بديلة",
-  "Alternative names for search. Separate with commas.": "أسماء بديلة للبحث. افصل بينها بفواصل.",
-  "Save aliases": "حفظ الأسماء البديلة",
   'Confirm': 'تأكيد',
   'Cancel': 'إلغاء',
   'Press back again to exit': 'اضغط زر الرجوع مرة أخرى للخروج',
@@ -437,6 +434,11 @@ export default {
   'Create your own exercise': 'أنشئ تمرينك الخاص',
   'Edit custom exercise': 'تعديل تمرين مخصص',
   'Exercise name': 'اسم التمرين',
+  'Other names': 'أسماء أخرى',
+  'The search finds it by these too. Separate them with commas.': 'يجده البحث بهذه الأسماء أيضًا. افصل بينها بفواصل.',
+  'Add another name': 'أضف اسمًا آخر',
+  'Also called {0}': 'يُعرف أيضًا باسم {0}',
+  'Save names': 'حفظ الأسماء',
   'Create exercise': 'إنشاء تمرين',
   'Give it a name': 'أعطه اسماً',
   'Pick a body part': 'اختر عضلة',

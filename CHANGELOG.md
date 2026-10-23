@@ -32,6 +32,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **The AI Coach is one tap away for admins** (#683, thanks TheBlackSide243). On a server that
   offers the Coach, admins now find an AI Coach row in Settings, right next to Look, that opens
   the admin dashboard straight at the Coach card.
+- **Call an exercise what you call it** (#624, thanks Space-Hermes). "Add another name" under an
+  exercise's tags (or in your own exercise's form) gives it other names, like OHP for the overhead
+  press, and the search finds it by those too. They sync between your devices and travel with
+  your own exercises in shared plans.
 - **Discard means discard, on the Apple Watch too** (#776). Discarding a workout on the phone
   while the watch follows it used to save it to Apple Health anyway, calories and all. Now the
   watch drops it and Apple Health never hears about it.

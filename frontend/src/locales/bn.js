@@ -1,8 +1,5 @@
 // Bengali UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "বিকল্প নাম",
-  "Alternative names for search. Separate with commas.": "অনুসন্ধানের জন্য বিকল্প নাম। কমা দিয়ে আলাদা করুন।",
-  "Save aliases": "বিকল্প নাম সংরক্ষণ করুন",
   'Confirm': 'নিশ্চিত করুন',
   'Cancel': 'বাতিল',
   'Press back again to exit': 'বের হতে আবার ব্যাক চাপুন',
@@ -616,6 +613,11 @@ export default {
   'Create your own exercise': 'নিজের ব্যায়াম তৈরি করুন',
   'Edit custom exercise': 'কাস্টম ব্যায়াম সম্পাদনা করুন',
   'Exercise name': 'ব্যায়ামের নাম',
+  'Other names': 'অন্য নাম',
+  'The search finds it by these too. Separate them with commas.': 'এই নামগুলো দিয়েও সার্চে এটা পাওয়া যাবে। কমা দিয়ে আলাদা করুন।',
+  'Add another name': 'আরেকটি নাম যোগ করুন',
+  'Also called {0}': 'একে {0}-ও বলা হয়',
+  'Save names': 'নামগুলো সেভ করুন',
   'Create exercise': 'ব্যায়াম তৈরি করুন',
   'Give it a name': 'একটি নাম দিন',
   'Pick a body part': 'শরীরের অংশ বেছে নিন',

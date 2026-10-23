@@ -1,8 +1,5 @@
 // Russian UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "Другие названия",
-  "Alternative names for search. Separate with commas.": "Другие названия для поиска. Разделяйте запятыми.",
-  "Save aliases": "Сохранить названия",
   'Confirm': 'Подтвердить',
   'Cancel': 'Отмена',
   'Press back again to exit': 'Нажмите «Назад» ещё раз, чтобы выйти',
@@ -520,6 +517,11 @@ export default {
   'Create your own exercise': 'Создать своё упражнение',
   'Edit custom exercise': 'Изменить своё упражнение',
   'Exercise name': 'Название упражнения',
+  'Other names': 'Другие названия',
+  'The search finds it by these too. Separate them with commas.': 'Поиск найдёт упражнение и по ним. Разделяйте запятыми.',
+  'Add another name': 'Добавить другое название',
+  'Also called {0}': 'Также называют: {0}',
+  'Save names': 'Сохранить названия',
   'Create exercise': 'Создать упражнение',
   'Give it a name': 'Задайте название',
   'Pick a body part': 'Выберите часть тела',

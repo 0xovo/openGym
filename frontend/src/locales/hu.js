@@ -1,8 +1,5 @@
 // Hungarian UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "Más elnevezések",
-  "Alternative names for search. Separate with commas.": "Alternatív nevek a kereséshez. Vesszővel válaszd el őket.",
-  "Save aliases": "Elnevezések mentése",
   // --- generic ---
   'Confirm': 'Megerősítés',
   'Cancel': 'Mégse',
@@ -534,6 +531,11 @@ export default {
   'Create your own exercise': 'Saját gyakorlat létrehozása',
   'Edit custom exercise': 'Egyéni gyakorlat szerkesztése',
   'Exercise name': 'Gyakorlat neve',
+  'Other names': 'Más nevek',
+  'The search finds it by these too. Separate them with commas.': 'A keresés ezeken a neveken is megtalálja. Vesszővel válaszd el őket.',
+  'Add another name': 'Másik név hozzáadása',
+  'Also called {0}': 'Más néven: {0}',
+  'Save names': 'Nevek mentése',
   'Create exercise': 'Gyakorlat létrehozása',
   'Give it a name': 'Adj neki egy nevet',
   'Pick a body part': 'Válassz testrészt',

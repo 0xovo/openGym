@@ -1,8 +1,5 @@
 // Korean UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "다른 이름",
-  "Alternative names for search. Separate with commas.": "검색에 사용할 다른 이름입니다. 쉼표로 구분하세요.",
-  "Save aliases": "다른 이름 저장",
   'Confirm': '확인',
   'Cancel': '취소',
   'Press back again to exit': '뒤로를 한 번 더 누르면 종료됩니다',
@@ -530,6 +527,11 @@ export default {
   'Create your own exercise': '나만의 운동 만들기',
   'Edit custom exercise': '커스텀 운동 편집',
   'Exercise name': '운동 이름',
+  'Other names': '다른 이름',
+  'The search finds it by these too. Separate them with commas.': '검색에서 이 이름으로도 찾을 수 있어요. 쉼표로 구분하세요.',
+  'Add another name': '다른 이름 추가',
+  'Also called {0}': '다른 이름: {0}',
+  'Save names': '이름 저장',
   'Create exercise': '운동 만들기',
   'Give it a name': '이름을 입력하세요',
   'Pick a body part': '부위를 선택하세요',

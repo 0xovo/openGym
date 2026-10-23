@@ -1,8 +1,5 @@
 // German UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "Alternative Namen",
-  "Alternative names for search. Separate with commas.": "Alternative Namen für die Suche. Mit Kommas trennen.",
-  "Save aliases": "Alternative Namen speichern",
   // --- generic ---
   'Confirm': 'Bestätigen',
   'Cancel': 'Abbrechen',
@@ -549,6 +546,11 @@ export default {
   'Create your own exercise': 'Eigene Übung erstellen',
   'Edit custom exercise': 'Eigene Übung bearbeiten',
   'Exercise name': 'Übungsname',
+  'Other names': 'Andere Namen',
+  'The search finds it by these too. Separate them with commas.': 'Die Suche findet sie auch darunter. Mit Kommas trennen.',
+  'Add another name': 'Weiteren Namen hinzufügen',
+  'Also called {0}': 'Auch genannt: {0}',
+  'Save names': 'Namen speichern',
   'Create exercise': 'Übung erstellen',
   'Give it a name': 'Gib ihr einen Namen',
   'Pick a body part': 'Wähle eine Körperpartie',

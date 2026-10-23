@@ -1,8 +1,5 @@
 // Turkish UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
-  "Aliases": "Alternatif adlar",
-  "Alternative names for search. Separate with commas.": "Arama için alternatif adlar. Virgülle ayırın.",
-  "Save aliases": "Alternatif adları kaydet",
   'Confirm': 'Onayla',
   'Cancel': 'İptal',
   'Press back again to exit': 'Çıkmak için geri tuşuna tekrar basın',
@@ -530,6 +527,11 @@ export default {
   'Create your own exercise': 'Kendi egzersizini oluştur',
   'Edit custom exercise': 'Özel egzersizi düzenle',
   'Exercise name': 'Egzersiz adı',
+  'Other names': 'Diğer adlar',
+  'The search finds it by these too. Separate them with commas.': 'Arama bunu bu adlarla da bulur. Virgülle ayır.',
+  'Add another name': 'Başka bir ad ekle',
+  'Also called {0}': 'Diğer adıyla {0}',
+  'Save names': 'Adları kaydet',
   'Create exercise': 'Egzersiz oluştur',
   'Give it a name': 'Bir ad ver',
   'Pick a body part': 'Bir vücut bölgesi seç',
