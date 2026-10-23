@@ -86,3 +86,47 @@ describe('profiles saved before the bench and the bar existed (#464)', () => {
     expect(newProfile('Home').accV).toBe(ACC_V)
   })
 })
+
+// Discord (deamondo, 10-23): a body-weight-only profile still listed the inverted row, and a
+// dumbbell fly showed without a bench, because neither name says what it hangs from or lies on.
+describe('kit the name does not mention (catalogue "needs")', () => {
+  const profile = equipment => ({ equipFilterOn: true, activeEquipId: 'p', equipProfiles: [{ id: 'p', name: 'P', equipment, accV: ACC_V }] })
+
+  test('an inverted row needs a bar, the table version does not', () => {
+    expect(accessoriesOf(EXIDX['0499'])).toEqual(['pull-up bar'])
+    expect(exAvailable(profile([]), EXIDX['0499'])).toBe(false)
+    expect(exAvailable(profile(['pull-up bar']), EXIDX['0499'])).toBe(true)
+    expect(exAvailable(profile([]), EXIDX['3381'])).toBe(true)
+  })
+
+  test('a dumbbell fly and a pullover need a bench', () => {
+    for (const id of ['0308', '0375']) {
+      expect(exAvailable(profile(['dumbbell']), EXIDX[id])).toBe(false)
+      expect(exAvailable(profile(['dumbbell', 'bench']), EXIDX[id])).toBe(true)
+    }
+  })
+
+  test('a floor pullover stays benchless', () => {
+    expect(accessoriesOf(EXIDX['4318'])).toEqual([])
+  })
+})
+
+describe('massage ball and foam roller', () => {
+  test('are two pieces of kit', () => {
+    expect(EXIDX['4465'].eq).toBe('massage ball')
+    expect(EXIDX['5394'].eq).toBe('roller')
+    expect(ALL_EQUIPMENT).toContain('massage ball')
+    expect(eqAvailable(['roller'], EXIDX['4465'])).toBe(false)
+  })
+
+  test('a profile that had the roller keeps the ball work until saved again', () => {
+    expect(eqAvailable(profileEquipment({ equipment: ['roller'], accV: 1 }), EXIDX['4465'])).toBe(true)
+    expect(eqAvailable(profileEquipment({ equipment: ['roller'] }), EXIDX['4465'])).toBe(true)
+    expect(eqAvailable(profileEquipment({ equipment: ['dumbbell'], accV: 1 }), EXIDX['4465'])).toBe(false)
+    expect(eqAvailable(profileEquipment({ equipment: ['roller'], accV: ACC_V }), EXIDX['4465'])).toBe(false)
+  })
+
+  test('a version 1 profile does not get the bench back', () => {
+    expect(profileEquipment({ equipment: ['dumbbell'], accV: 1 })).toEqual(['dumbbell'])
+  })
+})

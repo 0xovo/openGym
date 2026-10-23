@@ -3,8 +3,9 @@ import { EXDB } from './exercises-data.js'
 
 // Pieces of kit the catalogue never names as an exercise's equipment — "dumbbell bench press" is
 // tagged `dumbbell`, yet it needs a bench; "chin-up" is tagged `body weight`, yet it needs a bar.
-// They are read off the exercise name instead of stored on 1,300 rows, and sit in the profile
-// checklist beside the real equipment values.
+// Mostly read off the exercise name instead of stored on 1,300 rows; the ones the name does not
+// give away (a dumbbell fly lies on a bench, an inverted row hangs under a bar) carry `nd` from the
+// catalogue's "needs". They sit in the profile checklist beside the real equipment values.
 export const ACCESSORIES = ['bench', 'pull-up bar']
 
 // Machines that carry their own seat, bar or bench: "lever incline chest press" needs no bench.
@@ -17,6 +18,7 @@ export function accessoriesOf(ex) {
   const need = []
   if (/\bbench\b|\bincline\b|\bdecline\b/.test(n)) need.push('bench')
   if (/pull-up|pull up|chin-up|\bchin\b|hanging|muscle-up|muscle up/.test(n)) need.push('pull-up bar')
+  for (const a of Array.isArray(ex.nd) ? ex.nd : []) if (ACCESSORIES.includes(a) && !need.includes(a)) need.push(a)
   return need
 }
 
@@ -55,10 +57,15 @@ export function exAvailable(S, ex) {
 // A profile saved before the bench and the bar were on the checklist (#464) never had the chance
 // to tick them; read as unticked, every bench press and pull-up would vanish from it overnight.
 // It counts as having both until it is saved again, and the sheet shows them ticked.
-export const ACC_V = 1
+// Version 2 split the massage ball off the foam roller: a profile that had the roller kept the
+// ball exercises it always showed, again until it is saved.
+export const ACC_V = 2
 export function profileEquipment(p) {
   const have = p?.equipment || []
-  return p && p.accV !== ACC_V ? [...new Set([...have, ...ACCESSORIES])] : have
+  if (!p || p.accV === ACC_V) return have
+  const add = (p.accV || 0) < 1 ? [...ACCESSORIES] : []
+  if (have.includes('roller')) add.push('massage ball')
+  return [...new Set([...have, ...add])]
 }
 
 // The same test against a bare equipment list, for callers that hold a profile rather than S.

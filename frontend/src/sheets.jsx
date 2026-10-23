@@ -925,6 +925,8 @@ function DumbbellInventorySheet({ close }) {
           onClick={() => save(list.filter(x => x !== w))}>{fmtPlate(w)} <Icon name="xmark" /></button>)}
       </div>
       : <div className="small dim" style={{ marginBottom: 12 }}>{t('No list yet, so dumbbell lifts step by their increment as usual.')}</div>}
+    {/* An empty list means "any weight", not "none": owning no dumbbells is an equipment profile's job (Discord, deamondo). */}
+    {list.length === 0 && <div className="small dim" style={{ marginBottom: 12 }}>{t('No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.')}</div>}
     <div className="row" style={{ gap: 8, marginBottom: 12 }}>
       <NumberField className="input" decimal value={draft ?? ''} onChange={v => setDraft(v)}
         aria-label={t('Weight ({0})', unit)} placeholder={t('Weight ({0})', unit)} onKeyDown={e => { if (e.key === 'Enter') add() }} />

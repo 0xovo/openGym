@@ -35,8 +35,11 @@ describe('dumbbell inventory sheet', () => {
     act(() => dumbbellInventorySheet())
     const host = mountTopSheet()
     expect(host.textContent).toContain('No list yet')
+    // Owning none is said in an equipment profile, and the sheet says where (Discord, deamondo).
+    expect(host.textContent).toContain('No dumbbells at all? Leave them out of an equipment profile')
     act(() => button(host, 'Fill in 2 to 50 kg, every 2').click())
     expect(S().dumbbells.kg.weights).toHaveLength(25)
+    expect(host.textContent).not.toContain('No dumbbells at all?')
     expect(S().dumbbells.kg._ts).toEqual(expect.any(Number))
     expect(chips(host)[0]).toBe('2')
     act(() => host.querySelector('[aria-label="Remove 2 kg"]').click())

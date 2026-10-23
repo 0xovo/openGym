@@ -44,6 +44,7 @@ const rows = exercises
     }
     if (e.category) row.cat = e.category
     if (e.hold) row.hd = 1
+    if (e.needs) row.nd = e.needs
     if (e.femaleVariant) row.fv = e.femaleVariant
     if (e.maleVariant) row.mv = e.maleVariant
     return row
