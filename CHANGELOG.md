@@ -95,6 +95,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   the history and backups keep it, and your old custom fields stay in cm like before. The body
   CSV export says each field's unit in its column, and importing that file now brings the
   measurements back too, not just the weigh-ins.
+- **Your weekly rate, with a corridor** (#759). Under the body-weight chart on Home and in Stats:
+  the trend through the last three weeks of weigh-ins, in kg or lb and in % of body weight a
+  week, so one salty dinner can't fool it. Tap it to set what you aim for (lose, gain or hold,
+  in % or in your unit) and the card tells you whether you're on pace, too fast or too slow.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that

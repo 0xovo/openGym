@@ -297,6 +297,9 @@ h4.sec{
    55px, so the button pair may drop to a second line — still flush right, hence the auto margin. */
 .bw-head{flex-wrap:wrap;row-gap:8px}
 .bw-head>.row{margin-inline-start:auto}
+.bw-rate{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;width:100%;margin-top:6px;padding:6px 2px;background:none;border:0;color:var(--label-2);font:inherit;text-align:start;cursor:pointer}
+.bw-rate-t{min-width:0}
+.rate-range{display:grid;gap:8px;margin:14px 0 8px}
 
 /* ----------------------------------------------------------------- card -- */
 .card{

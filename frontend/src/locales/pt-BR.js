@@ -1604,6 +1604,27 @@ export const PT_BR_OVERRIDES = {
   "No unit": "Sem unidade",
   "{0} measurement check-in imported": "{0} registro de medidas importado",
   "{0} measurement check-ins imported": "{0} registros de medidas importados",
+  // --- weekly rate and corridor (#759) ---
+  "Weekly rate": "Ritmo semanal",
+  "Trend {0} a week ({1})": "Tendência de {0} por semana ({1})",
+  "A few more weigh-ins, spread over the next days, and you get a weekly trend.": "Mais algumas pesagens ao longo dos próximos dias e você ganha uma tendência semanal.",
+  "On pace": "No ritmo",
+  "Slower than planned": "Mais devagar que o planejado",
+  "Gaining faster than planned": "Ganhando mais rápido que o planejado",
+  "Losing faster than planned": "Perdendo mais rápido que o planejado",
+  "Outside your range": "Fora da sua faixa",
+  "Enter a range first": "Informe uma faixa primeiro",
+  "The trend through your weigh-ins of the last 3 weeks, so one salty dinner does not move it. Give it a range and the card tells you whether you are on pace.": "A tendência das suas pesagens das últimas 3 semanas, então um jantar salgado não mexe nela. Dê uma faixa e o cartão diz se você está no ritmo.",
+  "Lose": "Perder",
+  "Gain": "Ganhar",
+  "Hold": "Manter",
+  "% of body weight": "% do peso corporal",
+  "Within ±": "Dentro de ±",
+  "Hold within ±{0} a week.": "Manter dentro de ±{0} por semana.",
+  "Lose {0} to {1} a week.": "Perder de {0} a {1} por semana.",
+  "Gain {0} to {1} a week.": "Ganhar de {0} a {1} por semana.",
+  "A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.": "Um cutting costuma ficar em 0,5 a 1 % por semana, um bulking limpo em 0,25 a 0,5 %.",
+  "Remove range": "Remover faixa",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
