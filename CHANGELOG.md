@@ -29,6 +29,18 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   now lists each one in its ⋯ menu during a workout. Tap it and the backup takes over with the
   slot's own sets, reps, rest and warm-ups, and the exercise it replaced becomes its backup, so
   going back when the bench frees up is one tap too. Your routine stays exactly as it was.
+- **Machines with odd weight steps** (#688). A machine or cable exercise now has a Weight stack
+  under Plate loading: type in the weights its pin really picks (5, 11.3, 18.1, the LifeFitness
+  special) or fill an even stack and fix the odd ones. Progression, deloads, warm-ups, drops and
+  the + and − buttons then land only on those, and at the top of the stack it holds and says so.
+- **Lifts against your body weight** (#729, thanks @radu781). Exercise progress in Stats and an
+  exercise's History have a Bodyweight view: your estimated 1RM or heaviest set as a % of what
+  you weighed then, so the line only climbs when you got stronger for your size. Pull-ups and
+  dips count you plus the belt, assisted machines you minus the help.
+- **Log a workout by telling your AI about it** (#739, thanks @matthewjablack). The optional MCP
+  server gets `log_workout`: "curls, 12 kg, 12/12/10" lands in your history on every device,
+  saved through your own server like a paired phone. It asks back when a name could mean two
+  exercises, never logs the same thing twice, and takes 20 workouts an hour at most.
 - **The AI Coach is one tap away for admins** (#683, thanks TheBlackSide243). On a server that
   offers the Coach, admins now find an AI Coach row in Settings, right next to Look, that opens
   the admin dashboard straight at the Coach card.
