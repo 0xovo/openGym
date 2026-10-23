@@ -99,6 +99,12 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   the trend through the last three weeks of weigh-ins, in kg or lb and in % of body weight a
   week, so one salty dinner can't fool it. Tap it to set what you aim for (lose, gain or hold,
   in % or in your unit) and the card tells you whether you're on pace, too fast or too slow.
+- **The plate hint says plates, not reps** in Chinese and Korean: "20 per side" read as twenty
+  reps a side (#689, #698, thanks @xueyang-dev).
+- **Increase Contrast and Reduce Transparency are honoured** (#707, #708, thanks @olestrr). With
+  Increase Contrast on, colours, secondary text and hairlines get firmer (every button label at
+  4.5:1 or better). With Reduce Transparency on, the tab bar, timer, toast, workout and Coach bars
+  go solid instead of frosted.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
