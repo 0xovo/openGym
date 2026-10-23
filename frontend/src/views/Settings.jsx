@@ -37,6 +37,7 @@ import { APK_VARIANT, VARIANT_NAMES } from '../lib/apk-variant.js'
 import { BUILTIN_PX } from '../lib/anim-quality.js'
 import { selfUpdates } from '../lib/channel.js'
 import { forgetCoach } from '../lib/coach-api.js'
+import { coachAvailable } from '../lib/coach.js'
 import { REST_MAX, REST_PAUSE_MIN, REST_PAUSE_MAX, fmtRest, fmtDuration } from '../lib/duration.js'
 import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmentProfileSheet, plateInventorySheet, dumbbellInventorySheet, barDefaultsSheet, menuSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
@@ -1062,7 +1063,10 @@ function SettingsRoot({ ctx, preview, open, user, sync, home, go, entryKey }) {
     : { title: t('Guest'), sub: t('Your data lives on this device. Sign in to sync.') }
   const initial = user && !DEMO ? String(user.name || '?').trim().charAt(0).toUpperCase() : null
   const nav = useNavigate()
-  const adminCoach = !MOBILE && !DEMO && !!user?.admin
+  // Only while the server offers the Coach (the flag every Coach screen reads): on a box without
+  // it the admin dashboard has no Coach card to land on.
+  const config = useStore(s => s.config)
+  const adminCoach = !MOBILE && !DEMO && !!user?.admin && coachAvailable(config, user)
   return <div className="narrow">
     <div className="sp-nav">
       <button className="sp-back" data-back="/home" onClick={home} aria-label={t('Home')}><Icon name="chevronLeft" /><span>{t('Home')}</span></button>

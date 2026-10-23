@@ -2570,4 +2570,5 @@ export default {
   'Gain {0} to {1} a week.': 'Gå upp {0} till {1} i veckan.',
   'A cut is often 0.5 to 1 % a week, a lean bulk 0.25 to 0.5 %.': 'En deff är ofta 0,5 till 1 % i veckan, en lean bulk 0,25 till 0,5 %.',
   'Remove range': 'Ta bort intervall',
+  'Admin': 'Admin',
 }

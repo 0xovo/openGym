@@ -29,6 +29,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   now lists each one in its ⋯ menu during a workout. Tap it and the backup takes over with the
   slot's own sets, reps, rest and warm-ups, and the exercise it replaced becomes its backup, so
   going back when the bench frees up is one tap too. Your routine stays exactly as it was.
+- **The AI Coach is one tap away for admins** (#683, thanks TheBlackSide243). On a server that
+  offers the Coach, admins now find an AI Coach row in Settings, right next to Look, that opens
+  the admin dashboard straight at the Coach card.
 - **Discard means discard, on the Apple Watch too** (#776). Discarding a workout on the phone
   while the watch follows it used to save it to Apple Health anyway, calories and all. Now the
   watch drops it and Apple Health never hears about it.
