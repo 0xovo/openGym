@@ -7,8 +7,7 @@ since v1.4.1, five reported security holes closed and a fresh look at the animat
 
 **openGym on the iPhone.** The App Store app is the same openGym: use it on the phone alone, or
 connect it to your own server. Your data stays where it is (no account with us, nothing collected).
-Want it before the App Store has it? Join the public TestFlight beta:
-https://testflight.apple.com/join/RKATb61k
+Get it on the App Store: https://apps.apple.com/app/id6822275400
 
 - **Apple Watch.** Start a workout on the wrist, or on the phone and the watch app opens with it,
   then tick off sets with a big Done button and the Digital Crown for reps and weight. Rest is a
