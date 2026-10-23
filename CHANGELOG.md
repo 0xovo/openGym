@@ -105,6 +105,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   Increase Contrast on, colours, secondary text and hairlines get firmer (every button label at
   4.5:1 or better). With Reduce Transparency on, the tab bar, timer, toast, workout and Coach bars
   go solid instead of frosted.
+- **Hej, Sverige!** openGym speaks Swedish now, picked in Settings → Units & language or straight
+  from a Swedish phone (#721, thanks @Grizzly163). Exercise names and instructions stay in English
+  for now.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
