@@ -116,5 +116,7 @@ export default defineConfig({
       } : {})
     }
   },
-  build: { chunkSizeWarningLimit: 1500 }
+  build: { chunkSizeWarningLimit: 1500 },
+  // Gives happy-dom tests a working localStorage on Node 24+ (#733).
+  test: { setupFiles: ['./src/test-setup.js'] }
 })
