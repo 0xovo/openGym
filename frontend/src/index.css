@@ -900,6 +900,12 @@ body.chips-dragging *{cursor:inherit}
 .exhd{align-items:center}
 .wprog{height:4px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-bottom:16px}
 .wprog i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width var(--med) var(--ease)}
+/* The bar with the session's volume at its end (#774): 12 px tall where the bar is 4, so it takes
+   8 px less margin and the header keeps the exact height it has without it. */
+.wprog-row{display:flex;align-items:center;gap:8px;height:12px;margin-bottom:8px}
+.wprog-row .wprog,.whdr.stick .wprog-row .wprog{flex:1;min-width:0;margin-bottom:0}
+.whdr.stick .wprog-row{margin-bottom:2px}
+.wvol{flex:none;font-size:12px;line-height:12px;color:var(--label-2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .exmedia{position:relative;border-radius:var(--r-lg);overflow:hidden;background:#fff;margin-bottom:12px}
 .exmedia img{width:100%;height:320px;object-fit:contain;display:block}
 .exmedia .gifhint,.exmedia .giftoggle{

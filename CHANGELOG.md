@@ -70,6 +70,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **The rest wheel starts where your rest is.** Pick a time opens on the rest that applies right
   now (the exercise's, the warm-ups', or your default) instead of sitting at 0:00 (#735, thanks
   @lodepav).
+- **Volume while you lift.** The progress bar at the top of a workout now ends in the session's
+  volume, adding up every set you tick, in all four layouts. Handy for deciding whether today was
+  enough or you've got one more in you (#774).
 - **Count warm-ups in volume**, if you like (#719). A new switch in Settings → Units & language
   adds your done warm-ups to every volume the app shows: the workout, the summary, history,
   Stats, the report and the coach. Off by default, and records ignore warm-ups either way.
