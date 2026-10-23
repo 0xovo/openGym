@@ -59,7 +59,7 @@ info:
     ### CSRF
     State-changing browser requests must come from the app's own origin. The server
     checks `Sec-Fetch-Site` (falling back to `Origin` vs the configured `ORIGIN`);
-    a mismatch is refused with `403 {"error":"cross-origin request refused"}` on any
+    a mismatch is refused with `403 {"error":"cross-origin request refused","code":"origin-mismatch","expected":ORIGIN}` on any
     non-GET route, the passkey routes included. Exempt: `pair/redeem`, which the mobile
     app calls from its own origin (the code in the body is the credential, and the token
     comes back in the body, never as a cookie), and any request a Bearer token
@@ -1878,7 +1878,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
-              example: { error: "cross-origin request refused" }
+              example: { error: "cross-origin request refused", code: "origin-mismatch", expected: "https://gym.example.com" }
         '408':
           description: No bytes arrived for 60 seconds (`timeout`). The connection is closed.
           content:
@@ -1973,7 +1973,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
-              example: { error: "cross-origin request refused" }
+              example: { error: "cross-origin request refused", code: "origin-mismatch", expected: "https://gym.example.com" }
 
   /api/media/sweep:
     post:
@@ -2012,7 +2012,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
-              example: { error: "cross-origin request refused" }
+              example: { error: "cross-origin request refused", code: "origin-mismatch", expected: "https://gym.example.com" }
         '429':
           description: More than 10 sweeps this hour (`locked`).
           headers:

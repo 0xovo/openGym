@@ -19,7 +19,7 @@ import { coachRoutes } from './coach/routes.js';
 import { startCadence } from './coach/cadence.js';
 import { startWarmup } from './coach/warmup.js';
 import { dayReminderPush, nudgePush, restTimerPush, testPush } from './push-messages.js';
-import { verifyError } from './verify-error.js';
+import { verifyError, isMisconfigured, originHint } from './verify-error.js';
 import {
   hashPassword, verifyPassword, needsRehash, passwordProblem, passwordLength, nameKey, BusyError,
   MIN_LENGTH, MAX_LENGTH, makeResetCode, hashResetCode, resetCodeMatches, RESET_TTL_MS, warmUp,
@@ -757,6 +757,12 @@ const SIGN_IN_ROUTES = new Set([
   'POST /api/login/password', 'POST /api/register/password', 'POST /api/login/password-reset',
   'POST /api/device-link/options', 'POST /api/device-link/verify'
 ]);
+// A verify error as the answer's body: a passkey made at an address that is not ORIGIN/RP_ID gets
+// the same `code` as the origin check's 403, so the app explains both alike.
+const verifyAnswer = e => ({
+  error: verifyError(e, { rpId: RP_ID, origin: ORIGIN }),
+  ...(isMisconfigured(e) ? { code: 'origin-mismatch', expected: ORIGIN } : {})
+});
 const originsMatch = (a, b) => a.replace(/\/+$/, '') === b.replace(/\/+$/, '');
 // Whether a Bearer is the credential that would act on this request: it verifies, and no session
 // cookie sits beside it (readSession takes the cookie first, so a cookie is what would act then).
@@ -1738,7 +1744,7 @@ async function newPasskey(req, res, c, body, ev, user) {
   } catch (e) {
     // e.message can echo attacker-supplied response fields, so only the reason code is kept.
     audit(req, ev, { ok: false, user, msg: 'verify-error' });
-    json(res, 400, { error: verifyError(e, { rpId: RP_ID, origin: ORIGIN }) });
+    json(res, 400, verifyAnswer(e));
     return null;
   }
   if (!verification.verified) {
@@ -2198,7 +2204,7 @@ const routes = {
     } catch (e) {
       // e.message can echo attacker-supplied response fields, so only the reason code is kept.
       auditFail(req, 'auth.register.fail', { ok: false, name: c.name, msg: 'verify-error' });
-      return json(res, 400, { error: verifyError(e, { rpId: RP_ID, origin: ORIGIN }) });
+      return json(res, 400, verifyAnswer(e));
     }
     if (!verification.verified) {
       auditFail(req, 'auth.register.fail', { ok: false, name: c.name, msg: 'not-verified' });
@@ -2275,7 +2281,7 @@ const routes = {
       });
     } catch (e) {
       auditFail(req, 'auth.login.fail', { ok: false, user: db.users.find(u => u.id === cred.userId), uid: cred.userId, msg: 'verify-error' });
-      return json(res, 400, { error: verifyError(e, { rpId: RP_ID, origin: ORIGIN }) });
+      return json(res, 400, verifyAnswer(e));
     }
     if (!verification.verified) {
       auditFail(req, 'auth.login.fail', { ok: false, user: db.users.find(u => u.id === cred.userId), uid: cred.userId, msg: 'not-verified' });
@@ -3011,8 +3017,10 @@ const server = http.createServer(async (req, res) => {
     // Logged, not audited: this is reachable without a session, and an audit entry per attempt
     // would let anyone fill the log. An operator who has genuinely mis-set ORIGIN needs to see
     // the mismatch, and the container log is where they will look.
-    console.warn('refused cross-origin', key, 'origin=' + req.headers.origin, 'expected=' + ORIGIN);
-    return json(res, 403, { error: 'cross-origin request refused' });
+    // The answer carries ORIGIN too (the app shows it, see passkeyError in lib/api.js): it is no
+    // secret, and a hostile page cannot read a response CORS never allowed it.
+    console.warn(originHint(key, req.headers.origin, ORIGIN, req.headers['sec-fetch-site']));
+    return json(res, 403, { error: 'cross-origin request refused', code: 'origin-mismatch', expected: ORIGIN });
   }
   // After the origin check, so a forged request spends nobody's budget. The password routes only
   // (see the sign-in throttle above).
