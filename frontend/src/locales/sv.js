@@ -921,7 +921,7 @@ export default {
   'Before the Coach’s plan': 'Före coachens plan',
   'Before the Coach’s changes': 'Före coachens ändringar',
   'Add {0}': 'Lägg till {0}',
-  'Drop {0}': 'Ta bort {0}',
+  'Drop {0}': 'Drop {0}',
   'Swap {0} for {1}': 'Byt {0} mot {1}',
   '{0}: sets': '{0}: set',
   '{0}: reps': '{0}: reps',
