@@ -2490,4 +2490,6 @@ export default {
   "Measurement unit": "测量单位",
   "Logged values keep their type. Add a new measurement to use a different type.": "已记录的数值会保留原有类型。如需其他类型，请添加新的测量项。",
   "{0} must be between 0 and 100%.": "{0}必须在 0% 到 100% 之间。",
+  // --- warm-ups counted in volume (#719) ---
+  "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "加在正式组之前。计入你的容量（设置），但不计入纪录和进阶。每一组都把与正式重量的差距缩小一半，杠铃动作不会低于空杠，训练中仍可随时调整任意一组。",
 }

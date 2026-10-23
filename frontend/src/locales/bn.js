@@ -2569,4 +2569,6 @@ export default {
   "Measurement unit": "পরিমাপের একক",
   "Logged values keep their type. Add a new measurement to use a different type.": "লগ করা মানের ধরন অপরিবর্তিত থাকে। অন্য ধরন ব্যবহার করতে নতুন পরিমাপ যোগ করুন।",
   "{0} must be between 0 and 100%.": "{0} অবশ্যই ০ থেকে ১০০%-এর মধ্যে হতে হবে।",
+  // --- warm-ups counted in volume (#719) ---
+  "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "ওয়ার্ক সেটের আগে যোগ হয়। আপনার ভলিউমে গোনা হয় (সেটিংস), কিন্তু রেকর্ড আর প্রগ্রেশনে নয়। প্রতিটি ওয়ার্ক ওয়েটের দূরত্বের অর্ধেক কমায়, বারবেল লিফটে বারের নিচে কখনো নামে না, আর সেশনের মাঝেও যেকোনোটা বদলাতে পারবেন।",
 }

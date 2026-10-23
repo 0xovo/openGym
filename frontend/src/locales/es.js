@@ -2490,4 +2490,6 @@ export default {
   "Measurement unit": "Unidad de medida",
   "Logged values keep their type. Add a new measurement to use a different type.": "Los valores registrados conservan su tipo. Añade una nueva medida para usar otro tipo.",
   "{0} must be between 0 and 100%.": "{0} debe estar entre 0 y 100 %.",
+  // --- warm-ups counted in volume (#719) ---
+  "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "Se añaden antes de tus series de trabajo. Cuentan en tu volumen (Ajustes), pero no para los récords ni la progresión. Cada una reduce a la mitad la distancia hasta el peso de trabajo, sin bajar nunca de la barra vacía en un ejercicio con barra, y puedes cambiar cualquiera durante la sesión.",
 }

@@ -2545,4 +2545,6 @@ export default {
   "Measurement unit": "وحدة القياس",
   "Logged values keep their type. Add a new measurement to use a different type.": "تحتفظ القيم المسجلة بنوعها. أضف قياسًا جديدًا لاستخدام نوع مختلف.",
   "{0} must be between 0 and 100%.": "يجب أن تكون قيمة {0} بين 0 و100٪.",
+  // --- warm-ups counted in volume (#719) ---
+  "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "تُضاف قبل مجموعات العمل. تُحتسب في حجمك (الإعدادات)، لكنها لا تُحتسب في الأرقام القياسية أو التدرج. كل واحدة تقلص الفجوة إلى وزن العمل إلى النصف، ولا تقل أبدًا عن وزن البار في تمارين البار، ويمكنك تعديل أي منها أثناء الجلسة.",
 }

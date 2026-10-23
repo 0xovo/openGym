@@ -2493,4 +2493,6 @@ export default {
   "Measurement unit": "Mértékegység",
   "Logged values keep their type. Add a new measurement to use a different type.": "A rögzített értékek típusa megmarad. Más típushoz adj hozzá új mérést.",
   "{0} must be between 0 and 100%.": "{0} értékének 0 és 100% között kell lennie.",
+  // --- warm-ups counted in volume (#719) ---
+  "Added before your work sets. They count in your volume (Settings), but stay out of records and progression. Each one closes half the gap to the work weight, never below the bar on a barbell lift, and you can still change any of them mid-session.": "A munkasorozatok elé kerülnek. Beleszámítanak a volumenedbe (Beállítások), de a rekordokból és a progresszióból kimaradnak. Mindegyik a felére zárja a különbséget a munkasúlyhoz, rúddal végzett gyakorlatnál soha nem könnyebb az üres rúdnál, és edzés közben is bármelyiket módosíthatod.",
 }

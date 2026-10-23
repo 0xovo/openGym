@@ -75,7 +75,8 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   enough or you've got one more in you (#774).
 - **Count warm-ups in volume**, if you like (#719). A new switch in Settings → Units & language
   adds your done warm-ups to every volume the app shows: the workout, the summary, history,
-  Stats, the report and the coach. Off by default, and records ignore warm-ups either way.
+  Stats, the report and the coach. Off by default, and records ignore warm-ups either way. The
+  warm-up line in Exercise settings tells it like it is, whichever way the switch is set.
 - **Lifted in total.** Stats has a new tile with everything you've ever lifted, imports included.
   Spoiler: it's a lot.
 - **"No automatic progression" remembers what you did** (#217, thanks @iggaM23). With Settings →
