@@ -359,15 +359,25 @@ export function entryRoutineId(w, en) {
 const entryIn = (w, exId, rid) => (w.entries || []).find(e => e && e.id === exId && (!rid || entryRoutineId(w, e) === rid))
 
 /**
+ * Whether "last time" is the exercise's last session in any workout rather than in the routine
+ * it is planned in (Settings → "Last time means", #770). Per routine by default: a heavy Monday
+ * and a light Thursday keep their own numbers (#216). 'any' is for the lifter who trains the same
+ * lift twice a week and wants Thursday to start from Monday. Read by the rows a session opens
+ * with, the "Your last session" line and the progression baseline alike, so they never disagree.
+ */
+export const lastAcrossRoutines = S => S?.lastFrom === 'any'
+
+/**
  * The last counting session of an exercise: `{ d, sets, target, rid?, planned? }`, or null.
  *
  * Given a routine id, the routine's own last session of it (issue #216): the same bench press in
  * a heavy day and a light day is two lines of progress, not one that zigzags between them. A
  * routine that has never trained the exercise falls back to its last session anywhere, so a new
- * or copied routine starts from what you actually lift rather than from nothing.
+ * or copied routine starts from what you actually lift rather than from nothing. With "Last time
+ * means → Any workout" (lastAcrossRoutines) the routine is ignored and the newest session wins.
  */
 export function lastEntryFor(S, exId, rid) {
-  if (rid) {
+  if (rid && !lastAcrossRoutines(S)) {
     const own = lastEntryIn(S, exId, rid)
     if (own) return own
   }

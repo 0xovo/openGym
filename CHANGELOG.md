@@ -80,8 +80,13 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   Spoiler: it's a lot.
 - **"No automatic progression" remembers what you did** (#217, thanks @iggaM23). With Settings →
   Workout → Fine-tuning → Planned sessions start from → Your last session, an exercise with
-  progression off now opens at last time's weight and reps, the way Strong does it, and the card says so. "Your
-  plan" (the default) still opens at the routine's own numbers, and deload routines keep theirs.
+  progression off now opens at last time's weight and reps, the way Strong does it, and the card
+  says so. "Your plan" (the default) still opens at the routine's own numbers, and deload
+  routines keep theirs.
+- **"Last time" can mean any workout** (#770). Bench on Monday and Thursday? Settings → Workout →
+  Fine-tuning → Last time means → Any workout lets Thursday start from Monday, for the rows, the
+  "last time" line and progression alike. The default stays per routine, so a heavy day and a
+  light day keep their own numbers.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that

@@ -16,7 +16,7 @@
 //   · fewer sets than prescribed                       → miss
 // So a session that fell apart can never advance the load as though it had succeeded.
 
-import { modeOf, repStep, rerampWarmups, isBw, isPerSide, entryExcluded, entryRoutineId } from './history.js'
+import { modeOf, repStep, rerampWarmups, isBw, isPerSide, entryExcluded, entryRoutineId, lastAcrossRoutines } from './history.js'
 import { EXIDX, isAssisted, isLoadedEq, defaultIncrement } from './exercises.js'
 import { isWarmupRow, isSideSet, syncSideAggregate, makeSideSet } from './workout-model.js'
 import { normalizeRepRange } from './rep-range.js'
@@ -328,9 +328,10 @@ export function readSession(entry, fallback) {
  * no session of its own reads the exercise's whole history instead, so a new or copied routine
  * continues from where you are. Each session carries the routine it came from (`rid`) and the
  * plan it was built from (`planned`), so the caller can tell a borrowed or outdated baseline.
+ * "Last time means → Any workout" (#770) reads the whole history as one line, routine or not.
  */
 export function sessionsFor(S, exId, fallback, rid) {
-  if (rid) {
+  if (rid && !lastAcrossRoutines(S)) {
     const own = sessionsIn(S, exId, fallback, rid)
     if (own.length) return own
   }
@@ -491,8 +492,14 @@ export function nextPrescription(S, cfg, routine) {
   // routine no longer asks for. The sets and reps are the routine's own (double progression aims
   // inside its new range, from what you managed).
   // A borrowed session saved before plans were stamped is taken as a different plan.
-  const borrowed = !!routine?.id && last.rid !== routine.id
-  if (last.planned ? planChanged(last.planned, cfg) : borrowed) {
+  // With "Last time means → Any workout" (#770) another routine's session is not borrowed, it is
+  // simply the last one: one line of progress across routines, so only an edit of this routine's
+  // own plan restarts it. Held against the other routine's plan, Monday's 3 × 5 would restart
+  // Thursday's 3 × 8 every single week.
+  const across = lastAcrossRoutines(S)
+  const borrowed = !!routine?.id && !across && last.rid !== routine.id
+  const ownPlan = !across || !routine?.id || last.rid === routine.id
+  if (last.planned && ownPlan ? planChanged(last.planned, cfg) : borrowed) {
     const why = borrowed ? ['First time in this routine, so starting from its own target.'] : ['Plan changed, so starting from your new target.']
     // The weight holds at what was last lifted, unless the plan's own weight is not the one the
     // session was built from: the same edit that turned 3 × 5 @ 100 into 3 × 10 @ 70 set 70,

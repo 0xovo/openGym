@@ -227,6 +227,10 @@ export const DEF = {
   // and the weight too for an exercise with progression off (nothing else decides it).
   // Absent reads as 'plan' too, which is what the MCP bridge sees on a raw state file.
   startFrom: 'plan',
+  // Where "last time" is read from (Settings → During a workout, lib/history.js lastAcrossRoutines,
+  // #770): 'routine' is the routine's own last session of the exercise, as it has been since #216;
+  // 'any' is its newest session in any workout. Absent reads as 'routine'.
+  lastFrom: 'routine',
   // Per-language choice for translated exercise names: whether the original English name is
   // shown in parentheses next to the translation. Map { '<lang>': boolean }; a missing key
   // (any profile written before this setting existed) reads as shown.
