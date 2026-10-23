@@ -162,6 +162,10 @@
   background:color-mix(in srgb,var(--bg) 88%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(12px);backdrop-filter:saturate(180%) blur(12px)
 }
+/* Reduce Transparency: the pinned title bar and the composer go solid, like the app's own bars. */
+@media (prefers-reduced-transparency: reduce){
+  .chat-hdr,.composer{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--bg)}
+}
 /* The Android app reports the keyboard instead of shrinking the page (lib/native-keyboard.js):
    the composer rides on top of it. */
 :root[data-native-kb] .composer{bottom:var(--native-kb);padding-bottom:10px}
