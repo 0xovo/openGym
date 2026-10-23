@@ -59,6 +59,11 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   exercises for it, the same way the "Not trained" chips do (#553).
 - Stats' Week rows lose a stray line over each done/planned figure, which also sat a little
   low next to its bar.
+- **Exercises start the way you do them.** Add a plank, a wall sit or a dead hang and it starts
+  as a timed hold (#694, thanks @lodepav). A one-arm row or a single-leg press starts per side
+  (#736, thanks @lodepav). Jumping jacks, burpees, star jumps and tuck jumps start as sets × reps
+  instead of minutes and speed (#717, thanks @zykll18). Only fresh picks: what's already in your
+  routines and history stays exactly as you set it up.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
@@ -101,6 +106,14 @@ little Ready / Recovering / Fatigued bar, plus when it drops back to Recovering 
 you leave it alone. Handy for deciding whether those legs are really ready (thanks @sg41).
 
 **Fixes**
+- Deadlift variants that forgot your lower back remember it now: the kettlebell suitcase
+  deadlift and the plate deadlift lunge press (#693, #700, thanks @JeromeTDev and @choksi2212).
+- Equipment profiles know more about what an exercise needs. An inverted row needs a bar (unless
+  it's the under-the-table kind), a dumbbell fly or a pullover needs a bench, and the massage
+  ball is no longer filed as a foam roller. Own no dumbbells at all? The Dumbbells sheet now says
+  how to keep them out of the library and the Coach's plans. Profiles you already had keep
+  showing what they did.
+- The knee-to-chest push-up lives with the chest exercises, not in cardio.
 - **Rest days in the rotation**, and the same routine more than once (A → B → C → B → D): Add
   offers a rest day and every routine, including the ones already in the loop (#536).
 - Your lats show up: the upper back is "Lats & upper back" in Stats, on the body map and in the
