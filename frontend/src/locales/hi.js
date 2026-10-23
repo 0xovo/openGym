@@ -1883,6 +1883,7 @@ export default {
   'Couldn’t read that file.': 'यह फ़ाइल पढ़ी नहीं जा सकी।',
   'This server doesn’t know that passkey. Make a profile first.': 'यह सर्वर इस पासकी को नहीं पहचानता। पहले एक प्रोफ़ाइल बनाएँ।',
   'That took a little too long. Give it another go.': 'इसमें थोड़ा ज़्यादा समय लग गया। एक बार फिर कोशिश करें।',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "यह सर्वर सिर्फ़ {0} से किए गए बदलाव लेता है। अगर आपने openGym किसी दूसरे पते पर खोला है, तो सर्वर चलाने वाला ORIGIN और RP_ID को उसके हिसाब से सेट कर सकता है (सेल्फ़-होस्टिंग गाइड में तरीका दिया है)।",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'यह कोड काम नहीं किया। कोड 5 मिनट चलते हैं और सिर्फ़ एक बार काम करते हैं, तो एक नया कोड ले लें।',
   'Create profile with a password': 'पासवर्ड के साथ प्रोफ़ाइल बनाएँ',
   'Set {0} done': 'सेट {0} पूरा',

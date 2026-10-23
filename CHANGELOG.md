@@ -237,6 +237,10 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   handy with a model on your own network), the output-token ceiling a reasoning model needs
   raised, and how long a message may be. You're the admin there, after all (#527, thanks
   @xueyang-dev).
+- **Wrong address, clear answer.** When your api service's ORIGIN isn't the address in your
+  browser, the app now says which address the server expects and what to change, instead of a
+  bare "cross-origin request refused". The server log names the exact `ORIGIN=` and `RP_ID=`
+  to set (thanks tcmac, who lost a morning to this one).
 
 ## v1.4.2 (2026-10-18)
 

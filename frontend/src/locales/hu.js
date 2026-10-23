@@ -1886,6 +1886,7 @@ export default {
   'Couldn’t read that file.': 'Ezt a fájlt nem sikerült beolvasni.',
   'This server doesn’t know that passkey. Make a profile first.': 'Ez a szerver nem ismeri ezt a jelszókulcsot. Előbb hozz létre egy profilt.',
   'That took a little too long. Give it another go.': 'Ez egy kicsit túl sokáig tartott. Próbáld újra.',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "Ez a szerver csak a(z) {0} címről fogad el módosításokat. Ha más címen nyitottad meg az openGymet, a szerver üzemeltetője beállíthatja hozzá az ORIGIN és RP_ID értékét (a self-hosting útmutató megmutatja, hogyan).",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'Ez a kód nem működött. A kódok 5 percig érvényesek és csak egyszer használhatók, úgyhogy kérj egy újat.',
   'Create profile with a password': 'Profil létrehozása jelszóval',
   'Set {0} done': '{0}. sorozat kész',

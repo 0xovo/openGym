@@ -1876,6 +1876,7 @@ export default {
   'Couldn’t read that file.': '無法讀取這個檔案。',
   'This server doesn’t know that passkey. Make a profile first.': '這個伺服器不認得這個通行密鑰。請先建立個人檔案。',
   'That took a little too long. Give it another go.': '花的時間有點太久了。再試一次吧。',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "此伺服器只接受來自 {0} 的變更。如果你是在其他網址開啟 openGym，伺服器管理員可以把 ORIGIN 和 RP_ID 設成一致（自架指南裡有做法）。",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': '這個代碼沒用。代碼只在 5 分鐘內有效，而且只能用一次，換個新的吧。',
   'Create profile with a password': '用密碼建立個人檔案',
   'Set {0} done': '第 {0} 組完成',

@@ -1904,6 +1904,7 @@ export default {
   'Couldn’t read that file.': 'Kunde inte läsa filen.',
   'This server doesn’t know that passkey. Make a profile first.': 'Servern känner inte till den här passkeyn. Skapa en profil först.',
   'That took a little too long. Give it another go.': 'Det tog lite för lång tid. Försök igen.',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "Den här servern tar bara emot ändringar från {0}. Om du öppnade openGym på en annan adress kan den som driver servern ställa in ORIGIN och RP_ID så att de stämmer (guiden för egen server visar hur).",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'Koden fungerade inte. Koderna gäller i 5 minuter och fungerar en gång, så hämta en ny.',
   'Create profile with a password': 'Skapa profil med lösenord',
   'Set {0} done': 'Set {0} klart',

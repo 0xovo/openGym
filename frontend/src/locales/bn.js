@@ -1925,6 +1925,7 @@ export default {
   'Couldn’t read that file.': 'ফাইলটি পড়া যায়নি।',
   'This server doesn’t know that passkey. Make a profile first.': 'এই সার্ভার ওই পাসকি চেনে না। আগে একটি প্রোফাইল তৈরি করুন।',
   'That took a little too long. Give it another go.': 'একটু বেশি সময় লেগে গেল। আরেকবার চেষ্টা করুন।',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "এই সার্ভার শুধু {0} থেকে করা পরিবর্তন নেয়। আপনি যদি অন্য কোনো ঠিকানায় openGym খুলে থাকেন, সার্ভার যিনি চালান তিনি ORIGIN আর RP_ID সেই অনুযায়ী সেট করতে পারেন (সেলফ-হোস্টিং গাইডে কীভাবে তা দেখানো আছে)।",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'কোডটি কাজ করেনি। কোড 5 মিনিট থাকে এবং একবারই কাজ করে, তাই একটি নতুন নিন।',
   'Create profile with a password': 'পাসওয়ার্ড দিয়ে প্রোফাইল তৈরি করুন',
   'Set {0} done': 'সেট {0} সম্পন্ন',

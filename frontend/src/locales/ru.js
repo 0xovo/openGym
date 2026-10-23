@@ -1887,6 +1887,7 @@ export default {
   'Couldn’t read that file.': 'Не удалось прочитать этот файл.',
   'This server doesn’t know that passkey. Make a profile first.': 'Этот сервер не знает такой ключ доступа. Сначала создайте профиль.',
   'That took a little too long. Give it another go.': 'Это заняло слишком много времени. Попробуйте ещё раз.',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "Этот сервер принимает изменения только с {0}. Если вы открыли openGym по другому адресу, тот, кто управляет сервером, может выставить ORIGIN и RP_ID под него (как это сделать, описано в руководстве по self-hosting).",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'Этот код не сработал. Коды действуют 5 минут и только один раз, так что возьмите свежий.',
   'Create profile with a password': 'Создать профиль с паролем',
   'Set {0} done': 'Подход {0} выполнен',

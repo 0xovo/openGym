@@ -1883,6 +1883,7 @@ export default {
   'Couldn’t read that file.': 'Impossibile leggere questo file.',
   'This server doesn’t know that passkey. Make a profile first.': 'Questo server non conosce questa passkey. Crea prima un profilo.',
   'That took a little too long. Give it another go.': 'Ci è voluto un po’ troppo. Riprova.',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "Questo server accetta modifiche solo da {0}. Se hai aperto openGym a un altro indirizzo, chi gestisce il server può impostare ORIGIN e RP_ID su quello (la guida al self-hosting spiega come).",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'Questo codice non ha funzionato. I codici durano 5 minuti e valgono una volta sola, quindi prendine uno nuovo.',
   'Create profile with a password': 'Crea profilo con password',
   'Set {0} done': 'Serie {0} fatta',

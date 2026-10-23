@@ -1883,6 +1883,7 @@ export default {
   'Couldn’t read that file.': 'Bu dosya okunamadı.',
   'This server doesn’t know that passkey. Make a profile first.': 'Bu sunucu o geçiş anahtarını tanımıyor. Önce bir profil oluştur.',
   'That took a little too long. Give it another go.': 'Bu biraz fazla uzun sürdü. Bir kez daha dene.',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "Bu sunucu yalnızca {0} adresinden yapılan değişiklikleri kabul ediyor. openGym’i başka bir adreste açtıysan, sunucuyu yöneten kişi ORIGIN ve RP_ID değerlerini buna göre ayarlayabilir (self-hosting rehberi nasıl yapılacağını gösteriyor).",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'Bu kod işe yaramadı. Kodlar 5 dakika geçerli ve tek kullanımlık, yenisini al.',
   'Create profile with a password': 'Şifreyle profil oluştur',
   'Set {0} done': 'Set {0} tamam',

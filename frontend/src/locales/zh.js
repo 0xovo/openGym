@@ -1883,6 +1883,7 @@ export default {
   'Couldn’t read that file.': '无法读取这个文件。',
   'This server doesn’t know that passkey. Make a profile first.': '这个服务器不认识这个通行密钥。请先创建个人资料。',
   'That took a little too long. Give it another go.': '花的时间有点太长了。再试一次吧。',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "此服务器只接受来自 {0} 的更改。如果你是在其他地址打开的 openGym，服务器管理员可以把 ORIGIN 和 RP_ID 设成与之一致（自托管指南里有做法）。",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': '这个代码没用。代码只在 5 分钟内有效，且只能用一次，换个新的吧。',
   'Create profile with a password': '用密码创建个人资料',
   'Set {0} done': '第 {0} 组完成',

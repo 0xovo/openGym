@@ -1883,6 +1883,7 @@ export default {
   'Couldn’t read that file.': '이 파일을 읽을 수 없어요.',
   'This server doesn’t know that passkey. Make a profile first.': '이 서버는 이 패스키를 몰라요. 먼저 프로필을 만들어 주세요.',
   'That took a little too long. Give it another go.': '조금 너무 오래 걸렸어요. 다시 해 보세요.',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "이 서버는 {0}에서 한 변경만 받아요. 다른 주소에서 openGym을 열었다면, 서버를 운영하는 분이 ORIGIN과 RP_ID를 그 주소에 맞게 설정하면 돼요 (셀프 호스팅 가이드에 방법이 있어요).",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': '이 코드는 안 됐어요. 코드는 5분 동안 한 번만 쓸 수 있으니 새 코드를 받아 주세요.',
   'Create profile with a password': '비밀번호로 프로필 만들기',
   'Set {0} done': '{0}세트 완료',

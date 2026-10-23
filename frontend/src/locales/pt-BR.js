@@ -1173,6 +1173,7 @@ export const PT_BR_OVERRIDES = {
   'Couldn’t read that file.': 'Não foi possível ler esse arquivo.',
   'This server doesn’t know that passkey. Make a profile first.': 'Este servidor não conhece essa chave de acesso. Crie um perfil primeiro.',
   'That took a little too long. Give it another go.': 'Demorou um pouquinho demais. Tente de novo.',
+  "This server only takes changes made at {0}. If you opened openGym at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).": "Este servidor só aceita alterações feitas em {0}. Se você abriu o openGym em outro endereço, quem administra o servidor pode ajustar ORIGIN e RP_ID para bater com ele (o guia de self-hosting mostra como).",
   'That code didn’t work. Codes last 5 minutes and work once, so grab a fresh one.': 'Esse código não funcionou. Os códigos duram 5 minutos e só valem uma vez, então pegue um novo.',
   'Create profile with a password': 'Criar perfil com senha',
   // Swipe on sets (v1.3.11)
