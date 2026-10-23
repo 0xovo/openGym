@@ -78,6 +78,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   Stats, the report and the coach. Off by default, and records ignore warm-ups either way.
 - **Lifted in total.** Stats has a new tile with everything you've ever lifted, imports included.
   Spoiler: it's a lot.
+- **"No automatic progression" remembers what you did** (#217, thanks @iggaM23). With Settings →
+  Workout → Fine-tuning → Planned sessions start from → Your last session, an exercise with
+  progression off now opens at last time's weight and reps, the way Strong does it, and the card says so. "Your
+  plan" (the default) still opens at the routine's own numbers, and deload routines keep theirs.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that

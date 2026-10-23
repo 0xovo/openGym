@@ -293,6 +293,15 @@ describe('"Your last session" for an exercise with progression off', () => {
     expect(work(e).map(s => [s.w, s.r])).toEqual([[60, 7], [60, 7]])
   })
 
+  it('says on the card that the numbers are last time\'s (#217)', () => {
+    const st = state(routine(), { startFrom: 'last' })
+    train(st, ['A'], last)
+    expect(start(st, ['A'])[0].carried).toBe(true)
+    // "Your plan" opened at the routine's own 2 × 10, so there is nothing to explain.
+    st.startFrom = 'plan'
+    expect(start(st, ['A'])[0].carried).toBeUndefined()
+  })
+
   it('does the same for a routine that never set a weight', () => {
     const st = state(routine({ weight: 0 }), { startFrom: 'last' })
     train(st, ['A'], last)

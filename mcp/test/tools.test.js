@@ -1185,6 +1185,28 @@ describe('preview_session', () => {
     expect(out.overridden_count).toBe(0)
   })
 
+  test('progression off under "start from your last session" reports last time as the source (#217)', () => {
+    only({ id: '0025', sets: 2, reps: 8, weight: 50 }, {
+      prog: 'off',
+      workouts: [{
+        id: 'w1', d: '2026-07-20', routineId: 'r-preview', name: 'Preview',
+        entries: [{ id: '0025', target: { id: '0025', sets: 2, reps: 8, weight: 50 }, sets: [{ w: 60, r: 6, done: true }, { w: 60, r: 6, done: true }] }]
+      }]
+    })
+    S.startFrom = 'last'
+    _seedStateForTests(S)
+    try {
+      const e = call('preview_session').exercises[0]
+      expect(e.prescription.kind).toBe('off')
+      expect(e.opening_sets.map(s => [s.w, s.r])).toEqual([[60, 6], [60, 6]])
+      expect(e.weight_source).toBe('last_session')
+      expect(e.reps_source).toBe('last_session')
+    } finally {
+      delete S.startFrom
+      _seedStateForTests(S)
+    }
+  })
+
   test('a deload routine (excludeFromProgression) opens its own numbers even under a policy', () => {
     only({ id: '0025', sets: 3, reps: 5, weight: 50 }, {
       prog: 'linear', routine: { excludeFromProgression: true },

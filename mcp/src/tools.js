@@ -515,7 +515,13 @@ export const muscleBalance = {
 function sourceOf(S, cfg, plan, field, routine) {
   // Progression off (or a deload routine): the session is built from the routine's own target,
   // exactly as session-start.js does with useTarget — history and the confirmed weight are ignored.
-  if (!plan || plan.kind === 'off') return 'routine_plan'
+  // Except progression off under "start from your last session" (#217): there both the weight and
+  // the reps are last time's, when there is a last time. A deload routine keeps its own numbers.
+  if (!plan) return 'routine_plan'
+  if (plan.kind === 'off') {
+    const fromLast = startsFromLast(S) && routine?.excludeFromProgression !== true
+    return fromLast && lastEntryFor(S, cfg.id, routine && routine.id) ? 'last_session' : 'routine_plan'
+  }
   const decided = plan.kind !== 'first' && plan[field] != null
   // A policy that settles on the routine's own reps or hold — a restart after the plan was
   // edited, a bodyweight hold at the plan's count — is the plan speaking, not an override.

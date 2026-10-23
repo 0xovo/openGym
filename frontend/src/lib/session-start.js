@@ -75,7 +75,8 @@ export function buildPlannedEntry(stored, cfg, routine, { noProg = false } = {})
   // Rows that opened at last session's reps rather than the plan's ("Your last session", and no
   // policy that decided reps), so the workout card can say where the number came from. Written
   // only when true, and never saved with the finished workout.
-  const carried = !planReps && plan.kind !== 'off' && plan.reps == null && modeOf(cfg) === 'reps'
+  // An exercise with progression off that opened at last time's numbers (fromLast) says so too.
+  const carried = !planReps && (plan.kind !== 'off' || fromLast) && plan.reps == null && modeOf(cfg) === 'reps'
     && rows.some(s => !isWarmupRow(s) && s.r !== cfg.reps)
   // `planned` is what the routine asked for, kept apart from the target the prescription moved,
   // so the next session can tell an edited plan from a progressed one (nextPrescription).
