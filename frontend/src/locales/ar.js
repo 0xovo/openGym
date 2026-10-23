@@ -159,6 +159,8 @@ export default {
   'Workout complete!': 'اكتمل التمرين!',
   'Duration': 'المدة',
   'Volume': 'حجم التدريب',
+  'Count warm-ups in volume': 'احتساب الإحماء في حجم التدريب',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': 'مفيد عند المقارنة مع تطبيق آخر. الأرقام القياسية تتجاهل الإحماء في كل الأحوال.',
   'PRs': 'الأرقام القياسية',
   'New PR:': 'رقم قياسي جديد:',
   'Nice!': 'رائع!',

@@ -137,6 +137,8 @@ export default {
   'Workout complete!': 'Тренування завершено!',
   'Duration': 'Час',
   'Volume': 'Обсяг',
+  'Count warm-ups in volume': 'Враховувати розминку в обсязі',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': 'Зручно, коли порівнюєш з іншим застосунком. Рекорди в будь-якому разі не враховують розминку.',
   'PRs': 'Рекорди',
   'New PR:': 'Новий рекорд:',
   'Nice!': 'Чудово!',

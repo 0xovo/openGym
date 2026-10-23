@@ -70,6 +70,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **The rest wheel starts where your rest is.** Pick a time opens on the rest that applies right
   now (the exercise's, the warm-ups', or your default) instead of sitting at 0:00 (#735, thanks
   @lodepav).
+- **Count warm-ups in volume**, if you like (#719). A new switch in Settings → Units & language
+  adds your done warm-ups to every volume the app shows: the workout, the summary, history,
+  Stats, the report and the coach. Off by default, and records ignore warm-ups either way.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that

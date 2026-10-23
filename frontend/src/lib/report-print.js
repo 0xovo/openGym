@@ -4,7 +4,7 @@
 // lib/print-doc.js. Charts are inline SVG drawn here, so they stay sharp at any zoom and print the
 // same on every platform. No exercise media is ever put on paper.
 import { EXIDX } from './exercises.js'
-import { setLabel, sessionSections, workoutVolume, workoutDuration, workoutDay } from './history.js'
+import { setLabel, sessionSections, workoutVolume, sessionVolume, countsWarmups, workoutDuration, workoutDay } from './history.js'
 import { isWarmupRow, hasCompletedWork } from './workout-model.js'
 import { fmtNum, fmtVol, fmtDur, fmtDate, todayISO, DAYS, weekOrder, weekDayOffset } from './format.js'
 import { t, tn, dateLocale } from './i18n-core.js'
@@ -287,7 +287,7 @@ function setsHTML(e, speedUnit) {
   return rows.length ? `<div class="sets">${rows.join('')}</div>` : ''
 }
 
-function entryVolume(e) { return workoutVolume({ entries: [e] }) }
+function entryVolume(e, S) { return workoutVolume({ entries: [e] }, { warmups: countsWarmups(S) }) }
 
 /**
  * One finished workout on paper: what it was, when, how long and how heavy, then every exercise
@@ -301,7 +301,7 @@ export function workoutPrintHTML(S, w, { owner = '', probe = false } = {}) {
   const ms = workoutDuration(w)
   const day = workoutDay(w)
   const sets = workSetsOf(w)
-  const vol = w.vol ?? workoutVolume(w)
+  const vol = sessionVolume(w, S)
   const cards = [
     ms >= 60000 ? card(t('Duration'), esc(fmtDur(ms))) : '',
     card(t('Sets'), esc(fmtNum(sets))),
@@ -312,7 +312,7 @@ export function workoutPrintHTML(S, w, { owner = '', probe = false } = {}) {
   ].filter(Boolean).slice(0, 6)
   let num = 0
   const exHTML = e => {
-    const v = entryVolume(e)
+    const v = entryVolume(e, S)
     const done = (e.sets || []).filter(s => !isWarmupRow(s) && hasCompletedWork(s)).length
     const sum = [t('{0} sets', done), v > 0 ? fmtVol(v, unit) : ''].filter(Boolean).join(' · ')
     return `<div class="wx"><div class="wx-h"><div class="wx-num">${++num}</div><div class="wx-main">${nameHTML(e, { pr: prs.has(e.id) })}</div><div class="wx-sum">${esc(sum)}</div></div>`
@@ -427,7 +427,7 @@ function prsHTML(R, unit, m) {
 function workoutListItem(S, w, unit, speedUnit, m, id, lead = '') {
   const prs = new Set(w.prs || [])
   const ms = workoutDuration(w)
-  const facts = [ms >= 60000 ? fmtDur(ms) : '', fmtVol(w.vol ?? workoutVolume(w), unit), t('{0} sets', workSetsOf(w))].filter(Boolean).join(' · ')
+  const facts = [ms >= 60000 ? fmtDur(ms) : '', fmtVol(sessionVolume(w, S), unit), t('{0} sets', workSetsOf(w))].filter(Boolean).join(' · ')
   const rows = workoutUnits(w).flat().map((e, j) => {
     const sets = (e.sets || []).filter(s => !isWarmupRow(s) && hasCompletedWork(s)).map(s => setLabel(e.id, s, e.target, speedUnit))
     if (!sets.length) return ''

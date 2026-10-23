@@ -155,6 +155,8 @@ export default {
   'Workout complete!': 'Allenamento completato!',
   'Duration': 'Durata',
   'Volume': 'Volume',
+  'Count warm-ups in volume': 'Conta il riscaldamento nel volume',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': "Utile se fai il confronto con un'altra app. I record ignorano comunque il riscaldamento.",
   'PRs': 'Record',
   'New PR:': 'Nuovo record:',
   'Nice!': 'Grande!',

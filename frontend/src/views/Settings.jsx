@@ -779,6 +779,14 @@ export default function Settings({ page = null, find = null, via = null, entryKe
             { value: 'lander', label: 'Lander' },
             { value: 'weighted', label: t('Blend of all'), subtitle: t('Averages seven formulas and reads your RIR when you log it.') },
           ]} />
+        {/* Gross volume for people comparing with other apps (#719). Off is the app's own rule,
+            work sets only; on, every screen that shows a volume counts done warm-ups too
+            (lib/history.js sessionVolume). Records and progression never read warm-ups. */}
+        <Row icon="sunrise" iconTint="var(--teal)" title={t('Count warm-ups in volume')}
+          subtitle={t('Handy when you compare with another app. Records ignore warm-ups either way.')}>
+          <Switch aria-label={t('Count warm-ups in volume')} checked={S.volumeWarmups === true}
+            onChange={v => update(s => { s.volumeWarmups = v })} />
+        </Row>
       </Section>
     </>,
 

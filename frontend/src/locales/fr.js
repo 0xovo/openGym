@@ -155,6 +155,8 @@ export default {
   'Workout complete!': 'Séance terminée !',
   'Duration': 'Durée',
   'Volume': 'Volume',
+  'Count warm-ups in volume': 'Compter les échauffements dans le volume',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': 'Pratique pour comparer avec une autre appli. Les records ignorent les échauffements dans tous les cas.',
   'PRs': 'Records',
   'New PR:': 'Nouveau record :',
   'Nice!': 'Bien joué !',

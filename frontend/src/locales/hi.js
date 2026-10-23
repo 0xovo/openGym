@@ -155,6 +155,8 @@ export default {
   'Workout complete!': 'वर्कआउट पूरा!',
   'Duration': 'अवधि',
   'Volume': 'वॉल्यूम',
+  'Count warm-ups in volume': 'वॉल्यूम में वार्म-अप गिनें',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': 'किसी दूसरे ऐप से तुलना करते समय काम आता है। रिकॉर्ड वार्म-अप को हर हाल में नज़रअंदाज़ करते हैं।',
   'PRs': 'रिकॉर्ड',
   'New PR:': 'नया रिकॉर्ड:',
   'Nice!': 'बहुत बढ़िया!',

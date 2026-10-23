@@ -741,7 +741,7 @@ function shapeRows(sets, cfg, grid) {
   }
   return [warmup, work]
 }
-export function workoutVolume(w) {
+export function workoutVolume(w, { warmups = false } = {}) {
   let v = 0
   // Count each completed limb at its own load, including drops. A rest-pause side's r already
   // includes its bursts. Unchecked limbs and warm-ups contribute no volume.
@@ -758,10 +758,21 @@ export function workoutVolume(w) {
   ;(Array.isArray(w?.entries) ? w.entries : []).forEach(e => {
     const f = volumeFactor(e)
     ;(Array.isArray(e?.sets) ? e.sets : []).forEach(s => {
-      if (!isWarmupRow(s)) v += completedVolumeOf(s) * f
+      if (warmups || !isWarmupRow(s)) v += completedVolumeOf(s) * f
     })
   })
   return v
+}
+// Settings → Units → "Count warm-ups in volume" (#719), off by default. The saved `vol` stays
+// work sets only whatever it says, so the switch only changes what screens show and can be
+// flipped back without rewriting a single workout.
+export const countsWarmups = S => S?.volumeWarmups === true
+// The volume a screen shows for one session: counted from its sets, so units and the warm-up
+// switch always apply. A legacy record without entries only has its cached number.
+export function sessionVolume(w, S) {
+  if (Array.isArray(w?.entries)) return Math.max(0, Number(workoutVolume(w, { warmups: countsWarmups(S) })) || 0)
+  const v = Number(w?.vol)
+  return Number.isFinite(v) ? Math.max(0, v) : 0
 }
 // Finished sessions carry their canonical local calendar day in `d`. Keep it aligned with
 // History/calendar readers, and use the local start timestamp only for older records whose date

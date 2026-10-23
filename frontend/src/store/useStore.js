@@ -108,6 +108,8 @@ export const DEF = {
   exWeights: {}, workouts: [], active: null, customEx: [], gifSize: 'full',
   // Stats activity heatmap metric. Profiles without this key continue to open on time.
   heatmapMetric: 'time',
+  // Settings → Units → "Count warm-ups in volume" (#719): off keeps volume to work sets.
+  volumeWarmups: false,
   // How the active workout is laid out — 'cards' (one exercise at a time with Prev/Next),
   // 'list' (every exercise stacked and scrollable) or 'compact' (that stack stripped to just
   // names and set rows — no media, tags, notes, last-time or progression line). Purely

@@ -3,14 +3,14 @@
 // here without a browser.
 //
 // The rules are the app's own, read through the same helpers the Stats screen uses:
-//  - volume is workoutVolume (work sets only, both sides of a per-side set, both dumbbells when
+//  - volume is sessionVolume (work sets only unless warm-ups are switched in, #719; both sides of a per-side set, both dumbbells when
 //    logged per bell); sets are ticked work sets, a per-side set counting once per side, like the
 //    share card (lib/workout-card.js);
 //  - muscles are loadOfWorkouts, the Muscle balance card's effective sets;
 //  - the 1RM trend is e1rmSeries, the Exercise progress card's "Est. 1RM";
 //  - new bests are the ones each workout recorded when it was finished (w.prs).
 // Nothing here writes to the state.
-import { workoutVolume, workoutDuration, workoutDay, workoutAt, doneUnits, streakWeeks } from './history.js'
+import { sessionVolume, workoutDuration, workoutDay, workoutAt, doneUnits, streakWeeks } from './history.js'
 import { isWarmupRow } from './workout-model.js'
 import { loadOfWorkouts, rankOf, MUSCLE_NAME } from './muscles.js'
 import { e1rmSeries, bestSetOf, formulaOf } from './onerm.js'
@@ -53,19 +53,19 @@ export function reportRange(range, { from, to, today = todayISO() } = {}) {
 // Ticked work sets: warm-ups left out, a per-side set counted once per side.
 export const workSetsOf = w => (w.entries || []).reduce((n, e) => n + (e.sets || []).reduce((m, s) => m + (isWarmupRow(s) ? 0 : doneUnits(s)), 0), 0)
 
-// Legacy records without entries only carry the cached volume (the activity heatmap's rule).
-const volumeOf = w => Array.isArray(w?.entries) ? Math.max(0, Number(workoutVolume(w)) || 0) : Math.max(0, Number(w?.vol) || 0)
+// sessionVolume: counted from the sets, warm-ups in only when the profile says so (#719); legacy
+// records without entries carry the cached volume. `S` is the profile, absent in older callers.
 
 export const inRange = (S, { from, to }) => (S.workouts || [])
   .filter(w => { const d = workoutDay(w); return d && d >= from && d <= to })
   .sort((a, b) => (workoutAt(a) || 0) - (workoutAt(b) || 0))
 
 /** Headline numbers for a list of workouts (and the weigh-ins over the same days). */
-export function totalsOf(workouts, bodyweight = []) {
+export function totalsOf(workouts, bodyweight = [], S) {
   const t = { workouts: workouts.length, volume: 0, sets: 0, ms: 0, prs: 0, days: 0 }
   const days = new Set()
   for (const w of workouts) {
-    t.volume += volumeOf(w)
+    t.volume += sessionVolume(w, S)
     t.sets += workSetsOf(w)
     t.ms += workoutDuration(w)
     t.prs += new Set(w.prs || []).size
@@ -89,7 +89,7 @@ const weighInsIn = (S, { from, to }) => (S.bodyweight || [])
  * weeks or less, per week (the profile's first weekday) up to about four months, per month beyond.
  * Every bucket in the range is there, the empty ones too, so the gaps show.
  */
-export function bucketsOf(workouts, { from, to, days }, ws) {
+export function bucketsOf(workouts, { from, to, days }, ws, S) {
   const unit = days <= 14 ? 'day' : days <= 124 ? 'week' : 'month'
   const keyOf = iso => unit === 'day' ? iso : unit === 'week' ? weekKey(iso, ws) : iso.slice(0, 7) + '-01'
   const buckets = []
@@ -101,19 +101,19 @@ export function bucketsOf(workouts, { from, to, days }, ws) {
   for (const w of workouts) {
     const b = byKey[keyOf(workoutDay(w))]
     if (!b) continue
-    b.volume += volumeOf(w); b.sets += workSetsOf(w); b.workouts++
+    b.volume += sessionVolume(w, S); b.sets += workSetsOf(w); b.workouts++
   }
   buckets.forEach(b => { b.volume = Math.round(b.volume * 10) / 10 })
   return { unit, buckets }
 }
 
 /** Every day of the range for the consistency calendar, shaded 0–4 by volume like the heatmap. */
-export function calendarOf(workouts, { from, to }) {
+export function calendarOf(workouts, { from, to }, S) {
   const agg = {}
   for (const w of workouts) {
     const d = workoutDay(w)
     const a = agg[d] = agg[d] || { n: 0, volume: 0 }
-    a.n++; a.volume += volumeOf(w)
+    a.n++; a.volume += sessionVolume(w, S)
   }
   const values = Object.values(agg).map(a => a.volume).filter(v => v > 0).sort((a, b) => a - b)
   const q = p => (values.length ? values[Math.min(values.length - 1, Math.floor(p * values.length))] : 0)
@@ -216,15 +216,15 @@ export function reportData(S, { range = '4w', from, to, today = todayISO() } = {
   const weighIns = weighInsIn(S, r)
   const before = { from: addDays(r.from, -r.days), to: addDays(r.from, -1), days: r.days }
   const prevWorkouts = inRange(S, before)
-  const totals = totalsOf(workouts, weighIns)
+  const totals = totalsOf(workouts, weighIns, S)
   return {
     range: { ...r, kind: range },
     workouts,
     totals,
-    prev: totalsOf(prevWorkouts, weighInsIn(S, before)),
+    prev: totalsOf(prevWorkouts, weighInsIn(S, before), S),
     perWeek: Math.round(workouts.length / (r.days / 7) * 10) / 10,
-    buckets: bucketsOf(workouts, r, ws),
-    calendar: calendarOf(workouts, r),
+    buckets: bucketsOf(workouts, r, ws, S),
+    calendar: calendarOf(workouts, r, S),
     muscles: musclesOfRange(workouts),
     lifts: topLiftsOf(S, workouts, r),
     prs: prsOf(S, workouts),

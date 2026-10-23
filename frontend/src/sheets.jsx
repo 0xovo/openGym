@@ -4,7 +4,7 @@ import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
 import { fmtDate, fmtDateRange, fmtNum, fmtPlate, exerciseNameText, fmtVol, fmtDur, durPart, todayISO, isoOf, uid, exCount, routineCount, setsWorkCount, DAYN, DAYS, weekOrder, weekStartOf, weekDayOffset, MONTHS_LONG, ACCENTS } from './lib/format.js'
-import { lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, defaultConfig, pickedExerciseConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, sideReps, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
+import { lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, sessionVolume, countsWarmups, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, defaultConfig, pickedExerciseConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, sideReps, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
 import { usesBar, hasBarOverride, isNoBar, barTypeWeight, ownBarDefault, barPicks, withBarDefault, withStandardBars, defaultBarWeight, BAR_TYPES } from './lib/bar.js'
 import { PLATE_SIZES, pairsOf, ownsPlates, withPlatePairs, withStandardPlates, withLoadKind, loadKindFor, baseWeightFor, dropGrid } from './lib/plates.js'
 import { toScale, rirOf, EFFORT_PRESETS, effortColor } from './lib/effort.js'
@@ -1103,7 +1103,7 @@ export const exerciseDetailSheet = ex => ui().openSheet(close => <ExerciseDetail
 function ExerciseHistory({ exId }) {
   const st = useStore(s => s.S)
   const ex = exOr(exId)
-  const h = useMemo(() => exerciseHistory(st, exId), [st.workouts, exId])
+  const h = useMemo(() => exerciseHistory(st, exId), [st.workouts, exId, st.volumeWarmups])
   const [curve, setCurve] = useState('top')
   const onE1 = curve === 'e1rm' && h.e1rmPoints.length > 0
   const unit = h.metric === 'weight' ? st.unit : h.metric === 'reps' ? t('reps') : h.metric === 'sec' ? 's' : t('min')
@@ -2682,7 +2682,7 @@ function WorkoutDetail({ w, close }) {
   // Copied with the note as it stands in the box, which may not be saved yet.
   const copyAsText = async () => {
     const rec = { ...(st.workouts.find(x => sameWorkout(x, w)) || w), note: note.trim() }
-    toast(await copyText(workoutText(rec, { unit: st.unit, nameOf, speedUnit: speedUnitOf(st) })) ? t('Copied') : t('Could not copy'))
+    toast(await copyText(workoutText(rec, { unit: st.unit, nameOf, speedUnit: speedUnitOf(st), warmups: countsWarmups(st) })) ? t('Copied') : t('Could not copy'))
   }
   // A Garmin .fit activity (#447) of the saved record, for Garmin Connect's Import Data.
   const exportFit = () => {
@@ -2709,12 +2709,12 @@ function WorkoutDetail({ w, close }) {
   const grouped = groups.length > 1 || (groups[0] && groups[0].rid && (w.routineIds || []).length > 1)
   return <>
     <h3>{w.name}</h3>
-    <div className="muted small" style={{ marginBottom: 12 }}>{[fmtDate(w.d, true), ...durPart(w.end - w.start), fmtVol(w.vol, st.unit), ...(w.bw ? [fmtNum(w.bw) + ' ' + st.unit] : [])].join(' · ')}</div>
+    <div className="muted small" style={{ marginBottom: 12 }}>{[fmtDate(w.d, true), ...durPart(w.end - w.start), fmtVol(sessionVolume(w, st), st.unit), ...(w.bw ? [fmtNum(w.bw) + ' ' + st.unit] : [])].join(' · ')}</div>
     {grouped ? groups.map(g => {
       const r = g.rid ? st.routines.find(x => x.id === g.rid) : null
       const items = g.items.map(i => w.entries[i])
       const setN = items.reduce((n, e) => n + e.sets.filter(s => s.done && !isWarmupRow(s)).length, 0)
-      const vol = workoutVolume({ entries: items })
+      const vol = workoutVolume({ entries: items }, { warmups: countsWarmups(st) })
       return <div key={g.rid || '__none'}>
         <div className="row between" style={{ margin: '2px 0 8px', paddingBottom: 6, borderBottom: '1px solid var(--sep)' }}>
           <div className="row" style={{ gap: 7, fontWeight: 600 }}>
@@ -2795,7 +2795,8 @@ function ShareWorkoutImage({ w, nameOf, close }) {
   const st = useStore(s => s.S)
   const update = useStore(s => s.update)
   const withMap = st.shareMap !== false
-  const model = useMemo(() => workoutCardModel(w, { unit: st.unit, nameOf }), [w, st.unit])
+  const warmups = countsWarmups(st)
+  const model = useMemo(() => workoutCardModel(w, { unit: st.unit, nameOf, warmups }), [w, st.unit, warmups])
   // The last picture stays up while the next one is drawn, so the toggle never blanks the sheet.
   const [img, setImg] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -2899,7 +2900,7 @@ function Calendar({ start, close }) {
   const startOffset = weekDayOffset(new Date(y, mo, 1).getDay(), ws)
   const daysIn = new Date(y, mo + 1, 0).getDate()
   const monthWs = st.workouts.filter(w => workoutDay(w)?.startsWith(y + '-' + String(mo + 1).padStart(2, '0')))
-  const monthVol = monthWs.reduce((a, w) => a + (w.vol || 0), 0)
+  const monthVol = monthWs.reduce((a, w) => a + sessionVolume(w, st), 0)
   const monthMs = monthWs.reduce((a, w) => a + Math.max(0, (w.end || w.start) - w.start), 0)
   const cells = []
   for (let i = 0; i < startOffset; i++) cells.push(<div key={'e' + i} />)
@@ -2946,7 +2947,7 @@ export function WorkoutRow({ w, onClick }) {
   return <div className="item" {...tappable(onClick)}>
     <span className="lrow-i" style={{ width: 34, height: 34, borderRadius: 8, fontSize: 19 }}><Icon name={glyph} /></span>
     <div className="grow"><div className="tt">{w.name}</div>
-      <div className="ss">{[fmtDate(w.d, true), ...durPart(w.end - w.start), tn('{0} set', '{0} sets', setsDone(w)), fmtVol(w.vol, st.unit)].join(' · ')}</div></div>
+      <div className="ss">{[fmtDate(w.d, true), ...durPart(w.end - w.start), tn('{0} set', '{0} sets', setsDone(w)), fmtVol(sessionVolume(w, st), st.unit)].join(' · ')}</div></div>
     {mediaN > 0 && <span className="wrow-media" title={tn('{0} photo or video', '{0} photos or videos', mediaN)} aria-label={tn('{0} photo or video', '{0} photos or videos', mediaN)}><Icon name="image" />{mediaN}</span>}
     {w.prs && w.prs.length > 0 && <span className="pr"><Icon name="trophy" />{w.prs.length} PR</span>}
     <Icon name="chevronRight" className="chev" />
@@ -3538,7 +3539,7 @@ function FinishSummary({ w, prs, e1prs = [], additions = [], close }) {
     <h3 style={{ margin: '8px 0' }}>{t('Workout complete!')}</h3>
     <div className="tiles fin" style={{ textAlign: 'start' }}>
       <div className="tile"><div className="l">{t('Duration')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{fmtDur(w.end - w.start)}</div></div>
-      <div className="tile"><div className="l">{t('Volume')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{fmtVol(w.vol, st.unit)}</div></div>
+      <div className="tile"><div className="l">{t('Volume')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{fmtVol(sessionVolume(w, st), st.unit)}</div></div>
       <div className="tile wide"><div className="l">{t('Sets')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{setsWorkCount(setsDone(w), workSetsDone(w))}</div></div>
       <div className="tile narrow"><div className="l">{t('PRs')}</div><div className="v" style={{ fontSize: '1.1rem' }}>{prs.length || '–'}</div></div>
     </div>

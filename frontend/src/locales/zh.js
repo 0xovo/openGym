@@ -155,6 +155,8 @@ export default {
   'Workout complete!': '训练完成！',
   'Duration': '时长',
   'Volume': '总量',
+  'Count warm-ups in volume': '热身组计入总量',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': '和其他应用对比时很方便。纪录无论如何都不算热身组。',
   'PRs': '纪录',
   'New PR:': '新纪录：',
   'Nice!': '太棒了！',

@@ -155,6 +155,8 @@ export default {
   'Workout complete!': 'Antrenman tamamlandı!',
   'Duration': 'Süre',
   'Volume': 'Hacim',
+  'Count warm-ups in volume': 'Isınma setlerini hacme kat',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': 'Başka bir uygulamayla karşılaştırırken işe yarar. Rekorlar ısınmayı her durumda saymaz.',
   'PRs': 'Rekorlar',
   'New PR:': 'Yeni rekor:',
   'Nice!': 'Süper!',

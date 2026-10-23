@@ -186,6 +186,8 @@ export default {
   'Workout complete!': 'ওয়ার্কআউট সম্পন্ন!',
   'Duration': 'সময়কাল',
   'Volume': 'ভলিউম',
+  'Count warm-ups in volume': 'ভলিউমে ওয়ার্ম-আপ গুনুন',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': 'অন্য অ্যাপের সাথে তুলনা করতে কাজে লাগে। রেকর্ড সব সময়ই ওয়ার্ম-আপ বাদ দেয়।',
   'PRs': 'রেকর্ড',
   'New PR:': 'নতুন রেকর্ড:',
   'Nice!': 'দারুণ!',

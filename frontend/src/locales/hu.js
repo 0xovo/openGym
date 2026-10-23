@@ -153,6 +153,8 @@ export default {
   'Workout complete!': 'Edzés kész!',
   'Duration': 'Időtartam',
   'Volume': 'Volumen',
+  'Count warm-ups in volume': 'Bemelegítés beszámítása a volumenbe',
+  'Handy when you compare with another app. Records ignore warm-ups either way.': 'Jól jön, ha egy másik appal hasonlítasz össze. A rekordok így is, úgy is figyelmen kívül hagyják a bemelegítést.',
   'PRs': 'Rekordok',
   'New PR:': 'Új rekord:',
   'Nice!': 'Szuper!',
