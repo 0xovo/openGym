@@ -108,6 +108,12 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Hej, Sverige!** openGym speaks Swedish now, picked in Settings → Units & language or straight
   from a Swedish phone (#721, thanks @Grizzly163). Exercise names and instructions stay in English
   for now.
+- **The Android update actually installs.** Switch to another app while the new APK comes down
+  and Android quietly refused to open the installer, so the download finished and nothing
+  happened. Now the installer waits until you're back in openGym. Tap the update again after a
+  hiccup and it reuses the APK it already has instead of fetching 300 MB twice, and the leftover
+  APK is cleaned up once you're on the new version. (The fix lives in the updater itself, so it
+  helps from the update after 1.4.3 on: for this one, keep openGym open while it downloads.)
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that
