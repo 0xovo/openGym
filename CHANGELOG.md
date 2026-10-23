@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.4.2 (2026-10-18)
+## v1.4.2 (2026-10-23)
 
 openGym comes to the App Store, with an Apple Watch app in tow. Plus everything you asked for
 since v1.4.1, five reported security holes closed and a fresh look at the animations.
