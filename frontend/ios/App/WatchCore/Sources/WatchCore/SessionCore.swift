@@ -229,6 +229,36 @@ enum SessionCore {
         return snap.discarded?.contains(wid) ?? false
     }
 
+    /// A set the phone ticked, which the watch did not: its heart rate is the watch's to work out
+    /// (the phone has no sensor), from the watch session's readings up to `at`.
+    struct PhoneTick: Equatable {
+        var exId: String
+        var entryIdx: Int
+        var setIdx: Int
+        /// When the phone ticked it (ms since 1970).
+        var at: Double
+    }
+
+    /// The sets done in `after` and not in `before`, the same workout on both sides, oldest tick
+    /// first. A set the watch ticked itself is done in `before` already (tick), so only the phone's
+    /// show up here; a set without the phone's `at` is left out (no time to measure up to).
+    /// One side of a per-side set counts too: the row's `at` is that side's tick.
+    static func phoneTicks(_ before: ActiveWorkout?, _ after: ActiveWorkout?) -> [PhoneTick] {
+        guard let b = before, let a = after, let wid = a.id, wid == b.id else { return [] }
+        var out: [PhoneTick] = []
+        for (ei, e) in a.entries.enumerated() {
+            guard b.entries.indices.contains(ei), b.entries[ei].id == e.id else { continue }
+            let old = b.entries[ei].sets
+            for (si, row) in e.sets.enumerated() {
+                guard let at = row.at, old.indices.contains(si) else { continue }
+                let was = old[si]
+                let newSide = ["L", "R"].contains { row.sides?[$0].done == true && was.sides?[$0].done != true }
+                if (row.done && !was.done) || newSide { out.append(PhoneTick(exId: e.id, entryIdx: ei, setIdx: si, at: at)) }
+            }
+        }
+        return out.sorted { $0.at < $1.at }
+    }
+
     /// Of the deleted workouts the phone names, the ones this watch has not taken out of Apple Health
     /// yet (`done`: already removed, or found to have no copy of the watch's). Only workout ids.
     static func healthToDelete(gone: [String]?, done: [String]) -> [String] {

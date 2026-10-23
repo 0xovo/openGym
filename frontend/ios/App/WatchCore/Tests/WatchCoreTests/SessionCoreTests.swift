@@ -125,4 +125,27 @@ final class SessionCoreTests: XCTestCase {
         let json = #"{"v":1,"active":null,"discarded":["p1"]}"#
         XCTAssertTrue(SessionCore.discarded("p1", in: try JSONDecoder().decode(Snapshot.self, from: Data(json.utf8))))
     }
+
+    // Discord fuckdv: a set ticked on the phone while the watch runs the session got no heart rate.
+    func testFindsTheSetsThePhoneTickedButNotTheWatchsOwn() {
+        var s = SessionCore.applySnapshot(SessionState(), snap(workout("p1", sets: [row(60, 8), row(60, 8), row(60, 8)])))
+        s = SessionCore.tick(s, entry: 0, set: 0, w: 60, r: 8, at: 1000, id: "e1").0
+        let before = s.workout
+        let phone = workout("p1", sets: [row(60, 8, done: true, at: 1000), row(60, 8, done: true, at: 3000), row(60, 8, done: true)])
+        s = SessionCore.applySnapshot(s, snap(phone))
+        let ticks = SessionCore.phoneTicks(before, s.workout)
+        XCTAssertEqual(ticks, [SessionCore.PhoneTick(exId: "0025", entryIdx: 0, setIdx: 1, at: 3000)],
+                       "the watch's own tick and a set without a time are left out")
+        XCTAssertEqual(SessionCore.phoneTicks(s.workout, s.workout), [])
+        XCTAssertEqual(SessionCore.phoneTicks(before, workout("p2", sets: [row(60, 8, done: true, at: 5)])), [], "another workout")
+    }
+
+    func testOneSideTickedOnThePhoneCounts() {
+        var w = workout("p1", sets: [row(20, 0)])
+        w.entries[0].sets[0].sides = Sides(L: SideRow(w: 20, r: 10, done: false), R: SideRow(w: 20, r: 10, done: false))
+        let before = SessionCore.applySnapshot(SessionState(), snap(w)).workout
+        var after = w
+        after.entries[0].sets[0] = SessionCore.markSide(w.entries[0].sets[0], "L", w: 20, r: 10, at: 2000)
+        XCTAssertEqual(SessionCore.phoneTicks(before, after).map(\.at), [2000])
+    }
 }

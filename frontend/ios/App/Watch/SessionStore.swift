@@ -338,6 +338,10 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 self.health.start(workoutId: next.workout?.id)
             }
             if next.workout != nil && next.workout != before.workout { self.noteActivity() }
+            // Sets ticked on the phone: their heart rate from this watch's readings (Discord fuckdv).
+            for tick in SessionCore.phoneTicks(before.workout, next.workout) {
+                self.phoneTicked(tick, wid: next.workout?.id ?? "", resting: snap.active?.rest != nil)
+            }
             if let rest = snap.active?.rest, next.workout?.id == snap.active?.id {
                 let end = Date(timeIntervalSince1970: rest.endsAt / 1000)
                 if end != self.restEndsAt { self.startRest(until: end, notify: true) }
@@ -408,6 +412,27 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         }
         if to != ei { state.entryIndex = to }
         loadTargets()
+    }
+
+    /// A set ticked on the phone while this watch runs the session: the watch has the sensor, so
+    /// the set's heart rate is worked out here as for a tick on the wrist (completeSet), from when
+    /// the set started up to the phone's tick, and sent as a setHr. The rest before it closes at
+    /// the tick, and the rest after it (when the phone started one) is measured for that set.
+    private func phoneTicked(_ t: SessionCore.PhoneTick, wid: String, resting: Bool) {
+        let at = Date(timeIntervalSince1970: t.at / 1000)
+        // A tick from before this set started (one the phone made while the watch was away, already
+        // past) or from the future (a clock off between the two): no window to measure.
+        guard at > setStartedAt, at <= Date().addingTimeInterval(60) else { return }
+        let setFrom = setStartedAt
+        closeRest(at: at)
+        if let hr = health.stats(from: setFrom, to: at) {
+            send(event: [
+                "id": UUID().uuidString, "type": "setHr", "wid": wid, "exId": t.exId,
+                "entryIdx": t.entryIdx, "setIdx": t.setIdx, "hr": hr,
+            ])
+        }
+        setStartedAt = at
+        if resting { restAfter = (t.exId, t.entryIdx, t.setIdx, wid, at) }
     }
 
     /// A set passed over (a long press on Done): not done, the next one comes up.
