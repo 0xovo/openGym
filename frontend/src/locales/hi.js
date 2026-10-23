@@ -2223,6 +2223,7 @@ export default {
   'Animation quality': 'एनिमेशन की क्वालिटी',
   'Auto ({0})': 'ऑटो ({0})',
   'Built in ({0} px)': 'बिल्ट-इन ({0} px)',
+  '{0} APK, animations at {1} px': '{0} APK, एनिमेशन {1} px में',
   'Download failed. Tap to try again.': 'डाउनलोड नहीं हुआ। फिर से कोशिश के लिए टैप करें।',
   'Download over Wi-Fi only': 'सिर्फ़ Wi-Fi पर डाउनलोड करें',
   'Downloaded · {0}': 'डाउनलोड हो गया · {0}',

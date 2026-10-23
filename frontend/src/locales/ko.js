@@ -2223,6 +2223,7 @@ export default {
   'Animation quality': '애니메이션 화질',
   'Auto ({0})': '자동 ({0})',
   'Built in ({0} px)': '기본 내장 ({0} px)',
+  '{0} APK, animations at {1} px': '{0} APK, 애니메이션 {1} px',
   'Download failed. Tap to try again.': '다운로드에 실패했어요. 탭해서 다시 시도하세요.',
   'Download over Wi-Fi only': 'Wi-Fi에서만 다운로드',
   'Downloaded · {0}': '다운로드됨 · {0}',

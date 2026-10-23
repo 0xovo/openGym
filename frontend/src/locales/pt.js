@@ -2223,6 +2223,7 @@ export default {
   'Animation quality': 'Qualidade das animações',
   'Auto ({0})': 'Auto ({0})',
   'Built in ({0} px)': 'Incluídas ({0} px)',
+  '{0} APK, animations at {1} px': 'APK {0}, animações a {1} px',
   'Download failed. Tap to try again.': 'A transferência falhou. Toca para tentar de novo.',
   'Download over Wi-Fi only': 'Transferir só por Wi-Fi',
   'Downloaded · {0}': 'Transferidas · {0}',

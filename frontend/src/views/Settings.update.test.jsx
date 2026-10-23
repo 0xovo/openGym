@@ -170,3 +170,26 @@ describe('Settings — in-app update check', () => {
   })
 })
 
+const versionRow = () => [...host.querySelectorAll('.lrow')].find(r => r.textContent.includes('Version'))
+describe('Settings → About: which APK this is', () => {
+  it('the sideloaded APK names its kind and the animation size built in', async () => {
+    mocks.MOBILE = true
+    mocks.android = true
+    await mount()
+    expect(versionRow().textContent).toContain('Standard APK, animations at 180 px')
+  })
+
+  it('not on the web, iOS or the Google Play build', async () => {
+    await mount()
+    expect(versionRow().textContent).not.toContain('APK,')
+    for (const [android, channel] of [[false, 'sideload'], [true, 'play']]) {
+      act(() => root.unmount())
+      root = createRoot(host)
+      mocks.MOBILE = true
+      mocks.android = android
+      mocks.channel = channel
+      await mount()
+      expect(versionRow().textContent).not.toContain('APK,')
+    }
+  })
+})

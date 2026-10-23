@@ -2220,6 +2220,7 @@ export default {
   'Animation quality': 'Якість анімацій',
   'Auto ({0})': 'Авто ({0})',
   'Built in ({0} px)': 'Вбудовані ({0} px)',
+  '{0} APK, animations at {1} px': 'APK {0}, анімації {1} px',
   'Download failed. Tap to try again.': 'Завантаження не вдалося. Торкніться, щоб повторити.',
   'Download over Wi-Fi only': 'Завантажувати лише через Wi-Fi',
   'Downloaded · {0}': 'Завантажено · {0}',

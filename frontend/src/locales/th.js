@@ -2234,6 +2234,7 @@ export default {
   'Animation quality': 'คุณภาพภาพเคลื่อนไหว',
   'Auto ({0})': 'อัตโนมัติ ({0})',
   'Built in ({0} px)': 'ในตัวแอป ({0} px)',
+  '{0} APK, animations at {1} px': 'APK รุ่น {0} แอนิเมชัน {1} px',
   'Download failed. Tap to try again.': 'ดาวน์โหลดไม่สำเร็จ แตะเพื่อลองอีกครั้ง',
   'Download over Wi-Fi only': 'ดาวน์โหลดผ่าน Wi-Fi เท่านั้น',
   'Downloaded · {0}': 'ดาวน์โหลดแล้ว · {0}',

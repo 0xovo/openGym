@@ -114,6 +114,8 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   hiccup and it reuses the APK it already has instead of fetching 300 MB twice, and the leftover
   APK is cleaned up once you're on the new version. (The fix lives in the updater itself, so it
   helps from the update after 1.4.3 on: for this one, keep openGym open while it downloads.)
+- **Which APK is this?** Settings → About now tells you whether your Android app is the Standard
+  (180 px), Plus (240 px) or HD (360 px) one, no guessing from the file size.
 
 **Security.** Follow-ups to v1.4.2's audit.
 - **Pairing the phone app asks you to confirm it's you** (passkey, or your password where that

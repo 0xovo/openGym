@@ -2248,6 +2248,7 @@ export default {
   'Animation quality': 'Animationskvalitet',
   'Auto ({0})': 'Auto ({0})',
   'Built in ({0} px)': 'Inbyggd ({0} px)',
+  '{0} APK, animations at {1} px': '{0}-APK, animationer i {1} px',
   'Download failed. Tap to try again.': 'Nedladdningen misslyckades. Tryck för att försöka igen.',
   'Download over Wi-Fi only': 'Ladda bara ner via wifi',
   'Downloaded · {0}': 'Nedladdad · {0}',

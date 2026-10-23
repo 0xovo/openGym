@@ -2227,6 +2227,7 @@ export default {
   'Animation quality': 'Качество анимаций',
   'Auto ({0})': 'Авто ({0})',
   'Built in ({0} px)': 'Встроенные ({0} px)',
+  '{0} APK, animations at {1} px': 'APK {0}, анимации {1} px',
   'Download failed. Tap to try again.': 'Загрузка не удалась. Нажмите, чтобы повторить.',
   'Download over Wi-Fi only': 'Загружать только по Wi-Fi',
   'Downloaded · {0}': 'Загружено · {0}',

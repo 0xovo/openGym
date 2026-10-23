@@ -2278,6 +2278,7 @@ export default {
   'Animation quality': 'جودة الرسوم المتحركة',
   'Auto ({0})': 'تلقائي ({0})',
   'Built in ({0} px)': 'مدمجة ({0} px)',
+  '{0} APK, animations at {1} px': 'حزمة APK {0}، رسوم متحركة بدقة {1} px',
   'Download failed. Tap to try again.': 'فشل التنزيل. اضغط للمحاولة مجددًا.',
   'Download over Wi-Fi only': 'التنزيل عبر Wi-Fi فقط',
   'Downloaded · {0}': 'تم التنزيل · {0}',

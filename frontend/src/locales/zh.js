@@ -2223,6 +2223,7 @@ export default {
   'Animation quality': '动画清晰度',
   'Auto ({0})': '自动（{0}）',
   'Built in ({0} px)': '内置（{0} px）',
+  '{0} APK, animations at {1} px': '{0} 版 APK，动画 {1} px',
   'Download failed. Tap to try again.': '下载失败。点按重试。',
   'Download over Wi-Fi only': '仅通过 Wi-Fi 下载',
   'Downloaded · {0}': '已下载 · {0}',

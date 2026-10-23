@@ -2216,6 +2216,7 @@ export default {
   'Animation quality': '動畫畫質',
   'Auto ({0})': '自動（{0}）',
   'Built in ({0} px)': '內建（{0} px）',
+  '{0} APK, animations at {1} px': '{0} 版 APK，動畫 {1} px',
   'Download failed. Tap to try again.': '下載失敗。點一下再試一次。',
   'Download over Wi-Fi only': '僅透過 Wi-Fi 下載',
   'Downloaded · {0}': '已下載 · {0}',

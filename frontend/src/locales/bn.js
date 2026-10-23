@@ -2302,6 +2302,7 @@ export default {
   'Animation quality': 'অ্যানিমেশনের মান',
   'Auto ({0})': 'অটো ({0})',
   'Built in ({0} px)': 'অন্তর্ভুক্ত ({0} px)',
+  '{0} APK, animations at {1} px': '{0} APK, অ্যানিমেশন {1} px-এ',
   'Download failed. Tap to try again.': 'ডাউনলোড ব্যর্থ। আবার চেষ্টা করতে ট্যাপ করুন।',
   'Download over Wi-Fi only': 'শুধু Wi-Fi-তে ডাউনলোড',
   'Downloaded · {0}': 'ডাউনলোড হয়েছে · {0}',

@@ -2223,6 +2223,7 @@ export default {
   'Animation quality': 'Animasyon kalitesi',
   'Auto ({0})': 'Otomatik ({0})',
   'Built in ({0} px)': 'Yerleşik ({0} px)',
+  '{0} APK, animations at {1} px': '{0} APK, animasyonlar {1} px',
   'Download failed. Tap to try again.': 'İndirme başarısız. Tekrar denemek için dokun.',
   'Download over Wi-Fi only': 'Yalnızca Wi-Fi ile indir',
   'Downloaded · {0}': 'İndirildi · {0}',

@@ -2226,6 +2226,7 @@ export default {
   'Animation quality': 'Animációk minősége',
   'Auto ({0})': 'Auto ({0})',
   'Built in ({0} px)': 'Beépített ({0} px)',
+  '{0} APK, animations at {1} px': '{0} APK, {1} px-es animációk',
   'Download failed. Tap to try again.': 'A letöltés nem sikerült. Koppints az újrapróbáláshoz.',
   'Download over Wi-Fi only': 'Letöltés csak Wi-Fin',
   'Downloaded · {0}': 'Letöltve · {0}',
