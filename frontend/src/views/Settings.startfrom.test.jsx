@@ -103,7 +103,7 @@ describe('Settings — planned sessions start from', () => {
   })
 })
 
-describe('Settings — last time means (#770)', () => {
+describe('Settings: last time means (#770)', () => {
   const lastRow = () => [...host.querySelectorAll('.lrow')].find(r => r.textContent.includes('Last time means'))
   const pick = label => {
     act(() => { lastRow().click() })

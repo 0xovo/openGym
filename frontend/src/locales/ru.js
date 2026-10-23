@@ -1380,7 +1380,7 @@ export default {
   'Planned sessions start from': 'Основа запланированных тренировок',
   'The routine’s sets and reps. Your history decides the weight.': 'Подходы и повторения из программы. Вес определяет ваша история.',
   'Your last session': 'Ваша последняя тренировка',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'Повторения с прошлого раза в этой программе переносятся. При выключенной прогрессии — и вес.',
+  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'Повторения с прошлого раза в этой программе переносятся. При выключенной прогрессии и вес тоже.',
   'Last time means': '«Прошлый раз» это',
   'This routine': 'Эта программа',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'Твоя последняя тренировка этого упражнения в той же программе. Тяжёлый и лёгкий день идут отдельно.',
