@@ -1537,15 +1537,17 @@ function ActiveWorkout() {
     // The confirm names what it changes: this workout, never the routine behind it.
     else exConfigSheet(ex, null, commit, null, routine, seed, null, t('Add to this workout'))
   })
-  // Ending the session without saving it. The ⋯ menu's last item since the header's ✕ became the
-  // ⌄ that only leaves the screen (v1.3.11).
+  // Ending the session without saving it, from the Finish sheet only. It used to end the header ⋯
+  // as a red trash too, right where the exercise ⋯ keeps Remove exercise, and after a hard session
+  // the two got mixed up (#751).
   const discardWorkout = () => confirmSheet({
     title: t('Discard workout?'), message: t('The sets you logged in this session will be lost.'), confirmText: t('Discard'), danger: true,
     // Named for the watch first: gone from its snapshot it would look finished, and be saved to Apple Health (#776).
     onConfirm: () => { markDiscarded(useStore.getState().S.active?.id); update(s => { s.active = null }); stopRest(); stopWork(); nav('/home') },
   })
   // The header ⋯, in groups: the settings you change at the gym first (their own sheet, the same
-  // values as Settings), then what to add, what to change about this workout, and Discard last.
+  // values as Settings), then what to add and what to change about this workout. Nothing in it
+  // throws the session away: that is the Finish sheet's (#751).
   // Layout here stays this session's own (s.active.workoutView); the settings sheet's Layout is
   // the saved one.
   const openViewMenu = () => menuSheet({
@@ -1565,9 +1567,6 @@ function ActiveWorkout() {
         { icon: 'layout', label: t('Layout'), sub: LAYOUT_LABEL[workoutView] || LAYOUT_LABEL.cards, onClick: openLayoutMenu },
         { icon: 'note', label: A.note ? t('Edit session note') : t('Add session note'), onClick: sessionNoteSheet },
         noProgSwitchable && { icon: 'chartLineSlash', label: t('Don’t count for progression'), sub: t('Every exercise in this workout'), on: sessionNoProg(A), onClick: toggleSessionNoProg },
-      ] },
-      { items: [
-        !editing && { icon: 'trash', label: t('Discard workout'), danger: true, onClick: discardWorkout },
       ] },
     ],
   })
@@ -2113,9 +2112,9 @@ function ActiveWorkout() {
         while you are somewhere in the middle of a long stack. Cards mode never scrolls far. */}
     <div className={'whdr' + (listMode ? ' stick' : '')} ref={hdrRef}>
     {/* ⌄ leaves the screen and keeps the session running (the tab bar's Resume brings it back);
-        in the editor of a saved workout it is the ✕ that closes the editor. Discard is in the ⋯
-        menu now, and Finish is a labelled pill rather than a check that looked like a set tick: it
-        opens the Finish sheet (Finish and save, Discard), the editor's Save saves at once. */}
+        in the editor of a saved workout it is the ✕ that closes the editor. Finish is a labelled pill
+        rather than a check that looked like a set tick: it opens the Finish sheet (Finish and save,
+        Discard, the only way to discard, #751), the editor's Save saves at once. */}
     <div className="hdr whdr-bar">
       {editing
         ? <button className="iconbtn" aria-label={t('Close editor')} title={t('Close editor')} onClick={() => exitWorkoutEdit()}><Icon name="xmark" /></button>
