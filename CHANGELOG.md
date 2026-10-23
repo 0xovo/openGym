@@ -25,6 +25,15 @@ tiny body, faint where the session is headed and lit up where you've already tic
 layout and without moving a single set row (#670). Tap it for the big map and done/planned sets
 per muscle. Settings → Workout → Fine-tuning turns it off.
 
+- **Discard means discard, on the Apple Watch too** (#776). Discarding a workout on the phone
+  while the watch follows it used to save it to Apple Health anyway, calories and all. Now the
+  watch drops it and Apple Health never hears about it.
+- **Imported weigh-ins stay put.** Weigh-ins you import (an Apple Health export, a Google Health
+  or Health Connect CSV, Strong, Hevy) are no longer written back to Apple Health or Health
+  Connect, where they landed a second time. Only weigh-ins you enter in openGym go out.
+- **Heart rate for sets you tick on the phone.** With the Apple Watch running the session, a set
+  ticked on the phone now gets its heart rate from the watch too, not just the ones ticked on
+  the wrist.
 - **Apple Watch keeps up.** The watch could miss the phone right after launch and then hear
   nothing until you reopened the app, a freshly installed watch app could wait for your next change
   before it got your routines, and one odd routine could hide all of them. All fixed. Until the
