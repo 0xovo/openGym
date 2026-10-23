@@ -2543,4 +2543,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'เซ็ตที่หนักที่สุดเทียบกับน้ำหนักตัว ต่อการเทรนแต่ละครั้ง',
   'Estimated 1RM as a share of body weight, per workout': '1RM โดยประมาณเทียบกับน้ำหนักตัว ต่อการเทรนแต่ละครั้ง',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'น้ำหนักตัวในช่วงนี้: {0} → {1} ท่าที่ใช้น้ำหนักตัวและท่าที่มีตัวช่วยจะนับน้ำหนักตัวของคุณเป็นส่วนหนึ่งของน้ำหนักที่ยก',
+  'Weight stack': 'สแต็กน้ำหนัก',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'น้ำหนักที่เครื่องนี้มีจริง รวมขั้นแปลก ๆ ด้วย การเพิ่มน้ำหนัก การดีโหลด การวอร์มอัป และปุ่ม + กับ − จะลงที่ค่าเหล่านี้เท่านั้น',
+  'No list yet, so this exercise steps by its increment as usual.': 'ยังไม่มีรายการ ท่านี้จึงเพิ่มตามขั้นปกติของมัน',
+  'First ({0})': 'แรก ({0})',
+  'How many': 'กี่ค่า',
+  'Fill in': 'เติม',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'สุดสแต็กแล้ว: {0} {1} หนักที่สุด น้ำหนักจึงคงเดิม',
 }

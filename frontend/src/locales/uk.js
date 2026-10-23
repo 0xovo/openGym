@@ -2529,4 +2529,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'Найважчий підхід як частка ваги тіла, за тренуваннями',
   'Estimated 1RM as a share of body weight, per workout': 'Розрахунковий 1ПМ як частка ваги тіла, за тренуваннями',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Вага тіла за цей період: {0} → {1}. У вправах із власною вагою та з допомогою вага вашого тіла входить у навантаження.',
+  'Weight stack': 'Стек вантажів',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'Ваги, які на цьому тренажері справді є, з усіма дивними кроками. Прогресія, розвантаження, розминка й кнопки + і − потрапляють лише на них.',
+  'No list yet, so this exercise steps by its increment as usual.': 'Списку ще немає, тож вправа зростає на свій крок, як завжди.',
+  'First ({0})': 'Перший ({0})',
+  'How many': 'Скільки',
+  'Fill in': 'Заповнити',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Це весь стек: {0} {1} і є максимум, тож вага лишається.',
 }

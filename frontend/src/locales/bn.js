@@ -2611,4 +2611,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'প্রতি ওয়ার্কআউটে শরীরের ওজনের অনুপাতে সবচেয়ে ভারী সেট',
   'Estimated 1RM as a share of body weight, per workout': 'প্রতি ওয়ার্কআউটে শরীরের ওজনের অনুপাতে আনুমানিক 1RM',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'এই সময়ে শরীরের ওজন: {0} → {1}। বডিওয়েট ও অ্যাসিস্টেড ব্যায়ামে আপনার শরীরের ওজন লোডের অংশ হিসেবে ধরা হয়।',
+  'Weight stack': 'ওজনের স্ট্যাক',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'এই মেশিনে আসলে যে ওজনগুলো আছে, অদ্ভুত ধাপসহ। প্রগ্রেশন, ডিলোড, ওয়ার্ম-আপ আর + ও − বোতাম কেবল এগুলোতেই পড়ে।',
+  'No list yet, so this exercise steps by its increment as usual.': 'এখনও তালিকা নেই, তাই এই ব্যায়াম আগের মতো নিজের ধাপে বাড়ে।',
+  'First ({0})': 'প্রথম ({0})',
+  'How many': 'কতগুলো',
+  'Fill in': 'পূরণ করুন',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'এটাই পুরো স্ট্যাক: {0} {1} সবচেয়ে ভারী, তাই ওজন একই থাকে।',
 }

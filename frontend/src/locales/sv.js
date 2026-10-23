@@ -2579,4 +2579,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'Tyngsta setet som andel av kroppsvikten, per pass',
   'Estimated 1RM as a share of body weight, per workout': 'Uppskattat 1RM som andel av kroppsvikten, per pass',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Kroppsvikt under perioden: {0} → {1}. I kroppsviktsövningar och assisterade övningar räknas din kroppsvikt som en del av belastningen.',
+  'Weight stack': 'Viktstack',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'Vikterna som den här maskinen faktiskt har, udda steg och allt. Progression, deloads, uppvärmning och knapparna + och − landar bara på dessa.',
+  'No list yet, so this exercise steps by its increment as usual.': 'Ingen lista än, så övningen stegar med sitt vanliga steg.',
+  'First ({0})': 'Första ({0})',
+  'How many': 'Hur många',
+  'Fill in': 'Fyll i',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Det är hela stacken: {0} {1} är det tyngsta, så vikten står kvar.',
 }

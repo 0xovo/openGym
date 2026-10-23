@@ -287,6 +287,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   const loadStep = mode === 'reps' ? weightIncrement(cfg, S.unit) : 2.5
   // With the dumbbells you own listed (issue #376), + and − walk from bell to bell — 9, 11, 13 —
   // instead of along the increment's grid; an off-list weight goes to the nearest bell that way.
+  // A machine's own stack (#688) is walked the same way: 5, 11.3, 18.1.
   const owned = mode === 'reps' ? ownedWeightsFor(S, cfg) : null
   const stepLoad = (v, step, dir) => (owned ? stepOwned(owned, v, dir) : stepWeight(v, step, dir))
   // The weight column says what a dumbbell weight means when the exercise has said (#474): one

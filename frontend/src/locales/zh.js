@@ -2532,4 +2532,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': '每次训练中最重一组占体重的比例',
   'Estimated 1RM as a share of body weight, per workout': '每次训练的预估 1RM 占体重的比例',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': '此期间的体重：{0} → {1}。自重和辅助动作会把你的体重计入负重。',
+  'Weight stack': '配重片',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': '这台器械真实有的重量，奇怪的档位也算。进阶、减载、热身和 + − 按钮都只落在这些重量上。',
+  'No list yet, so this exercise steps by its increment as usual.': '还没有列表，所以这个动作照常按增量递增。',
+  'First ({0})': '起始 ({0})',
+  'How many': '数量',
+  'Fill in': '填入',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': '已经到底了：{0} {1} 是最重的一档，所以重量不变。',
 }

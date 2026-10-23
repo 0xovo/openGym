@@ -2587,4 +2587,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'أثقل مجموعة كنسبة من وزن الجسم، لكل تمرين',
   'Estimated 1RM as a share of body weight, per workout': 'الحد الأقصى المقدّر لتكرار واحد (1RM) كنسبة من وزن الجسم، لكل تمرين',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'وزن الجسم خلال هذه الفترة: {0} → {1}. تحتسب تمارين وزن الجسم والتمارين المساعدة وزن جسمك كجزء من الحمل.',
+  'Weight stack': 'مجموعة الأوزان',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'الأوزان الموجودة فعلًا في هذا الجهاز، بخطواتها الغريبة كلها. التدرج والتخفيف والإحماء وزرّا + و − تقع على هذه فقط.',
+  'No list yet, so this exercise steps by its increment as usual.': 'لا قائمة بعد، لذا يتقدم هذا التمرين بزيادته المعتادة.',
+  'First ({0})': 'الأول ({0})',
+  'How many': 'كم عددها',
+  'Fill in': 'املأ',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'هذه المجموعة كلها: {0} {1} هو الأثقل، لذا يبقى الوزن كما هو.',
 }

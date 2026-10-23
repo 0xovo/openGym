@@ -2532,4 +2532,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'Antrenman başına vücut ağırlığına oranla en ağır set',
   'Estimated 1RM as a share of body weight, per workout': 'Antrenman başına vücut ağırlığına oranla tahmini 1RM',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Bu dönemdeki vücut ağırlığı: {0} → {1}. Vücut ağırlığı ve destekli egzersizlerde vücut ağırlığın yükün bir parçası sayılır.',
+  'Weight stack': 'Ağırlık bloğu',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'Bu makinede gerçekten olan ağırlıklar, tuhaf adımlar dahil. İlerleme, deload, ısınma ve + ile − düğmeleri yalnızca bunlara düşer.',
+  'No list yet, so this exercise steps by its increment as usual.': 'Henüz liste yok, bu yüzden bu egzersiz her zamanki gibi kendi artışıyla ilerler.',
+  'First ({0})': 'İlk ({0})',
+  'How many': 'Kaç tane',
+  'Fill in': 'Doldur',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Bloğun tamamı bu: {0} {1} en ağırı, o yüzden ağırlık sabit kalır.',
 }

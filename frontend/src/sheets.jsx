@@ -41,7 +41,7 @@ import { printWorkout } from './lib/report-print.js'
 import { estimate1RM, best1RM, is1RMRecord, REP_CAP, formulaOf, FORMULA_NAMES } from './lib/onerm.js'
 import { exerciseHistory } from './lib/exercise-history.js'
 import { relativeSeries } from './lib/relative-strength.js'
-import { isBellEx, dbLoadOf, dbLoadFor, withDbLoad, entryDbLoad, currentDbLoad, isOneArm, dumbbellsOf, ownsDumbbells, withDumbbells, presetWeights, cleanWeights } from './lib/dumbbells.js'
+import { isBellEx, dbLoadOf, dbLoadFor, withDbLoad, entryDbLoad, currentDbLoad, isOneArm, dumbbellsOf, ownsDumbbells, withDumbbells, presetWeights, cleanWeights, canHaveStack, stackOf, withStack, stackFromStep } from './lib/dumbbells.js'
 import { policyFor, defaultIncrement, POLICIES_FOR, POLICY_NAME, POLICY_DESC, MAX_BW_SETS, MAX_TRIPLE_SETS } from './lib/progression.js'
 import { normalizeRepRange } from './lib/rep-range.js'
 import { isBackoff, backoffWeights } from './lib/backoff.js'
@@ -878,6 +878,61 @@ function DbLoadPicker({ ex, cfg, value, onChange }) {
   </>
 }
 
+// A machine's own weight stack (issue #688, lib/dumbbells.js): the weights its pin really
+// selects, for this exercise everywhere. With a list, progression, deloads, warm-ups, drops and the
+// + and − buttons land on these instead of on the increment, like the dumbbell list (#376). Tap a
+// weight to take it off, the field adds one, and the quick fill writes an even stack to edit from.
+function StackEditor({ ex }) {
+  const st = useStore(s => s.S)
+  const unit = st.unit === 'lb' ? 'lb' : 'kg'
+  const list = stackOf(st, ex.id)
+  const [draft, setDraft] = useState(null)
+  const [first, setFirst] = useState(null)
+  const [step, setStep] = useState(null)
+  const [count, setCount] = useState(null)
+  const save = ws => update(s => { s.stackWeights = withStack(s, ex.id, ws) })
+  const add = () => {
+    const w = cleanWeights([draft])[0]
+    if (!w) { toast(t('Enter a valid weight')); return }
+    save([...list, w])
+    setDraft(null)
+  }
+  const fill = () => {
+    const ws = stackFromStep(first, step, count || 10)
+    if (!ws.length) { toast(t('Enter a valid weight')); return }
+    save(ws)
+  }
+  return <>
+    <div className="small dim" style={{ marginBottom: 10 }}>
+      {t('The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.')}
+    </div>
+    {list.length > 0
+      ? <div className="chips" style={{ flexWrap: 'wrap', overflow: 'visible', touchAction: 'auto', marginBottom: 12 }}>
+        {list.map(w => <button key={w} className="chip on nocap" aria-label={t('Remove {0}', fmtPlate(w) + ' ' + unit)}
+          onClick={() => save(list.filter(x => x !== w))}>{fmtPlate(w)} <Icon name="xmark" /></button>)}
+      </div>
+      : <div className="small dim" style={{ marginBottom: 12 }}>{t('No list yet, so this exercise steps by its increment as usual.')}</div>}
+    <div className="row" style={{ gap: 8, marginBottom: 8 }}>
+      <NumberField className="input" decimal value={draft ?? ''} onChange={v => setDraft(v)}
+        aria-label={t('Weight ({0})', unit)} placeholder={t('Weight ({0})', unit)} onKeyDown={e => { if (e.key === 'Enter') add() }} />
+      <Button icon="plus" onClick={add} style={{ flex: '0 0 auto', width: 'auto' }}>{t('Add')}</Button>
+    </div>
+    {/* An evenly spaced stack in three numbers, to fix the odd ones on after. */}
+    {list.length === 0 && <>
+      <div className="row" style={{ gap: 8, marginBottom: 8 }}>
+        <NumberField className="input" decimal value={first ?? ''} onChange={setFirst} aria-label={t('First ({0})', unit)} placeholder={t('First ({0})', unit)} />
+        <NumberField className="input" decimal value={step ?? ''} onChange={setStep} aria-label={t('Step ({0})', unit)} placeholder={t('Step ({0})', unit)} />
+      </div>
+      <div className="row" style={{ gap: 8, marginBottom: 8 }}>
+        <NumberField className="input" value={count ?? ''} onChange={setCount} aria-label={t('How many')} placeholder={t('How many')} />
+        <Button onClick={fill} style={{ flex: '0 0 auto', width: 'auto' }}>{t('Fill in')}</Button>
+      </div>
+    </>}
+    {list.length > 0 && <Button variant="danger" onClick={() => save([])} style={{ marginBottom: 8 }}>{t('Clear the list')}</Button>}
+    <div style={{ height: 10 }} />
+  </>
+}
+
 // Mid-workout sheet behind the ⋯ menu's "Plate loading" — same values, same editor.
 function BarWeightSheet({ exId, cfg, close }) {
   const ex = exOr(exId)
@@ -885,6 +940,7 @@ function BarWeightSheet({ exId, cfg, close }) {
     <h3>{t('Plate loading')}</h3>
     <div className={`muted small ${exerciseNameClass(ex)}`} style={{ marginBottom: 12 }}>{exerciseNameFor(ex)}</div>
     <BarWeightEditor ex={ex} cfg={cfg} extra={t('Applies to this exercise everywhere, not just this plan.')} />
+    {canHaveStack(ex) && <><h4 className="sec">{t('Weight stack')}</h4><StackEditor ex={ex} /></>}
     <Button variant="primary" onClick={close}>{t('Done')}</Button>
   </>
 }
@@ -1095,6 +1151,7 @@ function ExerciseDetail({ ex, close }) {
     {modeOf({ id: ex.id }) === 'reps' && <>
       <h4 className="sec">{t('Plate loading')}</h4>
       <BarWeightEditor ex={ex} extra={t('You still log the total weight. This only feeds the plate line under each set.')} />
+      {canHaveStack(ex) && <><h4 className="sec">{t('Weight stack')}</h4><StackEditor ex={ex} /></>}
     </>}
     {/* The exercise's own default meaning of its weight (S.dbLoad), stamped like the loading
         above. A routine can still pick its own on the exercise's settings. */}
@@ -2288,6 +2345,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     {mode === 'reps' && <>
       <h4 className="sec">{t('Plate loading')}</h4>
       <BarWeightEditor ex={ex} cfg={c} extra={t('Applies to this exercise everywhere, not just this plan.')} />
+      {canHaveStack(ex) && !bw && <><h4 className="sec">{t('Weight stack')}</h4><StackEditor ex={ex} /></>}
     </>}
     {pyramid
       ? <div className="small dim" style={{ marginBottom: 18 }}>{t('Weight is up to you: pyramid sets are not progressed automatically.')}</div>

@@ -2532,4 +2532,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'Najcięższa seria jako odsetek masy ciała, na trening',
   'Estimated 1RM as a share of body weight, per workout': 'Szacowane 1RM jako odsetek masy ciała, na trening',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Masa ciała w tym okresie: {0} → {1}. W ćwiczeniach z masą ciała i wspomaganych Twoja masa ciała liczy się jako część obciążenia.',
+  'Weight stack': 'Stos obciążenia',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'Ciężary, które ta maszyna naprawdę ma, z dziwnymi skokami włącznie. Progresja, deloady, rozgrzewki i przyciski + i − trafiają tylko na nie.',
+  'No list yet, so this exercise steps by its increment as usual.': 'Jeszcze bez listy, więc to ćwiczenie rośnie o swój krok, jak zwykle.',
+  'First ({0})': 'Pierwszy ({0})',
+  'How many': 'Ile',
+  'Fill in': 'Wypełnij',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'To cały stos: {0} {1} to najwięcej, więc ciężar zostaje.',
 }

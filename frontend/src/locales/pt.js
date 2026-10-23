@@ -2532,4 +2532,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'Série mais pesada como proporção do peso corporal, por treino',
   'Estimated 1RM as a share of body weight, per workout': '1RM estimado como proporção do peso corporal, por treino',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Peso corporal neste período: {0} → {1}. Nos exercícios com peso corporal e assistidos, o teu peso corporal conta como parte da carga.',
+  'Weight stack': 'Bloco de pesos',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'Os pesos que esta máquina tem mesmo, saltos estranhos incluídos. A progressão, as descargas, os aquecimentos e os botões + e − só caem nestes.',
+  'No list yet, so this exercise steps by its increment as usual.': 'Ainda sem lista, por isso este exercício sobe pelo seu incremento, como sempre.',
+  'First ({0})': 'Primeiro ({0})',
+  'How many': 'Quantos',
+  'Fill in': 'Preencher',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'É o bloco todo: {0} {1} é o máximo que dá, por isso o peso fica.',
 }

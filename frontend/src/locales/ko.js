@@ -2532,4 +2532,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': '운동별 체중 대비 가장 무거운 세트',
   'Estimated 1RM as a share of body weight, per workout': '운동별 체중 대비 추정 1RM',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': '이 기간의 체중: {0} → {1}. 맨몸 운동과 보조 운동에서는 체중이 부하의 일부로 계산됩니다.',
+  'Weight stack': '웨이트 스택',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': '이 머신에 실제로 있는 무게예요. 들쭉날쭉한 간격도 그대로요. 진행, 디로드, 워밍업, + 와 − 버튼은 이 무게에만 맞춰져요.',
+  'No list yet, so this exercise steps by its increment as usual.': '아직 목록이 없어서 이 운동은 평소처럼 증가 단위로 올라가요.',
+  'First ({0})': '첫 무게 ({0})',
+  'How many': '개수',
+  'Fill in': '채우기',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': '스택 끝이에요: {0} {1}이(가) 가장 무거우니 무게를 유지해요.',
 }

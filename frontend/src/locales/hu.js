@@ -2535,4 +2535,11 @@ export default {
   'Heaviest set as a share of body weight, per workout': 'A legnehezebb sorozat a testsúly arányában, edzésenként',
   'Estimated 1RM as a share of body weight, per workout': 'Becsült 1RM a testsúly arányában, edzésenként',
   'Body weight over this period: {0} → {1}. Bodyweight and assisted exercises count your body weight as part of the load.': 'Testsúly ebben az időszakban: {0} → {1}. A testsúlyos és segített gyakorlatoknál a testsúlyod is a terhelés részének számít.',
+  'Weight stack': 'Súlyoszlop',
+  'The weights this machine really has, odd steps and all. Progression, deloads, warm-ups and the + and − buttons land only on these.': 'A súlyok, amik ezen a gépen tényleg vannak, a furcsa lépésekkel együtt. A progresszió, a deloadok, a bemelegítések és a + és − gombok csak ezekre esnek.',
+  'No list yet, so this exercise steps by its increment as usual.': 'Még nincs lista, így ez a gyakorlat a szokásos lépésével halad.',
+  'First ({0})': 'Első ({0})',
+  'How many': 'Hány darab',
+  'Fill in': 'Kitöltés',
+  'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Ez az egész oszlop: {0} {1} a legtöbb, így a súly marad.',
 }
