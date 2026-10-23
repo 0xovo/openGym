@@ -2305,6 +2305,8 @@ export default {
   'Remove “{0}”': 'Ta bort ”{0}”',
   'That’s plenty of backups.': 'Det räcker gott med reserver.',
   'Your backups': 'Dina reserver',
+  'Swap to {0}': 'Byt till {0}',
+  'Planned backup, same sets and reps': 'Planerad reserv, samma set och reps',
 
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Ingen vikt att lägga på här: det ökar i reps, sedan i set.',

@@ -2353,6 +2353,8 @@ export default {
   'Remove “{0}”': '“{0}” সরান',
   'That’s plenty of backups.': 'এতগুলো বিকল্পই যথেষ্ট।',
   'Your backups': 'আপনার বিকল্প',
+  'Swap to {0}': '{0}-এ বদলান',
+  'Planned backup, same sets and reps': 'পরিকল্পিত বিকল্প, একই সেট ও রেপ',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'এখানে ওজন যোগ করার কিছু নেই: আগে রেপ বাড়বে, তারপর সেট।',
   // --- #523 skip completed ---

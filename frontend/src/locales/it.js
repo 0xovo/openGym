@@ -2274,6 +2274,8 @@ export default {
   'Remove “{0}”': 'Rimuovi «{0}»',
   'That’s plenty of backups.': 'Bastano così, i sostituti.',
   'Your backups': 'I tuoi sostituti',
+  'Swap to {0}': 'Passa a {0}',
+  'Planned backup, same sets and reps': 'Sostituto previsto, stesse serie e ripetizioni',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Qui non c’è peso da aggiungere: si sale con le ripetizioni, poi con le serie.',
   // --- #523 skip completed ---

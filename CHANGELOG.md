@@ -25,6 +25,10 @@ tiny body, faint where the session is headed and lit up where you've already tic
 layout and without moving a single set row (#670). Tap it for the big map and done/planned sets
 per muscle. Settings → Workout → Fine-tuning turns it off.
 
+- **Machine taken? One tap to your backup** (#649). A routine exercise with planned backups
+  now lists each one in its ⋯ menu during a workout. Tap it and the backup takes over with the
+  slot's own sets, reps, rest and warm-ups, and the exercise it replaced becomes its backup, so
+  going back when the bench frees up is one tap too. Your routine stays exactly as it was.
 - **Discard means discard, on the Apple Watch too** (#776). Discarding a workout on the phone
   while the watch follows it used to save it to Apple Health anyway, calories and all. Now the
   watch drops it and Apple Health never hears about it.

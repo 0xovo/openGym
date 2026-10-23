@@ -2294,6 +2294,8 @@ export default {
   'Remove “{0}”': '„{0}“ entfernen',
   'That’s plenty of backups.': 'Das sind genug Ausweichübungen.',
   'Your backups': 'Deine Ausweichübungen',
+  'Swap to {0}': 'Zu {0} wechseln',
+  'Planned backup, same sets and reps': 'Geplante Ausweichübung, gleiche Sätze und Wiederholungen',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': 'Hier kommt kein Gewicht dazu: Es geht über Wiederholungen nach oben, dann über Sätze.',
   // --- #523 skip completed ---

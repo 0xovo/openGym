@@ -2267,6 +2267,8 @@ export default {
   'Remove “{0}”': '移除「{0}」',
   'That’s plenty of backups.': '備選動作已經夠多了。',
   'Your backups': '你的備選動作',
+  'Swap to {0}': '換成{0}',
+  'Planned backup, same sets and reps': '計畫好的備選，組數和次數不變',
   // --- #583 bodyweight step ---
   'Nothing to add in weight here: it goes up in reps, then sets.': '這裡不用加重量：先加次數，再加組數。',
   // --- #523 skip completed ---
