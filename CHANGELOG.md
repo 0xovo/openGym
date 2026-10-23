@@ -34,6 +34,18 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Heart rate for sets you tick on the phone.** With the Apple Watch running the session, a set
   ticked on the phone now gets its heart rate from the watch too, not just the ones ticked on
   the wrist.
+- **Back means back.** A page's own back button now brings you back where you were scrolled,
+  just like the edge swipe, and Body measurements goes back to Stats instead of Home. The titles
+  beside those back buttons all sit the same distance from them now (#704, #763, #764, thanks
+  @kurktchiev and @lajawi).
+- **Android back stops touring your tabs.** Hopping between Home, Plan, Stats and Exercises no
+  longer piles up history that Back then replays: on a tab, Back goes straight to "press again
+  to exit" (#705, thanks @chang0022).
+- **One "Rest's over" on iOS.** The end of a rest could leave two identical banners stacked
+  (#728, thanks @2baek2).
+- **Discard workout is harder to hit by accident.** It lived at the bottom of the workout's ⋯
+  menu as a red trash, exactly where an exercise's ⋯ keeps Remove exercise. Now it's only in the
+  Finish sheet, next to Finish and save, still with its "are you sure" (#751).
 - **Apple Watch keeps up.** The watch could miss the phone right after launch and then hear
   nothing until you reopened the app, a freshly installed watch app could wait for your next change
   before it got your routines, and one odd routine could hide all of them. All fixed. Until the
