@@ -102,6 +102,11 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - Coach on Gemini works with a fresh AI Studio key again: the default is Gemini 3.8 Flash (free
   tier included), and a model your key can't use any more is swapped once for one it lists,
   on the server and on a phone with its own key. If nothing fits, the error names the model (#758).
+- Coach through OpenRouter (and other hosts that insist on strict JSON schemas) stops failing
+  with "additionalProperties must be explicitly set to false": the request is sent once more in
+  the strict shape they want (#701, thanks @choksi2212).
+- MCP: `sets_planned` counts per-side sets the way `sets_done` does, so a finished unilateral
+  session reads 102/102 instead of 102/54 (#691, thanks @davidjorgensen).
 - Jumping jacks, burpees and the other cardio moves can be counted in sets x reps (or timed):
   their settings now offer Cardio, Reps and Time, Cardio still the default (#678).
 - Add exercise → By muscle has the Favourites chip too, for the muscle you picked (#669).
