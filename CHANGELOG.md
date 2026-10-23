@@ -51,6 +51,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   download, and the backup folder is only written to while the app still has your permission.
 - Push addresses that hide a private IPv4 address inside an IPv6 one are refused like the plain
   ones.
+- Self-hosted images run on this month's patched Node (22.23.4) and nginx (1.30.6), and the
+  server and the MCP bridge pick up a fixed `ip-address`. Thanks to MohamedAfrash and lodepav
+  (#766, #769).
 
 **Export as a spreadsheet** (#647). Settings → Data & backup → Export as spreadsheet (CSV): your
 workouts with one row per set (date, workout, exercise, set, weight, reps, RPE or RIR, warm-ups,
