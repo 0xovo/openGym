@@ -112,6 +112,10 @@ between two entries: "lever chest press" is two in the library, and a name like 
 matches nothing, comes back as a question with candidates. It only creates one of your own
 exercises when you confirm the library has none.
 
+It saves at most 20 workouts an hour (a forgotten week is fine, a client stuck in a loop is
+not), and each save leaves one line on the MCP server's stderr with the workout's id, day and
+the server revision it landed at. Workouts it logged have ids starting with `mw`.
+
 ### Pairing
 
 Writes go through the api rather than straight into `./data`, because the api is what keeps a

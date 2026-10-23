@@ -19,6 +19,12 @@ const hhmm = t => { const d = new Date(t); return String(d.getHours()).padStart(
 // Two writers racing the same profile resolve in a round or two; past that something keeps
 // writing, and the user is better told than retried at.
 const MAX_ATTEMPTS = 3
+// Saves per hour, per MCP process. Logging a week someone forgot is a handful; a client looping on
+// the tool is not, and each save is a full profile write on the server that every device pulls.
+export const WRITE_LIMIT = 20
+const WINDOW_MS = 60 * 60000
+let saves = []
+export const _resetWriteWindow = () => { saves = [] }
 
 function fail(code, message) {
   const err = new Error(message)
@@ -84,9 +90,9 @@ function viewOf(w, S, resolved) {
 }
 
 const setSchema = z.object({
-  reps: z.number().int().min(1).max(LOG_LIMITS.maxReps).optional().describe('Reps done. Give reps for a rep exercise, or seconds for a hold — never both in one exercise.'),
+  reps: z.number().int().min(1).max(LOG_LIMITS.maxReps).optional().describe('Reps done. Give reps for a rep exercise, or seconds for a hold, never both in one exercise.'),
   seconds: z.number().min(1).max(LOG_LIMITS.maxSec).optional().describe('Seconds held, for a timed exercise (plank, hang, wall sit).'),
-  weight: z.number().min(0).optional().describe('Load in `unit`. Omit or 0 for bodyweight. On an assistance machine it is the help (less is better). For dumbbells: as the profile logs that exercise — see weight_means in the reply.'),
+  weight: z.number().min(0).optional().describe('Load in `unit`. Omit or 0 for bodyweight. On an assistance machine it is the help (less is better). For dumbbells: as the profile logs that exercise (see weight_means in the reply).'),
   warmup: z.boolean().optional().describe('A warm-up set: kept out of volume, PRs and the next suggested weight.'),
   failure: z.boolean().optional().describe('Taken to failure.'),
   rir: z.number().min(0).max(10).optional().describe('Reps in reserve, if the user said it. Not with rpe.'),
@@ -126,6 +132,10 @@ export const logWorkout = {
     const opts = fetchImpl ? { fetchImpl } : {}
     // One clock for every attempt: a retry after a conflict files the same workout, not a later one.
     const now = Date.now()
+    saves = saves.filter(t => now - t < WINDOW_MS)
+    if (!params.dry_run && saves.length >= WRITE_LIMIT) {
+      throw fail('ERATE', `log_workout already saved ${WRITE_LIMIT} workouts in the last hour, the most it takes in one go; nothing was saved. Wait a bit, or log the rest in the app.`)
+    }
     const input = inputOf({ ...params, date: params.date || localIso(new Date(now)) })
 
     const me = await apiFetch(cfg, '/api/me', opts)
@@ -173,6 +183,11 @@ export const logWorkout = {
       const put = await apiFetch(cfg, '/api/data', { ...opts, method: 'PUT', body: { state: S, baseRev: got.body.rev ?? 0, ...(typeof doc._wid === 'string' ? { baseWid: doc._wid } : {}) } })
       if (put.status !== 409) {
         invalidate()
+        saves.push(now)
+        // The operator's trail (stderr, as the profile guard's): which workout went in, for what
+        // day and at which revision. Never the token, and nothing the model sees.
+        const sets = added.workout.entries.reduce((n, e) => n + e.sets.length, 0)
+        console.error(`[opengym-mcp] log_workout saved ${added.workout.id} for ${added.workout.d} (${added.workout.entries.length} exercises, ${sets} sets), rev ${put.body?.rev ?? '?'}`)
         return { logged: true, ...viewOf(added.workout, S, built), revision: put.body?.rev ?? null }
       }
       // Another device wrote in between: the server sent its current document back with the 409,
@@ -183,7 +198,7 @@ export const logWorkout = {
       }
       got = { status: 200, body: { state: put.body.state, rev: put.body.rev } }
     }
-    throw fail('ECONFLICT', `the profile kept changing on the server (${MAX_ATTEMPTS} attempts); nothing was saved — try again in a moment`)
+    throw fail('ECONFLICT', `the profile kept changing on the server (${MAX_ATTEMPTS} attempts); nothing was saved, try again in a moment`)
   },
 }
 

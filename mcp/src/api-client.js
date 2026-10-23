@@ -27,7 +27,7 @@ function fail(code, message, extra) {
 export function apiBase(raw) {
   let u
   try { u = new URL(String(raw || '').trim()) } catch {
-    throw fail('ENOCONFIG', 'OPENGYM_URL is not a URL — the address you open openGym at, e.g. https://gym.example.com')
+    throw fail('ENOCONFIG', 'OPENGYM_URL is not a URL: the address you open openGym at, e.g. https://gym.example.com')
   }
   if (u.protocol !== 'https:' && !(u.protocol === 'http:' && LOOPBACK.has(u.hostname))) {
     throw fail('ENOCONFIG', 'OPENGYM_URL must be https:// (plain http only for localhost): the token it carries is a full sign-in to your profile')

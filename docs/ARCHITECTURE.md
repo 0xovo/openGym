@@ -34,7 +34,7 @@ flowchart LR
   W <-- WatchConnectivity --> I
   I -- App Group snapshot --> WG
 
-  MCP["mcp/ (optional)<br/>stdio, read-only"] -.reads.-> D
+  MCP["mcp/ (optional)<br/>stdio, reads data, logs via API"] -.reads.-> D
   AI["AI provider<br/>(optional Coach)"]
   API -.Coach jobs.-> AI
   I -.on-device Coach.-> AI
@@ -57,7 +57,7 @@ in a file in the app's private storage (MOBILE.md explains the modes).
 | `api/coach/` | The optional AI Coach. `core/` has no server state and is shared with the phone apps |
 | `web/` | The nginx image: builds the frontend, adds `catalogue/media`, proxies `/api` |
 | `catalogue/` | The exercise database: one JSON per exercise, translations, the licensed 180 px media |
-| `mcp/` | Optional MCP server, read-only, for AI clients on the same machine |
+| `mcp/` | Optional MCP server for AI clients: reads the data folder, `log_workout` saves through the API |
 | `scripts/` | Build and release helpers, see [scripts/README.md](../scripts/README.md) |
 | `website/` | opengym.ch, plain HTML |
 | `helm/`, `kubernetes/`, `contrib/nix/` | Other ways to deploy |

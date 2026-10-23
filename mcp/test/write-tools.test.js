@@ -1,9 +1,9 @@
 // log_workout against a stand-in for the api: a node:http server that answers /api/me and
 // /api/data the way api/server.js does, and records what it is sent. What the real server does
 // with the write is log-workout.e2e.test.js; the arithmetic is frontend/src/lib/log-workout.test.js.
-import { describe, test, expect, beforeEach, afterEach } from 'vitest'
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
 import http from 'node:http'
-import { logWorkout } from '../src/write-tools.js'
+import { logWorkout, WRITE_LIMIT, _resetWriteWindow } from '../src/write-tools.js'
 import { apiBase, apiConfig } from '../src/api-client.js'
 import { _seedStateForTests } from '../src/state.js'
 
@@ -42,6 +42,7 @@ function stubApi(doc, script = {}) {
   }))
 }
 afterEach(() => api?.server.close())
+beforeEach(() => _resetWriteWindow())
 
 const DOC = () => ({ unit: 'kg', workouts: [], routines: [{ id: 'r1', name: 'Push', ex: [] }], customEx: [], exWeights: {}, edited: { restSec: 5 }, restSec: 120, _wid: 'w-abc', _ts: 1 })
 const CURLS = { exercises: [{ exercise: 'dumbbell curl', sets: [{ reps: 12, weight: 12 }, { reps: 12, weight: 12 }, { reps: 10, weight: 12, failure: true }] }] }
@@ -230,6 +231,47 @@ describe('found in review', () => {
       await expect(call(CURLS)).rejects.toMatchObject({ code: 'EPROFILE' })
     } finally { delete process.env.OPENGYM_UID }
     expect(api.puts).toHaveLength(0)
+  })
+})
+
+describe('limits and the trail a write leaves', () => {
+  beforeEach(async () => { api = await stubApi(DOC()) })
+  const day = n => { const d = new Date(Date.now() - n * 86400000); return { ...CURLS, start: '07:00', date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') } }
+
+  test('a client looping on log_workout is stopped after WRITE_LIMIT saves, before it even reads the profile', async () => {
+    for (let i = 1; i <= WRITE_LIMIT; i++) expect((await call(day(i))).logged).toBe(true)
+    const gets = api.gets
+    const err = await call(day(WRITE_LIMIT + 1)).catch(e => e)
+    expect(err.code).toBe('ERATE')
+    expect(err.message).not.toContain('—')
+    expect(api.gets).toBe(gets)
+    expect(api.puts).toHaveLength(WRITE_LIMIT)
+  })
+
+  test('dry runs and duplicates are not saves and do not use the budget up', async () => {
+    for (let i = 0; i < WRITE_LIMIT + 2; i++) await call({ ...CURLS, dry_run: true })
+    expect((await call(CURLS)).logged).toBe(true)
+    for (let i = 0; i < WRITE_LIMIT + 2; i++) expect((await call(CURLS)).duplicate).toBe(true)
+    expect((await call(day(3))).logged).toBe(true)
+  })
+
+  test('every saved workout leaves one line on stderr for the operator: what, when, which revision, never the token', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      const r = await call(CURLS)
+      await call({ ...CURLS, dry_run: true })
+      const lines = spy.mock.calls.map(c => c.join(' ')).filter(l => l.includes('log_workout'))
+      expect(lines).toHaveLength(1)
+      expect(lines[0]).toContain(r.workout_id)
+      expect(lines[0]).toContain(r.date)
+      expect(lines[0]).toContain('rev 8')
+      expect(lines[0]).not.toContain(TOKEN)
+    } finally { spy.mockRestore() }
+  })
+
+  test('what the model reads has no em dashes', () => {
+    const texts = [logWorkout.description, ...Object.values(logWorkout.schema).map(z => z.description || '')]
+    for (const t of texts) expect(t).not.toContain('—')
   })
 })
 
