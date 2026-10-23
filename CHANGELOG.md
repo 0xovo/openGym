@@ -241,6 +241,10 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   browser, the app now says which address the server expects and what to change, instead of a
   bare "cross-origin request refused". The server log names the exact `ORIGIN=` and `RP_ID=`
   to set (thanks tcmac, who lost a morning to this one).
+- Self-hosting on a NAS has its own section now: Synology, QNAP, Unraid and TrueNAS, with a
+  two-service compose to paste, absolute paths, ports, permissions and HTTPS. The FAQ explains
+  password sign-in (`PASSWORD_LOGIN`) and guest mode (`ALLOW_GUEST`), including why a stack
+  without its api quietly turns you into a guest.
 
 ## v1.4.2 (2026-10-18)
 

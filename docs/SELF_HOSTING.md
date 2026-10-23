@@ -9,7 +9,7 @@ This guide takes you from "just cloned it" to "using it from my phone over the i
 2. [The passkey requirement](#2-understand-the-passkey-requirement-important) — why your phone needs HTTPS
 3. [HTTPS on your own domain](#3-expose-it-over-https-on-your-own-domain) — Cloudflare Tunnel, Caddy, Traefik, nginx, Tailscale Serve
 4. [Multiple users](#4-multiple-users) — admin dashboard, invites, language, activity log, password sign-in
-5. [Fitting into an existing stack](#5-fitting-it-into-an-existing-stack) — ports, subpaths, media uploads
+5. [Fitting into an existing stack](#5-fitting-it-into-an-existing-stack) — ports, [NAS](#on-a-nas-synology-qnap-unraid-truenas), subpaths, media uploads
 6. [Backups](#6-backups)
 7. [Notifications](#7-notifications)
 8. [Updating](#8-updating)
@@ -522,6 +522,84 @@ Note the difference from `VITE_IMG_BASE` / `VITE_GIF_BASE` (see Troubleshooting)
 build-time values baked into the frontend bundle, and setting them next to `docker compose` does
 nothing to an image you pulled.
 
+### On a NAS (Synology, QNAP, Unraid, TrueNAS)
+
+A NAS runs openGym like any other Docker host. What trips people up is the NAS's own compose UI,
+which is not quite `docker compose` in a folder you chose. Four things to get right:
+
+**1. Both services, every time.** openGym is `api` *and* `web`. A stack with only `web` still
+loads, but every sign-in fails and the only way in that works is **Continue without account**:
+you are a guest, your data lives in that one browser, and nothing reaches the NAS. If the
+sign-in screen never accepts anything, check that `docker ps` shows both containers.
+
+**2. Absolute paths.** Container Station, Container Manager and Portainer keep the compose file
+in a folder of their own, so `./data` and `env_file: .env` resolve somewhere you did not put
+them. Spell them out (here for QNAP; use your share's path):
+
+```yaml
+name: opengym
+services:
+  api:
+    image: ghcr.io/duartesantos8/opengym-api:latest
+    restart: unless-stopped
+    env_file: /share/Container/opengym/.env
+    environment:
+      - PORT=3000
+      - DATA_DIR=/data
+      - TRUST_PROXY=1
+    volumes:
+      - /share/Container/opengym/data:/data
+  web:
+    image: ghcr.io/duartesantos8/opengym-web:latest
+    restart: unless-stopped
+    depends_on: [api]
+    ports:
+      - "3030:80"
+    environment:
+      - BACKEND=api
+      - PORT=3000
+```
+
+Typical roots: Synology `/volume1/docker/opengym`, QNAP `/share/Container/opengym`, Unraid
+`/mnt/user/appdata/opengym`, TrueNAS SCALE a dataset such as `/mnt/tank/apps/opengym`. Create the
+`data` folder and the `.env` file there first. On TrueNAS SCALE 24.10 and later this file goes in
+**Apps → Discover Apps → ⋮ → Install via YAML**; on Synology in **Container Manager →
+Project → Create**; on Unraid in the Compose Manager plugin. Unraid's single-container templates
+can work too, as long as both containers share one custom network and `BACKEND` names the API
+container.
+
+**3. ORIGIN is the address you type.** Pick the port on the left of `ports:` (`3030` above, any
+free one: DSM itself sits on 5000/5001, QNAP's on 8080) and put the exact address in `.env`:
+
+```env
+ORIGIN=http://10.11.0.4:3030
+RP_ID=10.11.0.4
+```
+
+Get this wrong and every save is refused. The app says "This server only takes changes made
+at ...", and `docker compose logs api` prints a `refused cross-origin` line with the `ORIGIN=`
+and `RP_ID=` to set. After changing `.env`, recreate the stack (Container Station's **Recreate**,
+Container Manager's **Build**, or `docker compose up -d`); a plain restart keeps the old values.
+Over plain http on a LAN address there are no passkeys (see [§2](#2-understand-the-passkey-requirement-important)),
+so for a first look either add `PASSWORD_LOGIN=1` ([password sign-in](#password-sign-in-optional))
+or keep going to step 4.
+
+**4. HTTPS through the NAS's reverse proxy.** For passkeys, the iPhone web app and
+notifications, give openGym a hostname with a certificate and point the proxy at the `web`
+port: Synology **Control Panel → Login Portal → Advanced → Reverse Proxy** (certificate under
+**Security → Certificate**), QNAP **Network & File Services → Network Access → Reverse Proxy**,
+Unraid and TrueNAS with Nginx Proxy Manager, Caddy or SWAG, or a Cloudflare Tunnel or Tailscale
+Serve from [§3](#3-expose-it-over-https-on-your-own-domain). Then `ORIGIN` and `RP_ID` become that
+hostname, and the LAN address stops being a way in.
+
+**Permissions.** The `api` container runs as root and writes everything under `data/`; its
+`secret`, `db.json` and `coach.json` end up root-owned with mode 600. A share mounted over NFS
+with root squash, or a TrueNAS dataset whose ACL maps root away, refuses those writes, and the
+API log says `EACCES` or `EPERM`. Give the dataset to root, or run `api` with `user: "568:568"`
+(TrueNAS's `apps` user, say) and make `data/` that user's first. Coach providers with an API key
+work either way; only the in-container CLI runtimes (`API_TARGET=coach`) need root. Your backup
+job reads `data/` as root, or as that user.
+
 ### Serving openGym under a subpath
 
 openGym can live at `https://example.com/gym/` rather than on a host of its own. Which of the two
@@ -948,6 +1026,8 @@ browser (see section 2).
 | Symptom | Fix |
 |---|---|
 | No passkey prompt on my phone | You're on `http://` or an IP, not HTTPS. Set up a domain (section 3). |
+| "This server only takes changes made at ...", or `refused cross-origin` in the API log | `ORIGIN` is not the address in your browser. The log line names the `ORIGIN=` and `RP_ID=` to set; then `docker compose up -d`. See [On a NAS](#on-a-nas-synology-qnap-unraid-truenas). |
+| The sign-in screen accepts nothing, only "Continue without account" works | The `api` service is not running or `web` cannot reach it (`BACKEND`, `PORT`). Without it you are a guest and nothing is saved on the server. |
 | "verification failed" on login | `RP_ID`/`ORIGIN` don't match the URL in the address bar. See the section above — start with what the server logged on startup. |
 | Exercise pictures missing | You are on an image older than v1.4.0 or a custom build: `docker compose pull && docker compose up -d`. A source build needs `catalogue/media/` checked out. |
 | Port 8080 already used | Set `WEB_PORT=9090` in `.env` (and update `ORIGIN` for local testing). |

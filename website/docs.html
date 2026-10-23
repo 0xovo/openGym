@@ -118,6 +118,7 @@
       <a class="side-sub" href="#sh-https">HTTPS on your domain</a>
       <a class="side-sub" href="#sh-notify">Notifications</a>
       <a class="side-sub" href="#sh-stack">In an existing stack</a>
+      <a class="side-sub" href="#sh-nas">On a NAS</a>
       <a class="side-sub" href="#sh-update">Updating</a>
     </div>
   </div>
@@ -617,6 +618,21 @@ ORIGIN=https://example.com          # no /gym here</code></pre>
      sign up and still not be signed in. Both setups are in
      <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING.md#nginx-under-gym-both-ways" rel="noopener">SELF_HOSTING.md</a>.</p>
 
+  <h3 id="sh-nas">On a NAS (Synology, QNAP, Unraid, TrueNAS)</h3>
+  <p>Works like any Docker host, with four catches. <b>Run both services</b>: a stack with only
+     <code>web</code> loads, but sign-in never works and <b>Continue without account</b> quietly
+     makes you a guest whose data stays in that browser. <b>Use absolute paths</b> for the data
+     volume and <code>env_file</code> (for example <code>/share/Container/opengym/.env</code>), because
+     the NAS's compose UI keeps the file in a folder of its own. <b>Set <code>ORIGIN</code> to the
+     exact address you type</b>, port included (<code>ORIGIN=http://10.11.0.4:3030</code>,
+     <code>RP_ID=10.11.0.4</code>), then recreate the stack; otherwise every save is refused and the
+     API log's <code>refused cross-origin</code> line names the values to set. <b>Add HTTPS</b>
+     through the NAS's reverse proxy (Synology Login Portal, QNAP Reverse Proxy, Nginx Proxy
+     Manager or Caddy on Unraid and TrueNAS) for passkeys. The <code>api</code> container runs as
+     root and writes <code>data/</code>, so an NFS share with root squash needs a different owner.
+     The full walkthrough with a compose file to paste is in
+     <a href="https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING.md#on-a-nas-synology-qnap-unraid-truenas" rel="noopener">SELF_HOSTING.md</a>.</p>
+
   <h3 id="sh-update">Updating</h3>
   <pre><code>git pull                  # picks up compose/config changes
 docker compose pull       # (or: docker compose up -d --build, if building from source)
@@ -998,6 +1014,8 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
   <h3 id="tr-rest">Everything else</h3>
   <table class="cfg">
     <tr><td>No passkey prompt on my phone</td><td>You're on <code>http://</code> or a bare IP. Passkeys need HTTPS or localhost — set up a domain, or use guest mode / the mobile app.</td></tr>
+    <tr><td>"This server only takes changes made at ..."</td><td><code>ORIGIN</code> isn't the address in your browser. <code>docker compose logs api</code> shows a <code>refused cross-origin</code> line naming the <code>ORIGIN=</code> and <code>RP_ID=</code> to set; then <code>docker compose up -d</code>.</td></tr>
+    <tr><td>Sign-in never works, only "Continue without account"</td><td>The <code>api</code> container isn't running or <code>web</code> can't reach it (<code>BACKEND</code>, <code>PORT</code>). As a guest nothing is saved on the server.</td></tr>
     <tr><td>"verification failed" on login</td><td><code>RP_ID</code>/<code>ORIGIN</code> don't match the address bar — see the checklist above, starting with what the server logged.</td></tr>
     <tr><td>Exercise pictures missing</td><td>You're on an image older than v1.4.0 or a custom build: <code>docker compose pull &amp;&amp; docker compose up -d</code>. A source build needs <code>catalogue/media/</code> checked out.</td></tr>
     <tr><td>Port 8080 already used</td><td><code>WEB_PORT=9090</code> in <code>.env</code> (and update <code>ORIGIN</code> for local testing).</td></tr>
@@ -1068,6 +1086,19 @@ Leg Day,Leg Press,2026-08-21,200,1</code></pre>
      QR code, a password manager, a security key or a Windows Hello PIN. Or switch on passwords
      with <code>PASSWORD_LOGIN=1</code> in <code>.env</code> and <code>docker compose up -d</code>:
      the sign-in screen then offers <b>Sign in with password</b> and new profiles can use one.</p>
+  <h3>Can I use a password instead of a passkey?</h3>
+  <p>Yes, if the instance allows it: <code>PASSWORD_LOGIN=1</code> in <code>.env</code>, then
+     <code>docker compose up -d</code>. Off by default. The sign-in screen gets <b>Sign in with
+     password</b> (profile name or sign-in e-mail), new profiles can use one, and a passkey profile
+     adds one under <b>Settings → Account → Password</b>. openGym never sends mail, so a forgotten
+     password is reset with a one-time code from the admin dashboard. Switching it off later locks
+     out profiles that only have a password. <a href="#admin-signin">More on signing in</a>.</p>
+  <h3>What is guest mode, and can I turn it off?</h3>
+  <p><b>Continue without account</b> keeps everything in that browser: no profile, no sync,
+     nothing on the server. Make a profile on the same device later and the data moves in. For an
+     instance meant for a known set of people, <code>ALLOW_GUEST=0</code> removes the button;
+     <code>INVITE_ONLY=1</code> decides who may create a profile. Stuck as a guest because sign-in
+     never works? The <code>api</code> container isn't reachable (<a href="#sh-nas">NAS notes</a>).</p>
   <h3>The AI Coach doesn't show up on my server.</h3>
   <p>Nothing in <code>.env</code> switches it on; an admin does, in the app. If Settings →
      Account has no <b>Admin dashboard</b>, nobody is admin yet: copy <b>Settings → Account →

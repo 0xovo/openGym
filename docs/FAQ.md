@@ -125,8 +125,53 @@ http the password crosses your network unencrypted, so keep that to a network yo
 
 ### Can I use a password instead of a passkey?
 
-Yes, if the instance allows it: set `PASSWORD_LOGIN=1`. It's off by default. See
-[password sign-in](SELF_HOSTING.md#password-sign-in-optional).
+Yes, if the instance allows it. It's off by default; put `PASSWORD_LOGIN=1` in `.env` and run
+`docker compose up -d` (a `restart` keeps the old settings). Then:
+
+- The sign-in screen offers **Sign in with password**: your profile name (or a sign-in e-mail, if
+  you added one) and the password. **Create new profile** can use a password instead of a passkey.
+- A profile made with a passkey gets a password under **Settings → Account → Password**,
+  confirmed with that passkey once. Nobody has a password until they set one.
+- Forgot it? There is no reset mail, because openGym never sends mail. An admin opens you in the
+  admin dashboard and picks **Reset password**, which gives a one-time code for **Sign in with
+  password → Have a reset code?**.
+- Wrong passwords are slowed down per name and per address. Running the API behind a proxy of
+  your own instead of the bundled `web` container? Read the `TRUST_PROXY` note in
+  `.env.example` first.
+- Switching it off again turns every password off at once. Profiles that only have a password are
+  locked out until it comes back, so have them add a passkey first.
+
+Passkeys stay the safer choice, and over plain http a password crosses your network in the clear.
+The details are in [password sign-in](SELF_HOSTING.md#password-sign-in-optional).
+
+### What is guest mode, and can I turn it off?
+
+**Continue without account** on the sign-in screen is guest mode. Everything stays in that
+browser: no profile, no sync, nothing on the server, and the admin dashboard never sees it. Handy
+for a quick look. Create a profile later on the same device and your guest data moves into it.
+
+On an instance for a known set of people, set `ALLOW_GUEST=0` in `.env` and `docker compose up -d`.
+The button disappears and a profile becomes the only way in. Anyone already in as a guest is sent
+to the sign-in screen on their next visit; their data stays in their browser and isn't deleted.
+`INVITE_ONLY=1` is the other half: it decides who may create a profile, and doesn't touch guests.
+
+Ended up a guest without meaning to? If signing in never works and only **Continue without
+account** does, the browser can't reach the API. Check that the `api` container runs next to
+`web` (a NAS stack with only `web` does exactly this) and see
+[On a NAS](SELF_HOSTING.md#on-a-nas-synology-qnap-unraid-truenas).
+
+### Can I run it on my NAS?
+
+Yes: Synology, QNAP, Unraid and TrueNAS all run the two containers. Use absolute paths for
+`data/` and `env_file`, set `ORIGIN` to the exact address you open, and put the NAS's reverse
+proxy in front for HTTPS. The walkthrough, with a compose file to paste, is in
+[On a NAS](SELF_HOSTING.md#on-a-nas-synology-qnap-unraid-truenas).
+
+### The app says "This server only takes changes made at ...".
+
+The server's `ORIGIN` isn't the address in your browser, so it refuses every save as if it came
+from another site. `docker compose logs api` shows a `refused cross-origin` line that names the
+`ORIGIN=` and `RP_ID=` to put in `.env`. Set them, `docker compose up -d`, reload.
 
 ### Can several people use one instance?
 
