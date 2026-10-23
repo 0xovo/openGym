@@ -222,6 +222,13 @@ enum SessionCore {
         return (count, true)
     }
 
+    /// Whether workout `wid`, gone from this snapshot, was discarded on the phone (not finished):
+    /// then nothing of it is saved to Apple Health (#776). An older phone never says: saved, as before.
+    static func discarded(_ wid: String?, in snap: Snapshot) -> Bool {
+        guard let wid = wid else { return false }
+        return snap.discarded?.contains(wid) ?? false
+    }
+
     /// Of the deleted workouts the phone names, the ones this watch has not taken out of Apple Health
     /// yet (`done`: already removed, or found to have no copy of the watch's). Only workout ids.
     static func healthToDelete(gone: [String]?, done: [String]) -> [String] {

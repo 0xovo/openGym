@@ -422,6 +422,30 @@ export function healthGoneFor (S, max = HEALTH_GONE_MAX) {
     .map(([id]) => 'opengym-w-' + id)
 }
 
+// Workouts discarded on the phone (#776), newest last: the snapshot names them for a while, so a
+// watch running one ends its Apple Health workout without saving it. Gone from the snapshot it
+// looks the same as a finished one. In localStorage, not S: a fact about this phone and its
+// watch, and it has to outlive the reload of "Discard the running workout" (ErrorBoundary).
+const DISCARDED_KEY = 'gym_watch_discarded'
+const DISCARDED_MAX = 5
+// Long enough for a watch out of range (or asleep in a bag) to hear it.
+export const DISCARDED_FOR_MS = 12 * 3600e3
+const readDiscarded = () => {
+  try { const v = JSON.parse(localStorage.getItem(DISCARDED_KEY)); return Array.isArray(v) ? v.filter(x => x && typeof x.id === 'string' && Number(x.at) > 0) : [] } catch { return [] }
+}
+
+/** The running workout `wid` is being discarded: call before it leaves S.active. */
+export function markDiscarded (wid, now = Date.now()) {
+  if (!wid || typeof wid !== 'string') return
+  const list = [...readDiscarded().filter(x => x.id !== wid), { id: wid, at: now }].slice(-DISCARDED_MAX)
+  try { localStorage.setItem(DISCARDED_KEY, JSON.stringify(list)) } catch { /* the watch then saves it, as before */ }
+}
+
+/** The ids of the workouts discarded here lately, oldest first. */
+export function discardedFor (now = Date.now()) {
+  return readDiscarded().filter(x => now - Number(x.at) < DISCARDED_FOR_MS).map(x => x.id)
+}
+
 /**
  * What the watch takes from the app beyond its own settings: the app's language (the watch shows
  * its words in it, whatever the watch itself is set to), and whether a workout starts with the
@@ -486,6 +510,9 @@ export async function startWatchSync ({ useStore, useUI }) {
       snap.settings = { ...settingsForWatch(prefs, healthOn), ...watchExtras(S) }
       // With Apple Health on: the deleted workouts, so the watch removes the copies it saved.
       if (healthOn) { const gone = healthGoneFor(S); if (gone.length) snap.healthGone = gone }
+      // Discarded here: the watch drops its Apple Health workout instead of saving it (#776).
+      const discarded = discardedFor()
+      if (discarded.length) snap.discarded = discarded
       const json = JSON.stringify(fitSnapshot(snap))
       if (json !== lastSent) {
         const r = await p.WatchBridge.sendSnapshot({ json })

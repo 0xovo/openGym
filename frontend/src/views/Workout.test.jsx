@@ -8,6 +8,7 @@ import { nextPrescription } from '../lib/progression.js'
 import { buildCombinedEntries } from '../lib/session-merge.js'
 import { buildCompletedWorkout } from '../lib/finish-workout.js'
 import { isWarmupRow } from '../lib/workout-model.js'
+import { discardedFor } from '../lib/watch-sync.js'
 import { finishWorkout, finishWorkoutSheet } from '../sheets.jsx'
 
 // A menu's actions in order, whether it came as one list or in groups (menuSheet `sections`).
@@ -890,6 +891,21 @@ describe('Workout discard timer lifecycle', () => {
     expect(mocks.work).toBeNull()
     expect(mocks.stopRest).toHaveBeenCalledOnce()
     expect(mocks.stopWork).toHaveBeenCalledOnce()
+  })
+
+  // #776: gone from the watch's snapshot, a discarded workout looked finished and was saved to
+  // Apple Health. Discard names it for the watch first.
+  it('tells the watch the workout was discarded, not finished', async () => {
+    const kept = new Map()
+    vi.stubGlobal('localStorage', { getItem: k => kept.get(k) ?? null, setItem: (k, v) => kept.set(k, String(v)), removeItem: k => kept.delete(k) })
+    await mount([exercise('timed-plank', [false])])
+    const wid = mocks.S.active.id
+    expect(wid).toBeTruthy()
+    await requestDiscard()
+    expect(discardedFor()).not.toContain(wid)
+    await act(async () => { mocks.confirmSheet.mock.calls[0][0].onConfirm() })
+    expect(discardedFor()).toContain(wid)
+    vi.unstubAllGlobals()
   })
 })
 

@@ -112,4 +112,17 @@ final class SessionCoreTests: XCTestCase {
         let snap = try JSONDecoder().decode(Snapshot.self, from: Data(json.utf8))
         XCTAssertEqual(SessionCore.applySnapshot(SessionState(), snap).workout?.entries.first?.sets.count, 1)
     }
+
+    // #776: a workout discarded on the phone is not saved to Apple Health; finished, or from an
+    // older phone that does not say, it is.
+    func testADiscardedWorkoutIsToldApartFromAFinishedOne() throws {
+        var gone = snap(nil)
+        XCTAssertFalse(SessionCore.discarded("p1", in: gone))
+        gone.discarded = ["p0", "p1"]
+        XCTAssertTrue(SessionCore.discarded("p1", in: gone))
+        XCTAssertFalse(SessionCore.discarded("p2", in: gone))
+        XCTAssertFalse(SessionCore.discarded(nil, in: gone))
+        let json = #"{"v":1,"active":null,"discarded":["p1"]}"#
+        XCTAssertTrue(SessionCore.discarded("p1", in: try JSONDecoder().decode(Snapshot.self, from: Data(json.utf8))))
+    }
 }

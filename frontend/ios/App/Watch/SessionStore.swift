@@ -313,14 +313,19 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             let next = SessionCore.applySnapshot(before, snap)
             self.state = next
             if let ended = before.workout, next.workout == nil {
-                // Ended on the phone (finished or discarded there): the session here ends too, and the
-                // watch says so instead of quietly going back to the start screen.
-                if !self.isDemo {
-                    self.summary = SessionCore.summary(ended, end: Date().timeIntervalSince1970 * 1000,
-                                                       startedAt: self.workoutSeenAt.map { $0.timeIntervalSince1970 * 1000 }, endedOnPhone: true)
+                // Ended on the phone: the session here ends too. Finished there, it is saved to Apple
+                // Health and the watch says so instead of quietly going back to the start screen.
+                // Discarded there (#776), nothing of it is saved, and there is nothing to sum up.
+                if SessionCore.discarded(ended.id, in: snap) {
+                    self.health.end(save: false)
+                } else {
+                    if !self.isDemo {
+                        self.summary = SessionCore.summary(ended, end: Date().timeIntervalSince1970 * 1000,
+                                                           startedAt: self.workoutSeenAt.map { $0.timeIntervalSince1970 * 1000 }, endedOnPhone: true)
+                    }
+                    self.ran(ended.id)
+                    self.health.end(save: true) { totals in self.addTotals(totals) }
                 }
-                self.ran(ended.id)
-                self.health.end(save: true) { totals in self.addTotals(totals) }
                 self.dropClips()
                 self.stopHold()
                 self.skipRest()
