@@ -164,6 +164,7 @@ export default {
   'Volume': 'Volumen',
   'Count warm-ups in volume': 'Aufwärmsätze ins Volumen zählen',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Praktisch, wenn du mit einer anderen App vergleichst. Rekorde ignorieren Aufwärmsätze so oder so.',
+  'Lifted in total': 'Insgesamt bewegt',
   'PRs': 'Rekorde',
   'New PR:': 'Neuer Rekord:',
   'Nice!': 'Stark!',

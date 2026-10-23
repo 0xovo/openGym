@@ -2,7 +2,7 @@
 // that says "volume" counts the done warm-ups too. The saved `vol` never changes, so the switch
 // can go back and forth without touching history. Records and progression never read warm-ups.
 import { describe, expect, it } from 'vitest'
-import { workoutVolume, sessionVolume, countsWarmups } from './history.js'
+import { workoutVolume, sessionVolume, lifetimeVolume, countsWarmups } from './history.js'
 import { totalsOf, reportData } from './report.js'
 import { exerciseHistory } from './exercise-history.js'
 import { insightsFor, sessionInsights } from './coach-insights.js'
@@ -44,6 +44,13 @@ describe('workoutVolume and the warm-up switch', () => {
     const w = { entries: [{ id: BENCH, sets: [{ ...warm(0, 0), sides: { L: { w: 10, r: 5, done: true }, R: { w: 12, r: 5, done: true } } }] }] }
     expect(workoutVolume(w, { warmups: true })).toBe(110)
     expect(workoutVolume(w)).toBe(0)
+  })
+
+  it('adds up a lifetime the same way', () => {
+    expect(lifetimeVolume(profile(false))).toBe(1200)
+    expect(lifetimeVolume(profile(true))).toBe(2000)
+    expect(lifetimeVolume(profile(false, [session('2026-10-01'), { d: '2020-01-01', vol: 5000 }]))).toBe(5600)
+    expect(lifetimeVolume({})).toBe(0)
   })
 })
 

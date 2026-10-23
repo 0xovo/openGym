@@ -157,6 +157,7 @@ export default {
   'Volume': 'Objętość',
   'Count warm-ups in volume': 'Wliczaj rozgrzewkę do objętości',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Przydaje się przy porównaniu z inną aplikacją. Rekordy i tak pomijają rozgrzewkę.',
+  'Lifted in total': 'Podniesione łącznie',
   'PRs': 'Rekordy',
   'New PR:': 'Nowy rekord:',
   'Nice!': 'Świetnie!',

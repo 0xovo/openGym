@@ -161,6 +161,7 @@ export default {
   'Volume': 'حجم التدريب',
   'Count warm-ups in volume': 'احتساب الإحماء في حجم التدريب',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'مفيد عند المقارنة مع تطبيق آخر. الأرقام القياسية تتجاهل الإحماء في كل الأحوال.',
+  'Lifted in total': 'المرفوع إجمالًا',
   'PRs': 'الأرقام القياسية',
   'New PR:': 'رقم قياسي جديد:',
   'Nice!': 'رائع!',

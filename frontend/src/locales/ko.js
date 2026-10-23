@@ -157,6 +157,7 @@ export default {
   'Volume': '볼륨',
   'Count warm-ups in volume': '워밍업을 볼륨에 포함',
   'Handy when you compare with another app. Records ignore warm-ups either way.': '다른 앱과 비교할 때 유용해요. 기록에는 어느 쪽이든 워밍업이 반영되지 않아요.',
+  'Lifted in total': '지금까지 든 총량',
   'PRs': '신기록',
   'New PR:': '신기록:',
   'Nice!': '좋아요!',

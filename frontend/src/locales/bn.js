@@ -188,6 +188,7 @@ export default {
   'Volume': 'ভলিউম',
   'Count warm-ups in volume': 'ভলিউমে ওয়ার্ম-আপ গুনুন',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'অন্য অ্যাপের সাথে তুলনা করতে কাজে লাগে। রেকর্ড সব সময়ই ওয়ার্ম-আপ বাদ দেয়।',
+  'Lifted in total': 'মোট তোলা',
   'PRs': 'রেকর্ড',
   'New PR:': 'নতুন রেকর্ড:',
   'Nice!': 'দারুণ!',

@@ -157,6 +157,7 @@ export default {
   'Volume': 'Volume',
   'Count warm-ups in volume': 'Contar aquecimentos no volume',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Dá jeito quando comparas com outra app. Os recordes ignoram os aquecimentos de qualquer forma.',
+  'Lifted in total': 'Levantado no total',
   'PRs': 'Recordes',
   'New PR:': 'Novo recorde:',
   'Nice!': 'Boa!',

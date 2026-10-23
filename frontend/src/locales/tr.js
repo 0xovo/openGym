@@ -157,6 +157,7 @@ export default {
   'Volume': 'Hacim',
   'Count warm-ups in volume': 'Isınma setlerini hacme kat',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Başka bir uygulamayla karşılaştırırken işe yarar. Rekorlar ısınmayı her durumda saymaz.',
+  'Lifted in total': 'Toplam kaldırılan',
   'PRs': 'Rekorlar',
   'New PR:': 'Yeni rekor:',
   'Nice!': 'Süper!',

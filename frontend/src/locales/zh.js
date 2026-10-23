@@ -157,6 +157,7 @@ export default {
   'Volume': '总量',
   'Count warm-ups in volume': '热身组计入总量',
   'Handy when you compare with another app. Records ignore warm-ups either way.': '和其他应用对比时很方便。纪录无论如何都不算热身组。',
+  'Lifted in total': '累计举起',
   'PRs': '纪录',
   'New PR:': '新纪录：',
   'Nice!': '太棒了！',

@@ -155,6 +155,7 @@ export default {
   'Volume': 'ปริมาณงาน',
   'Count warm-ups in volume': 'นับเซ็ตวอร์มอัพในปริมาณงาน',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'สะดวกเวลาเทียบกับแอปอื่น สถิติสูงสุดไม่นับวอร์มอัพอยู่แล้วไม่ว่าแบบไหน',
+  'Lifted in total': 'ยกไปทั้งหมด',
   'PRs': 'สถิติใหม่',
   'New PR:': 'สถิติใหม่:',
   'Nice!': 'เยี่ยม!',
