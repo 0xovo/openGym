@@ -99,6 +99,9 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   failing outright (thanks @rudycelekli).
 - The MCP server stops showing a profile whose data was deleted, also where the system can't
   watch files (thanks @rudycelekli).
+- Coach on Gemini works with a fresh AI Studio key again: the default is Gemini 3.8 Flash (free
+  tier included), and a model your key can't use any more is swapped once for one it lists,
+  on the server and on a phone with its own key. If nothing fits, the error names the model (#758).
 - Jumping jacks, burpees and the other cardio moves can be counted in sets x reps (or timed):
   their settings now offer Cardio, Reps and Time, Cardio still the default (#678).
 - Add exercise → By muscle has the Favourites chip too, for the muscle you picked (#669).

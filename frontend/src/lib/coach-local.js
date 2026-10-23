@@ -26,6 +26,7 @@ import anthropic from '../../../api/coach/core/adapters/anthropic.js'
 import openai from '../../../api/coach/core/adapters/openai.js'
 import gemini from '../../../api/coach/core/adapters/gemini.js'
 import compatible from '../../../api/coach/core/adapters/compatible.js'
+import { modelSubstitute } from '../../../api/coach/core/adapters/http.js'
 import { nativeFetch } from './capacitor-fetch.js'
 import { getApiKey } from './coach-secrets.js'
 import { loadCoachDevice, saveCoachDevice, coachLimits } from './coach-device.js'
@@ -189,11 +190,16 @@ async function run(S, kind, opts, d, adapter) {
     handle: await handle(), kind, intake: opts.intake, note: opts.note, refine: opts.refine, previous: opts.previous, workoutId: opts.workoutId, today: opts.today,
     lang: getLang()   // what the app shows, which a profile that never picked a language does not store (#303)
   })
+  const model = d.model || HTTP_PROVIDERS[d.provider].defaultModel
   const attempt = await runPipeline({
     adapter, cfg: cfgOf(d), kind, payload,
-    model: d.model || HTTP_PROVIDERS[d.provider].defaultModel, timeoutMs: timeoutFor(d.provider),
+    model, timeoutMs: timeoutFor(d.provider),
     invokeOpts: { env: envOf(d, key), fetch: nativeFetch, maxTokens: coachLimits(d).maxOutputTokens }
   })
+  // The saved model was refused and another one answered (#758): keep that one, so the next
+  // launch does not pay for the same 404 again. The setup screen shows the new name.
+  const swapped = model && modelSubstitute(d.provider, cfgOf(d), model)
+  if (swapped && swapped !== d.model) await saveCoachDevice({ model: swapped })
   if (!attempt.ok) {
     // There is no admin card on a phone, so the reason has to reach the person holding it:
     // the provider's own words for a refusal, the validator's for an answer that did not fit.

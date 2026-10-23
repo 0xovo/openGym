@@ -17,8 +17,8 @@ vi.mock('./coach-secrets.js', () => ({ getApiKey: async () => secret.key, setApi
 const wire = { calls: [], answer: null }
 vi.mock('./capacitor-fetch.js', () => ({
   nativeFetch: async (url, init) => {
-    wire.calls.push({ url, init, body: JSON.parse(init.body) })
-    const a = typeof wire.answer === 'function' ? wire.answer(wire.calls.length) : wire.answer
+    wire.calls.push({ url, init, body: init.body ? JSON.parse(init.body) : null })
+    const a = typeof wire.answer === 'function' ? wire.answer(wire.calls.length, url, init) : wire.answer
     return { ok: a.status < 300, status: a.status, text: async () => JSON.stringify(a.body), json: async () => a.body }
   }
 }))
@@ -108,9 +108,26 @@ describe('the Coach on a phone with its own key', () => {
     await local.localReview(state())
     const s = await settle()
     expect(s.lastError.errorClass).toBe('provider')
-    expect(s.lastError.detail).toMatch(/^404 The model `gpt-4o-mini-tts` does not exist/)
+    expect(s.lastError.detail).toMatch(/^404 the model "gpt-t" is not available to this key.*: The model `gpt-4o-mini-tts` does not exist/)
     expect(seen.at(-1)).toMatchObject({ kind: 'failed', errorClass: 'provider', detail: expect.stringMatching(/does not exist/) })
     local.setNotifier(null)
+  })
+
+  it('a saved model the key cannot use is swapped for one it can, and the swap is kept (#758)', async () => {
+    const { HTTP_PROVIDERS } = await import('../../../api/coach/core/providers.js')
+    const next = HTTP_PROVIDERS.gemini.defaultModel
+    device.data = { mode: 'byok', provider: 'gemini', model: 'gemini-2.5-pro', baseUrl: null }
+    wire.answer = (n, url) => url.includes('/models?')
+      ? { status: 200, body: { models: [{ name: 'models/gemini-2.5-pro' }, { name: 'models/' + next }] } }
+      : url.includes('gemini-2.5-pro')
+        ? { status: 404, body: { error: { message: 'This model models/gemini-2.5-pro is no longer available to new users.' } } }
+        : { status: 200, body: { candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify(review) }] } }] } }
+    await local.localReview(state())
+    const s = await settle()
+    expect(s.lastError).toBeNull()
+    expect(s.pending?.kind).toBe('review')
+    expect(wire.calls.at(-1).url).toContain(`/models/${next}:generateContent`)
+    expect((await loadCoachDevice()).model).toBe(next)
   })
 
   it('a 401 is an auth failure, and never a proposal', async () => {
