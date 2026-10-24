@@ -397,3 +397,14 @@ struct TouchLock: Equatable {
     mutating func unlock() { until = .distantPast }
     func allows(at t: Date) -> Bool { t >= until }
 }
+
+/// The 3-2-1 before a workout started on the watch: the heart-rate sensor warms up meanwhile (it
+/// needs a few seconds to lock on), so the first set has its heart rate. One second a number.
+enum Countdown {
+    static let seconds = 3
+
+    /// The number up `elapsed` seconds after the countdown began: 3, 2, 1, then 0 (go).
+    static func number(at elapsed: Double) -> Int {
+        max(seconds - Int(max(elapsed, 0).rounded(.down)), 0)
+    }
+}

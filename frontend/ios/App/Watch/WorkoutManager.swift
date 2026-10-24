@@ -104,15 +104,40 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         "yoga": .yoga, "flexibility": .flexibility, "other_workout": .other,
     ]
 
-    /// A workout started here or picked up from the phone: the session starts now, as the type the
-    /// phone planned (a run is a run in Apple Health), else as the type HealthKit opened the app
-    /// with, else strength training. A session already running keeps its type.
+    /// A session made and prepared, not started yet (the countdown before a workout started here).
+    private var prepared = false
+
+    /// The countdown before a workout started here: the session is made and prepared, which turns
+    /// the heart-rate sensor on. It needs a few seconds to lock on, so set 1 has its heart rate.
+    func prepare(type: String? = nil) {
+        guard session == nil, make(type: type, opened: nil) else { return }
+        prepared = true
+        session?.prepare()
+    }
+
+    /// A workout started here or picked up from the phone: the session starts now (the prepared
+    /// one, after a countdown), as the type the phone planned (a run is a run in Apple Health),
+    /// else as the type HealthKit opened the app with, else strength training. A session already
+    /// running keeps its type.
     func start(workoutId wid: String? = nil, type: String? = nil, opened: HKWorkoutActivityType? = nil) {
         wanted = true
         if let wid = wid { workoutId = wid }
         // Already running (opened by the phone before its workout arrived): only the id to add.
-        if session != nil { tag(); return }
-        guard enabled, HKHealthStore.isHealthDataAvailable() else { return }
+        if session != nil && !prepared { tag(); return }
+        guard session != nil || make(type: type, opened: opened), let s = session, let b = builder else { return }
+        prepared = false
+        let now = Date()
+        s.startActivity(with: now)
+        b.beginCollection(withStart: now) { _, _ in }
+        tagged = nil
+        tag()
+        startQuery(from: now)
+        running = true
+    }
+
+    /// A new session of the planned type and its builder, when Apple Health is on.
+    private func make(type: String?, opened: HKWorkoutActivityType?) -> Bool {
+        guard enabled, HKHealthStore.isHealthDataAvailable() else { return false }
         let config = HKWorkoutConfiguration()
         config.activityType = type.flatMap { WorkoutManager.activityTypes[$0] } ?? opened ?? .traditionalStrengthTraining
         config.locationType = .indoor
@@ -128,16 +153,11 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
             heartRate = nil
             calories = nil
             paused = false
-            let now = Date()
-            s.startActivity(with: now)
-            b.beginCollection(withStart: now) { _, _ in }
-            tagged = nil
-            tag()
-            startQuery(from: now)
-            running = true
+            return true
         } catch {
             session = nil
             builder = nil
+            return false
         }
     }
 
@@ -274,6 +294,7 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
     func end(save: Bool, totals: ((Totals) -> Void)? = nil) {
         wanted = false
         workoutId = nil
+        prepared = false
         if let q = query { store.stop(q); query = nil }
         let all = samples.map { $0.1 }
         let hr = Totals(hrAvg: all.isEmpty ? nil : (all.reduce(0, +) / Double(all.count)).rounded(), hrMax: all.max()?.rounded(), calories: nil)
