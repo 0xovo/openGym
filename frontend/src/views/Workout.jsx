@@ -1965,6 +1965,10 @@ function ActiveWorkout() {
       const late = Math.floor((Date.now() - at) / 1000)
       if (late > 1 && rest && rest !== restBefore && !rest.ready && !rest.paused) useUI.getState().addRest(-late)
     },
+    // Next exercise and Skip rest: what this screen's own Next and the rest bar's Skip do.
+    next: idx => update(s => { if (s.active && !s.active.editingWorkoutId && s.active.entries?.[idx]) s.active.cur = idx }),
+    restSkip: () => useUI.getState().stopRest(),
+    timer: () => useUI.getState().timer,
   }), [])
 
   // After the finished exercise folded away (toggle, above): the new current one is the next thing

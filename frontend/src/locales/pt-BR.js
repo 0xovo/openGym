@@ -263,6 +263,10 @@ export const PT_BR_OVERRIDES = {
   'Reps climb to {0}, then a set is added and the reps start over. At {1} sets it asks you to add weight instead.': 'As repetições aumentam até {0}; depois, uma série é adicionada e as repetições recomeçam. Ao chegar a {1} séries, o app sugere adicionar peso.',
 
   // Regional wording inherited from pt-PT would otherwise leak into pt-BR.
+  'Log set': 'Registrar série',
+  'Next exercise': 'Próximo exercício',
+  'Skip rest': 'Pular descanso',
+  'Open openGym for the next set': 'Abra o openGym para a próxima série',
   'Next': 'Próximo',
   'Move up': 'Mover para cima',
   'Move down': 'Mover para baixo',

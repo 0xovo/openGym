@@ -3653,4 +3653,17 @@ describe('the Lock Screen\'s Done (Live Activity)', () => {
     await act(async () => { mocks.live.setDone(0, 0, { at: Date.now() }) })
     expect(mocks.S.active.entries[0].sets[0].done).toBe(false)
   })
+
+  it('Next exercise moves the current exercise without ticking, Skip rest stops the rest', async () => {
+    await mount([exercise('live-bench', [false, false]), exercise('live-row', [false])])
+    await act(async () => { mocks.live.next(1) })
+    expect(mocks.S.active.cur).toBe(1)
+    expect(mocks.S.active.entries.flatMap(e => e.sets).some(s => s.done)).toBe(false)
+    mocks.timer = { left: 60, total: 90, endsAt: Date.now() + 60000 }
+    expect(mocks.live.timer()).toBe(mocks.timer)
+    const before = mocks.stopRest.mock.calls.length
+    await act(async () => { mocks.live.restSkip() })
+    expect(mocks.stopRest.mock.calls.length).toBe(before + 1)
+    expect(mocks.timer).toBeNull()
+  })
 })
