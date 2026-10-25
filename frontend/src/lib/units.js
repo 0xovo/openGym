@@ -78,6 +78,8 @@ export const mapTargetWeights = (cfg, c, prev, cInc = c) => {
   if (out.weight != null) out.weight = c(out.weight, p.weight)
   // A per-exercise increment is a load too — 2.5 kg is 5 lb, not 2.5 lb.
   if (out.inc > 0 && (out.mode == null || out.mode === 'reps')) out.inc = cInc(out.inc, p.inc)
+  // The step a session's back-off sets were built with is that same increment.
+  if (out.backoffStep > 0) out.backoffStep = cInc(out.backoffStep, p.backoffStep)
   if (Array.isArray(out.warmup)) out.warmup = out.warmup.map((w, i) => (w && w.weight != null ? { ...w, weight: c(w.weight, p.warmup?.[i]?.weight) } : w))
   // A pyramid's own weight per set; 0 ("no plan for this set") stays 0.
   if (Array.isArray(out.pyramidWeight)) out.pyramidWeight = out.pyramidWeight.map((w, i) => (w > 0 ? c(w, p.pyramidWeight?.[i]) : w))

@@ -88,10 +88,27 @@ export function viewRow(S, exId, row) {
   if (!row || !exConverted(S, exId)) return row
   return mapSetWeights(row, viewFns(S, exId)[0])
 }
+// Every stored weight of `prev` by the number it shows: a value shown and not changed is found
+// again even when its row moved (a set added above it, a warm-up inserted), and keeps its stored
+// value to the last place.
+const knownOf = (S, exId, prev, walk) => {
+  const known = new Map()
+  if (!prev) return known
+  const [view] = viewFns(S, exId)
+  walk(prev, x => { if (x != null && Number.isFinite(Number(x))) known.set(view(x), x); return x })
+  return known
+}
+const backKnown = (back, known) => (v, old) => {
+  const kept = back(v, old)
+  if (old != null && kept === old) return kept
+  return known.has(Number(v)) ? known.get(Number(v)) : kept
+}
+
 /** A row changed in the exercise's unit, back in the profile's; `prev` is the stored row. */
 export function storedRow(S, exId, row, prev) {
   if (!row || !exConverted(S, exId)) return row
-  return mapSetWeights(row, storeFns(S, exId)[0], prev)
+  const known = knownOf(S, exId, prev, (r, c) => mapSetWeights(r, c))
+  return mapSetWeights(row, backKnown(storeFns(S, exId)[0], known), prev)
 }
 /** A session entry in the exercise's unit. */
 export function viewEntry(S, entry) {
@@ -103,7 +120,8 @@ export function viewEntry(S, entry) {
 export function storedEntry(S, entry, prev) {
   if (!entry || !exConverted(S, entry.id)) return entry
   const [c, inc] = storeFns(S, entry.id)
-  return mapEntryWeights(entry, c, prev, inc)
+  const known = knownOf(S, entry.id, prev, (e, k) => mapEntryWeights(e, k, null, x => x))
+  return mapEntryWeights(entry, backKnown(c, known), prev, inc)
 }
 
 // One view per state and exercise: the store hands out a new state on every change, and a render
@@ -150,3 +168,17 @@ export function exView(S, exId) {
 
 /** A bar weight for the exercise typed in its unit, as S.barWeights stores it. */
 export const storedBar = (S, exId, v) => (v > 0 ? storedWeight(S, exId, v, S?.barWeights?.[exId]) : v)
+
+/**
+ * Change one entry of the running session in its own unit: `fn` gets the entry as the exercise
+ * shows it and changes it in place, the way it changes a stored one, and what it leaves is stored
+ * back in the profile's unit. `s` is a state being changed (a store update's draft).
+ */
+export function inEntryUnit(s, idx, fn) {
+  const e = s?.active?.entries?.[idx]
+  if (!e || !exConverted(s, e.id)) return fn(e)
+  const v = viewEntry(s, e)
+  const out = fn(v)
+  s.active.entries[idx] = storedEntry(s, v, e)
+  return out
+}

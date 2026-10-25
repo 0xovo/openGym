@@ -52,6 +52,7 @@ import { MUSCLE_NAME } from '../lib/muscles.js'
 import FocusView from './FocusView.jsx'
 import { SeasonDeco } from '../components/Seasonal.jsx'
 import { entryDbLoad, bellsIn, ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
+import { exView, viewEntry, inEntryUnit } from '../lib/ex-unit.js'
 
 // How long after a key starts a hold the same key is not yet its "Done" (#133). A USB button
 // that bounces, or a double press, sends two presses a moment apart: the first starts the hold,
@@ -110,7 +111,12 @@ const RTL_LETTER = /[֐-ࣿיִ-﷿ﹰ-﻿]/
 const SWITCH_SIDES_SEC = 10
 
 function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSide, onField, onAddSet, onRemoveSet, onAddWarmup, onRemoveSetAt, onCopySetAt, onStartTimed, onPairPrev, onPairNext, onSetRowRef, onProgressionSettings, onRest, onNoProg, routineUpdate, onSwap, onSwapBackup, onMoveUp, onMoveDown, canMoveUp, canMoveDown, onRemoveExercise, busy }) {
-  const S = useStore(s => s.S)
+  // The block reads the state as its exercise sees it (lib/ex-unit.js): in the exercise's own
+  // weight unit when it has one (#657), so its rows, steppers, plates, owned weights, "last time"
+  // and records all speak that unit. Every change goes through inEntryUnit or the parent's
+  // onField (mutEntry), which store it back in the profile's unit.
+  const live = useStore(s => s.S)
+  const S = exView(live, live.active.entries[entryIdx]?.id)
   const update = useStore(s => s.update)
   const working = useUI(s => s.work)
   const restEnds = useUI(s => s.timer?.endsAt)
@@ -121,7 +127,9 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   // Drops/bursts mutate the row in place — same card, not a new set with its own long rest.
   // A planned exercise (see the exercise's "Intensifier" config) arrives with these already
   // filled in by applyIntensifierPlan; these only add/edit/remove entries live from here on.
-  const mutSet = (i, fn) => update(s => { const row = s.active.entries[entryIdx].sets[i]; s.active.entries[entryIdx].sets[i] = fn(row) }, true)
+  const mutSet = (i, fn) => update(s => inEntryUnit(s, entryIdx, e => { e.sets[i] = fn(e.sets[i]) }), true)
+  // A row as it is now in the store (not the render's copy), in the exercise's unit.
+  const liveRow = i => { const st = useStore.getState().S; return viewEntry(st, st.active?.entries[entryIdx])?.sets[i] }
   // Warm-up or work is the row's phase; switching it moves the row to the edge of the warm-ups.
   const setPhaseAt = (i, warm) => update(s => {
     const e = s.active.entries[entryIdx]
@@ -177,13 +185,12 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   // still fires the rest timer / auto-advance / workout-complete flow.
   const setSide = (i, side, field, v) => {
     if (field !== 'w') return mutSet(i, row => setSideField(row, side, field, v))
-    update(s => {
-      const e = s.active.entries[entryIdx]
+    update(s => inEntryUnit(s, entryIdx, e => {
       const row = setSideField(e.sets[i], side, field, v)
       row.sides[side].weightOrigin = WEIGHT_ORIGIN_MANUAL
       e.sets[i] = row
       e.sets = cascadeWeight(e.sets, i, v, side, e.target?.backoffStep)
-    }, true)
+    }), true)
   }
   // Drop/burst edits accept an optional `side` ('L'|'R'): present for a per-side row (edits that
   // one limb's drop/burst), absent for a straight row (edits the row's own).
@@ -331,7 +338,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     // member's field changes the partner re-renders too, replacing the closure's `s` reference
     // with a fresh clone before the next tap fires. Reading from the store avoids that stale-
     // closure problem entirely and keeps every tap operating on the real current value.
-    const fresh = useStore.getState().S.active?.entries[entryIdx]?.sets[i]
+    const fresh = liveRow(i)
     const cur = fresh ? fresh[col.f] : s[col.f]
     if (mode === 'reps' && col.f === 'w') return onField(i, col.f, stepLoad(cur, col.step, dir))
     // The step is in the unit on screen: +0.5 mph, not +0.5 km/h shown as +0.31.
@@ -556,7 +563,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   // routed through setSide so the aggregate stays correct. Reads the live side value from the
   // store for the same stale-closure reason `bump` does.
   const sideBump = (i, side, col, dir) => {
-    const fresh = useStore.getState().S.active?.entries[entryIdx]?.sets[i]?.sides?.[side]
+    const fresh = liveRow(i)?.sides?.[side]
     const cur = fresh ? fresh[col.f] : 0
     if (col.f === 'w') return setSide(i, side, col.f, stepLoad(cur, col.step, dir))
     // Reps step by one per side: repCol's step of two keeps the *combined* total evenly
@@ -1271,7 +1278,9 @@ function ActiveWorkout() {
   const vol = sessionVolume(A, S)
   const weighable = vol > 0 || A.entries.some(e => { const c = { ...(e.target || {}), id: e.id }; return modeOf(c) === 'reps' && !isBw(c) })
 
-  const mutEntry = (idx, fn) => update(s => { fn(s.active.entries[idx]) }, true)
+  // An exercise with a unit of its own (#657) is changed in that unit, as it is shown and typed:
+  // a weight from its row, a cascade, an added set or warm-up, the watch's numbers.
+  const mutEntry = (idx, fn) => update(s => { inEntryUnit(s, idx, fn) }, true)
   // Clearing an optional field drops the key rather than storing null, so a set only carries
   // what was actually logged — in the session, in history and in a backup.
   const setField = (idx, i, field, v) => mutEntry(idx, e => {
@@ -1316,9 +1325,10 @@ function ActiveWorkout() {
   const removeSet = idx => mutEntry(idx, e => { e.sets = removeLastSet(e.sets) })
   const addWarmup = idx => mutEntry(idx, e => {
     const m = modeOf({ ...(e.target || {}), id: e.id })
+    const V = exView(S, e.id)
     // A warm-up of a dumbbell lift lands on a bell you own when the profile lists them (#376).
-    const ramp = (m === 'reps' && ownedWeightsFor(S, { ...(e.target || {}), id: e.id })) || defaultIncrement(e.id, S.unit)
-    e.sets = insertWarmupRow(e.sets, m, { ...(e.target || {}), id: e.id }, ramp, barFloor(S, e.id))
+    const ramp = (m === 'reps' && ownedWeightsFor(V, { ...(e.target || {}), id: e.id })) || defaultIncrement(e.id, V.unit)
+    e.sets = insertWarmupRow(e.sets, m, { ...(e.target || {}), id: e.id }, ramp, barFloor(V, e.id))
   })
   // The set-number menu's Remove and the swipe both go through deleteActiveSet, Undo and all.
   const removeSetAt = (idx, i) => deleteActiveSet(idx, i, { editing })
@@ -1913,7 +1923,9 @@ function ActiveWorkout() {
   // PR. Fix it leaves the set unticked to correct; Log as typed ticks it. Only a tick by hand in
   // a live session: never an untick, a hold's timer, the watch, or a saved workout being edited.
   const checkedToggle = (idx, i, side, opts) => {
-    const st = useStore.getState().S
+    // Held against the exercise's own numbers, in its own unit (#657).
+    const live = useStore.getState().S
+    const st = exView(live, live.active?.entries?.[idx]?.id)
     const e = st.active?.entries?.[idx]
     const row = side ? e?.sets?.[i]?.sides?.[side] : e?.sets?.[i]
     if (editing || !row || row.done || modeAt(idx) !== 'reps') return toggle(idx, i, side, opts)
