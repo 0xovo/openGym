@@ -285,18 +285,19 @@ The [documentation index](docs/README.md) sorts every guide by who it's for. The
 
 ## Roadmap
 
-A release roughly every two weeks, each small and themed. The full plan is in
-[ROADMAP.md](ROADMAP.md), and the issues sit in the
+A release roughly every one to two weeks, each one whatever has passed testing by then. The full
+plan is in [ROADMAP.md](ROADMAP.md), and the issues sit in the
 [GitHub milestones](https://github.com/DuarteSantos8/openGym/milestones).
 
 | Release | When | Theme |
 |---|---|---|
 | v1.4.0 | released Oct 2026 | A new exercise database with 5,632 exercises, plus two rounds of community work |
 | v1.4.1 | released Oct 2026 | Bug fixes for v1.4.0 |
-| v1.4.2 | released Oct 2026 | The App Store, the Apple Watch, widgets, a Google Play build |
-| v1.4.3 | Oct 2026 | The gym reminder, health data read back, community features |
-| next | Nov 2026 to Apr 2027 | Programmes, the progression engine, cardio, sharing, accounts, Android and health, looks |
-| later | | Database storage |
+| v1.4.2 | released Oct 2026 | The App Store, the Apple Watch, widgets, three APK sizes |
+| v1.4.3 | in App Review | The community release: gym reminder, health data read back, watch upgrades, CSV export |
+| v1.4.4 | in progress | Programmes with %1RM and RPE targets, custom app icons, kg or lb per exercise, the Coach fix |
+| v1.4.5 | Nov 2026 | Remote MCP over HTTPS, Google Play, a gym reminder that also notices you leaving |
+| later | dates are guesses | Circuits and EMOM, a trainer role, OIDC, F-Droid, an on-device Coach, Strava and Garmin, database storage |
 
 ## Community
 
