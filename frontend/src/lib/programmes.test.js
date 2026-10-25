@@ -11,6 +11,7 @@ import { buildCompletedWorkout } from './finish-workout.js'
 import { isWarmupRow } from './workout-model.js'
 import { queueOf } from './queue.js'
 import { progressionGuidance } from './progression-copy.js'
+import { buildPlanBundle, buildProgrammeBundle, parsePlan, mergePlan } from './plan-share.js'
 
 const BENCH = '0025', SQUAT = '0043'
 const clone = v => JSON.parse(JSON.stringify(v))
@@ -296,5 +297,48 @@ describe('sharing a programme', () => {
   it('survives a JSON round trip unchanged', () => {
     const p = normalizeProgramme(block())
     expect(normalizeProgramme(clone(p))).toEqual(p)
+  })
+})
+
+describe('a programme in a plan file (plan-share.js)', () => {
+  const friend = () => ({ unit: 'lb', routines: [], week: { 2: ['mine'] }, customEx: [], programmes: {} })
+
+  it('round-trips through the file: routines, weekdays and weeks, under new ids', () => {
+    const s = state()
+    saveProgramme(s, block())
+    const file = JSON.parse(JSON.stringify(buildProgrammeBundle(s, 'P')))
+    expect(file).toMatchObject({ opengym_plan: 1, programme_fmt: 1, name: 'Strength block', week: { 1: ['A'], 4: ['B'] } })
+    expect(file.routines.map(r => r.id)).toEqual(['A', 'B'])
+    const parsed = parsePlan(JSON.stringify(file), 'lb')
+    const f = friend()
+    expect(mergePlan(f, parsed).programmes).toBe(1)
+    const [p] = Object.values(f.programmes)
+    const [a, b] = f.routines
+    expect(p.days).toEqual({ 1: [a.id], 4: [b.id] })
+    expect(p.weeks).toEqual([
+      { rpe: 7, t: { [BENCH]: { pct: 75 } } },
+      { rpe: 8, t: { [BENCH]: { pct: 80 }, [`${b.id}:${SQUAT}`]: { pct: 70, rpe: 9 } } },
+      { deload: true },
+    ])
+    // Imported, not started: your own week is untouched.
+    expect(f.week).toEqual({ 2: ['mine'] })
+    expect(f.programme).toBeUndefined()
+  })
+
+  it('a whole plan export carries every programme', () => {
+    const s = state()
+    saveProgramme(s, block())
+    expect(buildPlanBundle(s, '').programmes).toHaveLength(1)
+    expect(buildPlanBundle(state(), '').programmes).toBeUndefined()
+  })
+
+  it('an older file has none, a newer programme format is skipped, the routines still come in', () => {
+    const s = state()
+    saveProgramme(s, block())
+    const file = buildProgrammeBundle(s, 'P')
+    expect(parsePlan({ ...file, programmes: undefined, programme_fmt: undefined }).programmes).toEqual([])
+    const newer = parsePlan({ ...file, programme_fmt: 2 })
+    expect(newer.programmes).toEqual([])
+    expect(newer.routineCount).toBe(2)
   })
 })

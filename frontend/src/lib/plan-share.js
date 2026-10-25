@@ -26,8 +26,12 @@ import { MUSCLES, inMuscleOrder } from './muscles.js'
 import { SG_NAME_MAX } from './superset-meta.js'
 import { esc, printShell, printDocument, probeMarks } from './print-doc.js'
 import { normalizeAliases } from './exercise-aliases.js'
+import { bundleProgramme, importedProgramme, programmeById, programmeRoutineIds, programmesOf } from './programmes.js'
 
 const PLAN_FMT = 1
+// Programmes (#159) ride in a plan file as `programmes`, versioned on their own (`programme_fmt`)
+// so the file stays a format-1 plan: an older app reads its routines and weekdays and skips them.
+const PROGRAMME_FMT = 1
 const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 0]   // every getDay() index; only the reader's own
                                           // screen puts them in an order (see weekOrder)
 const PLAN_UNITS = new Set(['kg', 'lb'])
@@ -240,7 +244,21 @@ export function buildPlanBundle(S, name) {
   // written after are read the same way at the other end.
   const week = {}
   WEEK_DAYS.forEach(d => { if (S.week?.[d]?.length) week[d] = [].concat(S.week[d]) })
-  return { opengym_plan: PLAN_FMT, exported: todayISO(), name: name || '', unit, week, routines, customEx }
+  const programmes = programmesOf(S).map(bundleProgramme).filter(Boolean)
+  return { opengym_plan: PLAN_FMT, exported: todayISO(), name: name || '', unit, week, routines, customEx,
+    ...(programmes.length ? { programme_fmt: PROGRAMME_FMT, programmes } : {}) }
+}
+
+/**
+ * One programme as a plan file: its routines, its weekdays as the file's week (what an older app
+ * imports as the schedule), and the programme itself. Null for an unknown id.
+ */
+export function buildProgrammeBundle(S, id) {
+  const p = programmeById(S, id)
+  if (!p) return null
+  const ids = new Set(programmeRoutineIds(S, p))
+  const sub = { ...S, routines: (S.routines || []).filter(r => ids.has(r.id)), week: p.days || {}, programmes: { [p.id]: p } }
+  return buildPlanBundle(sub, p.name)
 }
 
 /**
@@ -305,6 +323,9 @@ export function parsePlan(raw, destinationUnit = 'kg') {
     routineCount: routines.length,
     exerciseCount: routines.reduce((n, r) => n + r.ex.length, 0),
     scheduledDays: WEEK_DAYS.filter(d => data.week?.[d]?.length).length,
+    // A newer programme format than this app reads is left out rather than half understood.
+    programmes: Array.isArray(data.programmes) && !(Number(data.programme_fmt) > PROGRAMME_FMT)
+      ? data.programmes.filter(p => p && typeof p === 'object' && !Array.isArray(p)) : [],
     // `unit` is the unit of the returned prescriptions. `sourceUnit` is null for a legacy file;
     // that absence means its numbers were intentionally treated as already in `destination`.
     unit: destination,
@@ -359,8 +380,16 @@ export function mergePlan(s, bundle, { schedule } = {}) {
       if (ids.length) s.week[d] = ids
     })
   }
+  // Programmes, over the routines just added (lib/programmes.js importedProgramme). Never started.
+  let programmes = 0
+  for (const p of source.programmes || []) {
+    const got = importedProgramme(p, ridMap, exIdMap)
+    if (!got) continue
+    s.programmes = { ...(s.programmes && typeof s.programmes === 'object' ? s.programmes : {}), [got.id]: got }
+    programmes++
+  }
   // `ids`: the new routines' ids in the plan's order, for a caller that puts them in a rotation.
-  return { routines: source.routines.length, ids: source.routines.map(r => ridMap[r.id]) }
+  return { routines: source.routines.length, ids: source.routines.map(r => ridMap[r.id]), programmes }
 }
 
 /* ------------------------------- printable PDF ------------------------------- */
