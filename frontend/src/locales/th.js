@@ -2574,4 +2574,11 @@ export default {
   'Everything but dumbbells': 'ทุกอย่างยกเว้นดัมเบล',
   'None, so dumbbell lifts stay hidden.': 'ไม่มี ท่าที่ใช้ดัมเบลจึงถูกซ่อนไว้',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym อ่านเฉพาะตอนที่เปิดอยู่: อัตราการเต้นของหัวใจของการฝึกในวันล่าสุด และน้ำหนักในหนึ่งปีล่าสุด การฝึกที่เก่ากว่านั้นจะเหมือนเดิม',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'ไอคอนแอป',
+  'Original': 'ดั้งเดิม',
+  'Mono': 'โมโน',
+  'Just for this phone. Some home screens take a moment to catch up.': 'เฉพาะโทรศัพท์เครื่องนี้ หน้าจอโฮมบางแบบต้องใช้เวลาสักครู่ถึงจะเปลี่ยน',
+  'New icon on its way. It shows up once you leave the app.': 'ไอคอนใหม่กำลังมา จะแสดงทันทีที่คุณออกจากแอป',
+  'The icon could not be changed.': 'เปลี่ยนไอคอนไม่ได้',
 }

@@ -2610,4 +2610,11 @@ export default {
   'Everything but dumbbells': 'Allt utom hantlar',
   'None, so dumbbell lifts stay hidden.': 'Inga, så hantelövningar förblir dolda.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym läser bara medan appen är öppen: puls för pass från det senaste dygnet, vägningar från det senaste året. Äldre pass förblir som de är.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Appikon',
+  'Original': 'Original',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Bara för den här telefonen. Vissa hemskärmar behöver en stund på sig att hänga med.',
+  'New icon on its way. It shows up once you leave the app.': 'Ny ikon på väg. Den dyker upp när du lämnar appen.',
+  'The icon could not be changed.': 'Ikonen gick inte att byta.',
 }

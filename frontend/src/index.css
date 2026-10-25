@@ -1935,6 +1935,13 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
 }
 .swatch-input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;border-radius:50%;cursor:pointer;-webkit-appearance:none;appearance:none}
 .swatch-note{margin-top:-4px}
+/* Settings → App icon: the previews in the shape of a home-screen icon, the chosen one ringed like a swatch. */
+.app-icons{flex-basis:100%;padding-inline-start:41px;display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:12px}
+.app-icon{position:relative;aspect-ratio:1;max-width:60px;border-radius:23%;padding:0;transition:transform var(--fast)}
+.app-icon img{width:100%;height:100%;display:block;border-radius:inherit;box-shadow:0 0 0 .5px var(--sep)}
+.app-icon:active{transform:scale(.92)}
+.app-icon:disabled{opacity:1}
+.app-icon.on::after{content:'';position:absolute;inset:-4px;border-radius:27%;box-shadow:0 0 0 2px var(--acc);pointer-events:none}
 
 /* --- supersets --- */
 .ss-label{

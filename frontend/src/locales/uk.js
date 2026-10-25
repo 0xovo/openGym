@@ -2560,4 +2560,11 @@ export default {
   'Everything but dumbbells': 'Усе, крім гантелей',
   'None, so dumbbell lifts stay hidden.': 'Немає, тож вправи з гантелями приховані.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym читає дані, лише поки відкритий: пульс тренувань за останню добу, зважування за останній рік. Старіші тренування лишаються як є.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Значок застосунку',
+  'Original': 'Оригінал',
+  'Mono': 'Моно',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Лише для цього телефона. Деяким домашнім екранам треба хвилинка, щоб помітити.',
+  'New icon on its way. It shows up once you leave the app.': 'Новий значок уже в дорозі. Він з’явиться, щойно ви вийдете із застосунку.',
+  'The icon could not be changed.': 'Не вдалося змінити значок.',
 }

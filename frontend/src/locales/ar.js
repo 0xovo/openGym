@@ -2618,4 +2618,11 @@ export default {
   'Everything but dumbbells': 'كل شيء ما عدا الدمبلز',
   'None, so dumbbell lifts stay hidden.': 'لا شيء، لذا تبقى تمارين الدمبل مخفية.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'يقرأ openGym فقط وهو مفتوح: نبض القلب لتمارين آخر يوم، وقياسات الوزن لآخر سنة. تبقى التمارين الأقدم كما هي.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'أيقونة التطبيق',
+  'Original': 'الأصلية',
+  'Mono': 'أحادية',
+  'Just for this phone. Some home screens take a moment to catch up.': 'لهذا الهاتف فقط. بعض الشاشات الرئيسية تحتاج لحظة لتلحق.',
+  'New icon on its way. It shows up once you leave the app.': 'الأيقونة الجديدة في الطريق. ستظهر بمجرد أن تغادر التطبيق.',
+  'The icon could not be changed.': 'تعذّر تغيير الأيقونة.',
 }

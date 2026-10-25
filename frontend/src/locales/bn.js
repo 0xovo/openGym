@@ -2642,4 +2642,11 @@ export default {
   'Everything but dumbbells': 'ডাম্বেল ছাড়া সবকিছু',
   'None, so dumbbell lifts stay hidden.': 'একটাও নেই, তাই ডাম্বেলের ব্যায়াম লুকানো থাকবে।',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym শুধু খোলা থাকলেই পড়ে: শেষ এক দিনের ওয়ার্কআউটের হার্ট রেট, শেষ এক বছরের ওজন। পুরোনো ওয়ার্কআউট যেমন আছে তেমনই থাকে।',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'অ্যাপ আইকন',
+  'Original': 'আসল',
+  'Mono': 'মনো',
+  'Just for this phone. Some home screens take a moment to catch up.': 'শুধু এই ফোনের জন্য। কিছু হোম স্ক্রিন বুঝতে একটু সময় নেয়।',
+  'New icon on its way. It shows up once you leave the app.': 'নতুন আইকন আসছে। অ্যাপ থেকে বেরোলেই দেখা যাবে।',
+  'The icon could not be changed.': 'আইকন বদলানো গেল না।',
 }

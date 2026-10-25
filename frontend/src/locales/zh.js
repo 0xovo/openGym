@@ -2563,4 +2563,11 @@ export default {
   'Everything but dumbbells': '除哑铃外的全部',
   'None, so dumbbell lifts stay hidden.': '没有，所以哑铃动作会隐藏。',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym 只在打开时读取：最近一天训练的心率，最近一年的称重。更早的训练保持不变。',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': '应用图标',
+  'Original': '原版',
+  'Mono': '单色',
+  'Just for this phone. Some home screens take a moment to catch up.': '仅限这部手机。有些主屏幕要过一会儿才会跟上。',
+  'New icon on its way. It shows up once you leave the app.': '新图标在路上了，离开应用后就会出现。',
+  'The icon could not be changed.': '无法更换图标。',
 }

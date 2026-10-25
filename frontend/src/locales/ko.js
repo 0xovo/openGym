@@ -2563,4 +2563,11 @@ export default {
   'Everything but dumbbells': '덤벨 빼고 전부',
   'None, so dumbbell lifts stay hidden.': '없음, 그래서 덤벨 운동은 숨겨져요.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym은 열려 있을 때만 읽어요: 최근 하루 동안의 운동 심박수와 최근 1년의 체중 기록. 그보다 오래된 운동은 그대로 둬요.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': '앱 아이콘',
+  'Original': '기본',
+  'Mono': '모노',
+  'Just for this phone. Some home screens take a moment to catch up.': '이 휴대폰에만 적용돼요. 홈 화면에 따라 바뀌는 데 잠깐 걸릴 수 있어요.',
+  'New icon on its way. It shows up once you leave the app.': '새 아이콘이 오는 중이에요. 앱을 나가면 바로 보여요.',
+  'The icon could not be changed.': '아이콘을 바꾸지 못했어요.',
 }

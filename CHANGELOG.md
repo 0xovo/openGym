@@ -6,6 +6,11 @@ tag. Write it for the people using the app: what changed for them, short, no em 
 
 ## Unreleased
 
+**Pick your own app icon.** Settings → Look & Home → App icon swaps the icon on your home screen:
+the original, Light, Mono, or one in green, blue, orange, pink or purple. It's per phone, so your
+iPhone and your Android can disagree. On Android the new icon moves in once you leave the app, and
+some launchers need a second to notice.
+
 **AI Coach works with picky OpenAI-compatible gateways** (#804). Some endpoints answer the Coach
 with a plain 400 "please check the request parameters" and no hint why. The Coach now tries a
 simpler request on its own (a looser JSON mode, the other token-limit field, no temperature, and

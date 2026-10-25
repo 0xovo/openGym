@@ -1656,6 +1656,10 @@ export const PT_BR_OVERRIDES = {
   'Everything but dumbbells': 'Tudo menos halteres',
   'None, so dumbbell lifts stay hidden.': 'Nenhum, então os exercícios com halteres ficam escondidos.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'O openGym só lê enquanto está aberto: frequência cardíaca dos treinos do último dia, pesagens do último ano. Os treinos mais antigos ficam como estão.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Ícone do app',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Só para este celular. Algumas telas iniciais demoram um pouco para perceber.',
+  'New icon on its way. It shows up once you leave the app.': 'Novo ícone a caminho. Ele aparece assim que você sair do app.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

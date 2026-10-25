@@ -2563,4 +2563,11 @@ export default {
   'Everything but dumbbells': 'Dambıl hariç her şey',
   'None, so dumbbell lifts stay hidden.': 'Yok, bu yüzden dambıl hareketleri gizli kalır.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym yalnızca açıkken okur: son bir günün antrenmanları için nabız, son bir yılın tartılmaları. Daha eski antrenmanlar olduğu gibi kalır.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Uygulama simgesi',
+  'Original': 'Orijinal',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Yalnızca bu telefon için. Bazı ana ekranların fark etmesi biraz sürer.',
+  'New icon on its way. It shows up once you leave the app.': 'Yeni simge yolda. Uygulamadan çıktığında görünür.',
+  'The icon could not be changed.': 'Simge değiştirilemedi.',
 }

@@ -2563,4 +2563,11 @@ export default {
   'Everything but dumbbells': 'Tutto tranne i manubri',
   'None, so dumbbell lifts stay hidden.': 'Nessuno, quindi gli esercizi con manubri restano nascosti.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym legge solo mentre è aperto: battito degli allenamenti dell’ultimo giorno, pesate dell’ultimo anno. Gli allenamenti più vecchi restano come sono.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Icona dell’app',
+  'Original': 'Originale',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Solo per questo telefono. Alcune schermate Home ci mettono un attimo ad accorgersene.',
+  'New icon on its way. It shows up once you leave the app.': 'Nuova icona in arrivo. Compare appena esci dall’app.',
+  'The icon could not be changed.': 'Non è stato possibile cambiare l’icona.',
 }

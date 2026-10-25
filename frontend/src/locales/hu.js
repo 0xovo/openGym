@@ -2566,4 +2566,11 @@ export default {
   'Everything but dumbbells': 'Minden, kivéve a kézisúlyzót',
   'None, so dumbbell lifts stay hidden.': 'Nincs, így a kézisúlyzós gyakorlatok rejtve maradnak.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'Az openGym csak nyitott állapotban olvas: az utolsó nap edzéseinek pulzusát és az utolsó egy év mérlegeléseit. A régebbi edzések maradnak, ahogy vannak.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Alkalmazásikon',
+  'Original': 'Eredeti',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Csak ezen a telefonon. Néhány kezdőképernyőnek kell egy pillanat, mire észreveszi.',
+  'New icon on its way. It shows up once you leave the app.': 'Úton az új ikon. Akkor jelenik meg, amikor kilépsz az alkalmazásból.',
+  'The icon could not be changed.': 'Nem sikerült megváltoztatni az ikont.',
 }
