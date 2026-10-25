@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useStore } from './store/useStore.js'
-import { exView, exUnitPin, withExUnit, profileUnit, viewTarget, storedTarget, storedBar } from './lib/ex-unit.js'
+import { exView, exUnitPin, exUnitOf, exUnitTag, withExUnit, profileUnit, viewTarget, storedTarget, storedBar, viewEntry, viewRow, shownWeight } from './lib/ex-unit.js'
 import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
@@ -2866,7 +2866,8 @@ function WorkoutDetail({ w, close }) {
     return <div key={i} className="row wd-ex" style={{ alignItems: 'flex-start' }} {...tappable(() => exerciseHistorySheet(e.id))}>
       {ex && <button type="button" className="wd-thumb" aria-label={t('Details')} onClick={ev => { ev.stopPropagation(); exerciseDetailSheet(ex) }}><Thumb ex={ex} /></button>}
       <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`} style={{ fontWeight: 600 }}>{nameOf(e)} {w.prs && w.prs.includes(e.id) && <span className="pr"><Icon name="trophy" />PR</span>}</div>
-        <div className="ss">{e.sets.filter(hasCompletedWork).map(s => setLabel(e.id, s, e.target, speedUnitOf(st)) + hrLabel(s)).join('  ·  ') || t('no sets')}</div>
+        {/* An exercise in a unit of its own (#657) reads in it, and says which. */}
+        <div className="ss">{viewEntry(st, e).sets.filter(hasCompletedWork).map(s => setLabel(e.id, s, e.target, speedUnitOf(st)) + hrLabel(s)).join('  ·  ') || t('no sets')}{exUnitTag(st, e.id)}</div>
         {times[i] > 0 && <div className="small dim" style={{ marginTop: 3 }}>
           <Icon name="timer" style={{ fontSize: 12, marginInlineEnd: 4, verticalAlign: '-1px' }} />{fmtDur(Math.max(times[i], 60000))}
         </div>}
@@ -2889,7 +2890,7 @@ function WorkoutDetail({ w, close }) {
   // Copied with the note as it stands in the box, which may not be saved yet.
   const copyAsText = async () => {
     const rec = { ...(st.workouts.find(x => sameWorkout(x, w)) || w), note: note.trim() }
-    toast(await copyText(workoutText(rec, { unit: st.unit, nameOf, speedUnit: speedUnitOf(st), warmups: countsWarmups(st) })) ? t('Copied') : t('Could not copy'))
+    toast(await copyText(workoutText(rec, { unit: st.unit, nameOf, speedUnit: speedUnitOf(st), warmups: countsWarmups(st), state: st })) ? t('Copied') : t('Could not copy'))
   }
   // A Garmin .fit activity (#447) of the saved record, for Garmin Connect's Import Data.
   const exportFit = () => {
@@ -3690,9 +3691,9 @@ function LastAndNext({ st, w }) {
           {tr ? <span style={{ color: tr[1], display: 'inline-flex' }} aria-label={row.trend > 0 ? t('Up on last time') : row.trend < 0 ? t('Down on last time') : t('Same as last time')}><Icon name={tr[0]} /></span>
             : <span className="tag nocap">{t('First time')}</span>}
         </div>
-        <div className="small">{t('Today')}: {setsLine(row.today, st.unit)}</div>
-        {row.last && <div className="small dim">{t('Last time')}: {setsLine(row.last, st.unit)}</div>}
-        {row.next && <div className="small accent">{t('Next time')}: {row.next.w != null ? fmtNum(row.next.w) + ' ' + st.unit : ''}{row.next.w != null && row.next.r != null ? ' × ' : ''}{row.next.r != null ? row.next.r : ''} · {nextWord[row.next.kind]}</div>}
+        <div className="small">{t('Today')}: {setsLine(row.today.map(x => viewRow(st, row.id, x)), exUnitOf(st, row.id))}</div>
+        {row.last && <div className="small dim">{t('Last time')}: {setsLine(row.last.map(x => viewRow(st, row.id, x)), exUnitOf(st, row.id))}</div>}
+        {row.next && <div className="small accent">{t('Next time')}: {row.next.w != null ? fmtNum(shownWeight(st, row.id, row.next.w)) + ' ' + exUnitOf(st, row.id) : ''}{row.next.w != null && row.next.r != null ? ' × ' : ''}{row.next.r != null ? row.next.r : ''} · {nextWord[row.next.kind]}</div>}
       </div>
     })}</div>
   </div>

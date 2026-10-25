@@ -13,6 +13,8 @@ import { pctWeight } from './programmes.js'
 import { mergeStates, STAMPED_MAPS } from './sync-merge.js'
 import { STAMPED_MAPS as API_STAMPED_MAPS } from '../../../api/sync-stamps.js'
 import { EXIDX } from './exercises.js'
+import { workoutText } from './workout-text.js'
+import { exUnitTag } from './ex-unit.js'
 
 const BENCH = '0025'   // barbell bench press
 const CURL = '0294'    // dumbbell curl
@@ -300,5 +302,28 @@ describe('sync', () => {
     const a = { unit: 'kg', _ts: 10, exUnit: withExUnit({}, BENCH, 'lb', 5) }
     const old = { unit: 'kg', _ts: 20 }
     expect(mergeStates(old, a).exUnit[BENCH].unit).toBe('lb')
+  })
+})
+
+describe('display', () => {
+  it('a copied workout writes a pinned exercise in its unit, the volume in the profile’s', () => {
+    const S = pin('kg', BENCH, 'lb')
+    const w = { id: 'w', d: '2026-10-01', start: 0, end: 0, name: 'Push', entries: [
+      { id: BENCH, sets: [{ w: 61.235, r: 5, done: true }, { w: 63.5029, r: 5, done: true }] },
+      { id: SQUAT, sets: [{ w: 100, r: 5, done: true }] },
+    ] }
+    const text = workoutText(w, { unit: 'kg', nameOf: e => e.id, state: S })
+    expect(text).toContain('135×5, 140×5 (lb)')
+    expect(text.trim().endsWith('100×5')).toBe(true)
+    // Volume stays a profile total: 61.235×5 + 63.5029×5 + 500 kg.
+    expect(text).toContain('1,123.7 kg')
+    // Without the state (an older caller), the stored numbers as before.
+    expect(workoutText(w, { unit: 'kg', nameOf: e => e.id })).toContain('61.24×5')
+  })
+
+  it('tags only exercises shown in another unit', () => {
+    const S = pin('kg', BENCH, 'lb')
+    expect(exUnitTag(S, BENCH)).toBe(' (lb)')
+    expect(exUnitTag(S, SQUAT)).toBe('')
   })
 })
