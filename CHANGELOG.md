@@ -29,6 +29,11 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   now lists each one in its ⋯ menu during a workout. Tap it and the backup takes over with the
   slot's own sets, reps, rest and warm-ups, and the exercise it replaced becomes its backup, so
   going back when the bench frees up is one tap too. Your routine stays exactly as it was.
+- **Lock Screen: Next exercise and Skip rest** (iPhone, Discord). The workout's Live Activity
+  and the Dynamic Island get a small button next to the big one: Skip rest while you rest, Next
+  exercise the rest of the time, so a machine somebody grabbed no longer means unlocking the
+  phone. Nothing gets ticked, and it works with openGym asleep. The big button now says Log set,
+  because "Done" sounded a lot like "I'm going home".
 - **Machines with odd weight steps** (#688). A machine or cable exercise now has a Weight stack
   under Plate loading: type in the weights its pin really picks (5, 11.3, 18.1, the LifeFitness
   special) or fill an even stack and fix the odd ones. Progression, deloads, warm-ups, drops and
@@ -278,6 +283,8 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - Exercise names on the Lock Screen, in the Dynamic Island, on the Apple Watch and in the widgets
   are title-cased like in the app (Focus mode's exercise menu too), instead of whispering
   "barbell bench press".
+- After a long run of Lock Screen taps with the app asleep, the Live Activity said "All sets done"
+  with sets still to go. It now says "Open openGym for the next set".
 - Focus mode: the exercise's ⋯ menu has Add set and Add warm-up set, so one more set no longer
   means a trip to the Cards layout.
 - A weight change too small to show (say 0.03 kg) reads 0 instead of a lonely "-0".
