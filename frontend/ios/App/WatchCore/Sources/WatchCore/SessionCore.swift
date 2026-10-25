@@ -490,3 +490,21 @@ enum Effort {
         return tops.firstIndex { rir <= $0 } ?? tops.count
     }
 }
+
+/*
+ * The weigh-in's crown, in two parts: the whole kilos (or pounds) and the tenth after the point.
+ * One crown in tenths moved a whole kilo in a flick and was fiddly to stop on the right one.
+ */
+enum WeighIn {
+    /// 79.4 → (79, 4). Rounded to the tenth first, so 79.95 is (80, 0), never (79, 10).
+    static func parts(_ v: Double) -> (whole: Double, tenth: Double) {
+        let tenths = (max(0, v) * 10).rounded()
+        return ((tenths / 10).rounded(.down), tenths.truncatingRemainder(dividingBy: 10))
+    }
+
+    /// (79, 4) → 79.4, on the tenth's grid (no 79.40000001 to send to the phone).
+    static func join(whole: Double, tenth: Double) -> Double {
+        let t = min(9, max(0, tenth.rounded()))
+        return (whole.rounded() * 10 + t) / 10
+    }
+}

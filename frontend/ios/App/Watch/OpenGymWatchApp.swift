@@ -779,34 +779,46 @@ struct ValueEditor: View {
 }
 
 /// The weigh-in before a workout started here, as the phone asks for it: the body weight on the
-/// crown (in tenths), Save and start, or start without.
+/// crown in two parts (whole units, then a tap on the tenth for the tenth), Save and start, or
+/// start without. One crown in tenths ran a whole kilo away in a flick.
 struct WeighInView: View {
     @EnvironmentObject var store: SessionStore
-    @FocusState private var focused: Bool
+    enum Part: Hashable { case whole, tenth }
+    @FocusState private var part: Part?
     @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 40
 
+    private var whole: Binding<Double> {
+        Binding(get: { WeighIn.parts(store.bodyWeight).whole },
+                set: { store.bodyWeight = WeighIn.join(whole: $0, tenth: WeighIn.parts(store.bodyWeight).tenth) })
+    }
+    private var tenth: Binding<Double> {
+        Binding(get: { WeighIn.parts(store.bodyWeight).tenth },
+                set: { store.bodyWeight = WeighIn.join(whole: WeighIn.parts(store.bodyWeight).whole, tenth: $0) })
+    }
+
     var body: some View {
+        let p = WeighIn.parts(store.bodyWeight)
         ScrollView {
             VStack(spacing: 6) {
                 Text("Quick check-in").font(.system(.headline, design: .rounded))
-                HStack(alignment: .firstTextBaseline, spacing: 2) {
-                    Text(verbatim: String(format: "%.1f", store.bodyWeight))
-                        .font(.system(size: size, weight: .semibold, design: .rounded).monospacedDigit())
-                        .foregroundStyle(Theme.accent)
-                        .contentTransition(.numericText())
-                    Text(verbatim: store.unit).font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(.secondary)
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    digits(String(Int(p.whole)), .whole, whole, 20...(store.unit == "lb" ? 700 : 320))
+                    Text(verbatim: ".").font(.system(size: size, weight: .semibold, design: .rounded)).foregroundStyle(.secondary)
+                    digits(String(Int(p.tenth)), .tenth, tenth, 0...9)
+                    Text(verbatim: " " + store.unit).font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(.secondary)
                 }
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .frame(maxWidth: .infinity, minHeight: Theme.tap)
-                .focusable()
-                .focused($focused)
-                .digitalCrownRotation($store.bodyWeight, from: 20, through: store.unit == "lb" ? 700 : 320, by: 0.1,
-                                      sensitivity: .low, isContinuous: false, isHapticFeedbackEnabled: true)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text("Body weight"))
                 .accessibilityValue(Text(verbatim: String(format: "%.1f %@", store.bodyWeight, store.unit)))
                 .accessibilityHint(Text("Turn the Digital Crown to change it."))
+                .accessibilityAdjustableAction { d in
+                    let v = store.bodyWeight + (d == .increment ? 0.1 : -0.1)
+                    let q = WeighIn.parts(v)
+                    store.bodyWeight = WeighIn.join(whole: q.whole, tenth: q.tenth)
+                }
                 Button { store.finishWeighIn(save: true) } label: {
                     Text("Save & start workout").font(.body.weight(.semibold)).frame(maxWidth: .infinity, minHeight: Theme.tap)
                 }
@@ -824,7 +836,26 @@ struct WeighInView: View {
             }
             .padding(.horizontal, 4)
         }
-        .onAppear { focused = true }
+        .onAppear { part = .whole }
+    }
+
+    /// One part of the number: the one the crown turns is in the accent colour on a soft tile,
+    /// a tap on the other one hands the crown to it.
+    private func digits(_ text: String, _ which: Part, _ value: Binding<Double>, _ range: ClosedRange<Double>) -> some View {
+        let on = part == which
+        return Text(verbatim: text)
+            .font(.system(size: which == .whole ? size : size * 0.8, weight: .semibold, design: .rounded).monospacedDigit())
+            .foregroundStyle(on ? Theme.accent : Color.white)
+            .contentTransition(.numericText())
+            .padding(.horizontal, 4)
+            .frame(minWidth: Theme.tap * 0.7, minHeight: Theme.tap)
+            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(on ? Theme.dim : Color.clear))
+            .contentShape(Rectangle())
+            .focusable()
+            .focused($part, equals: which)
+            .digitalCrownRotation(value, from: range.lowerBound, through: range.upperBound, by: 1,
+                                  sensitivity: .low, isContinuous: false, isHapticFeedbackEnabled: true)
+            .onTapGesture { part = which }
     }
 }
 
