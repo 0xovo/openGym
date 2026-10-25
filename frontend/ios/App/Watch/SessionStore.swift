@@ -161,6 +161,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                         self.health.start(workoutId: w.id, type: w.healthType)
                     }
                     self.armIdleCheck()
+                    // `state = saved` above ran in init, where its didSet does not: the forgotten-
+                    // workout check is armed here (a workout left running overnight ends now).
+                    self.watchIdle()
                 }
             }
         }
