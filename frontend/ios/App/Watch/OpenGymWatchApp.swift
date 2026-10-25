@@ -207,6 +207,19 @@ struct EdgeButton: View {
     }
 }
 
+/// Water Lock, as Apple's Workout has it: the screen and the crown's press stop doing anything
+/// (a sleeve or a bent wrist no longer leaves the workout or taps Done); turning the crown unlocks.
+/// watchOS allows it only while a workout session runs, so without Apple Health there is none.
+struct LockButton: View {
+    @ObservedObject var health: WorkoutManager
+
+    var body: some View {
+        if health.running {
+            EdgeButton(systemImage: "drop.fill", label: Text("Lock")) { WKInterfaceDevice.current().enableWaterLock() }
+        }
+    }
+}
+
 /// The 3-2-1 before a workout started here: big numbers in a ring that empties once. A tap
 /// starts at once; the small button cancels (nothing starts, nothing is logged).
 struct CountdownView: View {
@@ -919,6 +932,7 @@ struct FinishPage: View {
             if store.offline {
                 Text("Saved on the watch, syncs later").font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }
+            LockButton(health: store.health)
         }
         .padding(.horizontal, 6)
         .dynamicTypeSize(...DynamicTypeSize.accessibility2)
@@ -1007,6 +1021,8 @@ struct RestView: View {
             HStack {
                 EdgeButton(systemImage: "goforward.15", label: Text("+15s")) { store.addRest(15) }
                 Spacer()
+                LockButton(health: store.health)
+                Spacer()
                 EdgeButton(systemImage: "forward.end.fill", label: Text("Skip")) { store.skipRest() }
             }
             .opacity(dimmed ? 0 : 1)
@@ -1041,6 +1057,7 @@ struct HoldView: View {
             .aspectRatio(1, contentMode: .fit)
             .padding(.horizontal, 6)
             HStack {
+                LockButton(health: store.health)
                 Spacer()
                 EdgeButton(systemImage: "stop.fill", label: Text("Stop")) { store.endHold(early: true) }
             }
