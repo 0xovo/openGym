@@ -1672,6 +1672,17 @@ export const PT_BR_OVERRIDES = {
   'App icon': 'Ícone do app',
   'Just for this phone. Some home screens take a moment to catch up.': 'Só para este celular. Algumas telas iniciais demoram um pouco para perceber.',
   'New icon on its way. It shows up once you leave the app.': 'Novo ícone a caminho. Ele aparece assim que você sair do app.',
+  // --- seasonal themes (lib/seasonal.js) ---
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Uma teia de aranha no cabeçalho, morcegos atrás do cronômetro de descanso, abóboras no fim. Nunca em cima das suas séries.',
+  'A pumpkin orange accent while Halloween shows. Your own color comes back after.': 'Um destaque laranja abóbora enquanto durar o Halloween. Depois sua cor volta.',
+  'Spiders, bats and one shy pumpkin until the end of October. Never during a workout.': 'Aranhas, morcegos e uma abóbora tímida até o fim de outubro. Nunca durante um treino.',
+  'Little extras for the time of year.': 'Pequenos extras de acordo com a época do ano.',
+  'Boo! You found the pumpkin. It was watching you train.': 'Bu! Você achou a abóbora. Ela estava vendo você treinar.',
+  'Boo! Pumpkin found. Your next PR is now officially haunted.': 'Bu! Abóbora encontrada. Seu próximo recorde agora é oficialmente assombrado.',
+  'Boo! Found it. The spiders owe you a rep.': 'Bu! Achou. As aranhas te devem uma repetição.',
+  'The pumpkin is napping. Come back tomorrow.': 'A abóbora está tirando uma soneca. Volte amanhã.',
+  'Back next October. The spiders are on holiday.': 'Volta em outubro. As aranhas estão de férias.',
+  'Try the Halloween app icon': 'Experimente o ícone de Halloween do app',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

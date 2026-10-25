@@ -6,10 +6,10 @@ tag. Write it for the people using the app: what changed for them, short, no em 
 
 ## Unreleased
 
-**Pick your own app icon.** Settings → Look & Home → App icon swaps the icon on your home screen:
-the original, Light, Mono, or one in green, blue, orange, pink or purple. It's per phone, so your
-iPhone and your Android can disagree. On Android the new icon moves in once you leave the app, and
-some launchers need a second to notice.
+**Your own app icon on Android too.** The picker from 1.4.3 leaves the iPhone: Settings → Look &
+Home → App icon has all nine on Android, Halloween included. It's per phone, so your iPhone and
+your Android can disagree. On Android the new icon moves in once you leave the app, and some
+launchers need a second to notice.
 
 **AI Coach works with picky OpenAI-compatible gateways** (#804). Some endpoints answer the Coach
 with a plain 400 "please check the request parameters" and no hint why. The Coach now tries a
@@ -81,6 +81,23 @@ reads it straight back in without losing a set. The importer also learned GymMan
 **Keep what you added** (#592). Threw an extra exercise into a routine's workout? The finish
 summary lists it under "New in this workout" with one button to add it to the routine, sets, reps
 and weight as you did them. Ignore it and the routine stays exactly as it was.
+
+**Halloween.** Until the end of October a small spider drops in whenever you open openGym (tap
+it and it runs), bats cross the header now and then, cobwebs gather in a few corners and a shy
+pumpkin hides somewhere on Home. Find it for a little surprise, once a day. Stats gets a skeleton
+hanging off the activity card, spiders on threads, a moon with a tiny witch and two pumpkins
+peeking out. Rarely, a bigger witch. Workouts get a quiet version that never sits on a set, a
+button or a timer: a cobweb and a spider in the header's corner, two bats along the rest bar and
+pumpkins on the finish screen (Also during workouts turns that off). Gone on 1 November by
+itself, and Settings → Look & Home → Seasonal themes has Auto, On (all year, we won't judge) and
+Off, plus Spooky colors for a pumpkin orange accent. Reduce motion gets a still version, and with
+the theme off nothing of it is even loaded.
+
+**Pick your own app icon** (iPhone). Settings → Look & Home → App icon swaps the icon on your
+home screen: the original, Light, Mono, one in green, blue, orange, pink or purple, or Halloween,
+a pumpkin orange dumbbell with jack-o'-lantern faces under a moon, with a spider in the corner. The
+Halloween one stays all year, and while the theme is on, Seasonal themes has a shortcut to it. It's
+per phone and iOS asks you to confirm. Android gets the picker in the next version.
 
 **In the workout**
 - **Machine taken? One tap to your backup** (#649). A routine exercise with planned backups lists
