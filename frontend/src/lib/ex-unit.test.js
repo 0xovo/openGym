@@ -14,6 +14,7 @@ import { mergeStates, STAMPED_MAPS } from './sync-merge.js'
 import { STAMPED_MAPS as API_STAMPED_MAPS } from '../../../api/sync-stamps.js'
 import { EXIDX } from './exercises.js'
 import { workoutText } from './workout-text.js'
+import { buildPlanBundle, parsePlan, mergePlan } from './plan-share.js'
 import { exUnitTag } from './ex-unit.js'
 
 const BENCH = '0025'   // barbell bench press
@@ -325,5 +326,44 @@ describe('display', () => {
     const S = pin('kg', BENCH, 'lb')
     expect(exUnitTag(S, BENCH)).toBe(' (lb)')
     expect(exUnitTag(S, SQUAT)).toBe('')
+  })
+})
+
+describe('shared plan files', () => {
+  const writer = () => pin('kg', BENCH, 'lb', {
+    routines: [{ id: 'r', name: 'Push', ex: [{ id: BENCH, sets: 3, reps: 5, weight: 20.4117 }, { id: SQUAT, sets: 3, reps: 5, weight: 100 }] }],
+    week: {}, customEx: [],
+  })
+  it('carry the pins of the plan’s exercises, the numbers in the file’s unit', () => {
+    const b = buildPlanBundle(writer(), 'Push')
+    expect(b.exUnit).toEqual({ [BENCH]: 'lb' })
+    expect(b.unit).toBe('kg')
+    expect(b.routines[0].ex[0].weight).toBe(20.4117)
+    // Nothing pinned, nothing written: the file keeps the shape it had.
+    expect('exUnit' in buildPlanBundle({ ...writer(), exUnit: {} }, 'Push')).toBe(false)
+  })
+
+  it('pin the exercise on import, converted to the reader’s profile, unless the reader chose already', () => {
+    const file = JSON.stringify(buildPlanBundle(writer(), 'Push'))
+    const lbReader = { unit: 'lb', routines: [], week: {}, customEx: [] }
+    mergePlan(lbReader, parsePlan(file, 'lb'))
+    expect(lbReader.exUnit[BENCH].unit).toBe('lb')
+    expect(lbReader.routines[0].ex[0].weight).toBe(45)
+    const kgReader = { unit: 'kg', routines: [], week: {}, customEx: [] }
+    mergePlan(kgReader, parsePlan(file, 'kg'))
+    expect(shownWeight(kgReader, BENCH, kgReader.routines[0].ex[0].weight)).toBe(45)
+    const decided = { unit: 'kg', routines: [], week: {}, customEx: [], exUnit: withExUnit({}, BENCH, null, 3) }
+    mergePlan(decided, parsePlan(file, 'kg'))
+    expect(decided.exUnit[BENCH]).toEqual({ unit: null, _ts: 3 })
+  })
+
+  it('an older file without the map, or a broken one, pins nothing', () => {
+    const b = buildPlanBundle(writer(), 'Push')
+    delete b.exUnit
+    const s = { unit: 'kg', routines: [], week: {}, customEx: [] }
+    mergePlan(s, parsePlan(JSON.stringify(b), 'kg'))
+    expect(s.exUnit).toBeUndefined()
+    const bad = parsePlan(JSON.stringify({ ...b, exUnit: { [BENCH]: 'stone', nope: 'lb' } }), 'kg')
+    expect(bad.exUnit).toEqual({})
   })
 })

@@ -14,6 +14,7 @@ import { exOr } from '../lib/exercises.js'
 import { weightIncrement } from '../lib/progression.js'
 import { REST } from '../lib/rotation.js'
 import { starterProgrammeOptions, buildStarterProgramme } from '../lib/starter.js'
+import { exView, viewTarget, exUnitOf } from '../lib/ex-unit.js'
 import {
   programmesOf, programmeById, programmeStatus, newProgramme, saveProgramme, deleteProgramme, resizeWeeks,
   stepWeek, cleanWeek, currentSchedule, startProgramme, pauseProgramme, resumeProgramme, endProgramme,
@@ -194,10 +195,12 @@ function WeekSheet({ id, index, close }) {
     <div className="sect-b prog-lifts" style={{ marginBottom: 6 }}>
       {liftsOf(S, p).map(cfg => {
         const pct = w.t?.[cfg.id]?.pct ?? null
-        const est = pct != null ? pctWeight(S, cfg.id, pct, { step: weightIncrement(cfg, S.unit) }) : null
+        // Worked out and rounded in the lift's own weight unit (#657): 5 lb steps on a lb-pinned bar.
+        const unit = exUnitOf(S, cfg.id)
+        const est = pct != null ? pctWeight(exView(S, cfg.id), cfg.id, pct, { step: weightIncrement(viewTarget(S, cfg.id, cfg), unit) }) : null
         return <div key={cfg.id} className="lrow prog-lift">
           <span className="lrow-m"><span className="lrow-t">{exerciseNameText(exOr(cfg.id))}</span>
-            {pct != null && <span className="lrow-s">{est != null ? t('about {0}', fmtNum(est) + ' ' + (S.unit || 'kg')) : t('Log a set first to work this out')}</span>}</span>
+            {pct != null && <span className="lrow-s">{est != null ? t('about {0}', fmtNum(est) + ' ' + unit) : t('Log a set first to work this out')}</span>}</span>
           <PctField pct={pct} onChange={v => setPct(cfg.id, v)} label={t('%1RM for {0}', exerciseNameText(exOr(cfg.id)))} />
         </div>
       })}

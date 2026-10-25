@@ -18,6 +18,7 @@ import { queueOf, weekTally } from './queue.js'
 import { todayISO, isoOf, fmtNum, weekStartOf, startOfWeek, exerciseNameText } from './format.js'
 import { accentPair, accentValue } from './accent.js'
 import { speedUnitOf } from './speed.js'
+import { viewTarget, exUnitOf, shownWeight } from './ex-unit.js'
 
 export const WIDGET_SNAPSHOT_VERSION = 1
 // Today and the week after it: enough for "next workout" to still be right a few days on.
@@ -45,11 +46,11 @@ function dayOf (S, iso, today) {
     count: routines.reduce((n, r) => n + (r.ex || []).length, 0),
   }
   if (iso === today) {
-    const unit = S.unit === 'lb' ? 'lb' : 'kg'
     const speed = speedUnitOf(S)
     day.exercises = routines.flatMap(r => r.ex || []).slice(0, WIDGET_EXERCISES_MAX).map(cfg => {
       let line = ''
-      try { line = exLine(cfg, unit, speed) } catch { line = '' }
+      // In the exercise's own weight unit when it has one (#657).
+      try { line = exLine(viewTarget(S, cfg.id, cfg), exUnitOf(S, cfg.id), speed) } catch { line = '' }
       return { name: nameOfCfg(cfg), line }
     })
     // Logged already (as the Home screen's today row says it): every routine of the day covered
@@ -71,8 +72,7 @@ function lastPrOf (S) {
   const name = EXIDX[id] ? exerciseNameText(EXIDX[id]) : String(entry?.target?.name || entry?.name || id)
   let best = 0
   try { best = entry ? bestWeightForEntry(entry) : 0 } catch { best = 0 }
-  const unit = S.unit === 'lb' ? 'lb' : 'kg'
-  return { name, value: best > 0 ? `${fmtNum(best)} ${unit}` : '', d: w.d || null }
+  return { name, value: best > 0 ? `${fmtNum(shownWeight(S, id, best))} ${exUnitOf(S, id)}` : '', d: w.d || null }
 }
 
 function activeOf (S) {

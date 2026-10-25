@@ -20,6 +20,7 @@ import { MAX_TRIPLE_SETS } from './progression.js'
 import { uid, todayISO, DAYN, weekOrder, weekStartOf, exCount, routineCount } from './format.js'
 import { t, exerciseNameFor, exerciseNameClass } from './i18n-core.js'
 import { convertWeight } from './units.js'
+import { exUnitPin, withExUnit, viewTarget, exUnitOf } from './ex-unit.js'
 import { fmtSpeed, speedUnitOf } from './speed.js'
 import { clampIncline, hasIncline } from './incline.js'
 import { MUSCLES, inMuscleOrder } from './muscles.js'
@@ -245,7 +246,11 @@ export function buildPlanBundle(S, name) {
   const week = {}
   WEEK_DAYS.forEach(d => { if (S.week?.[d]?.length) week[d] = [].concat(S.week[d]) })
   const programmes = programmesOf(S).map(bundleProgramme).filter(Boolean)
+  // The plan's exercises that are shown in a weight unit of their own (#657), so a shared lb
+  // machine arrives as one. The numbers stay in the file's `unit`; an older app skips the map.
+  const exUnit = Object.fromEntries([...usedIds].map(id => [id, exUnitPin(S, id)]).filter(([, u]) => u))
   return { opengym_plan: PLAN_FMT, exported: todayISO(), name: name || '', unit, week, routines, customEx,
+    ...(Object.keys(exUnit).length ? { exUnit } : {}),
     ...(programmes.length ? { programme_fmt: PROGRAMME_FMT, programmes } : {}) }
 }
 
@@ -314,10 +319,16 @@ export function parsePlan(raw, destinationUnit = 'kg') {
       return convertedExercise({ ...passthrough, ...(pyramid.length ? { pyramid } : {}), ...(pyramidRest.length ? { pyramidRest } : {}), ...(pyramidWeight.length ? { pyramidWeight } : {}), ...(warm ? { warmupSets: warm } : {}), ...(intens ? { intensifier: intens } : {}), ...(rest ? { restSec: rest } : restOff ? { restOff: true } : {}), ...(warmOff ? { warmupRestOff: true } : warmRest ? { warmupRestSec: warmRest } : {}), ...(sideOff ? { sideRestOff: true } : sideRest ? { sideRestSec: sideRest } : {}), ...(subs.length ? { subs } : {}), ...(sgName ? { sgName } : {}), ...(sgRest ? { sgRest } : {}), ...(incline > 0 ? { incline } : {}) }, sourceUnit || destination, destination)
     })
   }))
+  // Exercise units (#657): only kg or lb, and only for exercises the plan still holds.
+  const inPlan = new Set(routines.flatMap(r => r.ex.map(e => e.id)))
+  const exUnit = Object.fromEntries(Object.entries(data.exUnit && typeof data.exUnit === 'object' && !Array.isArray(data.exUnit) ? data.exUnit : {})
+    .map(([id, u]) => [known.has(id) ? id : canonicalExId(id), u])
+    .filter(([id, u]) => (u === 'kg' || u === 'lb') && inPlan.has(id)))
   return {
     name: (data.name || '').trim(),
     routines,
     week: data.week || {},
+    exUnit,
     customEx,
     dropped,
     routineCount: routines.length,
@@ -379,6 +390,13 @@ export function mergePlan(s, bundle, { schedule } = {}) {
       const ids = [].concat(val).map(oldId => ridMap[oldId]).filter(Boolean)
       if (ids.length) s.week[d] = ids
     })
+  }
+  // An exercise the plan shows in a unit of its own (#657) is pinned the same here, unless this
+  // profile already made its own choice for it.
+  for (const [id, u] of Object.entries(source.exUnit || {})) {
+    const nid = exIdMap[id] || canonicalExId(id)
+    if (s.exUnit && typeof s.exUnit === 'object' && s.exUnit[nid]) continue
+    s.exUnit = withExUnit(s.exUnit, nid, u)
   }
   // Programmes, over the routines just added (lib/programmes.js importedProgramme). Never started.
   let programmes = 0
@@ -452,7 +470,10 @@ export function printedName(ex, fallback) {
 
 // One exercise row. `n` is its number in the routine; `ticks` draws a box per set to tick off at
 // the gym (the single-routine sheet, which is the one you take with you).
-function exerciseHTML(e, n, unit, { speedUnit, ticks }) {
+function exerciseHTML(stored, n, profile, { speedUnit, ticks, state }) {
+  // In the exercise's own weight unit when it has one (#657).
+  const e = state ? viewTarget(state, stored.id, stored) : stored
+  const unit = state ? exUnitOf(state, stored.id) : profile
   const ex = EXIDX[e.id]
   const { name, en, cls } = printedName(ex)
   // Translated, and set apart by a real space: glued to the name, "capitalize" read the two as
@@ -470,11 +491,11 @@ function exerciseHTML(e, n, unit, { speedUnit, ticks }) {
 // The routine's heading (and, for the first routine, the section heading above it) travels inside
 // the first block, so it can never be stranded at the bottom of a page with its exercises overleaf.
 // The routine itself may run over a page: holding all of it together left whole pages blank.
-function routineHTML(r, unit, { bare = false, speedUnit, ticks = false, lead = '', m, key }) {
+function routineHTML(r, unit, { bare = false, speedUnit, ticks = false, lead = '', m, key, state }) {
   let n = 0
   const list = units(r.ex)
   const blocks = list.map((u, bi) => {
-    const items = u.map(e => exerciseHTML(e, ++n, unit, { speedUnit, ticks })).join('')
+    const items = u.map(e => exerciseHTML(e, ++n, unit, { speedUnit, ticks, state })).join('')
     const body = u.length > 1
       ? `<div class="ss"><div class="ss-tag">${esc(t('Superset'))}</div>${items}</div>`
       : items
@@ -547,7 +568,7 @@ export function planPrintHTML(S, owner, { routineId, probe = false } = {}) {
   const routines = routineId ? [single].filter(Boolean) : (S.routines || []).filter(r => r.ex && r.ex.length)
   const lead = routineId ? '' : `<h3 class="sec-h">${esc(t('Routines'))}</h3>`
   const body = routines.length
-    ? routines.map((r, i) => routineHTML(r, unit, { bare: !!single, speedUnit, ticks: !!single, lead: i === 0 ? lead : '', m, key: 'r' + i })).join('')
+    ? routines.map((r, i) => routineHTML(r, unit, { bare: !!single, speedUnit, ticks: !!single, lead: i === 0 ? lead : '', m, key: 'r' + i, state: S })).join('')
     : `<p class="none">${esc(t('No routines yet.'))}</p>`
   const title = single ? single.name : t('Weekly Training Plan')
   const facts = single ? [exCount(single.ex.length)] : [routineCount(routines.length)]
