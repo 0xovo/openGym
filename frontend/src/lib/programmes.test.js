@@ -1,6 +1,6 @@
 // Programmes (#159): the model, the run (start, weeks, pause, end, repeat) and the targets a
 // session opens with (session-start.js).
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeAll, afterAll, afterEach } from 'vitest'
 import {
   normalizeProgramme, programmesOf, newProgramme, saveProgramme, deleteProgramme, resizeWeeks, stepWeek,
   programmeStatus, startProgramme, pauseProgramme, resumeProgramme, endProgramme, repeatProgramme,
@@ -12,6 +12,16 @@ import { isWarmupRow } from './workout-model.js'
 import { queueOf } from './queue.js'
 import { progressionGuidance } from './progression-copy.js'
 import { buildPlanBundle, buildProgrammeBundle, parsePlan, mergePlan } from './plan-share.js'
+import { todayISO } from './format.js'
+
+// A fixed clock for the whole file, local noon on a Wednesday: every date here is a calendar date
+// in the device's own zone, and the run must not depend on the day or hour the suite happens to run.
+// Only Date is faked, so nothing waits on timers.
+const at = (...ymdhm) => vi.setSystemTime(new Date(...ymdhm))
+beforeAll(() => { vi.useFakeTimers({ toFake: ['Date'] }) })
+afterEach(() => { at(2026, 9, 21, 12, 0) })
+afterAll(() => { vi.useRealTimers() })
+at(2026, 9, 21, 12, 0)
 
 const BENCH = '0025', SQUAT = '0043'
 const clone = v => JSON.parse(JSON.stringify(v))
@@ -227,21 +237,40 @@ describe('the target of one exercise', () => {
   })
 })
 
-describe('a session in a running programme (session-start.js)', () => {
-  const today = new Date()
-  const iso = d => d.toISOString().slice(0, 10)
+// The session builder reads "today" off the clock (todayISO, local). Each case runs at instants
+// that sit on the edges a week count can trip over: just after midnight on a Monday (the week
+// start), just before midnight on the Sunday before it, both European clock changes (2026-10-25,
+// 2027-03-28, 23 and 25-hour days) and a US one (2026-11-01). The programme is started "today" by
+// the same local date the builder reads, never by a UTC date (toISOString), which on a Monday just
+// after midnight in Zurich is still Sunday and once made this test think it was week 2.
+const CLOCKS = [
+  ['Monday 00:30 after the EU autumn change', [2026, 9, 26, 0, 30]],
+  ['Sunday 23:30, the 25-hour day', [2026, 9, 25, 23, 30]],
+  ['Sunday 02:30, inside the repeated hour', [2026, 9, 25, 2, 30]],
+  ['Sunday 01:30, the US autumn change', [2026, 10, 1, 1, 30]],
+  ['Monday 00:30 after the EU spring change', [2027, 2, 29, 0, 30]],
+  ['Sunday 02:30, the skipped hour', [2027, 2, 28, 2, 30]],
+  ['an ordinary Wednesday noon', [2026, 9, 21, 12, 0]],
+]
+const daysBefore = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() - n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }
+
+describe.each(CLOCKS)('a session in a running programme (session-start.js), %s', (_, clock) => {
   const routine = (s, id) => s.routines.find(r => r.id === id)
   const withHistory = () => {
     const s = state({ workouts: [logged('2026-01-05', BENCH, 100, 5, 'A'), logged('2026-01-05', SQUAT, 120, 5, 'B')] })
     saveProgramme(s, block())
     return s
   }
+  beforeAll(() => { at(...clock) })
+  // afterEach (file level) puts the default clock back; each test sets its own again.
+  const now = () => { at(...clock); return todayISO() }
 
   it('opens at the %1RM weight and the routine\'s reps, not at the policy\'s', () => {
     const s = withHistory()
+    const today = now()
     const before = buildSessionEntries(s, routine(s, 'A'))[0]
     expect(work(before).map(x => x.w)).toEqual([102.5, 102.5, 102.5])   // linear: one step up
-    startProgramme(s, 'P', iso(today))
+    startProgramme(s, 'P', today)
     const [bench, squat] = buildSessionEntries(s, routine(s, 'A'))
     expect(work(bench).map(x => [x.w, x.r])).toEqual([[87.5, 5], [87.5, 5], [87.5, 5]])
     expect(bench.target.weight).toBe(87.5)
@@ -256,7 +285,7 @@ describe('a session in a running programme (session-start.js)', () => {
   it('"Your last session" does not move a programme\'s reps', () => {
     const s = { ...withHistory(), startFrom: 'last' }
     s.workouts[0].entries[0].sets = [{ w: 100, r: 7, done: true }]
-    startProgramme(s, 'P', iso(today))
+    startProgramme(s, 'P', now())
     const [bench] = buildSessionEntries(s, routine(s, 'A'))
     expect(work(bench).map(x => x.r)).toEqual([5, 5, 5])
     expect(bench.carried).toBeUndefined()
@@ -264,8 +293,7 @@ describe('a session in a running programme (session-start.js)', () => {
 
   it('a deload week takes the weight down and stays out of progression', () => {
     const s = withHistory()
-    const d = new Date(today); d.setDate(d.getDate() - 14)
-    startProgramme(s, 'P', iso(d))
+    startProgramme(s, 'P', daysBefore(now(), 14))
     const [bench] = buildSessionEntries(s, routine(s, 'A'))
     expect(bench.plan.prog).toMatchObject({ week: 3, deload: true })
     expect(work(bench)[0].w).toBe(92.5)   // 102.5 × 0.9, on the 2.5 grid
@@ -275,8 +303,47 @@ describe('a session in a running programme (session-start.js)', () => {
   it('a routine the programme does not schedule builds as always', () => {
     const s = withHistory()
     const plain = buildSessionEntries(s, routine(s, 'C'))
-    startProgramme(s, 'P', iso(today))
+    startProgramme(s, 'P', now())
     expect(buildSessionEntries(s, routine(s, 'C'))).toEqual(plain)
+  })
+})
+
+// The week count is calendar arithmetic on local dates: weekKey (format.js) takes noon, so a 23 or
+// 25-hour day never moves a date, and the day difference is rounded to whole days.
+describe('week boundaries across the clock changes', () => {
+  const run = (startedOn, weekStart = 1) => {
+    const s = state({ weekStart, programmes: { P: { id: 'P', at: 1, days: { 1: ['A'] }, weeks: Array(8).fill({}) } } })
+    s.programme = { id: 'P', startedOn, cycle: 1, bump: 0 }
+    return d => programmeStatus(s, d)?.week
+  }
+  it('EU autumn change (Sunday 2026-10-25): week 2 starts on the Monday after', () => {
+    const w = run('2026-10-19')
+    expect(['2026-10-19', '2026-10-24', '2026-10-25', '2026-10-26', '2026-11-01', '2026-11-02'].map(w)).toEqual([1, 1, 1, 2, 2, 3])
+  })
+  it('EU spring change (Sunday 2027-03-28)', () => {
+    const w = run('2027-03-22')
+    expect(['2027-03-27', '2027-03-28', '2027-03-29', '2027-04-04', '2027-04-05'].map(w)).toEqual([1, 1, 2, 2, 3])
+  })
+  it('US changes (2026-11-01, 2027-03-14)', () => {
+    expect(['2026-11-01', '2026-11-02'].map(run('2026-10-26'))).toEqual([1, 2])
+    expect(['2027-03-14', '2027-03-15'].map(run('2027-03-08'))).toEqual([1, 2])
+  })
+  it('a Sunday week start turns over on Sunday, on the change day itself', () => {
+    const w = run('2026-10-24', 0)   // a Saturday: week 1 is Sun 10-18 to Sat 10-24
+    expect(['2026-10-24', '2026-10-25', '2026-10-31', '2026-11-01'].map(w)).toEqual([1, 2, 2, 3])
+  })
+  it('a start on the week\'s last day still counts that week as week 1', () => {
+    expect(['2026-10-25', '2026-10-26'].map(run('2026-10-25'))).toEqual([1, 2])
+    expect(['2027-03-28', '2027-03-29'].map(run('2027-03-28'))).toEqual([1, 2])
+  })
+  it('a pause across a clock change moves the start by whole weeks', () => {
+    const s = state({ programmes: { P: { id: 'P', at: 1, days: { 1: ['A'] }, weeks: Array(8).fill({}) } } })
+    startProgramme(s, 'P', '2026-10-21')
+    pauseProgramme(s, '2026-10-22')
+    resumeProgramme(s, '2026-11-04')
+    expect(s.programme.startedOn).toBe('2026-11-04')
+    expect(programmeStatus(s, '2026-11-08').week).toBe(1)
+    expect(programmeStatus(s, '2026-11-09').week).toBe(2)
   })
 })
 

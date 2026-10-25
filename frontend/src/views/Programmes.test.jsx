@@ -2,7 +2,7 @@
 // Plan → Programmes (#159): the list, a starter added, a programme started and ended, the week sheet.
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
@@ -29,6 +29,11 @@ vi.mock('react-router-dom', () => ({ useNavigate: () => to => mocks.navs.push(to
 vi.mock('../sheets.jsx', () => ({ confirmSheet: o => { mocks.confirm = o }, exportProgrammeFile: vi.fn() }))
 
 const { default: Programmes, ProgrammeEdit } = await import('./Programmes.jsx')
+
+// A fixed clock (only Date is faked): Monday 00:30 local, the first minutes of a week, right after
+// the EU clock change, where a UTC date would still say Sunday.
+beforeAll(() => { vi.useFakeTimers({ toFake: ['Date'] }); vi.setSystemTime(new Date(2026, 9, 26, 0, 30)) })
+afterAll(() => { vi.useRealTimers() })
 
 let host, root
 beforeEach(() => {
