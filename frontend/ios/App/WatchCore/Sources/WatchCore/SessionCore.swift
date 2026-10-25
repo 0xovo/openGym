@@ -425,6 +425,13 @@ enum Idle: Equatable {
         return ticks.max() ?? w.start.flatMap { $0 > 0 ? $0 : nil }
     }
 
+    /// What idle time counts from: the newest of the last set, when this watch picked the workout
+    /// up, the last change to it from either side (SessionStore's activityAt, the same one
+    /// SensorPlan uses) and a "keep going" answered.
+    static func since(lastSet: Double, seen: Double?, activity: Double?, snooze: Double?) -> Double {
+        [lastSet, seen ?? 0, activity ?? 0, snooze ?? 0].max() ?? lastSet
+    }
+
     /// `since`: the last thing that counts (the last set, or a "keep going" answered since).
     static func state(since: Double, now: Double) -> Idle {
         let idle = now - since

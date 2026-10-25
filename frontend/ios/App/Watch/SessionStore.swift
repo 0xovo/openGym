@@ -660,12 +660,15 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     }
 
     private func checkIdle() {
-        guard let w = workout, holdEndsAt == nil else { return }
+        // A rest or a hold running is a workout going on, however long it takes.
+        guard let w = workout, holdEndsAt == nil, restEndsAt == nil else { return }
         let now = Date().timeIntervalSince1970 * 1000
-        let seen = workoutSeenAt.map { $0.timeIntervalSince1970 * 1000 }
+        let ms = { (d: Date?) in d.map { $0.timeIntervalSince1970 * 1000 } }
+        let seen = ms(workoutSeenAt)
         let last = Idle.lastSet(w) ?? seen ?? now
-        // Picked up from the phone or answered "keep going" since: counted from then, never ended earlier.
-        let since = [last, seen ?? 0, idleSnooze.map { $0.timeIntervalSince1970 * 1000 } ?? 0].max() ?? last
+        // Picked up from the phone, changed there (a set edited, an exercise added) or answered
+        // "keep going" since: counted from then, never ended earlier.
+        let since = Idle.since(lastSet: last, seen: seen, activity: ms(activityAt), snooze: ms(idleSnooze))
         switch Idle.state(since: since, now: now) {
         case .active: break
         case .ask:

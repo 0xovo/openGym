@@ -35,4 +35,15 @@ final class IdleTests: XCTestCase {
         XCTAssertEqual(Idle.lastSet(workout(start: 1000, ats: [nil, nil])), 1000)
         XCTAssertNil(Idle.lastSet(workout(start: 0, ats: [nil])), "a phone that sent no start: the watch's own time then")
     }
+
+    func testAChangeFromThePhoneCountsAsTheWorkoutGoingOn() {
+        // Last set at 0, the phone edited the workout at 30 min: asked at 50, not at 20; ended at 75.
+        let since = Idle.since(lastSet: 0, seen: nil, activity: 30 * min, snooze: nil)
+        XCTAssertEqual(since, 30 * min)
+        XCTAssertEqual(Idle.state(since: since, now: 25 * min), .active)
+        XCTAssertEqual(Idle.state(since: since, now: 50 * min), .ask)
+        XCTAssertEqual(Idle.state(since: since, now: 75 * min), .end)
+        XCTAssertEqual(Idle.since(lastSet: 10 * min, seen: 2 * min, activity: nil, snooze: 40 * min), 40 * min, "keep going")
+        XCTAssertEqual(Idle.since(lastSet: 10 * min, seen: nil, activity: nil, snooze: nil), 10 * min)
+    }
 }
