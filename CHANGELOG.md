@@ -20,6 +20,15 @@ Home → App icon has all nine on Android, Halloween included. It's per phone, s
 your Android can disagree. On Android the new icon moves in once you leave the app, and some
 launchers need a second to notice.
 
+**The gym reminder's map, redrawn** (#614). It looked like a map someone bolted on, so now it looks
+like openGym: your gyms are cards with their address, radius and a switch each (swipe or ⋯ to
+rename or remove, with Undo), and adding one opens a big map with a search on top that puts gyms
+first, a radius circle in your accent colour you can drag bigger or smaller, and a big "I'm here
+right now" button. On the iPhone it's Apple Maps, the one you already know. On Android it's
+OpenStreetMap, now dark in dark mode, with an "Open in Google Maps" button for a second opinion.
+Your gyms still never leave the phone; a search goes to Apple or OpenStreetMap, and the app says so
+right under the search field.
+
 **AI Coach works with picky OpenAI-compatible gateways** (#804). Some endpoints answer the Coach
 with a plain 400 "please check the request parameters" and no hint why. The Coach now tries a
 simpler request on its own (a looser JSON mode, the other token-limit field, no temperature, and

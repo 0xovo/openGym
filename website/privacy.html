@@ -163,9 +163,13 @@
   <p><b>Gym reminder</b> (phone app, off until you switch it on). Where your gyms are stays on your
      phone: not synced, not in backups, not sent to us or to your server. The phone itself notices
      when you walk in (Android's location service or iOS region monitoring), so nobody, us
-     included, learns where you go. We don't want to know, honestly. Two things do go out: an
-     address you search for on the map goes to OpenStreetMap's Nominatim (just the text you
-     typed), and the map tiles come from OpenStreetMap. And if the phone is connected to your own
+     included, learns where you go. We don't want to know, honestly. Two things do go out: what you
+     type into the map's search, and the map itself. On the iPhone the map is Apple Maps, so a search
+     (and the street address of a pin you drop) goes to Apple, like any search in Apple's Maps app.
+     On Android it is OpenStreetMap: a search goes to OpenStreetMap's Nominatim (just the text you
+     typed and the rough area the map shows, at most one request a second) and the map tiles come
+     from OpenStreetMap's tile servers (© OpenStreetMap contributors, under their tile usage
+     policy). "Open in Google Maps" sends the pin's spot to Google only when you tap it. And if the phone is connected to your own
      server, it asks that server "trained today already?" when you arrive, so a workout logged on
      your laptop doesn't get you nagged. That question carries the date, not your location.</p>
   <p id="delete"><b>Deleting your data:</b> it's on your phone, so Settings → Reset or uninstalling the app
