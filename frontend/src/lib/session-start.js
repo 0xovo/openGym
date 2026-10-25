@@ -3,14 +3,16 @@
 // to identical entries, or the two paths drift apart the first time a prescription rule changes.
 // Imports both history.js and progression.js (which itself imports history.js); nothing in
 // either imports this file, so there is no cycle.
-import { buildSets, applyIntensifierPlan, modeOf, barFloor } from './history.js'
+import { buildSets, applyIntensifierPlan, modeOf, barFloor, isBw } from './history.js'
 import { isWarmupRow } from './workout-model.js'
-import { nextPrescription, applyPrescription, defaultIncrement, weightIncrement, plannedOf } from './progression.js'
+import { nextPrescription, applyPrescription, defaultIncrement, weightIncrement, plannedOf, deloadTo, DELOAD_FACTOR } from './progression.js'
 import { dropGrid } from './plates.js'
 import { backoffStepOf, applyBackoff } from './backoff.js'
 import { dbLoadFor, historyAs, ownedWeightsFor, withMeaning } from './dumbbells.js'
 import { isAssisted } from './exercises.js'
 import { sessionHistory } from './backfill.js'
+import { programmeSlot, pctWeight } from './programmes.js'
+import { todayISO } from './format.js'
 
 /**
  * Where a planned session's reps come from (Settings → During a workout). 'plan', the default:
@@ -41,19 +43,25 @@ export function buildPlannedEntry(stored, cfg, routine, { noProg = false } = {})
   const meaning = dbLoadFor(stored, cfg)
   const st = historyAs(stored, cfg.id, meaning)
   // `plan` is kept on the entry purely so the workout can explain the number it chose.
-  const plan = noProg ? { policy: 'off', kind: 'off' } : nextPrescription(st, cfg, routine)
+  let plan = noProg ? { policy: 'off', kind: 'off' } : nextPrescription(st, cfg, routine)
   // The warm-up ramp and the prescription snap to the exercise's own increment (1.25 kg
   // plates exist), not the unit default; a timed exercise's `inc` is seconds, so it keeps the
   // default for its optional load.
   const step = modeOf(cfg) === 'reps' ? weightIncrement(cfg, st.unit) : defaultIncrement(cfg.id, st.unit)
-  const planReps = !startsFromLast(st)
-  const fromLast = !noProg && plan.kind === 'off' && startsFromLast(st)
+  // A running programme's target for this exercise this week (lib/programmes.js) replaces the
+  // policy's prescription: the weight from the %1RM, the reps from the routine, so neither the
+  // policy nor "Your last session" moves numbers the programme set.
+  const slot = noProg ? null : programmeSlot(stored, routine?.id, cfg.id, stored?.active?.d || todayISO())
+  const policyKind = plan.kind
+  if (slot) plan = programmePlan(st, cfg, plan, slot, step)
+  const planReps = !startsFromLast(st) || plan.kind === 'programme'
+  const fromLast = !noProg && policyKind === 'off' && !slot && startsFromLast(st)
   // Warm-ups ramp over the dumbbells you own when the profile lists them (issue #376): a rung
   // lands on the heaviest bell under it, never on a weight in between that no rack holds.
   const ramp = (modeOf(cfg) === 'reps' && ownedWeightsFor(st, cfg)) || step
   // Back-off sets step down from the top set by the exercise's own step (lib/backoff.js).
   const backoffStep = modeOf(cfg) === 'reps' && backoffStepOf(cfg, st.unit) ? step : 0
-  const built = applyPrescription(buildSets(st, cfg, { step: ramp, rid: routine?.id, useTarget: plan.kind === 'off' && !fromLast, planReps }), plan, ramp, barFloor(st, cfg.id), isAssisted(cfg))
+  const built = applyPrescription(buildSets(st, cfg, { step: ramp, rid: routine?.id, useTarget: policyKind === 'off' && !fromLast, planReps }), plan, ramp, barFloor(st, cfg.id), isAssisted(cfg))
   const rows = backoffStep ? applyBackoff(built, backoffStep) : built
   const sets = applyIntensifierPlan(rows, cfg, dropGrid(st, cfg))
   const target = { ...cfg }
@@ -80,7 +88,31 @@ export function buildPlannedEntry(stored, cfg, routine, { noProg = false } = {})
     && rows.some(s => !isWarmupRow(s) && s.r !== cfg.reps)
   // `planned` is what the routine asked for, kept apart from the target the prescription moved,
   // so the next session can tell an edited plan from a progressed one (nextPrescription).
-  return { target, plan, sets, planned: plannedOf(cfg), ...(carried ? { carried: true } : {}) }
+  return { target, plan, sets, planned: plannedOf(cfg), ...(carried ? { carried: true } : {}), ...(slot?.deload ? { deload: true } : {}) }
+}
+
+/**
+ * The prescription a programme's target makes of the policy's (buildPlannedEntry). A %1RM with an
+ * estimate to take it from sets the weight; without one (a first session, a body-weight lift) the
+ * policy's weight stands. A deload week without a %1RM takes the policy's weight down by the
+ * deload factor. The reps and sets are left to the routine, the RPE rides along to be shown.
+ */
+export function programmePlan(st, cfg, plan, slot, step) {
+  const reps = modeOf(cfg) === 'reps' && !isBw(cfg) && !isAssisted(cfg)
+  const owned = reps ? ownedWeightsFor(st, cfg) : null
+  let weight = reps && slot.pct != null ? pctWeight(st, cfg.id, slot.pct, { step, owned, floor: barFloor(st, cfg.id) }) : null
+  if (weight == null && slot.deload && reps) {
+    const base = plan.weight ?? cfg.weight
+    if (base > 0) weight = deloadTo(base, step, DELOAD_FACTOR)
+  }
+  const why = [slot.pct != null && weight != null ? 'Week {0} of {1}: {2}% of your best 1RM' : slot.deload ? 'Week {0} of {1}: deload week' : 'Week {0} of {1}',
+    slot.week, slot.weeks, slot.pct]
+  return {
+    policy: plan.policy, kind: 'programme', why,
+    // Without a weight of its own the policy's stands, so the weight still moves as it would have.
+    ...(weight != null ? { weight } : plan.weight != null ? { weight: plan.weight } : {}),
+    prog: { week: slot.week, weeks: slot.weeks, ...(slot.pct != null ? { pct: slot.pct } : {}), ...(slot.rpe != null ? { rpe: slot.rpe } : {}), ...(slot.deload ? { deload: true } : {}) },
+  }
 }
 
 /**
@@ -145,7 +177,8 @@ export function buildSessionEntries(st, r) {
   // right weight already on the screen instead of being told about it afterwards.
   const noProg = r?.excludeFromProgression === true
   return (r ? r.ex : []).map(cfg => {
-    const built = buildPlannedEntry(st, cfg, r, { noProg })
-    return { id: cfg.id, sg: cfg.sg, ...built, ...(noProg ? { noProg: true } : {}) }
+    const { deload, ...built } = buildPlannedEntry(st, cfg, r, { noProg })
+    // A programme's deload week stays out of progression, as a deload routine does.
+    return { id: cfg.id, sg: cfg.sg, ...built, ...(noProg || deload ? { noProg: true } : {}) }
   })
 }
