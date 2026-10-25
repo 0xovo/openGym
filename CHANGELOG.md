@@ -29,6 +29,9 @@ dragged the page. WebKit's bug, our workaround. The App Store app and Safari tab
 **Tap the picture in a past workout for the how-to** (#805, thanks @sg41). The thumbnail opens the
 exercise's description, the rest of the row still opens its history.
 
+**Server dependencies patched** (#806, thanks @lodepav). body-parser, fast-uri, qs and zod move to
+their fixed versions in the API and the MCP server, nothing you'll notice except fewer CVEs.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a
