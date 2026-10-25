@@ -1352,3 +1352,38 @@ describe('date arguments must be dates the calendar has', () => {
     }
   })
 })
+
+/* ---------- get_programme (#159) ---------- */
+
+describe('get_programme', () => {
+  const block = () => ({ id: 'P', name: 'Block', at: 1, days: { 1: [S.routines[0].id] }, weeks: [{ rpe: 7, t: { '0025': { pct: 75 } } }, { deload: true }] })
+
+  test('lists the programmes and nothing running by default', () => {
+    S.programmes = { P: block() }
+    _seedStateForTests(S)
+    const r = call('get_programme')
+    expect(r.running).toBeNull()
+    expect(r.programmes).toHaveLength(1)
+    expect(r.programmes[0]).toMatchObject({ id: 'P', weeks: 2, schedule: { kind: 'weekdays', days: { Monday: ['Push Day'] } } })
+    expect(r.programmes[0].week_targets[0]).toEqual({ deload: false, rpe: 7, targets: [{ exercise_id: '0025', exercise_name: 'barbell bench press', routine_id: null, pct_1rm: 75, rpe: null }] })
+  })
+
+  test('the running one: its week and this week\'s targets, and preview_session opens at them', () => {
+    S.programmes = { P: block() }
+    S.week = { 1: [S.routines[0].id] }
+    S.programme = { id: 'P', startedOn: FAKE_TODAY_ISO, cycle: 1, bump: 0, saved: { week: {} } }
+    _seedStateForTests(S)
+    const r = call('get_programme')
+    expect(r.running).toMatchObject({ id: 'P', week: 1, weeks: 2, paused: false, done: false })
+    expect(r.running.this_week.rpe).toBe(7)
+    const bench = call('preview_session').exercises.find(e => e.id === '0025')
+    expect(bench.prescription).toMatchObject({ kind: 'programme', programme: { week: 1, weeks: 2, pct_1rm: 75, target_rpe: 7 } })
+    expect(bench.weight_source).toBe('programme')
+    expect(bench.reps_source).toBe('routine_plan')
+  })
+
+  test('a profile without programmes answers empty', () => {
+    const r = call('get_programme')
+    expect(r).toMatchObject({ running: null, programmes: [] })
+  })
+})

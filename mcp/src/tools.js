@@ -1,4 +1,4 @@
-/* The eight read-only tools. Each handler returns JSON; labels.js pre-substitutes any
+/* The read-only tools. Each handler returns JSON; labels.js pre-substitutes any
    {0}/{1} template the lib returns so the LLM gets final text, not template strings.
    ISO dates are validated on the way in; the handlers never see 'yesterday'. */
 import { z } from 'zod'
@@ -18,6 +18,7 @@ import {
 import { loadOfWorkouts, rankOf, levelsOf } from '../../frontend/src/lib/muscles.js'
 import { policyFor } from '../../frontend/src/lib/progression.js'
 import { buildSessionEntries, startsFromLast } from '../../frontend/src/lib/session-start.js'
+import { programmesOf, programmeStatus, programmeRoutineIds } from '../../frontend/src/lib/programmes.js'
 
 /* ---------- helpers ---------- */
 
@@ -518,6 +519,11 @@ function sourceOf(S, cfg, plan, field, routine) {
   // Except progression off under "start from your last session" (#217): there both the weight and
   // the reps are last time's, when there is a last time. A deload routine keeps its own numbers.
   if (!plan) return 'routine_plan'
+  // A running programme's %1RM set the weight (lib/programmes.js); its reps are the routine's.
+  if (plan.kind === 'programme') {
+    if (field === 'weight' && plan.prog?.pct != null && plan.weight != null) return 'programme'
+    if (field === 'reps') return 'routine_plan'
+  }
   if (plan.kind === 'off') {
     const fromLast = startsFromLast(S) && routine?.excludeFromProgression !== true
     return fromLast && lastEntryFor(S, cfg.id, routine && routine.id) ? 'last_session' : 'routine_plan'
@@ -534,6 +540,7 @@ function sourceOf(S, cfg, plan, field, routine) {
 }
 
 const SOURCE_TEXT = {
+  programme: 'the running programme\'s %1RM target for this week, from the best estimated 1RM',
   progression: 'the progression policy overrode the routine',
   confirmed_weight: 'your confirmed working weight for this exercise',
   last_session: 'carried over from the last time this routine had this exercise (or any routine, if this one never has)',
@@ -604,7 +611,9 @@ export const previewSession = {
           // Triple progression aims each set on its own ("12, 12, 12, 9"); `reps` is the first set's.
           row_reps: Array.isArray(plan.rowReps) ? plan.rowReps : undefined,
           sec: plan.sec != null ? plan.sec : undefined,
-          why: plan.why ? fmt(plan.why[0], plan.why.slice(1)) : null
+          why: plan.why ? fmt(plan.why[0], plan.why.slice(1)) : null,
+          // This week's target of a running programme, when it speaks to this exercise.
+          programme: plan.prog ? { week: plan.prog.week, weeks: plan.prog.weeks, pct_1rm: plan.prog.pct, target_rpe: plan.prog.rpe, deload: plan.prog.deload === true } : undefined
         },
         opening_sets: rows.map(s => ({
           phase: isWarmupRow(s) ? 'warmup' : 'work',
@@ -672,8 +681,49 @@ export const previewSession = {
 
 /* ---------- registration list ---------- */
 
+/* ---------- get_programme ---------- */
+
+/** get_programme — the programmes saved, and where the running one stands (#159). */
+export const getProgramme = {
+  name: 'get_programme',
+  description: 'Show the user\'s programmes: routines run as a block of 1 to 16 calendar weeks, each week with optional targets (a %1RM per exercise, an RPE per exercise or for the whole week, a deload week). `running` is the one in progress, or null: its current week (1-based) of how many, whether it is paused or done, and this week\'s targets. While one runs, its schedule IS the user\'s weekday plan or rotation (get_week_plan shows it), and preview_session already opens sessions at its targets. `programmes` lists every saved one with its schedule and weeks. Targets are keyed by exercise id, or by "routineId:exerciseId" for one routine only.',
+  schema: {},
+  handler: () => {
+    const S = getState()
+    if (!S) return noState()
+    const nameOf = id => (S.routines || []).find(r => r.id === id)?.name || null
+    const weekOut = w => ({
+      deload: w.deload === true,
+      rpe: w.rpe ?? null,
+      targets: Object.entries(w.t || {}).map(([key, v]) => {
+        const i = key.indexOf(':')
+        const exId = i < 0 ? key : key.slice(i + 1)
+        return { exercise_id: exId, exercise_name: exerciseOf(exId, S).n, routine_id: i < 0 ? null : key.slice(0, i), pct_1rm: v.pct ?? null, rpe: v.rpe ?? null }
+      }),
+    })
+    const st = programmeStatus(S, todayIso())
+    return {
+      today: todayIso(),
+      running: st ? {
+        id: st.programme.id, name: st.programme.name, week: st.week, weeks: st.weeks,
+        paused: st.paused, done: st.done, round: st.cycle, started_on: st.run.startedOn,
+        extra_pct_1rm: Number(st.run.bump) || 0,
+        this_week: st.current ? weekOut(st.current) : null,
+      } : null,
+      programmes: programmesOf(S).map(p => ({
+        id: p.id, name: p.name, weeks: p.weeks.length,
+        schedule: p.sequence
+          ? { kind: 'rotation', sequence: p.sequence.map(id => (id === 'rest' ? 'rest' : nameOf(id))) }
+          : { kind: 'weekdays', days: Object.fromEntries(Object.entries(p.days || {}).map(([d, ids]) => [DAY_NAMES[d], ids.map(nameOf).filter(Boolean)])) },
+        routine_ids: programmeRoutineIds(S, p),
+        week_targets: p.weeks.map(weekOut),
+      })),
+    }
+  }
+}
+
 export const TOOLS = [
-  listRoutines, getRoutine, previewSession, getWeekPlan, listWorkouts, getWorkout, getBodyweight, estimate1rm, muscleBalance
+  listRoutines, getRoutine, previewSession, getWeekPlan, listWorkouts, getWorkout, getBodyweight, estimate1rm, muscleBalance, getProgramme
 ]
 
 function noState() {
