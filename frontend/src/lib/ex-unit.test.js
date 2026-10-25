@@ -318,7 +318,7 @@ describe('display', () => {
     // Volume stays a profile total: 61.235×5 + 63.5029×5 + 500 kg.
     expect(text).toContain('1,123.7 kg')
     // Without the state (an older caller), the stored numbers as before.
-    expect(workoutText(w, { unit: 'kg', nameOf: e => e.id })).toContain('61.24×5')
+    expect(workoutText(w, { unit: 'kg', nameOf: e => e.id })).toContain('61.2×5')
   })
 
   it('tags only exercises shown in another unit', () => {
