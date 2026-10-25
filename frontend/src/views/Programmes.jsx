@@ -227,7 +227,7 @@ export function ProgrammeEdit() {
   const update = useStore(s => s.update)
   const p = programmeById(S, id)
   if (!p) return <div className="narrow"><div className="hdr">
-    <button className="iconbtn" onClick={() => nav('/plan/programmes')} aria-label={t('Programmes')}><Icon name="chevronLeft" /></button>
+    <button className="iconbtn" data-back="/plan/programmes" onClick={() => nav('/plan/programmes')} aria-label={t('Programmes')}><Icon name="chevronLeft" /></button>
   </div><div className="empty">{t('This programme is gone.')}</div></div>
   const st = programmeStatus(S)
   const running = st?.programme.id === id
