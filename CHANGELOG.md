@@ -15,6 +15,15 @@ runs. Pause it for a holiday, run it again a bit heavier when it's done, share i
 starters to try: a 4-week strength block, 6 weeks of upper/lower by effort, and 12 weeks of 5×5-style
 linear with a deload every fourth week. The MCP server can read it too (`get_programme`).
 
+**kg and lb in the same gym** (#657, thanks @ifrankerem, and @connor-johnstone, @XinwangTao and
+@youssmohmail-create for the use cases). Any exercise can have its own weight unit: lb dumbbells and
+kg plates, or kg free weights next to the lb machines. Pick it under the exercise's settings, in a
+workout or in the routine editor. That exercise is then shown and typed in its unit everywhere: the
+rows, + and −, plates and bar, your dumbbell and stack lists, steps, warm-ups, last time, records,
+history and its chart. Type 45 lb and you'll see 45 lb again, no 44.9 creeping in. Totals like
+volume and Lifted in total stay in your profile's unit, and so do backups, the CSV, the Coach and
+the MCP server. The Apple Watch shows and edits it in its unit too, and shared plans carry it.
+
 **Your own app icon on Android too.** The picker from 1.4.3 leaves the iPhone: Settings → Look &
 Home → App icon has all nine on Android, Halloween included. It's per phone, so your iPhone and
 your Android can disagree. On Android the new icon moves in once you leave the app, and some

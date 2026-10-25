@@ -2679,4 +2679,7 @@ export default {
   'Time per exercise': 'เวลาต่อท่า',
   'Average time a session, counted from when its sets were ticked.': 'เวลาเฉลี่ยต่อครั้ง นับจากเวลาที่ติ๊กเซต',
   'No timed sets in this period.': 'ไม่มีเซตที่มีเวลาในช่วงนี้',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'ตามโปรไฟล์ ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'สำหรับยิมที่ใช้ทั้ง kg และ lb ท่านี้จะแสดงและกรอกด้วยหน่วยนี้ทุกที่ รวมถึงแผ่นน้ำหนักและระยะเพิ่ม ยอดรวมในสถิติยังเป็น {0}',
 }

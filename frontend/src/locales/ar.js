@@ -2723,4 +2723,7 @@ export default {
   'Time per exercise': 'الوقت لكل تمرين',
   'Average time a session, counted from when its sets were ticked.': 'متوسط الوقت في الجلسة، محسوبًا من أوقات تسجيل مجموعاته.',
   'No timed sets in this period.': 'لا توجد مجموعات مُوقّتة في هذه الفترة.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'مثل الملف الشخصي ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'للصالات التي تخلط بين kg وlb. يُعرض هذا التمرين ويُكتب بهذه الوحدة في كل مكان، بما في ذلك الأقراص والخطوات. تبقى المجاميع في الإحصاءات بوحدة {0}.',
 }

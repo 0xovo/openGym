@@ -2747,4 +2747,7 @@ export default {
   'Time per exercise': 'প্রতি ব্যায়ামের সময়',
   'Average time a session, counted from when its sets were ticked.': 'প্রতি সেশনে গড় সময়, সেটগুলো যখন টিক দেওয়া হয়েছিল তা থেকে গণনা করা।',
   'No timed sets in this period.': 'এই সময়ে কোনো সময়-চিহ্নিত সেট নেই।',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'প্রোফাইলের মতো ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'যে জিমে kg আর lb দুটোই আছে তাদের জন্য। এই এক্সারসাইজ সব জায়গায় এই এককেই দেখানো ও লেখা হয়, প্লেট আর ধাপসহ। পরিসংখ্যানের মোট হিসাব {0}-তেই থাকে।',
 }

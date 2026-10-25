@@ -2665,4 +2665,7 @@ export default {
   'Time per exercise': 'Час на вправу',
   'Average time a session, counted from when its sets were ticked.': 'Середній час за тренування, за часом позначення підходів.',
   'No timed sets in this period.': 'У цей період немає підходів із часом.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'Як у профілі ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'Для залів, де змішані кг і фунти. Ця вправа всюди показується й вводиться в цій одиниці, разом із млинцями та кроками. Підсумки в статистиці лишаються в {0}.',
 }

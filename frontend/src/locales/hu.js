@@ -2671,4 +2671,7 @@ export default {
   'Time per exercise': 'Idő gyakorlatonként',
   'Average time a session, counted from when its sets were ticked.': 'Átlagos idő edzésenként, a sorozatok kipipálásától számolva.',
   'No timed sets in this period.': 'Ebben az időszakban nincs időzített sorozat.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'Mint a profilban ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'Olyan termekhez, ahol keveredik a kg és a lb. Ez a gyakorlat mindenhol ebben jelenik meg és ebben írod be, a tárcsákat és a lépéseket is beleértve. A statisztika összesítői {0} maradnak.',
 }

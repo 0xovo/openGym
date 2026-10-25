@@ -2668,4 +2668,7 @@ export default {
   'Time per exercise': 'प्रति व्यायाम समय',
   'Average time a session, counted from when its sets were ticked.': 'प्रति सत्र औसत समय, सेट्स पर टिक लगाने के समय से गिना गया।',
   'No timed sets in this period.': 'इस अवधि में समय वाले कोई सेट नहीं।',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'प्रोफ़ाइल जैसा ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'उन जिम के लिए जहाँ kg और lb दोनों हैं। यह एक्सरसाइज़ हर जगह इसी इकाई में दिखती और लिखी जाती है, प्लेट और स्टेप भी। Stats के कुल योग {0} में ही रहते हैं।',
 }

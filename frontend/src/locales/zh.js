@@ -2668,4 +2668,7 @@ export default {
   'Time per exercise': '每个动作的用时',
   'Average time a session, counted from when its sets were ticked.': '每次训练的平均用时，按勾选各组的时间计算。',
   'No timed sets in this period.': '这段时间内没有带时间的组。',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': '跟随个人资料（{0}）',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': '适合 kg 和 lb 混用的健身房。这个动作在各处都以该单位显示和输入，包括杠铃片和步长。统计里的总量仍为 {0}。',
 }

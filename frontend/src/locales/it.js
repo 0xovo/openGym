@@ -2668,4 +2668,7 @@ export default {
   'Time per exercise': 'Tempo per esercizio',
   'Average time a session, counted from when its sets were ticked.': 'Tempo medio per sessione, contato da quando sono state spuntate le serie.',
   'No timed sets in this period.': 'Nessuna serie con tempo in questo periodo.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'Come il profilo ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'Per le palestre che mescolano kg e lb. Questo esercizio viene mostrato e inserito ovunque in questa unità, dischi e incrementi compresi. I totali nelle statistiche restano in {0}.',
 }

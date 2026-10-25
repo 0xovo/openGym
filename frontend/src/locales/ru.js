@@ -2672,4 +2672,7 @@ export default {
   'Time per exercise': 'Время на упражнение',
   'Average time a session, counted from when its sets were ticked.': 'Среднее время за тренировку, по времени отметки подходов.',
   'No timed sets in this period.': 'В этот период нет подходов со временем.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'Как в профиле ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'Для залов, где смешаны кг и фунты. Это упражнение везде показывается и вводится в этой единице, включая блины и шаги. Итоги в статистике остаются в {0}.',
 }

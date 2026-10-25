@@ -2668,4 +2668,7 @@ export default {
   'Time per exercise': 'Egzersiz başına süre',
   'Average time a session, counted from when its sets were ticked.': 'Setlerin işaretlendiği zamanlardan hesaplanan, antrenman başına ortalama süre.',
   'No timed sets in this period.': 'Bu dönemde süresi olan set yok.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'Profildeki gibi ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'kg ve lb’yi karıştıran salonlar için. Bu egzersiz her yerde bu birimle gösterilir ve girilir, plakalar ve artışlar dahil. İstatistiklerdeki toplamlar {0} olarak kalır.',
 }

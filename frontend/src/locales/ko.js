@@ -2668,4 +2668,7 @@ export default {
   'Time per exercise': '운동별 시간',
   'Average time a session, counted from when its sets were ticked.': '세트를 체크한 시각으로 계산한 세션당 평균 시간입니다.',
   'No timed sets in this period.': '이 기간에는 시간이 기록된 세트가 없어요.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': '프로필과 같게 ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'kg과 lb를 함께 쓰는 헬스장을 위해. 이 운동은 원판과 증가 단위까지 어디서나 이 단위로 보이고 입력돼요. 통계의 합계는 계속 {0}로 남아요.',
 }

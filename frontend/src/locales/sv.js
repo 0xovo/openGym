@@ -2715,4 +2715,7 @@ export default {
   'Time per exercise': 'Tid per övning',
   'Average time a session, counted from when its sets were ticked.': 'Snittid per pass, räknat från när seten bockades av.',
   'No timed sets in this period.': 'Inga set med tid under den här perioden.',
+  // --- exercise weight unit (#657) ---
+  'Profile default ({0})': 'Som profilen ({0})',
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'För gym som blandar kg och lb. Den här övningen visas och skrivs in i den överallt, viktskivor och steg inräknade. Totalerna i statistiken stannar i {0}.',
 }

@@ -1708,6 +1708,8 @@ export const PT_BR_OVERRIDES = {
   'The pumpkin is napping. Come back tomorrow.': 'A abóbora está tirando uma soneca. Volte amanhã.',
   'Back next October. The spiders are on holiday.': 'Volta em outubro. As aranhas estão de férias.',
   'Try the Halloween app icon': 'Experimente o ícone de Halloween do app',
+  // --- exercise weight unit (#657) ---
+  'For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.': 'Para academias que misturam kg e lb. Este exercício aparece e é digitado nesta unidade em todo lugar, anilhas e incrementos incluídos. Os totais nas estatísticas ficam em {0}.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
