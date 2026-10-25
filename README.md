@@ -21,10 +21,12 @@ on your phone, synced across your devices, behind your own passkey login.
 [![Coverage](https://gitlab.com/DuarteSantos8/opengym/badges/main/coverage.svg?job=test:frontend&style=flat-square)](https://gitlab.com/DuarteSantos8/opengym/-/pipelines?ref=main)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-a3e635?style=flat-square)](LICENSE)
 
+<a href="https://apps.apple.com/app/id6822275400"><img src="website/app-store-badge.svg" alt="Download on the App Store" height="44"></a>
+
 [Website](https://opengym.ch) ·
 [Live demo](https://opengym.ch/demo/) ·
 [Android APK](https://github.com/DuarteSantos8/openGym/releases/latest) ·
-[iPhone beta (TestFlight)](https://testflight.apple.com/join/RKATb61k) ·
+[App Store](https://apps.apple.com/app/id6822275400) ·
 [Self-hosting guide](docs/SELF_HOSTING.md) ·
 [Roadmap](ROADMAP.md) ·
 [Changelog](CHANGELOG.md)
@@ -202,7 +204,7 @@ the phone, no account) or connect them to your server and sync.
 
 | | Get it |
 |---|---|
-| **iPhone and iPad**, with the **Apple Watch** app | The App Store. Until it is listed there, the [public TestFlight beta](https://testflight.apple.com/join/RKATb61k) |
+| **iPhone and iPad**, with the **Apple Watch** app | The [App Store](https://apps.apple.com/app/id6822275400), in every App Store country |
 | **Android** | The signed APK from the [latest release](https://github.com/DuarteSantos8/openGym/releases/latest) or [opengym.ch](https://opengym.ch), in three sizes: **Standard** (`openGym-X.Y.Z.apk`, animations at 180 px, about 315 MB), **Plus** (`openGym-Plus-X.Y.Z.apk`, 240 px, about 424 MB) and **HD** (`openGym-HD-X.Y.Z.apk`, 360 px, about 760 MB). It updates itself and stays the kind you picked |
 | **Google Play** | Coming: a new developer account has to run a closed test first |
 

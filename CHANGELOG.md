@@ -300,15 +300,14 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   password sign-in (`PASSWORD_LOGIN`) and guest mode (`ALLOW_GUEST`), including why a stack
   without its api quietly turns you into a guest.
 
-## v1.4.2 (2026-10-18)
+## v1.4.2 (2026-10-23)
 
 openGym comes to the App Store, with an Apple Watch app in tow. Plus everything you asked for
 since v1.4.1, five reported security holes closed and a fresh look at the animations.
 
 **openGym on the iPhone.** The App Store app is the same openGym: use it on the phone alone, or
 connect it to your own server. Your data stays where it is (no account with us, nothing collected).
-Want it before the App Store has it? Join the public TestFlight beta:
-https://testflight.apple.com/join/RKATb61k
+Get it on the App Store: https://apps.apple.com/app/id6822275400
 
 - **Apple Watch.** Start a workout on the wrist, or on the phone and the watch app opens with it,
   then tick off sets with a big Done button and the Digital Crown for reps and weight. Rest is a

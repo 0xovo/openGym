@@ -10,7 +10,7 @@ TestFlight beta) on an iPhone, the APK on Android. Then read
 
 | | Where | Updates |
 |---|---|---|
-| **iPhone and iPad** | The App Store. Before it is there, or to test the next version early: the [public TestFlight beta](https://testflight.apple.com/join/RKATb61k) | the App Store or TestFlight |
+| **iPhone and iPad** | The [App Store](https://apps.apple.com/app/id6822275400). To test the next version early: the [public TestFlight beta](https://testflight.apple.com/join/RKATb61k) | the App Store or TestFlight |
 | **Apple Watch** | Comes with the iPhone app | with the iPhone app |
 | **Android, APK** | [GitHub release](https://github.com/DuarteSantos8/openGym/releases/latest) or [opengym.ch](https://opengym.ch). From v1.4.2 in three sizes: Standard (animations at 180 px), Plus (240 px) and HD (360 px, the biggest download) | the app itself, each size to its own kind |
 | **Android, Google Play** | Coming: the account has to run a closed test first | Google Play, sharper animations as downloads |
@@ -463,7 +463,7 @@ so `npx` fetches it for that one run.
 ## Distributing your own build
 
 The signed APK stays the way to get openGym on Android without a store, and it updates itself.
-The App Store app (public TestFlight beta: https://testflight.apple.com/join/RKATb61k) and the
+The [App Store app](https://apps.apple.com/app/id6822275400) and the
 Google Play build come from the same code; how they are built and uploaded is in
 [APP_STORES.md](APP_STORES.md).
 
@@ -509,7 +509,7 @@ apksigner sign --ks my.keystore --ks-key-alias opengym --out openGym.apk aligned
 
 ### iPhone: build it yourself
 
-The App Store app is the easy way. If you want your own build, for example of a fork:
+The [App Store app](https://apps.apple.com/app/id6822275400) is the easy way. If you want your own build, for example of a fork:
 
 - **Xcode free signing:** open `ios/` in Xcode with a free Apple ID as the team and run it
   onto your own iPhone. Apple expires the signature after 7 days; re-run from Xcode to renew.
