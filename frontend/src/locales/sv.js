@@ -2617,4 +2617,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Bara för den här telefonen. Vissa hemskärmar behöver en stund på sig att hänga med.',
   'New icon on its way. It shows up once you leave the app.': 'Ny ikon på väg. Den dyker upp när du lämnar appen.',
   'The icon could not be changed.': 'Ikonen gick inte att byta.',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'Stämmer det?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Vikt: {0} är mer än dubbelt så mycket som ditt tyngsta, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Reps: {0} är mer än dubbelt så många som ditt bästa, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Vikt: {0} är under en tredjedel av förra gångens {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Reps: {0} är under en tredjedel av förra gångens {1}.',
+  'Fix it': 'Rätta',
+  'Log as typed': 'Logga som skrivet',
 }

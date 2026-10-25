@@ -2576,10 +2576,10 @@ export default {
   'The icon could not be changed.': 'Не удалось сменить значок.',
   // --- workout: a likely typo asked about at the tick ---
   'Is that right?': 'Всё верно?',
-  'Weight: {0} is more than twice your heaviest, {1}.': 'Вес: {0} — больше чем вдвое выше вашего рекорда, {1}.',
-  'Reps: {0} is more than twice your most, {1}.': 'Повт.: {0} — больше чем вдвое выше вашего рекорда, {1}.',
-  'Weight: {0} is under a third of last time’s {1}.': 'Вес: {0} — меньше трети от прошлого раза, {1}.',
-  'Reps: {0} is under a third of last time’s {1}.': 'Повт.: {0} — меньше трети от прошлого раза, {1}.',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Вес: {0}, это больше чем вдвое выше вашего рекорда, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Повт.: {0}, это больше чем вдвое выше вашего рекорда, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Вес: {0}, это меньше трети от прошлого раза, {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Повт.: {0}, это меньше трети от прошлого раза, {1}.',
   'Fix it': 'Исправить',
   'Log as typed': 'Записать как есть',
 }

@@ -17,6 +17,11 @@ simpler request on its own (a looser JSON mode, the other token-limit field, no 
 as a last resort JSON asked for in the prompt only), remembers what that endpoint and model
 accepted so the next run asks right away, and if nothing works shows you the endpoint's own words.
 
+**"Is that right?" before a likely typo** (#811, thanks @lodepav). Tick a set at 300 kg when your
+best is 30 and openGym asks first, because whatever you tick becomes last time, the next target and
+maybe a shiny fake PR. Fix it leaves the set open, Log as typed means you really did. Only on a tick
+by hand: never an untick, a hold's timer, the watch, a first time or an assisted lift's weight.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a
