@@ -1432,6 +1432,29 @@ body.chips-dragging *{cursor:inherit}
 }
 .progline.warn{color:var(--yellow)}
 .progline svg{flex:none;margin-top:2px}
+/* Programmes (#159, views/Programmes.jsx): the running one on Home, in Plan and on its own screen.
+   Every row keeps to one line on a 320px phone: the name gives way, the chip never does. */
+.prog-chip{max-width:100%;margin:0 0 8px;color:var(--acc)}
+.prog-chip span{overflow:hidden;text-overflow:ellipsis}
+.prog-strip{width:100%;display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:10px 12px;
+  border-radius:12px;background:var(--surface);color:var(--label);text-align:start;font-size:15px}
+.prog-strip .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog-strip .tag{flex:none}
+.prog-strip svg{flex:none;color:var(--acc)}
+.prog-run{margin-bottom:16px}
+.prog-run .lbl2{font-size:11px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--label-3)}
+.prog-run .prog-name{font-weight:500;font-size:17px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog-run .tag{flex:none;white-space:nowrap}
+.prog-bar{height:4px;border-radius:2px;background:var(--surface-3);margin-top:10px;overflow:hidden}
+.prog-bar span{display:block;height:100%;background:var(--acc);border-radius:2px}
+.prog-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.prog-actions.col{flex-direction:column;margin-top:16px}
+.prog-lift .lrow-t{font-size:15px}
+.prog-pct{flex:none;display:flex;align-items:baseline;gap:3px;background:var(--surface-2);border-radius:10px;padding:0 10px}
+.prog-pct .num{width:4ch;min-height:40px;text-align:end;background:none;border:none;outline:none;font-size:17px;font-weight:500}
+.prog-pct i{font-style:normal;font-size:13px;color:var(--label-2)}
+.lrow.prog-now .lrow-t{color:var(--acc);font-weight:600}
+.prog-weeks .stp{flex:none;width:136px}
 /* "Last time" / "Best set" under the plan line (#173): a button that switches between the two,
    looking like the plain line it replaced, with a small icon to say it can be tapped. */
 .refline{width:100%;display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;padding:0;text-align:start}

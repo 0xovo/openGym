@@ -33,6 +33,7 @@ import { isoOf, todayISO, uid, weekKey, MONDAY, SUNDAY } from './format.js'
 import { queueOf } from './queue.js'
 import { REST, saveRotation, startPass, stopPass, chooseFixedWeek } from './rotation.js'
 import { best1RM } from './onerm.js'
+import { t } from './i18n-core.js'
 
 export const MAX_WEEKS = 16
 export const PCT_MIN = 30
@@ -291,6 +292,15 @@ export function repeatProgramme(s, today = todayISO(), bump = 0, now = Date.now(
   s.programme = { ...run, startedOn: today, ...next }
   delete s.programme.pausedOn
   return true
+}
+
+/** "Week 2 of 6", "Push block, paused", "Programme done": the running programme in a few words, or null. */
+export function programmeChip(S, today = todayISO()) {
+  const st = programmeStatus(S, today)
+  if (!st) return null
+  if (st.done) return t('Programme done')
+  if (st.paused) return t('{0}, paused', st.programme.name || t('Programme'))
+  return t('Week {0} of {1}', st.week, st.weeks)
 }
 
 /* ------------------------------- targets for a session ------------------------------- */

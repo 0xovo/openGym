@@ -71,6 +71,8 @@ const ProgressPhotos = lazyView(() => import('./views/ProgressPhotos.jsx'))
 // only needs Home, and these are fetched right behind it the same way.
 const CheckIn = lazyView(() => import('./views/CheckIn.jsx'))
 const RoutineEdit = lazyView(() => import('./views/RoutineEdit.jsx'))
+const Programmes = lazyView(() => import('./views/Programmes.jsx'))
+const ProgrammeEdit = lazyView(() => import('./views/Programmes.jsx').then(m => ({ default: m.ProgrammeEdit })))
 const Stats = lazyView(() => import('./views/Stats.jsx'))
 const History = lazyView(() => import('./views/History.jsx'))
 const Library = lazyView(() => import('./views/Library.jsx'))
@@ -292,6 +294,8 @@ function Shell() {
       {S.checkIn !== false && <Route path="/checkin" element={<CheckIn />} />}
       <Route path="/plan" element={<Plan />} />
       <Route path="/plan/r/:id" element={<RoutineEdit />} />
+      <Route path="/plan/programmes" element={<Programmes />} />
+      <Route path="/plan/prog/:id" element={<ProgrammeEdit />} />
       <Route path="/workout" element={<Workout />} />
       <Route path="/stats" element={<Stats />} />
       <Route path="/history" element={<History />} />
