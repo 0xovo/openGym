@@ -61,9 +61,9 @@ vi.mock('@capacitor/local-notifications', () => ({
 }))
 // The map is Leaflet in the phone app; here a stand-in that records what the page asks of it.
 vi.mock('leaflet', () => {
-  const layer = () => ({ addTo() { return this }, on() { return this }, setLatLng() {}, setOpacity() {}, setStyle() {}, setRadius() {}, getLatLng: () => ({ lat: 0, lng: 0 }), options: { opacity: 0 } })
+  const layer = () => ({ addTo() { return this }, on() { return this }, setLatLng() {}, setOpacity() {}, setStyle() {}, setRadius() {}, getLatLng: () => ({ lat: 0, lng: 0 }), getBounds: () => [[0, 0], [1, 1]], options: { opacity: 0 } })
   const L = {
-    map: () => ({ setView() { return this }, attributionControl: { setPrefix() {} }, on() {}, invalidateSize() {}, remove() {}, getZoom: () => 2, distance: () => 0 }),
+    map: () => ({ setView() { return this }, attributionControl: { setPrefix() {} }, on() {}, invalidateSize() {}, remove() {}, getZoom: () => 2, distance: () => 0, fitBounds() {} }),
     tileLayer: layer, marker: layer, circle: layer, divIcon: () => ({}), control: { zoom: () => ({ addTo() {} }) },
   }
   return { default: L, ...L }
@@ -327,6 +327,15 @@ describe('one gym: search, here, Google Maps, Apple Maps', () => {
     await submit()
     await click(host.querySelector('.gmap-hit'))
     expect(host.querySelector('input[aria-label="Name"]').value).toBe('Basement')
+  })
+
+  it('Enter presses Search, not the field\'s clear button (the first button in the form)', async () => {
+    mocks.location = { state: { draft: {} } }
+    await render(<GymEditPage />)
+    await type(field(), 'iron')
+    const buttons = [...host.querySelectorAll('.gmap-search button')]
+    // implicit submission uses the first submit button: only Search may be one
+    expect(buttons.filter(b => b.type === 'submit').map(b => b.textContent)).toEqual(['Search'])
   })
 
   it('nothing found says so', async () => {

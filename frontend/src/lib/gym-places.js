@@ -26,6 +26,17 @@ export const TILES = Object.freeze({
   attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
 })
 export const MIN_GAP_MS = 1000
+
+// In the phone app the request goes out natively (CapacitorHttp), with the User-Agent above. A
+// plain browser may not set one: there it would only cost a CORS preflight Nominatim refuses, and
+// the page's Referer names the app instead, which is what the policy asks of browser apps.
+async function placeFetch(url, init) {
+  let native = false
+  try { native = (await import('@capacitor/core')).Capacitor.isNativePlatform() } catch { /* no Capacitor */ }
+  if (native) return nativeFetch(url, init)
+  const { 'User-Agent': _ua, ...headers } = init.headers || {}
+  return fetch(url, { ...init, headers, referrerPolicy: 'strict-origin-when-cross-origin' })
+}
 const CACHE_MAX = 40
 
 // What Nominatim calls a gym. These come first in the results, the rest after them by distance.
@@ -64,7 +75,7 @@ export function rankPlaces(places, near) {
  * A place search with Nominatim's manners built in. `fetcher`, `now` and `sleep` are for tests.
  * search(q, { near }) resolves to ranked places ([] for an empty question).
  */
-export function createPlaceSearch({ fetcher = nativeFetch, now = () => Date.now(), sleep = ms => new Promise(r => setTimeout(r, ms)), lang = () => getLang() || 'en' } = {}) {
+export function createPlaceSearch({ fetcher = placeFetch, now = () => Date.now(), sleep = ms => new Promise(r => setTimeout(r, ms)), lang = () => getLang() || 'en' } = {}) {
   const cache = new Map()
   const flying = new Map()
   let nextAt = 0

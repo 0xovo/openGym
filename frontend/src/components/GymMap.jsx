@@ -53,9 +53,12 @@ export default function GymMap({ pos, radius, onPick, onRadius, label, handleLab
       // Let go: the handle snaps back onto the edge (it may have been dragged off to the side).
       handle.on('dragend', () => placeHandle())
       map.on('click', e => moveTo(e.latlng))
-      live.current = { map, marker, circle, handle, placeHandle, show }
+      // The whole circle in view, with room for the search on top: a phone at 320 px included.
+      const frame = () => map.fitBounds(circle.getBounds(), { padding: [44, 44], maxZoom: 18, animate: false })
+      if (shown) frame()
+      live.current = { map, marker, circle, handle, placeHandle, show, frame }
       // The page may still be sliding in: measure once it sits.
-      setTimeout(() => { if (!gone) map.invalidateSize() }, 350)
+      setTimeout(() => { if (!gone) { map.invalidateSize(); if (marker.options.opacity === 1) frame() } }, 350)
     }).catch(() => {})
     return () => { gone = true; live.current?.map.remove(); live.current = null }
   }, [])
@@ -67,7 +70,7 @@ export default function GymMap({ pos, radius, onPick, onRadius, label, handleLab
     if (Math.abs(cur.lat - pos.lat) < 1e-7 && Math.abs(cur.lng - pos.lng) < 1e-7 && m.marker.options.opacity === 1) return
     m.marker.setLatLng([pos.lat, pos.lng]); m.circle.setLatLng([pos.lat, pos.lng])
     m.show(); m.placeHandle()
-    m.map.setView([pos.lat, pos.lng], Math.max(m.map.getZoom(), 17))
+    m.frame()
   }, [pos?.lat, pos?.lng])
   useEffect(() => { const m = live.current; if (m) { m.circle.setRadius(radius); m.placeHandle() } }, [radius])
   return <div className="gym-map" ref={host} role="application" aria-label={label} />
