@@ -1553,10 +1553,12 @@ function ActiveWorkout() {
   // Ending the session without saving it, from the Finish sheet only. It used to end the header ⋯
   // as a red trash too, right where the exercise ⋯ keeps Remove exercise, and after a hard session
   // the two got mixed up (#751).
+  // Named for the watch first: gone from its snapshot it would look finished, and be saved to Apple Health (#776).
+  // The watch's own Discard (confirmed there) runs this too.
+  const discardNow = () => { markDiscarded(useStore.getState().S.active?.id); update(s => { s.active = null }); stopRest(); stopWork(); nav('/home') }
   const discardWorkout = () => confirmSheet({
     title: t('Discard workout?'), message: t('The sets you logged in this session will be lost.'), confirmText: t('Discard'), danger: true,
-    // Named for the watch first: gone from its snapshot it would look finished, and be saved to Apple Health (#776).
-    onConfirm: () => { markDiscarded(useStore.getState().S.active?.id); update(s => { s.active = null }); stopRest(); stopWork(); nav('/home') },
+    onConfirm: discardNow,
   })
   // The header ⋯, in groups: the settings you change at the gym first (their own sheet, the same
   // values as Settings), then what to add and what to change about this workout. Nothing in it
@@ -1934,6 +1936,7 @@ function ActiveWorkout() {
       if (at || hr) mutEntry(idx, en => { const set = en.sets[i]; if (!(oneSide ? set?.sides?.[oneSide]?.done : set?.done)) return; if (at) set.at = at; if (hr) set.hr = hr })
     },
     finish: () => { if (!useStore.getState().S.active?.editingWorkoutId) finishWorkoutNow() },
+    discard: () => { if (!useStore.getState().S.active?.editingWorkoutId) discardNow() },
   }), [])
 
   // The Lock Screen's Done (lib/live-activity.js) ticks its set through this same toggle, as if

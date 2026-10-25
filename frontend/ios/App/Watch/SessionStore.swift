@@ -704,6 +704,21 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         Haptics.finished()
     }
 
+    /// Discards the session: nothing saved here or in Apple Health, and the phone drops it too.
+    func discard() {
+        closeRest(at: Date())
+        let (next, event) = SessionCore.finish(state, at: Date().timeIntervalSince1970 * 1000, id: UUID().uuidString, discard: true)
+        guard let ev = event else { return }
+        health.end(save: false)
+        stopHold()
+        skipRest()
+        dropClips()
+        send(event: ev)
+        state = next
+        summary = nil
+        Haptics.discarded()
+    }
+
     func skipRest() {
         ackRestOver()
         closeRest(at: Date())
@@ -993,6 +1008,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
  *   skip       a soft one going down
  *   count      a click each second of the 3-2-1 before a workout
  *   ask        two taps: "All done?", nothing logged for 20 minutes
+ *   discarded  stop alone: the workout is gone, nothing saved
  */
 enum Haptics {
     private static var device: WKInterfaceDevice { WKInterfaceDevice.current() }
@@ -1009,4 +1025,5 @@ enum Haptics {
     static func skip() { play([(0, .directionDown)]) }
     static func count() { play([(0, .click)]) }
     static func ask() { play([(0, .notification), (0.6, .notification)]) }
+    static func discarded() { play([(0, .stop)]) }
 }

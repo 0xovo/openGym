@@ -300,8 +300,8 @@ enum SessionCore {
         return (s, event)
     }
 
-    /// The session finished here.
-    static func finish(_ s0: SessionState, at: Double, id: String) -> (SessionState, Event?) {
+    /// The session finished here, or discarded here (the phone drops it unsaved).
+    static func finish(_ s0: SessionState, at: Double, id: String, discard: Bool = false) -> (SessionState, Event?) {
         guard let w = s0.workout else { return (s0, nil) }
         var s = s0
         s.workout = nil
@@ -309,7 +309,7 @@ enum SessionCore {
         s.skipped = nil
         s.startedHere = nil
         if let wid = w.id { s.finishedHere = Array((s.finishedHere + [wid]).suffix(5)) }
-        return (s, ["id": id, "type": "finish", "wid": w.id ?? "", "at": at])
+        return (s, ["id": id, "type": discard ? "discard" : "finish", "wid": w.id ?? "", "at": at])
     }
 
     /// The set to do next in an exercise: the one picked, or the first not done.

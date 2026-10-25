@@ -204,7 +204,7 @@ export function clipsFor (S, packs = animPacks().packs || {}) {
 
 /* ---------- applying the watch's events ---------- */
 
-let handlers = null      // the workout screen's: setDone, finish
+let handlers = null      // the workout screen's: setDone, finish, discard
 let appHandlers = null   // the app's: start
 const readApplied = () => { try { return JSON.parse(localStorage.getItem(APPLIED_KEY)) || [] } catch { return [] } }
 const writeApplied = ids => { try { localStorage.setItem(APPLIED_KEY, JSON.stringify(ids.slice(-APPLIED_MAX))) } catch { /* the queue's ack is what counts */ } }
@@ -224,6 +224,7 @@ function entryIndexOf (A, ev) {
  *   start   { routineIds, wid, at }  the app starts that session with the watch's id and start
  *   setDone { wid, exId, entryIdx, setIdx, w, r, at }   the workout screen's own tick
  *   finish  { wid, at }              the workout screen's own Finish and save
+ *   discard { wid, at }              the workout screen's own Discard (confirmed on the watch)
  *   setHr   { wid, exId, entryIdx, setIdx, hr?, restHr? }   heart rate on a set (lib/heart-rate.js)
  *
  * A tick for a workout already saved (finished on the phone while the watch was away) is written
@@ -291,12 +292,13 @@ export function applyEvents (events, getState) {
         if (!appHandlers) break
         appHandlers.patchSet({ wid: ev.wid, exId: ev.exId, entryIdx: ev.entryIdx, setIdx: ev.setIdx }, fields)
       }
-    } else if (ev.type === 'finish' && ours) {
+    } else if ((ev.type === 'finish' || ev.type === 'discard') && ours) {
       if (!handlers) {
         if (appHandlers?.openWorkout) appHandlers.openWorkout()
         break
       }
-      handlers.finish()
+      if (ev.type === 'finish') handlers.finish()
+      else handlers.discard?.()
     }
     // Applied, or meaningless now (another workout, a set that is gone): either way it is done.
     applied.push(ev.id)
