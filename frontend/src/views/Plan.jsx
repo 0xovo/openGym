@@ -169,6 +169,7 @@ export default function Plan() {
 
   return <div className="narrow plan">
     <div className="hdr">
+      <SeasonDeco spot="header-bats" />
       <div><h1>{t('Plan')}</h1><div className="sub">{mode === 'rotation' ? t('Your routines in a loop') : t('Your weekly routine')}</div></div>
       <div className="hdr-actions">
         {showCoach && <Button size="sm" variant="tinted" icon="sparkles" onClick={() => nav('/coach')}>{t('Coach')}</Button>}
@@ -304,6 +305,8 @@ function Schedule({ S, update, nav, mode }) {
           : <Segmented className="seg-inline" value={mode} onChange={setMode}
               options={[{ value: 'week', label: t('Fixed Week') }, { value: 'rotation', label: t('Rotation') }]} />}
       </Row>
+      {/* a cobweb in the card's empty top corner, in season (components/Seasonal.jsx) */}
+      <SeasonDeco spot="plan-card" />
     </Section>
 
     {!S.routines.length && <div className="empty plan-empty">
@@ -322,7 +325,7 @@ function Schedule({ S, update, nav, mode }) {
 
     {mode === 'week' ? <>
       <h4 className="sec">{t('This week')}</h4>
-      <div className="list plan-week">{weekOrder(ws).map(d => dayRow(d))}<SeasonDeco spot="plan-card" /></div>
+      <div className="list plan-week">{weekOrder(ws).map(d => dayRow(d))}</div>
       <p className="sect-f">{t('Want two routines on one day? Tap the day and pick both.')}</p>
     </> : <div className="rotation">
       <div className="row between plan-sec-h">

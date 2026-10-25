@@ -93,14 +93,17 @@ const Pumpkin = () => (
 const Witch = () => (
   <svg className="hw-witchsvg" viewBox="0 -3 80 46" aria-hidden="true" focusable="false">
     <path d="M7 34.2 74 25.6l.3 2.2L7.4 36.4Z" />
-    <path d="M1.4 29.6c4.6.3 8.6 1.6 12.6 3.4l.6 3.6c-4.2 1.8-8.4 3-13.4 3.4 2.4-2.2 3.4-4.2 2.6-6.4-.4-1.6-1.2-2.8-2.4-4Z" />
-    <path d="M35.6 18.2c-7.4 1.4-12.6 5.6-16 10.6 4.2-1.6 8.6-2 13-1.4Z" />
+    <path d="M.8 28.8c4.8.2 9 1.6 13.2 3.6l.6 3.8c-4.4 2-8.8 3.2-14 3.6 2.6-2.4 3.6-4.6 2.8-6.8-.4-1.6-1.4-3-2.6-4.2Z" />
+    <path d="M14.8 31.6l1.6-.2.8 5.4-1.6.3Z" />
+    <path d="M37.2 17.4c-7.8 1.2-13.4 5.6-17.2 11.2 4.6-1.8 9.4-2.2 14-1.6Z" />
     <path d="M34.4 30.2c-3.4-5.8-2-11.8 2.6-15.4 3.2-2.4 7.4-2.4 10 .4 2.8 3 2.4 7.6.8 11.2l3.8 2.4Z" />
+    <path d="M46 18.4c2.6 2 4.8 4.6 6.4 7.8l-2 .9c-1.8-2.6-4-4.8-5.8-6.6Z" />
     <path d="M45.4 26.2 53.6 31h3.4l-.4 2.2h-4.4l-8.6-4.6Z" />
-    <circle cx="46.8" cy="11.4" r="3.6" />
-    <path d="M50 10.8l3.8 1.6-3.6.6Z" />
-    <path d="M38.8 8.4h15.2c.6 0 .6 1.2 0 1.2H38.8c-.6 0-.6-1.2 0-1.2Z" />
-    <path d="M42.4 8.6h7.4C48 4.6 45 1 40 -1.6c2.6 3 3.4 6 2.4 10.2Z" />
+    <path d="M43.4 11.4c-3.4.8-5.8 3.4-7.8 7 2.8-1.6 5-2.2 7.6-2.4Z" />
+    <circle cx="46.6" cy="12.6" r="3.4" />
+    <path d="M49.6 12.2l3.8 1.4-3.6.8Z" />
+    <path d="M37.4 10.2c3.2-1.8 13.6-2 17.8-.5.7.3.5 1.4-.3 1.4-5.2-.3-11.6 0-17 .5-.9 0-1.2-.9-.5-1.4Z" />
+    <path d="M41.6 9.6h8.6C48.4 5 45.2 1.2 39.6-1.8c2.8 3.2 3.4 6.6 2 11.4Z" />
   </svg>
 )
 
@@ -157,7 +160,7 @@ function SpiderDrop({ still, onGone }) {
 
 /** Decoration for one place in a view. Unknown spots draw nothing. */
 export function Deco({ spot }) {
-  if (spot === 'home-bats') return <HeaderBats />
+  if (spot === 'header-bats') return <HeaderBats />
   if (spot === 'home-hero') return <Web className="hw-web-br" />
   if (spot === 'plan-card') return <Web className="hw-web-tr" />
   if (spot === 'home-streak') return <PeekPumpkin />
