@@ -49,6 +49,13 @@ reads it straight back in without losing a set. The importer also learned GymMan
 summary lists it under "New in this workout" with one button to add it to the routine, sets, reps
 and weight as you did them. Ignore it and the routine stays exactly as it was.
 
+**Halloween.** Until the end of October a small spider drops in on the first start of the day
+(tap it and it runs), bats cross the header now and then, cobwebs gather in a couple of corners and
+a shy pumpkin hides somewhere on Home. Find it for a little surprise, once a day. Rarely, a witch.
+Never on the workout screen, gone on 1 November by itself, and Settings → Look & Home → Seasonal
+themes has Auto, On (all year, we won't judge) and Off, plus Spooky colors for a pumpkin orange
+accent. Reduce motion gets a quiet version, and with the theme off nothing of it is even loaded.
+
 **In the workout**
 - **Machine taken? One tap to your backup** (#649). A routine exercise with planned backups lists
   each one in its ⋯ menu during a workout. Tap it and the backup takes over with the slot's own
