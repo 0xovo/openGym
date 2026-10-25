@@ -99,6 +99,19 @@ describe('workout detail', () => {
     expect(history.textContent).toContain('60×5')
   })
 
+  it('opens the exercise\'s description from its thumbnail, not the history (#805)', () => {
+    const w = workout([{ id: lifts[0], target: { mode: 'reps' }, sets: [done(60, 5)] }])
+    useStore.setState(s => ({ S: { ...s.S, workouts: [w] } }))
+    workoutDetailSheet(w)
+    const thumb = mountTopSheet().querySelector('.wd-ex .wd-thumb')
+    expect(thumb.tagName).toBe('BUTTON')
+    act(() => { thumb.click() })
+    expect(useUI.getState().sheets).toHaveLength(2)
+    const detail = mountTopSheet()
+    expect(detail.querySelector('.exdetail-name')).not.toBeNull()
+    expect(detail.textContent).not.toContain('Exercise history')
+  })
+
   it('copies the workout as text, with the note as it stands in the box', async () => {
     const writeText = vi.fn(() => Promise.resolve())
     vi.stubGlobal('navigator', { ...navigator, clipboard: { writeText } })
