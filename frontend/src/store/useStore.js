@@ -108,6 +108,10 @@ export const DEF = {
   // to keep Rotation selected, and the weekday grid hidden, from the moment it's chosen in
   // Settings/Plan through to the first routine being added — there's no queue yet to derive it from.
   scheduleMode: null,
+  // Programmes (#159, lib/programmes.js): { [id]: programme }, merged per programme, and the one
+  // running ({ id, startedOn, pausedOn?, cycle, bump, saved }) or null. Starting one writes its
+  // schedule into `week` or `rotation` above, so everything that reads those follows it.
+  programmes: {}, programme: null,
   exWeights: {}, workouts: [], active: null, customEx: [], gifSize: 'full',
   // Stats activity heatmap metric. Profiles without this key continue to open on time.
   heatmapMetric: 'time',
