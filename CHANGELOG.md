@@ -71,6 +71,27 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Heart rate for sets you tick on the phone.** With the Apple Watch running the session, a set
   ticked on the phone now gets its heart rate from the watch too, not just the ones ticked on
   the wrist.
+- **RPE and RIR on the Apple Watch.** If you rate your sets, the watch's set page now has a
+  little effort disc next to Done. Tap it, turn the crown (RPE 6 to 10 in halves, or RIR 5 down
+  to 0) and it goes into the set with the weight and reps. Leave it alone and nothing is logged.
+- **Discard on the watch** (#783, thanks @cubetes). Finish workout? on the wrist now also offers
+  Discard workout: gone on the watch, gone on the phone, nothing in Apple Health.
+- **A 3-2-1 before a watch workout** (#789, thanks @cubetes). With Apple Health on, a workout
+  you start on the wrist counts down first while the heart-rate sensor warms up, so set 1 has a
+  heart rate too. Tap to skip the wait.
+- **Forgot to hit Finish?** (#790, thanks @cubetes). After 20 minutes without a set the watch
+  taps you and asks "All done?". No answer by 45 minutes and the workout ends on its own, at your
+  last set, so Apple Health doesn't count your drive home as a workout.
+- **No more ghost sets in supersets** (#791, thanks @cubetes). When the watch flips to the
+  partner exercise by itself, taps are ignored for a second, so a slow double tap on Done no
+  longer logs a set you never did.
+- **Lock the watch mid-workout.** The rest, hold and finish screens have a Lock button (Water
+  Lock, like Apple's Workout): a sleeve or a bent wrist can't press the crown out of your workout.
+  Turn the crown to unlock.
+- **A calmer weigh-in crown.** The watch's weigh-in turns whole kilos (or pounds) now; tap the
+  digit after the point for the tenth. No more chasing 80.0 past 79.3.
+- **Bigger numbers on the watch.** Weight and reps are larger, Done is easier to spot, and with
+  the wrist down the set page dims properly.
 - **A run is a run in Apple Health** (#799, thanks @svillar). A workout that was only running
   used to land in Apple Health as strength training, from the watch every time. Now runs, walks,
   rows, rides, jump rope, HIIT, yoga and stretching each get their own type, on the iPhone, the
