@@ -2660,4 +2660,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'বু! বাদুড়গুলো ওয়ার্ম-আপের অংশ ছিল না।',
   'Boo! Found it. The spiders owe you a rep.': 'বু! পেয়ে গেছেন। মাকড়সাদের কাছে আপনার একটা রেপ পাওনা।',
   'The pumpkin is napping. Come back tomorrow.': 'কুমড়োটা ঘুমোচ্ছে। কাল আবার আসুন।',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'অ্যাপ আইকন',
+  'Original': 'আসল',
+  'Mono': 'মনো',
+  'Just for this phone. Some home screens take a moment to catch up.': 'শুধু এই ফোনের জন্য। কিছু হোম স্ক্রিন বুঝতে একটু সময় নেয়।',
+  'The icon could not be changed.': 'আইকন বদলানো গেল না।',
+  'Try the Halloween app icon': 'হ্যালোইন অ্যাপ আইকন চেষ্টা করুন',
 }

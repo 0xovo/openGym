@@ -60,6 +60,12 @@ itself, and Settings → Look & Home → Seasonal themes has Auto, On (all year,
 Off, plus Spooky colors for a pumpkin orange accent. Reduce motion gets a still version, and with
 the theme off nothing of it is even loaded.
 
+**Pick your own app icon** (iPhone). Settings → Look & Home → App icon swaps the icon on your
+home screen: the original, Light, Mono, one in green, blue, orange, pink or purple, or Halloween,
+a pumpkin orange dumbbell with jack-o'-lantern faces under a moon, with a spider in the corner. The
+Halloween one stays all year, and while the theme is on, Seasonal themes has a shortcut to it. It's
+per phone and iOS asks you to confirm. Android gets the picker in the next version.
+
 **In the workout**
 - **Machine taken? One tap to your backup** (#649). A routine exercise with planned backups lists
   each one in its ⋯ menu during a workout. Tap it and the backup takes over with the slot's own

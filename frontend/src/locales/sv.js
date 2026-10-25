@@ -2628,4 +2628,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'Bu! Fladdermössen var inte en del av uppvärmningen.',
   'Boo! Found it. The spiders owe you a rep.': 'Bu! Hittad. Spindlarna är skyldiga dig en rep.',
   'The pumpkin is napping. Come back tomorrow.': 'Pumpan tar en tupplur. Kom tillbaka i morgon.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Appikon',
+  'Original': 'Original',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Bara för den här telefonen. Vissa hemskärmar behöver en stund på sig att hänga med.',
+  'The icon could not be changed.': 'Ikonen gick inte att byta.',
+  'Try the Halloween app icon': 'Testa Halloween-appikonen',
 }

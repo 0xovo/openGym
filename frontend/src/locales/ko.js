@@ -2581,4 +2581,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': '왁! 박쥐는 워밍업에 없던 거예요.',
   'Boo! Found it. The spiders owe you a rep.': '왁! 찾았다. 거미들이 1회 빚졌어요.',
   'The pumpkin is napping. Come back tomorrow.': '호박이 낮잠 자는 중이에요. 내일 다시 와 주세요.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': '앱 아이콘',
+  'Original': '기본',
+  'Mono': '모노',
+  'Just for this phone. Some home screens take a moment to catch up.': '이 휴대폰에만 적용돼요. 홈 화면에 따라 바뀌는 데 잠깐 걸릴 수 있어요.',
+  'The icon could not be changed.': '아이콘을 바꾸지 못했어요.',
+  'Try the Halloween app icon': '핼러윈 앱 아이콘 써 보기',
 }

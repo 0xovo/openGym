@@ -2581,4 +2581,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': '吓！蝙蝠可不在热身计划里。',
   'Boo! Found it. The spiders owe you a rep.': '吓！找到了。蜘蛛们欠你一次。',
   'The pumpkin is napping. Come back tomorrow.': '南瓜在打盹，明天再来吧。',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': '应用图标',
+  'Original': '原版',
+  'Mono': '单色',
+  'Just for this phone. Some home screens take a moment to catch up.': '仅限这部手机。有些主屏幕要过一会儿才会跟上。',
+  'The icon could not be changed.': '无法更换图标。',
+  'Try the Halloween app icon': '试试万圣节应用图标',
 }

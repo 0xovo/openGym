@@ -2581,4 +2581,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'Bu! Nietoperze nie były częścią rozgrzewki.',
   'Boo! Found it. The spiders owe you a rep.': 'Bu! Mam ją. Pająki są Ci winne jedno powtórzenie.',
   'The pumpkin is napping. Come back tomorrow.': 'Dynia ucina sobie drzemkę. Wróć jutro.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Ikona aplikacji',
+  'Original': 'Oryginalna',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Tylko na tym telefonie. Niektóre ekrany główne potrzebują chwili, żeby to załapać.',
+  'The icon could not be changed.': 'Nie udało się zmienić ikony.',
+  'Try the Halloween app icon': 'Wypróbuj halloweenową ikonę aplikacji',
 }

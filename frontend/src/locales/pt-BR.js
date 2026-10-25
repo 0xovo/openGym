@@ -1666,6 +1666,10 @@ export const PT_BR_OVERRIDES = {
   'Boo! Found it. The spiders owe you a rep.': 'Bu! Achou. As aranhas te devem uma repetição.',
   'The pumpkin is napping. Come back tomorrow.': 'A abóbora está tirando uma soneca. Volte amanhã.',
   'Back next October. The spiders are on holiday.': 'Volta em outubro. As aranhas estão de férias.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Ícone do app',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Só para este celular. Algumas telas iniciais demoram um pouco para perceber.',
+  'Try the Halloween app icon': 'Experimente o ícone de Halloween do app',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

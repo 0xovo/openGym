@@ -2585,4 +2585,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'Бу! Летучие мыши не входили в разминку.',
   'Boo! Found it. The spiders owe you a rep.': 'Бу! Есть! Пауки должны тебе один повтор.',
   'The pumpkin is napping. Come back tomorrow.': 'Тыква дремлет. Загляни завтра.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Значок приложения',
+  'Original': 'Оригинал',
+  'Mono': 'Моно',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Только для этого телефона. Некоторым рабочим столам нужна минутка, чтобы заметить.',
+  'The icon could not be changed.': 'Не удалось сменить значок.',
+  'Try the Halloween app icon': 'Попробуй хеллоуинский значок приложения',
 }

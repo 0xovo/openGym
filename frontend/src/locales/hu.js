@@ -2584,4 +2584,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'Bú! A denevérek nem voltak a bemelegítés részei.',
   'Boo! Found it. The spiders owe you a rep.': 'Bú! Megvan. A pókok tartoznak neked egy ismétléssel.',
   'The pumpkin is napping. Come back tomorrow.': 'A tök épp szundikál. Gyere vissza holnap.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Alkalmazásikon',
+  'Original': 'Eredeti',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Csak ezen a telefonon. Néhány kezdőképernyőnek kell egy pillanat, mire észreveszi.',
+  'The icon could not be changed.': 'Nem sikerült megváltoztatni az ikont.',
+  'Try the Halloween app icon': 'Próbáld ki a halloweeni alkalmazásikont',
 }

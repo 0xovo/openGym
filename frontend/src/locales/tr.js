@@ -2581,4 +2581,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'Bö! Yarasalar ısınmanın bir parçası değildi.',
   'Boo! Found it. The spiders owe you a rep.': 'Bö! Buldun. Örümcekler sana bir tekrar borçlu.',
   'The pumpkin is napping. Come back tomorrow.': 'Balkabağı şekerleme yapıyor. Yarın tekrar gel.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Uygulama simgesi',
+  'Original': 'Orijinal',
+  'Mono': 'Mono',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Yalnızca bu telefon için. Bazı ana ekranların fark etmesi biraz sürer.',
+  'The icon could not be changed.': 'Simge değiştirilemedi.',
+  'Try the Halloween app icon': 'Cadılar Bayramı uygulama simgesini dene',
 }

@@ -460,6 +460,17 @@ so `npx` fetches it for that one run.
 (If the generator won't take the SVG directly, export it to `resources/icon.png` at
 1024×1024 first; any image tool can do it.)
 
+The alternate icons people can pick in Settings → Look & Home → App icon (iPhone only in 1.4.3;
+Android gets them in 1.4.4) are not made by that generator. `node scripts/app-icons.mjs` draws
+them from the list in `src/lib/app-icon-variants.js` and the glyph in `resources/icon.svg`, with
+no dependencies: the SVG per icon in `resources/icons/`, an `AppIcon-<Name>` set (1024 px, opaque)
+per icon in the iOS asset catalog, and the previews in `public/app-icons/`. An icon with `art`
+(Halloween) is a hand-made SVG in `resources/icons/` instead, which the script renders; it may use
+only rect, circle, line, polyline, polygon and one two-stop radialGradient. `--check` says whether
+the committed files still match. A new icon also needs its name in `AppIconPlugin.swift` and its
+set in `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`; `scripts/app-icons.test.mjs` fails until
+all of them agree.
+
 ## Distributing your own build
 
 The signed APK stays the way to get openGym on Android without a store, and it updates itself.

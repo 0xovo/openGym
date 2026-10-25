@@ -2578,4 +2578,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'Бу! Кажани не входили в розминку.',
   'Boo! Found it. The spiders owe you a rep.': 'Бу! Є! Павуки винні тобі одне повторення.',
   'The pumpkin is napping. Come back tomorrow.': 'Гарбуз дрімає. Зазирни завтра.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'Значок застосунку',
+  'Original': 'Оригінал',
+  'Mono': 'Моно',
+  'Just for this phone. Some home screens take a moment to catch up.': 'Лише для цього телефона. Деяким домашнім екранам треба хвилинка, щоб помітити.',
+  'The icon could not be changed.': 'Не вдалося змінити значок.',
+  'Try the Halloween app icon': 'Спробуй гелловінський значок застосунку',
 }

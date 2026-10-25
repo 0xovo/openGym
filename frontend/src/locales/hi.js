@@ -2581,4 +2581,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'बू! चमगादड़ वार्म-अप का हिस्सा नहीं थे।',
   'Boo! Found it. The spiders owe you a rep.': 'बू! मिल गया। मकड़ियों पर आपका एक रेप उधार है।',
   'The pumpkin is napping. Come back tomorrow.': 'कद्दू झपकी ले रहा है। कल फिर आइए।',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'ऐप आइकन',
+  'Original': 'मूल',
+  'Mono': 'मोनो',
+  'Just for this phone. Some home screens take a moment to catch up.': 'सिर्फ़ इस फ़ोन के लिए। कुछ होम स्क्रीन को समझने में थोड़ा समय लगता है।',
+  'The icon could not be changed.': 'आइकन बदला नहीं जा सका।',
+  'Try the Halloween app icon': 'हैलोवीन ऐप आइकन आज़माएँ',
 }

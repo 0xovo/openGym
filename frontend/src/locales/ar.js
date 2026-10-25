@@ -2636,4 +2636,11 @@ export default {
   'Boo! The bats were not part of the warm-up.': 'بوو! الخفافيش لم تكن جزءًا من الإحماء.',
   'Boo! Found it. The spiders owe you a rep.': 'بوو! وجدتها. العناكب مدينة لك بتكرار.',
   'The pumpkin is napping. Come back tomorrow.': 'اليقطينة تأخذ قيلولة. عد غدًا.',
+  // --- Settings → App icon (the phone app's home-screen icon) ---
+  'App icon': 'أيقونة التطبيق',
+  'Original': 'الأصلية',
+  'Mono': 'أحادية',
+  'Just for this phone. Some home screens take a moment to catch up.': 'لهذا الهاتف فقط. بعض الشاشات الرئيسية تحتاج لحظة لتلحق.',
+  'The icon could not be changed.': 'تعذّر تغيير الأيقونة.',
+  'Try the Halloween app icon': 'جرّب أيقونة التطبيق الخاصة بالهالوين',
 }
