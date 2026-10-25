@@ -1,5 +1,6 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useStore } from './store/useStore.js'
+import { exView, exUnitPin, withExUnit, profileUnit, viewTarget, storedTarget, storedBar } from './lib/ex-unit.js'
 import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
@@ -770,6 +771,33 @@ function GoalSheet({ close }) {
 }
 export const goalSheet = () => ui().openSheet(close => <GoalSheet close={close} />)
 
+/* ============================ weight unit ============================ */
+// An exercise's own weight unit (#657, lib/ex-unit.js): lb dumbbells next to kg plates. Per
+// exercise, not per plan, so it writes straight to S.exUnit like the plate loading below it.
+// `onChange` hears the old and the new state's unit, for a sheet that holds numbers in it.
+function ExUnitRow({ ex, onChange }) {
+  const st = useStore(s => s.S)
+  const pin = exUnitPin(st, ex.id)
+  const set = v => {
+    const before = S()
+    update(s => { s.exUnit = withExUnit(s.exUnit, ex.id, v || null) })
+    onChange?.(before, S())
+  }
+  return <>
+    <div className="sect-b" style={{ marginBottom: 8 }}>
+      <SelectRow icon="scale" iconTint="var(--acc)" title={t('Weight unit')} sheetTitle={t('Weight unit')} value={pin || ''} onChange={set}
+        options={[
+          { value: '', label: t('Profile default ({0})', profileUnit(st)) },
+          { value: 'kg', label: 'kg' },
+          { value: 'lb', label: 'lb' },
+        ]} />
+    </div>
+    <div className="small dim" style={{ marginBottom: 18 }}>
+      {t('For gyms that mix kg and lb. This exercise is shown and typed in it everywhere, plates and steps included. Totals in Stats stay in {0}.', profileUnit(st))}
+    </div>
+  </>
+}
+
 /* ============================ plate loading ============================ */
 // One editor for every place an exercise's loading shows up (exercise detail, exercise config,
 // mid-workout sheet). Three things, all per exercise and display-only (lib/plates.js):
@@ -785,7 +813,8 @@ export const goalSheet = () => ui().openSheet(close => <GoalSheet close={close} 
 // same thing the workout screen derives it from, so what the editor shows as chosen is what
 // the rows do. Without one, the equipment alone decides.
 function BarWeightEditor({ ex, cfg, extra }) {
-  const st = useStore(s => s.S)
+  // In the exercise's own unit (#657): a pinned barbell's bar is 45 lb on a kg profile.
+  const st = exView(useStore(s => s.S), ex.id)
   const bar = usesBar(ex)
   const ctx = { ...(cfg || {}), id: ex.id }
   const kind = loadKindFor(st, ctx)
@@ -816,7 +845,7 @@ function BarWeightEditor({ ex, cfg, extra }) {
   const setBar = v => update(s => {
     s.barWeights = s.barWeights || {}
     const n = Math.max(0, Math.round((v || 0) * 100) / 100)
-    if (n > 0) s.barWeights[ex.id] = n; else delete s.barWeights[ex.id]
+    if (n > 0) s.barWeights[ex.id] = storedBar(s, ex.id, n); else delete s.barWeights[ex.id]
   })
   // A quick pick of the type's own weight takes the override off, so the exercise keeps following
   // your bars instead of freezing today's number onto it.
@@ -885,14 +914,15 @@ function DbLoadPicker({ ex, cfg, value, onChange }) {
 // + and − buttons land on these instead of on the increment, like the dumbbell list (#376). Tap a
 // weight to take it off, the field adds one, and the quick fill writes an even stack to edit from.
 function StackEditor({ ex }) {
-  const st = useStore(s => s.S)
+  // Listed in the exercise's own unit (#657), and kept in it: the stack carries its unit.
+  const st = exView(useStore(s => s.S), ex.id)
   const unit = st.unit === 'lb' ? 'lb' : 'kg'
   const list = stackOf(st, ex.id)
   const [draft, setDraft] = useState(null)
   const [first, setFirst] = useState(null)
   const [step, setStep] = useState(null)
   const [count, setCount] = useState(null)
-  const save = ws => update(s => { s.stackWeights = withStack(s, ex.id, ws) })
+  const save = ws => update(s => { s.stackWeights = withStack({ unit, stackWeights: s.stackWeights }, ex.id, ws) })
   const add = () => {
     const w = cleanWeights([draft])[0]
     if (!w) { toast(t('Enter a valid weight')); return }
@@ -1072,7 +1102,7 @@ export const barDefaultsSheet = () => ui().openSheet(close => <BarDefaultsSheet 
 // Estimated 1RM for one exercise (issue #18): what the log already implies, plus a calculator
 // for a set you have not done — so the number is reachable before there is any history.
 function OneRM({ ex }) {
-  const st = useStore(s => s.S)
+  const st = exView(useStore(s => s.S), ex.id)
   const best = best1RM(st, ex.id)
   const [w, setW] = useState(best ? best.w : (st.exWeights[ex.id] || {}).w || 20)
   const [r, setR] = useState(best ? best.r : 5)
@@ -1129,7 +1159,8 @@ export function detailTags(ex) {
 
 function ExerciseDetail({ ex, close }) {
   useLang() // the description and steps arrive in their own chunk the first time a sheet asks
-  const st = useStore(s => s.S)
+  // The best and last time in the exercise's own weight unit (#657).
+  const st = exView(useStore(s => s.S), ex.id)
   const last = lastEntryFor(st, ex.id)
   const best = bestWeightFor(st, ex.id, currentDbLoad(st, ex.id))
   const fav = isFav(st, ex.id)
@@ -1160,6 +1191,8 @@ function ExerciseDetail({ ex, close }) {
       <Button variant="danger" icon="trash" style={{ flex: 1 }} onClick={() => deleteCustomEx(ex, close)}>{t('Delete')}</Button>
     </div>}
     {modeOf({ id: ex.id }) === 'reps' && <>
+      <h4 className="sec">{t('Weight unit')}</h4>
+      <ExUnitRow ex={ex} />
       <h4 className="sec">{t('Plate loading')}</h4>
       <BarWeightEditor ex={ex} extra={t('You still log the total weight. This only feeds the plate line under each set.')} />
       {canHaveStack(ex) && <><h4 className="sec">{t('Weight stack')}</h4><StackEditor ex={ex} /></>}
@@ -1192,7 +1225,9 @@ export const exerciseDetailSheet = ex => ui().openSheet(close => <ExerciseDetail
 // every store tick while a session runs, and LineChart drops its hover whenever `points`
 // changes identity, so a series rebuilt per render would lose the tooltip under your finger.
 function ExerciseHistory({ exId }) {
-  const st = useStore(s => s.S)
+  // The exercise's sets, chart, best and 1RM in its own weight unit (#657); the volume line of a
+  // session is this exercise's own, so it follows the same unit.
+  const st = exView(useStore(s => s.S), exId)
   const ex = exOr(exId)
   const h = useMemo(() => exerciseHistory(st, exId), [st.workouts, exId, st.volumeWarmups])
   const [curve, setCurve] = useState('top')
@@ -1891,7 +1926,10 @@ function BackupsSheet({ ex, subs: initial, onChange, close }) {
 }
 
 function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, initial, saveLabel, backupsEditable }) {
-  const st = useStore(s => s.S)
+  // Shown and typed in the exercise's own weight unit when it has one (#657, lib/ex-unit.js); the
+  // config it opened with and the one it saves are in the profile's.
+  const live = useStore(s => s.S)
+  const st = exView(live, ex.id)
   // No warm-up rest of its own: the profile's (Settings > Workout) when it has one, else the work rest.
   const warmAll = typeof st.warmupRestSec === 'number' ? st.warmupRestSec : null
   const warmLikeAll = warmAll === null ? t('Like the work sets') : t('Default ({0})', warmAll > 0 ? fmtRest(warmAll) : t('No timer'))
@@ -1903,7 +1941,8 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   // or timed like any other (#678). A saved duration/speed plan keeps its cardio form even after
   // the catalogue moved its exercise out of cardio (jumping jacks, #717).
   const speedUnit = speedUnitOf(st)
-  const seed = existing || initial || pickedExerciseConfig(ex.id)
+  const seedStored = existing || initial || pickedExerciseConfig(ex.id)
+  const seed = viewTarget(live, ex.id, seedStored)
   const cardioEx = isCardio(ex.id) || modeOf({ ...seed, id: ex.id }) === 'cardio'
   const [c, setC] = useState(() => {
     const cfg = { ...seed }
@@ -1946,6 +1985,8 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
       ? { ...next, ...normalizeRepRange(next.reps, next.repsMin, isPerSide(next) ? 2 : 1) }
       : next
   })
+  // Back in the profile's unit, a number shown and left alone kept exactly as it was stored.
+  const saveAs = out => onSave(storedTarget(useStore.getState().S, ex.id, out, seedStored))
   const save = () => {
     if (progressionStepInvalid) return
     close()
@@ -2003,8 +2044,8 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     }
     // The treadmill's grade, only when it has one, so a flat slot keeps the shape it had.
     const incline = clampIncline(c.incline)
-    if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 8), ...(incline > 0 ? { incline } : {}), ...withNote, ...withRest, ...withSubs })
-    else if (mode === 'time') onSave({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withSetRests, ...withMeant, ...withFailure, ...withSubs })
+    if (cardio) saveAs({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 8), ...(incline > 0 ? { incline } : {}), ...withNote, ...withRest, ...withSubs })
+    else if (mode === 'time') saveAs({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withSetRests, ...withMeant, ...withFailure, ...withSubs })
     else {
       // A unilateral target is stored even: the split has to divide, and a typed 15 would
       // otherwise plan seven reps on one side and eight on the other, every session.
@@ -2038,7 +2079,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
       if (c.backoff === true && backoffOffered(out, 'reps', ex, bw) && isBackoff({ ...out, backoff: true })) out.backoff = true
       // A pyramid has its own Max set for this, so the flag is not offered (or kept) there.
       if (!list.length) Object.assign(out, withFailure)
-      onSave(out)
+      saveAs(out)
     }
   }
   return <>
@@ -2353,6 +2394,11 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     </>}
     {/* How the weight is plate-loaded and what the bar weighs — per exercise, not per plan, so
         it sits apart from the config fields above and writes straight to S.barWeights/S.loadKind. */}
+    {/* What is typed above is held in the unit on screen; a switch converts it with the unit. */}
+    {!cardio && <>
+      <h4 className="sec">{t('Weight unit')}</h4>
+      <ExUnitRow ex={ex} onChange={(before, after) => setC(x => viewTarget(after, ex.id, storedTarget(before, ex.id, x, seedStored)))} />
+    </>}
     {mode === 'reps' && <>
       <h4 className="sec">{t('Plate loading')}</h4>
       <BarWeightEditor ex={ex} cfg={c} extra={t('Applies to this exercise everywhere, not just this plan.')} />
