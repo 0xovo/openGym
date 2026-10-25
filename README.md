@@ -293,8 +293,8 @@ A release roughly every two weeks, each small and themed. The full plan is in
 |---|---|---|
 | v1.4.0 | released Oct 2026 | A new exercise database with 5,632 exercises, plus two rounds of community work |
 | v1.4.1 | released Oct 2026 | Bug fixes for v1.4.0 |
-| v1.4.2 | Oct 2026 | The App Store, the Apple Watch, widgets, a Google Play build |
-| v1.4.3 | Nov 2026 | The gym reminder, health data read back, community features |
+| v1.4.2 | released Oct 2026 | The App Store, the Apple Watch, widgets, a Google Play build |
+| v1.4.3 | Oct 2026 | The gym reminder, health data read back, community features |
 | next | Nov 2026 to Apr 2027 | Programmes, the progression engine, cardio, sharing, accounts, Android and health, looks |
 | later | | Database storage |
 

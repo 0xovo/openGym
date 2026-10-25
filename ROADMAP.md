@@ -153,7 +153,7 @@ server.
 
 The animations come back as WebP, and the Android update check reads GitHub.
 
-## v1.4.2: openGym in the App Store  (2026-10-18)
+## v1.4.2: openGym in the App Store  (released 2026-10-23)
 
 - The iPhone app in the App Store, with an Apple Watch app, widgets, a Live Activity and Apple
   Health (#90, #125 on iOS)
