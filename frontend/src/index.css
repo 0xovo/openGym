@@ -155,7 +155,7 @@ body{
 /* Opened from the Home Screen on iOS 26 the page is laid out one status bar short of the screen it
    is drawn on (WebKit bug 301108: viewport-fit=cover with the black-translucent status bar puts the
    content under the bar but sizes the viewport as if it stopped there), so anything fixed to the
-   bottom — the tab bar — floats the top inset above the edge, 62px on an iPhone 17 Pro Max, with
+   bottom (the tab bar) floats the top inset above the edge, 62px on an iPhone 17 Pro Max, with
    bare background under it. iOS grows the viewport once the page is dragged or a taller page is
    shown, and shrinks it again when a keyboard closes. A body at least as tall as the large
    viewport, which in an installed app is the whole screen, keeps the viewport full from the first

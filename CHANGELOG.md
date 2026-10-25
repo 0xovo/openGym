@@ -22,6 +22,10 @@ best is 30 and openGym asks first, because whatever you tick becomes last time, 
 maybe a shiny fake PR. Fix it leaves the set open, Log as typed means you really did. Only on a tick
 by hand: never an untick, a hold's timer, the watch, a first time or an assisted lift's weight.
 
+**The installed iPhone web app fills the screen** (#810, thanks @kurktchiev). On iOS 26 a Home
+Screen app could leave the tab bar floating a status bar's height above the bottom edge until you
+dragged the page. WebKit's bug, our workaround. The App Store app and Safari tabs were never affected.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a
