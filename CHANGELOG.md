@@ -6,16 +6,45 @@ tag. Write it for the people using the app: what changed for them, short, no em 
 
 ## Unreleased
 
-**Pick your own app icon.** Settings → Look & Home → App icon swaps the icon on your home screen:
-the original, Light, Mono, or one in green, blue, orange, pink or purple. It's per phone, so your
-iPhone and your Android can disagree. On Android the new icon moves in once you leave the app, and
-some launchers need a second to notice.
+**Programmes** (#159, thanks Giulio Leuci; #679, thanks @peteh and @Gthbacc). Plan → Programmes runs
+your routines as a block of 1 to 16 weeks, and each week can say how hard: a %1RM per lift, an RPE for
+the week, or a deload. Start one and its schedule takes over your plan (Home says "Week 2 of 6"), end it
+and your old plan comes back as it was. A %1RM opens the session at that share of your best estimated
+1RM, rounded to plates, dumbbells or a machine's stack you own, and beats your progression while it
+runs. Pause it for a holiday, run it again a bit heavier when it's done, share it as a plan file. Three
+starters to try: a 4-week strength block, 6 weeks of upper/lower by effort, and 12 weeks of 5×5-style
+linear with a deload every fourth week. The MCP server can read it too (`get_programme`).
+
+**Your own app icon on Android too.** The picker from 1.4.3 leaves the iPhone: Settings → Look &
+Home → App icon has all nine on Android, Halloween included. It's per phone, so your iPhone and
+your Android can disagree. On Android the new icon moves in once you leave the app, and some
+launchers need a second to notice.
 
 **AI Coach works with picky OpenAI-compatible gateways** (#804). Some endpoints answer the Coach
 with a plain 400 "please check the request parameters" and no hint why. The Coach now tries a
 simpler request on its own (a looser JSON mode, the other token-limit field, no temperature, and
 as a last resort JSON asked for in the prompt only), remembers what that endpoint and model
 accepted so the next run asks right away, and if nothing works shows you the endpoint's own words.
+
+**"Is that right?" before a likely typo** (#811, thanks @lodepav). Tick a set at 300 kg when your
+best is 30 and openGym asks first, because whatever you tick becomes last time, the next target and
+maybe a shiny fake PR. Fix it leaves the set open, Log as typed means you really did. Only on a tick
+by hand: never an untick, a hold's timer, the watch, a first time or an assisted lift's weight.
+
+**The installed iPhone web app fills the screen** (#810, thanks @kurktchiev). On iOS 26 a Home
+Screen app could leave the tab bar floating a status bar's height above the bottom edge until you
+dragged the page. WebKit's bug, our workaround. The App Store app and Safari tabs were never affected.
+
+**Tap the picture in a past workout for the how-to** (#805, thanks @sg41). The thumbnail opens the
+exercise's description, the rest of the row still opens its history.
+
+**Server dependencies patched** (#806, thanks @lodepav). body-parser, fast-uri, qs and zod move to
+their fixed versions in the API and the MCP server, nothing you'll notice except fewer CVEs.
+
+**How long each exercise takes** (#812, thanks @lodepav). A past workout shows a little timer under
+every exercise, and Stats has a Time per exercise card (1M, 3M, 1Y, All), longest first. It's read from
+when you ticked the sets, rest and setup included, so it's what an exercise really costs you.
+Imported history has no tick times, so it stays quiet there.
 
 ## v1.4.3 (DATE)
 
@@ -61,6 +90,23 @@ reads it straight back in without losing a set. The importer also learned GymMan
 **Keep what you added** (#592). Threw an extra exercise into a routine's workout? The finish
 summary lists it under "New in this workout" with one button to add it to the routine, sets, reps
 and weight as you did them. Ignore it and the routine stays exactly as it was.
+
+**Halloween.** Until the end of October a small spider drops in whenever you open openGym (tap
+it and it runs), bats cross the header now and then, cobwebs gather in a few corners and a shy
+pumpkin hides somewhere on Home. Find it for a little surprise, once a day. Stats gets a skeleton
+hanging off the activity card, spiders on threads, a moon with a tiny witch and two pumpkins
+peeking out. Rarely, a bigger witch. Workouts get a quiet version that never sits on a set, a
+button or a timer: a cobweb and a spider in the header's corner, two bats along the rest bar and
+pumpkins on the finish screen (Also during workouts turns that off). Gone on 1 November by
+itself, and Settings → Look & Home → Seasonal themes has Auto, On (all year, we won't judge) and
+Off, plus Spooky colors for a pumpkin orange accent. Reduce motion gets a still version, and with
+the theme off nothing of it is even loaded.
+
+**Pick your own app icon** (iPhone). Settings → Look & Home → App icon swaps the icon on your
+home screen: the original, Light, Mono, one in green, blue, orange, pink or purple, or Halloween,
+a pumpkin orange dumbbell with jack-o'-lantern faces under a moon, with a spider in the corner. The
+Halloween one stays all year, and while the theme is on, Seasonal themes has a shortcut to it. It's
+per phone and iOS asks you to confirm. Android gets the picker in the next version.
 
 **In the workout**
 - **Machine taken? One tap to your backup** (#649). A routine exercise with planned backups lists

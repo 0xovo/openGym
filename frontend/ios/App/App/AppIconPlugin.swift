@@ -34,6 +34,7 @@ public class AppIconPlugin: CAPPlugin, CAPBridgedPlugin {
         "orange": "AppIcon-Orange",
         "pink": "AppIcon-Pink",
         "violet": "AppIcon-Violet",
+        "halloween": "AppIcon-Halloween",
     ]
 
     static func id(for iconName: String?) -> String {

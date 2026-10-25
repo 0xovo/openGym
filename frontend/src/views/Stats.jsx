@@ -4,13 +4,15 @@ import { useStore } from '../store/useStore.js'
 import { dayPhotosOf } from '../lib/day-photos.js'
 import { EXIDX, matchExercise, betterWeight, isAssisted } from '../lib/exercises.js'
 import { lastBW, streakWeeks, setLabel, modeOf, effortOf, entriesForExercise, metricEntriesForExercise, metricModeForEntry, bestWeightForEntry, completedRepsOf, workoutDay, workoutAt, lifetimeVolume } from '../lib/history.js'
-import { fmtNum, fmtDate, fmtVol, todayISO, isoOf, weekKey, weekStartOf, exerciseNameText } from '../lib/format.js'
+import { fmtNum, fmtDate, fmtVol, fmtDur, todayISO, isoOf, weekKey, weekStartOf, exerciseNameText } from '../lib/format.js'
+import { entryTimes, exerciseTimeRows } from '../lib/exercise-time.js'
 import { speedUnitOf, speedLabel, toSpeed } from '../lib/speed.js'
 import { t, exerciseNameFor, exerciseNameClass, getLang } from '../lib/i18n.js'
 import { bwSheet, goalSheet, calendarSheet, dayOverrideSheet, workoutDetailSheet, exerciseHistorySheet, WorkoutRow, bwDeltaColor, weighInsSheet } from '../sheets.jsx'
 import LineChart from '../components/LineChart.jsx'
 import WeightRate from '../components/WeightRate.jsx'
 import Heatmap from '../components/Heatmap.jsx'
+import { SeasonDeco } from '../components/Seasonal.jsx'
 import Icon from '../components/Icon.jsx'
 import { reportSheet } from '../components/ReportSheet.jsx'
 import BodyMap, { BodyMapLegend } from '../components/BodyMap.jsx'
@@ -470,6 +472,34 @@ export function WeeklyPlanVolume({ S }) {
   </div>
 }
 
+// How long each exercise takes, on average a session, from when its sets were ticked
+// (lib/exercise-time.js): the rest before a set and the setup count, so it is what an exercise
+// costs in a workout. Only workouts with tick times count; imported history has none.
+const TIME_ROWS = 6
+export function ExerciseTimeCard({ S }) {
+  const [win, setWin] = useState(90)
+  const [all, setAll] = useState(false)
+  const rows = useMemo(() => exerciseTimeRows(S.workouts, rangeStart(win)), [S.workouts, win])
+  const shown = all ? rows : rows.slice(0, TIME_ROWS)
+  const max = rows.length ? rows[0].avg : 0
+  const nameOf = id => (EXIDX[id] ? exerciseNameFor(EXIDX[id]) : id)
+  return <div className="card" data-exercise-time>
+    <h2 style={{ marginBottom: 2 }}>{t('Time per exercise')}</h2>
+    <div className="muted small" style={{ marginBottom: 10 }}>{t('Average time a session, counted from when its sets were ticked.')}</div>
+    <Segmented className="seg-range" value={win} onChange={v => { setWin(v); setAll(false) }} options={rangeOptions()} />
+    {rows.length ? shown.map(r => <div className="mrow" key={r.id} {...tappable(() => exerciseHistorySheet(r.id))}>
+      <span className={`nm ${exerciseNameClass(EXIDX[r.id])}`}>{nameOf(r.id)}</span>
+      <span className="bar"><i style={{ width: Math.round(r.avg / max * 100) + '%' }} /></span>
+      <span className="v">{fmtDur(Math.max(r.avg, 60000))}</span>
+    </div>) : <div className="muted small">{t('No timed sets in this period.')}</div>}
+    {rows.length > TIME_ROWS && <>
+      <div style={{ height: 8 }} />
+      <Button trailingIcon={all ? 'chevronUp' : 'chevronDown'} aria-expanded={all}
+        onClick={() => setAll(v => !v)}>{t(all ? 'Show less' : 'Show more')}</Button>
+    </>}
+  </div>
+}
+
 export default function Stats() {
   const nav = useNavigate()
   const S = useStore(s => s.S)
@@ -720,7 +750,7 @@ export default function Stats() {
   if (showRel) exOpts.push({ value: 'bodyweight', label: t('Bodyweight') })
 
   return <>
-    <div className="hdr"><div><h1>{t('Stats')}</h1><div className="sub">{t('Progress & history')}</div></div>
+    <div className="hdr"><SeasonDeco spot="stats-hdr" /><div><h1>{t('Stats')}</h1><div className="sub">{t('Progress & history')}</div></div>
       <div className="row" style={{ gap: 8 }}>
         <button className="iconbtn" onClick={reportSheet} aria-label={t('Performance report')} title={t('Performance report')}><Icon name="note" /></button>
         <button className="iconbtn" onClick={() => nav('/history')} aria-label={t('History')}><Icon name="history" /></button>
@@ -733,10 +763,11 @@ export default function Stats() {
       <div className="tile"><div className="l"><Icon name="scale" />{t('Weight 30d')}</div><div className="v" style={{ fontSize: 22, color: bwDelta30 === null ? 'inherit' : bwDeltaColor(bwDelta30, (lastBW(S) || {}).w || 0) }}>{bwDelta30 === null ? '–' : (bwDelta30 > 0 ? '+' : '') + fmtNum(bwDelta30) + ' ' + S.unit}</div></div>
       {/* Everything ever lifted (Discord): imports included, warm-ups only when the profile
           counts them (#719). Full width, since a few hundred sessions make a long number. */}
-      {lifetime > 0 && <div className="tile" style={{ gridColumn: '1 / -1' }} data-lifetime-volume><div className="l"><Icon name="plate" />{t('Lifted in total')}</div><div className="v">{fmtVol(Math.round(lifetime), S.unit)}</div></div>}
+      {lifetime > 0 && <div className="tile" style={{ gridColumn: '1 / -1' }} data-lifetime-volume><SeasonDeco spot="stats-tile" /><div className="l"><Icon name="plate" />{t('Lifted in total')}</div><div className="v">{fmtVol(Math.round(lifetime), S.unit)}</div></div>}
     </div>
 
     <div className="card">
+      <SeasonDeco spot="stats-heatmap" />
       <h2>{t('Activity (last 12 months)')}</h2>
       <Heatmap
         S={S}
@@ -759,6 +790,7 @@ export default function Stats() {
       <Button size="sm" variant="tinted" trailingIcon="chevronRight" style={{ flexShrink: 0 }} onClick={() => nav('/progress-photos')}>{t('Open')}</Button>
     </div>}
     <div className="card row between" style={{ alignItems: 'center', gap: 12 }}>
+      <SeasonDeco spot="stats-peek" />
       <div style={{ minWidth: 0 }}><h2 style={{ margin: 0 }}>{t('Body measurements')}</h2>
         <div className="muted small" style={{ marginTop: 4 }}>{(S.measurements || []).length
           ? t('Last check-in {0}', fmtDate(S.measurements[S.measurements.length - 1].d, true))
@@ -766,6 +798,7 @@ export default function Stats() {
       <Button size="sm" variant="tinted" trailingIcon="chevronRight" style={{ flexShrink: 0 }} onClick={() => nav('/measurements')}>{t('Open')}</Button>
     </div>
     {(hasEffort(S) || hasEstimableEffort(S)) && <EffortCard S={S} />}
+    {workouts.some(w => entryTimes(w).length) && <ExerciseTimeCard S={S} />}
 
     <div className="cols">
       <div className="card">
@@ -785,6 +818,7 @@ export default function Stats() {
         {S.bodyweight.length > 0 && <div className="row" style={{ justifyContent: 'flex-end', marginTop: 4 }}>
           <Button size="sm" variant="ghost" trailingIcon="chevronRight" onClick={weighInsSheet}>{t('All weigh-ins')}</Button>
         </div>}
+        <SeasonDeco spot="stats-web" />
       </div>
 
       <div className="card">

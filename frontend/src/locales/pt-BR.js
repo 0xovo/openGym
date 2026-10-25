@@ -7,6 +7,18 @@ export const PT_BR_OVERRIDES = {
   'The search finds it by these too. Separate them with commas.': 'A busca também encontra o exercício por estes. Separe com vírgulas.',
   'Save names': 'Salvar nomes',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Ajuda quando você compara com outro app. Os recordes ignoram o aquecimento de qualquer jeito.',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'Está certo?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Peso: {0} é mais que o dobro do seu máximo, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Reps: {0} é mais que o dobro do seu máximo, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Peso: {0} é menos de um terço da última vez, {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Reps: {0} é menos de um terço da última vez, {1}.',
+  'Fix it': 'Corrigir',
+  'Log as typed': 'Registrar assim',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Tempo por exercício',
+  'Average time a session, counted from when its sets were ticked.': 'Tempo médio por sessão, contado a partir de quando as séries foram marcadas.',
+  'No timed sets in this period.': 'Nenhuma série com tempo neste período.',
   '{0} set brings an {1} with it. Switch on Effort per set in Settings to see it.': '{0} série traz um {1} junto. Ative “Esforço por série” nas Configurações para ver.',
   'Add to this set': 'Adicionar a esta série',
   'Copy this exercise’s warm-up sets, and the rest and note from its Exercise settings, into the routine. A note added for today stays with this workout. Your workout history is kept.': 'Copia para a rotina as séries de aquecimento deste exercício, e o descanso e a anotação das Configurações do exercício dele. Uma anotação adicionada para hoje fica com este treino. Seu histórico de treinos é mantido.',
@@ -1685,6 +1697,17 @@ export const PT_BR_OVERRIDES = {
   'Your routines as a block of weeks, with starter programmes to try.': 'Suas rotinas como um bloco de semanas, com programas iniciais para experimentar.',
   'aim for {0}': 'mire em {0}',
   'Week {0} of {1}: {2}% of your best 1RM': 'Semana {0} de {1}: {2}% do seu melhor 1RM',
+  // --- seasonal themes (lib/seasonal.js) ---
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Uma teia de aranha no cabeçalho, morcegos atrás do cronômetro de descanso, abóboras no fim. Nunca em cima das suas séries.',
+  'A pumpkin orange accent while Halloween shows. Your own color comes back after.': 'Um destaque laranja abóbora enquanto durar o Halloween. Depois sua cor volta.',
+  'Spiders, bats and one shy pumpkin until the end of October. Never during a workout.': 'Aranhas, morcegos e uma abóbora tímida até o fim de outubro. Nunca durante um treino.',
+  'Little extras for the time of year.': 'Pequenos extras de acordo com a época do ano.',
+  'Boo! You found the pumpkin. It was watching you train.': 'Bu! Você achou a abóbora. Ela estava vendo você treinar.',
+  'Boo! Pumpkin found. Your next PR is now officially haunted.': 'Bu! Abóbora encontrada. Seu próximo recorde agora é oficialmente assombrado.',
+  'Boo! Found it. The spiders owe you a rep.': 'Bu! Achou. As aranhas te devem uma repetição.',
+  'The pumpkin is napping. Come back tomorrow.': 'A abóbora está tirando uma soneca. Volte amanhã.',
+  'Back next October. The spiders are on holiday.': 'Volta em outubro. As aranhas estão de férias.',
+  'Try the Halloween app icon': 'Experimente o ícone de Halloween do app',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

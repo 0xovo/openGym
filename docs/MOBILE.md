@@ -465,7 +465,9 @@ generator. `node scripts/app-icons.mjs` draws them from the list in
 `src/lib/app-icon-variants.js` and the glyph in `resources/icon.svg`, with no dependencies: the
 SVG per icon in `resources/icons/`, an `AppIcon-<Name>` set (1024 px, opaque) per icon in the iOS
 asset catalog, the Android launcher, round and adaptive layers per density, and the previews in
-`public/app-icons/`. `--check` says whether the committed files still match. A new icon also
+`public/app-icons/`. An icon with `art` (Halloween) is a hand-made SVG in `resources/icons/`
+instead, which the script renders; it may use only rect, circle, line, polyline, polygon and one
+two-stop radialGradient. `--check` says whether the committed files still match. A new icon also
 needs its activity-alias in `AndroidManifest.xml`, its name in `AppIcons.java` and
 `AppIconPlugin.swift`, and its set in `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`;
 `scripts/app-icons.test.mjs` fails until all of them agree.

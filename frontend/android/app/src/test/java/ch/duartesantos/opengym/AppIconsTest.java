@@ -11,6 +11,7 @@ public class AppIconsTest {
         assertEquals(AppIcons.IDS.length, AppIcons.ALIASES.length);
         assertEquals("IconDefault", AppIcons.aliasFor("default"));
         assertEquals("IconSky", AppIcons.aliasFor("sky"));
+        assertEquals("IconHalloween", AppIcons.aliasFor("halloween"));
         assertNull(AppIcons.aliasFor("nope"));
         assertNull(AppIcons.aliasFor(null));
     }
@@ -29,5 +30,9 @@ public class AppIconsTest {
         on = new boolean[AppIcons.ALIASES.length];
         on[0] = true;
         assertEquals("default", AppIcons.current(on));
+        // The last one, Halloween, counts too.
+        on = new boolean[AppIcons.ALIASES.length];
+        on[AppIcons.ALIASES.length - 1] = true;
+        assertEquals("halloween", AppIcons.current(on));
     }
 }

@@ -99,6 +99,19 @@ describe('workout detail', () => {
     expect(history.textContent).toContain('60×5')
   })
 
+  it('opens the exercise\'s description from its thumbnail, not the history (#805)', () => {
+    const w = workout([{ id: lifts[0], target: { mode: 'reps' }, sets: [done(60, 5)] }])
+    useStore.setState(s => ({ S: { ...s.S, workouts: [w] } }))
+    workoutDetailSheet(w)
+    const thumb = mountTopSheet().querySelector('.wd-ex .wd-thumb')
+    expect(thumb.tagName).toBe('BUTTON')
+    act(() => { thumb.click() })
+    expect(useUI.getState().sheets).toHaveLength(2)
+    const detail = mountTopSheet()
+    expect(detail.querySelector('.exdetail-name')).not.toBeNull()
+    expect(detail.textContent).not.toContain('Exercise history')
+  })
+
   it('copies the workout as text, with the note as it stands in the box', async () => {
     const writeText = vi.fn(() => Promise.resolve())
     vi.stubGlobal('navigator', { ...navigator, clipboard: { writeText } })
@@ -177,5 +190,24 @@ describe('export as .fit', () => {
     const host = mountTopSheet()
     await act(async () => { button(host, 'Export as .fit file').click() })
     expect(toast).toHaveBeenCalledWith('Could not create the file')
+  })
+})
+
+describe('workout detail: time per exercise', () => {
+  const T0 = workout([]).start   // the fixture's own clock, so the ticks fall inside it in any time zone
+  const at = min => T0 + min * 60000
+  it('shows how long each exercise took, from its ticks', () => {
+    workoutDetailSheet(workout([
+      { id: lifts[0], target: { mode: 'reps' }, sets: [done(100, 5, { at: at(4) }), done(100, 5, { at: at(8) })] },
+      { id: lifts[1], target: { mode: 'reps' }, sets: [done(60, 8, { at: at(20) })] },
+    ]))
+    const lines = [...mountTopSheet().querySelectorAll('.wd-ex .grow')].map(el => el.textContent)
+    expect(lines[0]).toContain('8 min')
+    expect(lines[1]).toContain('12 min')
+  })
+
+  it('shows none for a workout without tick times', () => {
+    workoutDetailSheet(workout([{ id: lifts[0], target: { mode: 'reps' }, sets: [done(100, 5)] }]))
+    expect(mountTopSheet().querySelector('.wd-ex .grow').textContent).not.toContain('min')
   })
 })

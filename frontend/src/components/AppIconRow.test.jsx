@@ -76,6 +76,16 @@ describe('App icon row', () => {
     expect(m.toast).not.toHaveBeenCalled()
   })
 
+  it.each(['android', 'ios'])('offers the Halloween icon last, all year (%s)', async platform => {
+    globalThis.Capacitor = { getPlatform: () => platform }
+    m.later = platform === 'android'
+    await mount()
+    expect(buttons().at(-1).getAttribute('aria-label')).toBe('Halloween')
+    await tap('Halloween')
+    expect(m.calls).toEqual([{ name: 'halloween' }])
+    expect(chosen()).toEqual(['Halloween'])
+  })
+
   it('a tap on the icon in use asks the phone nothing', async () => {
     await mount()
     await tap('Original')

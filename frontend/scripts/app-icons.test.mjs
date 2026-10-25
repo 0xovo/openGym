@@ -2,9 +2,10 @@
  * platform wants, and drawn the way the script draws it today; and the native projects list the
  * same icons as src/lib/app-icon-variants.js, or the picker would offer one the phone has not got. */
 import { describe, expect, it } from 'vitest'
+import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { DENSITIES, IOS_SIZE, PREVIEW, ROOT, draw, files, pngInfo } from './app-icons.mjs'
+import { DENSITIES, IOS_SIZE, PREVIEW, ROOT, draw, files, pngInfo, scene } from './app-icons.mjs'
 import { APP_ICON_VARIANTS } from '../src/lib/app-icon-variants.js'
 
 const read = rel => readFileSync(join(ROOT, rel), 'utf8')
@@ -46,6 +47,36 @@ describe('generated icon files', () => {
     }
     const sky = APP_ICON_VARIANTS.find(v => v.id === 'sky')
     expect(readFileSync(join(ROOT, `${RES}/mipmap-mdpi/ic_launcher_sky_round.png`)).equals(draw(sky, 48, { round: true }))).toBe(true)
+    // The hand-made one goes through its own renderer, round cut included.
+    const hw = APP_ICON_VARIANTS.find(v => v.id === 'halloween')
+    expect(readFileSync(join(ROOT, `${RES}/mipmap-mdpi/ic_launcher_halloween_round.png`)).equals(draw(hw, 48, { round: true }))).toBe(true)
+  })
+})
+
+describe('node scripts/app-icons.mjs --check', () => {
+  // Every committed icon against a fresh draw, the 1024s too (about 20 s, so it runs once, here).
+  it('finds nothing out of date', () => {
+    const out = execFileSync(process.execPath, [join(ROOT, 'scripts/app-icons.mjs'), '--check'], { encoding: 'utf8' })
+    expect(out).toContain('app icons up to date')
+  }, 120_000)
+})
+
+describe('the Halloween icon', () => {
+  const v = APP_ICON_VARIANTS.find(x => x.id === 'halloween')
+
+  it('is a hand-made SVG the renderer knows every piece of', () => {
+    expect(v).toMatchObject({ name: 'Halloween', ios: 'AppIcon-Halloween', art: 'resources/icons/halloween.svg' })
+    // scene() throws on any element it cannot draw.
+    expect(scene(read(v.art)).length).toBeGreaterThan(10)
+  })
+
+  it('is dark at the edges, orange on the dumbbell, pale on the moon', () => {
+    const shapes = scene(read(v.art))
+    const at = (x, y) => shapes.find(s => s.hit(x, y)).color(x, y).map(Math.round)
+    expect(at(256, 256)).toEqual([255, 122, 26])   // the bar
+    expect(at(90, 110)).toEqual([247, 232, 180])   // the moon's lit side
+    const corner = at(10, 500)
+    expect(Math.max(...corner)).toBeLessThan(40)
   })
 })
 
@@ -92,6 +123,7 @@ describe('iOS alternate icons', () => {
     const names = [...pbx.matchAll(/ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "([^"]*)";/g)].map(m => m[1].split(' '))
     expect(names.length).toBe((pbx.match(/ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;/g) || []).length)
     for (const n of names) expect(n).toEqual(ALT.map(v => v.ios))
+    expect(names[0]).toContain('AppIcon-Halloween')
   })
 
   it('the plugin is compiled, registered and knows the same sets', () => {
