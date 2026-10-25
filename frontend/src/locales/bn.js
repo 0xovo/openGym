@@ -2649,4 +2649,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'শুধু এই ফোনের জন্য। কিছু হোম স্ক্রিন বুঝতে একটু সময় নেয়।',
   'New icon on its way. It shows up once you leave the app.': 'নতুন আইকন আসছে। অ্যাপ থেকে বেরোলেই দেখা যাবে।',
   'The icon could not be changed.': 'আইকন বদলানো গেল না।',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'এটা কি ঠিক?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'ওজন: {0} আপনার সবচেয়ে ভারী ওজন {1}-এর দ্বিগুণেরও বেশি।',
+  'Reps: {0} is more than twice your most, {1}.': 'রেপ: {0} আপনার সর্বোচ্চ {1}-এর দ্বিগুণেরও বেশি।',
+  'Weight: {0} is under a third of last time’s {1}.': 'ওজন: {0} গতবারের {1}-এর এক-তৃতীয়াংশেরও কম।',
+  'Reps: {0} is under a third of last time’s {1}.': 'রেপ: {0} গতবারের {1}-এর এক-তৃতীয়াংশেরও কম।',
+  'Fix it': 'ঠিক করুন',
+  'Log as typed': 'যেমন লেখা তেমন লগ করুন',
 }

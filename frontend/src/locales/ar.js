@@ -2625,4 +2625,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'لهذا الهاتف فقط. بعض الشاشات الرئيسية تحتاج لحظة لتلحق.',
   'New icon on its way. It shows up once you leave the app.': 'الأيقونة الجديدة في الطريق. ستظهر بمجرد أن تغادر التطبيق.',
   'The icon could not be changed.': 'تعذّر تغيير الأيقونة.',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'هل هذا صحيح؟',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'الوزن: {0} أكثر من ضعف أثقل وزن لك، {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'التكرارات: {0} أكثر من ضعف أعلى عدد لك، {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'الوزن: {0} أقل من ثلث وزن المرة السابقة، {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'التكرارات: {0} أقل من ثلث عدد المرة السابقة، {1}.',
+  'Fix it': 'صحّحه',
+  'Log as typed': 'سجّل كما كُتب',
 }

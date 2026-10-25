@@ -2570,4 +2570,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Rien que pour ce téléphone. Certains écrans d’accueil mettent un instant à suivre.',
   'New icon on its way. It shows up once you leave the app.': 'Nouvelle icône en route. Elle apparaît dès que tu quittes l’app.',
   'The icon could not be changed.': 'Impossible de changer l’icône.',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'C’est bien ça ?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Poids : {0}, c’est plus du double de ton record, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Reps : {0}, c’est plus du double de ton record, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Poids : {0}, c’est moins du tiers de la dernière fois, {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Reps : {0}, c’est moins du tiers de la dernière fois, {1}.',
+  'Fix it': 'Corriger',
+  'Log as typed': 'Noter tel quel',
 }

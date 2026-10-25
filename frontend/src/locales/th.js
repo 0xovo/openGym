@@ -2581,4 +2581,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'เฉพาะโทรศัพท์เครื่องนี้ หน้าจอโฮมบางแบบต้องใช้เวลาสักครู่ถึงจะเปลี่ยน',
   'New icon on its way. It shows up once you leave the app.': 'ไอคอนใหม่กำลังมา จะแสดงทันทีที่คุณออกจากแอป',
   'The icon could not be changed.': 'เปลี่ยนไอคอนไม่ได้',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'ถูกต้องไหม?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'น้ำหนัก: {0} มากกว่าสองเท่าของสถิติสูงสุดของคุณ {1}',
+  'Reps: {0} is more than twice your most, {1}.': 'ครั้ง: {0} มากกว่าสองเท่าของสถิติสูงสุดของคุณ {1}',
+  'Weight: {0} is under a third of last time’s {1}.': 'น้ำหนัก: {0} น้อยกว่าหนึ่งในสามของครั้งก่อน {1}',
+  'Reps: {0} is under a third of last time’s {1}.': 'ครั้ง: {0} น้อยกว่าหนึ่งในสามของครั้งก่อน {1}',
+  'Fix it': 'แก้ไข',
+  'Log as typed': 'บันทึกตามที่พิมพ์',
 }
