@@ -36,6 +36,7 @@
 		AA0600000000000000000004 /* HealthReadCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0600000000000000000003 /* HealthReadCore.swift */; };
 		AA0800000000000000000002 /* GymReminderPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0800000000000000000001 /* GymReminderPlugin.swift */; };
 		AA0800000000000000000004 /* GymReminderRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0800000000000000000003 /* GymReminderRules.swift */; };
+		AA1440000000000000000002 /* GymMapPickerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1440000000000000000001 /* GymMapPickerPlugin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,7 @@
 		AA0600000000000000000001 /* ClipCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClipCodec.swift; path = ../WatchCore/Sources/WatchCore/ClipCodec.swift; sourceTree = "<group>"; };
 		AA0600000000000000000003 /* HealthReadCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HealthReadCore.swift; path = ../WatchCore/Sources/WatchCore/HealthReadCore.swift; sourceTree = "<group>"; };
 		AA0800000000000000000001 /* GymReminderPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GymReminderPlugin.swift; sourceTree = "<group>"; };
+		AA1440000000000000000001 /* GymMapPickerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GymMapPickerPlugin.swift; sourceTree = "<group>"; };
 		AA0800000000000000000003 /* GymReminderRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GymReminderRules.swift; path = ../GymReminderCore/Sources/GymReminderCore/GymReminderRules.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -139,6 +141,7 @@
 				AA0600000000000000000003 /* HealthReadCore.swift */,
 				AA0800000000000000000001 /* GymReminderPlugin.swift */,
 				AA0800000000000000000003 /* GymReminderRules.swift */,
+				AA1440000000000000000001 /* GymMapPickerPlugin.swift */,
 				AA0200000000000000000007 /* PrivacyInfo.xcprivacy */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
@@ -296,6 +299,7 @@
 				AA0600000000000000000004 /* HealthReadCore.swift in Sources */,
 				AA0800000000000000000002 /* GymReminderPlugin.swift in Sources */,
 				AA0800000000000000000004 /* GymReminderRules.swift in Sources */,
+				AA1440000000000000000002 /* GymMapPickerPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

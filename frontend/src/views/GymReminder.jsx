@@ -74,6 +74,7 @@ async function pickNative(gym) {
       none: t('Nothing found. Try a street and a town.'),
       hint: t('Tap the map or drag the pin onto your gym.'),
       privacy: t('Searches go to Apple Maps. Your gyms stay on this phone.'),
+      noLocation: noLocation(), notFound: t('Couldn’t find where you are. Try the map instead.'),
     },
   })
 }
