@@ -1642,6 +1642,16 @@ export const PT_BR_OVERRIDES = {
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'É o bloco todo: {0} {1} é o máximo que dá, então o peso fica.',
   'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Não tem código no celular? Ele só aparece enquanto o celular está conectado a este servidor: Configurações → Conta → Conectar ao meu servidor.',
   'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Para entrar também no computador, você precisa do seu próprio servidor. Conecte este celular a ele, e Adicionar outro dispositivo dá um código para o computador.',
+  'How hard it felt': 'Quão puxado foi',
+  'Not rated yet': 'Ainda sem avaliação',
+  'How hard did that feel?': 'Quão puxado pareceu?',
+  'Tap how it felt, or type an exact {0}.': 'Toque em como foi, ou digite um {0} exato.',
+  'All out, nothing left': 'No limite, não sobrou nada',
+  'Nearly all out': 'Quase no limite',
+  'Very hard, one word at a time': 'Muito puxado, uma palavra por vez',
+  'Hard, short sentences only': 'Puxado, só frases curtas',
+  'Working, but steady': 'Exigente, mas estável',
+  'Easy, you could chat the whole way': 'Fácil, dava para bater papo o tempo todo',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

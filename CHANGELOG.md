@@ -141,6 +141,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Volume while you lift.** The progress bar at the top of a workout now ends in the session's
   volume, adding up every set you tick, in all four layouts. Handy for deciding whether today was
   enough or you've got one more in you (#774).
+- **Rate your cardio** (Discord). A cardio set's menu (tap the set number) now has How hard it
+  felt, in RPE whatever your sets use, worded for a run instead of reps left. An easy walk then
+  loads your fatigue map less than a hard run; unrated cardio counts as it always did. The incline
+  keeps its column.
 - **Count warm-ups in volume**, if you like (#719). A new switch in Settings → Units & language
   adds your done warm-ups to every volume the app shows: the workout, the summary, history,
   Stats, the report and the coach. Off by default, and records ignore warm-ups either way. The

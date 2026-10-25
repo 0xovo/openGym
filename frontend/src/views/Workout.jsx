@@ -496,6 +496,10 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
           // as RIR 0 wherever effort is read, unless a rating was logged on the set. A timed
           // per-side pair is one set, so both halves get it.
           !warm && mode !== 'cardio' && { icon: 'gauge', label: t('Taken to failure'), sub: t('Nothing left in the tank'), on: isFailureSet(s), onClick: () => toggleFailureAt(i) },
+          // Cardio's effort lives here, not in a column (the third one is the incline): RPE only,
+          // whatever the profile logs, since reps in reserve mean nothing on a treadmill. Stored as
+          // `rpe` on the set, which the fatigue model already reads (recovery.js via rirOf).
+          !warm && cardio && { icon: 'gauge', label: t('How hard it felt'), sub: s.rpe != null ? t(EFFORT.rpe.hd) + ' ' + fmtNum(s.rpe) : t('Not rated yet'), onClick: () => effortPickerSheet('rpe', s.rpe ?? null, nv => onField(i, 'rpe', nv), { cardio: true }) },
           // Just this set's rest, this session (#609): a long one before the top set, none after a light one.
           !editing && { icon: 'timer', label: t('Rest after this set'), sub: ownRestHere == null ? t('Default ({0})', fmtRest(setRestDefault(i))) : ownRestHere === 0 ? t('No timer') : fmtRest(ownRestHere), onClick: () => openSetRest(i) },
         ] },

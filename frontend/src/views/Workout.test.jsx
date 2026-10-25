@@ -1864,6 +1864,21 @@ describe('workout focus view', () => {
     expect(mocks.S.active.entries[0].sets[0]).toMatchObject({ min: 21, speed: 8.5 })
   })
 
+  it('rates a cardio set in RPE from the focus card\'s set menu', async () => {
+    await mount([exercise('plain-treadmill', [false], {
+      target: { mode: 'cardio', min: 20, speed: 8 },
+      sets: [{ min: 20, speed: 8, done: false }],
+    })], 0, { active: { workoutView: 'focus' } })
+    await click(buttonNamed('Set menu'))
+    const rate = mocks.menuSheet.mock.calls.at(-1)[0].items.filter(Boolean).find(item => item.label === 'How hard it felt')
+    expect(rate.sub).toBe('Not rated yet')
+    await act(async () => { rate.onClick() })
+    const [scale, , onPick, opts] = mocks.effortPickerSheet.mock.calls.at(-1)
+    expect([scale, opts]).toEqual(['rpe', { cardio: true }])
+    await act(async () => { onPick(7.5) })
+    expect(mocks.S.active.entries[0].sets[0].rpe).toBe(7.5)
+  })
+
   it('keeps drop and burst rows editable and opens every set action', async () => {
     await mount([exercise('plain-bench', [false], {
       sets: [{
@@ -2958,6 +2973,39 @@ describe('workout controls: the more menu and the set menu', () => {
     await act(async () => { container.querySelector('button[aria-label="Set 2"]').dispatchEvent(new dom.Event('click', { bubbles: true })) })
     await act(async () => { item('Remove this set').onClick() })
     expect(mocks.S.active.entries[0].sets.length).toBe(1)
+  })
+
+  // Cardio effort (Discord thehypetrainhobo): the third column stays the incline, so the rating
+  // sits in the set menu, RPE only, and lands on the row as `rpe` for the fatigue model.
+  it('rates a cardio row in RPE from its set menu, whatever the profile logs', async () => {
+    await mount([exercise('plain-treadmill', [false], {
+      target: { mode: 'cardio', min: 30, speed: 5 },
+      sets: [{ min: 30, speed: 5, done: true }],
+    })], 0, { effort: 'rir' })
+    const openSet = async () => { await act(async () => { container.querySelector('button[aria-label="Set 1"]').dispatchEvent(new dom.Event('click', { bubbles: true })) }) }
+    await openSet()
+    expect(item('Taken to failure')).toBeUndefined()
+    expect(item('How hard it felt').sub).toBe('Not rated yet')
+    mocks.effortPickerSheet.mockClear()
+    await act(async () => { item('How hard it felt').onClick() })
+    const [scale, value, onPick, opts] = mocks.effortPickerSheet.mock.calls.at(-1)
+    expect([scale, value, opts]).toEqual(['rpe', null, { cardio: true }])
+    await act(async () => { onPick(6) })
+    expect(mocks.S.active.entries[0].sets[0]).toMatchObject({ rpe: 6, done: true })
+    expect('rir' in mocks.S.active.entries[0].sets[0]).toBe(false)
+    await rerender()
+    await openSet()
+    expect(item('How hard it felt').sub).toBe('RPE 6')
+    // Cleared, the key goes again.
+    await act(async () => { item('How hard it felt').onClick() })
+    await act(async () => { mocks.effortPickerSheet.mock.calls.at(-1)[2](null) })
+    expect('rpe' in mocks.S.active.entries[0].sets[0]).toBe(false)
+  })
+
+  it('offers no effort row on a lift, where the column already does it', async () => {
+    await mount([exercise('plain-bench', [false])])
+    await act(async () => { container.querySelector('button[aria-label="Set 1"]').dispatchEvent(new dom.Event('click', { bubbles: true })) })
+    expect(item('How hard it felt')).toBeUndefined()
   })
 
   // #609: one set's rest, from its menu, this session only.

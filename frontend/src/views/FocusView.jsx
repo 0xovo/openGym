@@ -251,6 +251,8 @@ export default function FocusView({
       { icon: 'arrowDown', label: t('Add drop set'), onClick: () => onMutateSet(setIdx, row => addDropTo(row, entry.target)) },
       { icon: 'bolt', label: t('Add burst'), onClick: () => onMutateSet(setIdx, row => addBurstTo(row, entry.target?.intensifier?.type === 'restpause' ? entry.target.intensifier.restSec : (S.restPauseSec || 15))) },
       !isWarmupRow(set) && mode !== 'cardio' && { icon: 'gauge', label: t('Taken to failure'), sub: t('Nothing left in the tank'), on: isFailureSet(set), onClick: () => onMutateSet(setIdx, toggleFailure) },
+      // Cardio rates in RPE from here, as in the list's set menu (Workout.jsx): no column to spare.
+      !isWarmupRow(set) && mode === 'cardio' && { icon: 'gauge', label: t('How hard it felt'), sub: set.rpe != null ? t(EFFORT.rpe.hd) + ' ' + fmtNum(set.rpe) : t('Not rated yet'), onClick: () => effortPickerSheet('rpe', set.rpe ?? null, value => onField(setIdx, 'rpe', value), { cardio: true }) },
       { icon: 'trash', label: t('Delete set'), danger: true, disabled: entry.sets.length <= 1, onClick: () => onRemoveSetAt(setIdx) },
     ],
   })

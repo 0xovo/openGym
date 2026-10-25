@@ -2398,7 +2398,7 @@ export const glyphPicker = (current, onPick) => {
 // for the value between two presets. Presets are stored in RIR internally; a profile that logs
 // RPE sees the same buttons labelled on its own scale (toScale), coloured identically — the
 // colour is the effort, not the number, so 0 RIR and 10 RPE are both the "went to failure" end.
-function EffortPicker({ kind, value, onPick, close }) {
+function EffortPicker({ kind, value, onPick, close, cardio = false }) {
   // Local mirror so the ticked preset and the exact field track typing live.
   const [v, setV] = useState(value ?? null)
   // The exact field used to write through on every change, and onPick concludes the set (issue
@@ -2427,8 +2427,8 @@ function EffortPicker({ kind, value, onPick, close }) {
   // as the row title, a tick on the current one. The exact field is the app's own stepper,
   // tinted like the logged cell in the set row, so the sheet and the row read as one thing.
   return <>
-    <h3 style={{ marginBottom: 2 }}>{t('How hard was that set?')}</h3>
-    <div className="muted small" style={{ marginBottom: 10 }}>{t('Tap how many reps you had left, or type an exact {0}.', hd)}</div>
+    <h3 style={{ marginBottom: 2 }}>{cardio ? t('How hard did that feel?') : t('How hard was that set?')}</h3>
+    <div className="muted small" style={{ marginBottom: 10 }}>{cardio ? t('Tap how it felt, or type an exact {0}.', hd) : t('Tap how many reps you had left, or type an exact {0}.', hd)}</div>
     <div className="list menu-list effpick">
       {EFFORT_PRESETS.map(p => {
         const label = fmtNum(toScale(kind, p.rir)) + (p.tail ? '+' : '')
@@ -2436,7 +2436,7 @@ function EffortPicker({ kind, value, onPick, close }) {
         return <div key={p.rir} className={'item menu-item' + (on ? ' on' : '')} style={{ '--bc': p.color }}
           {...tappable(() => pick(p.rir))}>
           <span className="lrow-i effpick-n">{label}</span>
-          <div className="grow"><div className="tt">{t(p.feel)}</div></div>
+          <div className="grow"><div className="tt">{t(cardio ? p.cardioFeel : p.feel)}</div></div>
           <span className={'menu-on' + (on ? ' is-on' : '')}><Icon name="check" /></span>
         </div>
       })}
@@ -2463,9 +2463,10 @@ function EffortPicker({ kind, value, onPick, close }) {
 }
 // kind is 'rir' | 'rpe'; value is the set's current rating on that scale (or null); onPick
 // receives the new value on that same scale (null to clear). The caller stores it exactly as
-// weight/reps are stored — a null drops the key rather than writing a zero.
-export const effortPickerSheet = (kind, value, onPick) =>
-  ui().openSheet(close => <EffortPicker kind={kind} value={value} onPick={onPick} close={close} />)
+// weight/reps are stored — a null drops the key rather than writing a zero. `cardio` words the
+// presets for a run or a ride (the caller passes 'rpe' then: reps in reserve mean nothing there).
+export const effortPickerSheet = (kind, value, onPick, { cardio = false } = {}) =>
+  ui().openSheet(close => <EffortPicker kind={kind} value={value} onPick={onPick} close={close} cardio={cardio} />)
 
 /* ============================ share / print / import a plan ============================ */
 // What the Plan menu does with a plan: export it, print it, import a friend's.
