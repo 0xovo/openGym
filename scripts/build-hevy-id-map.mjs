@@ -40,7 +40,8 @@ function hevyApiKey() {
  * are intentionally omitted so they import as custom exercises.
  */
 // Titles whose closest catalogue entry is a different movement — better a custom exercise than
-// a wrong one. Keep in sync with the note at the top of the generated map.
+// a wrong one. Left out of both tables, so the API import (by template id) skips them too.
+// Keep in sync with the note at the top of the generated map.
 const NEVER_BY_TITLE = new Set(['side plank', 'squat (machine)', 'rear delt reverse fly (cable)'])
 
 const BY_TITLE = {
@@ -261,11 +262,11 @@ async function main() {
   const unmatched = []
   for (const t of templates) {
     if (!t?.id || t.is_custom) { if (t?.id && t.is_custom) unmatched.push(t); continue }
-    const id = resolve(t)
+    const titleKey = String(t.title || '').trim().toLowerCase()
+    const id = NEVER_BY_TITLE.has(titleKey) ? null : resolve(t)
     if (id) {
       map[t.id] = id
-      const titleKey = String(t.title || '').trim().toLowerCase()
-      if (titleKey && !NEVER_BY_TITLE.has(titleKey) && !titleMap[titleKey]) titleMap[titleKey] = id
+      if (titleKey && !titleMap[titleKey]) titleMap[titleKey] = id
     } else unmatched.push(t)
   }
 

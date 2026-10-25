@@ -75,7 +75,6 @@ describe('HEVY_ID_MAP', () => {
     '914F3A96': '0327', // Chest Supported Incline Row (Dumbbell)
     '98237BA2': '0826', // Knee Raise Parallel Bars
     '4E5257DE': '6392', // Lat Pulldown - Close Grip (Cable)
-    C315DC2A: '0602', // Rear Delt Reverse Fly (Cable)
     FFDA283B: '0381', // Reverse Lunge (Dumbbell)
     '8BAB2735': '0318', // Seated Incline Curl (Dumbbell)
     '9237BAD1': '1454', // Seated Shoulder Press (Machine): its artwork is 1454, 0603's a landmine press
@@ -89,6 +88,11 @@ describe('HEVY_ID_MAP', () => {
       expect(matchHevyTemplate({ id: hid, title: 'ignored localized name' })).toBe(want)
     })
   }
+
+  it('leaves the never-by-title lifts out of the id map as well', () => {
+    // Side Plank, Squat (Machine), Rear Delt Reverse Fly (Cable)
+    for (const id of ['E3EDA509', 'CC35A01F', 'C315DC2A']) expect(HEVY_ID_MAP[id]).toBeUndefined()
+  })
 
   it('leaves catalogue gaps unmapped (import as custom)', () => {
     for (const id of ['68CE0B9B', '0222DB42', 'D1CD146F']) {
