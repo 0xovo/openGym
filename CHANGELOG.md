@@ -181,6 +181,12 @@ little Ready / Recovering / Fatigued bar, plus when it drops back to Recovering 
 you leave it alone. Handy for deciding whether those legs are really ready (thanks @sg41).
 
 **Fixes**
+- **openGym starts again on iPhones with iOS 15.5 to 16.3** (P1). 1.4.2 and the web demo sat on
+  the splash forever there, because one tiny link check used regex syntax Safari only learned in
+  16.4. Rewritten, the build now targets Safari 15 like the app does, and a test reads every built
+  file for syntax older iPhones can't handle. Should a browser still choke, openGym now says so
+  on screen with the error and a Reload button instead of lifting the logo forever. Thanks
+  h097327 for the excellent report.
 - Deadlift variants that forgot your lower back remember it now: the kettlebell suitcase
   deadlift and the plate deadlift lunge press (#693, #700, thanks @JeromeTDev and @choksi2212).
 - Equipment profiles know more about what an exercise needs. An inverted row needs a bar (unless
