@@ -175,7 +175,7 @@ struct RoundButton: View {
         VStack(spacing: 3) {
             Button(action: action) {
                 Image(systemName: systemImage)
-                    .font(.system(size: size * 0.42, weight: .bold))
+                    .font(.system(size: size * 0.44, weight: .heavy))
                     .foregroundStyle(dimmed ? Theme.accent : Color.black)
                     .frame(width: size, height: size)
                     .background(Circle().fill(dimmed ? Color.clear : Theme.accent))
@@ -183,7 +183,8 @@ struct RoundButton: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(label)
-            if caption { label.font(.caption2.weight(.semibold)).foregroundStyle(.secondary).lineLimit(1) }
+            // The word under it in the accent too, so Done reads as the one thing to press.
+            if caption { label.font(.caption2.weight(.bold)).foregroundStyle(dimmed ? Color.secondary : Theme.accent).lineLimit(1) }
         }
     }
 }
@@ -455,7 +456,7 @@ struct ExercisePage: View {
                 .accessibilityHint(Text("Tap to change it."))
             }
         } else {
-            HStack(spacing: 5) {
+            HStack(spacing: 6) {
                 ValueTile(value: formatNumber(weight), unit: unit, label: Text("Weight"), tint: tint) { if current { editing = .weight } }
                 ValueTile(value: formatNumber(reps), unit: nil, label: Text("Reps"), tint: tint) { if current { editing = .reps } }
             }
@@ -609,8 +610,10 @@ struct ValueTile: View {
     var tint: Color = .white
     var large = false
     let tap: () -> Void
-    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 30
-    @ScaledMetric(relativeTo: .largeTitle) private var largeSize: CGFloat = 38
+    // The numbers are what a glance between sets is for: as big as the tile lets them be.
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 34
+    @ScaledMetric(relativeTo: .largeTitle) private var largeSize: CGFloat = 42
+    @Environment(\.isLuminanceReduced) private var dimmed
 
     var body: some View {
         Button(action: tap) {
@@ -627,10 +630,12 @@ struct ValueTile: View {
                 label.font(.system(size: 10, weight: .medium)).foregroundStyle(.secondary).lineLimit(1)
                     .dynamicTypeSize(...DynamicTypeSize.large)
             }
-            .foregroundStyle(tint)
+            .foregroundStyle(tint.opacity(dimmed ? 0.7 : 1))
             .frame(maxWidth: .infinity, minHeight: Theme.tap)
             .padding(.vertical, 3)
-            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Theme.dim))
+            // Always On: no lit tiles, only their outline (less light, the numbers still read).
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(dimmed ? Color.clear : Theme.dim))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Theme.dim, lineWidth: dimmed ? 1 : 0))
         }
         .buttonStyle(.plain)
         // VoiceOver: "Weight, 62.5 kg, button: tap to change it".
@@ -879,6 +884,7 @@ struct SetDots: View {
     let current: Int?
     let skipped: (Int) -> Bool
     let pick: (Int) -> Void
+    @Environment(\.isLuminanceReduced) private var dimmed
 
     var body: some View {
         HStack(spacing: 4) {
@@ -897,6 +903,7 @@ struct SetDots: View {
                     .onTapGesture { if !s.done { pick(pair.offset) } }
             }
         }
+        .opacity(dimmed ? 0.6 : 1)
         // VoiceOver: "Set 2 of 4, 1 done", swipe up or down to pick another set.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("Set \((current ?? 0) + 1) of \(entry.sets.count)"))
