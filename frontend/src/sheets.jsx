@@ -978,18 +978,32 @@ function BarWeightSheet({ exId, cfg, close }) {
 }
 export const barWeightSheet = (exId, cfg) => ui().openSheet(close => <BarWeightSheet exId={exId} cfg={cfg} close={close} />)
 
+// Plates, dumbbells and bars are kept per unit. With an exercise in the other unit (#657, lib/ex-unit.js)
+// that unit's list is the one its rows load from, so the editor offers both: `[st, unit, switcher]`,
+// `st` read as that unit, and the switch only while some exercise uses the other one.
+function useListUnit() {
+  const live = useStore(s => s.S)
+  const home = profileUnit(live)
+  const [unit, setUnit] = useState(home)
+  const other = Object.values(live.exUnit || {}).some(v => (v?.unit === 'kg' || v?.unit === 'lb') && v.unit !== home)
+  const switcher = other || unit !== home
+    ? <Segmented className="seg-inline" value={unit} onChange={setUnit} options={[{ value: 'kg', label: 'kg' }, { value: 'lb', label: 'lb' }]} />
+    : null
+  return [unit === home ? live : { ...live, unit }, unit, switcher]
+}
+
 // The plates you own, as pairs per size, for the profile's unit (Settings → Equipment → Plates).
 // The first edit copies the standard set into S.plates[unit] and changes one count in it, so the
 // list you see is always the list the set rows load from. "Back to the standard set" empties the
 // unit's list again. Both are stamped (lib/plates.js), so the last change wins a sync.
 function PlateInventorySheet({ close }) {
-  const st = useStore(s => s.S)
-  const unit = st.unit === 'lb' ? 'lb' : 'kg'
+  const [st, unit, switcher] = useListUnit()
   const own = ownsPlates(st)
-  const setPairs = (w, n) => update(s => { s.plates = withPlatePairs(s, w, n) })
-  const reset = () => update(s => { s.plates = withStandardPlates(s) })
+  const setPairs = (w, n) => update(s => { s.plates = withPlatePairs({ unit, plates: s.plates }, w, n) })
+  const reset = () => update(s => { s.plates = withStandardPlates({ unit, plates: s.plates }) })
   return <>
     <h3>{t('Plates')}</h3>
+    {switcher}
     <div className="muted small" style={{ marginBottom: 14 }}>
       {t('Pairs of each size you own. Every set row loads from this list, so a home gym with one pair of 45s is never told to use two.')}
     </div>
@@ -1013,11 +1027,10 @@ export const plateInventorySheet = () => ui().openSheet(close => <PlateInventory
 // puts them back on the increment. Tapping a weight takes it off, the field adds one, and the
 // quick fill writes the usual rack for the unit to edit from. Every change is stamped.
 function DumbbellInventorySheet({ close }) {
-  const st = useStore(s => s.S)
-  const unit = st.unit === 'lb' ? 'lb' : 'kg'
+  const [st, unit, switcher] = useListUnit()
   const list = dumbbellsOf(st)
   const [draft, setDraft] = useState(null)
-  const save = ws => update(s => { s.dumbbells = withDumbbells(s, ws) })
+  const save = ws => update(s => { s.dumbbells = withDumbbells({ unit, dumbbells: s.dumbbells }, ws) })
   const none = ownsNoDumbbells(st)
   const setNone = on => update(s => { s.dumbbells = withNoDumbbells(s, on) })
   const preset = presetWeights(unit)
@@ -1029,6 +1042,7 @@ function DumbbellInventorySheet({ close }) {
   }
   return <>
     <h3>{t('Dumbbells')}</h3>
+    {switcher}
     <div className="muted small" style={{ marginBottom: 14 }}>
       {t('The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.')}
     </div>
@@ -1066,13 +1080,13 @@ export const dumbbellInventorySheet = () => ui().openSheet(close => <DumbbellInv
 // own. A short 15 kg olympic bar is set here once instead of on every lift. Logged weights stay
 // totals, so history keeps its meaning; only the plate math and the drop steps move.
 function BarDefaultsSheet({ close }) {
-  const st = useStore(s => s.S)
-  const unit = st.unit === 'lb' ? 'lb' : 'kg'
-  const set = (eq, w) => update(s => { s.barDefaults = withBarDefault(s, eq, w) })
+  const [st, unit, switcher] = useListUnit()
+  const set = (eq, w) => update(s => { s.barDefaults = withBarDefault({ unit, barDefaults: s.barDefaults }, eq, w) })
   const any = BAR_TYPES.some(eq => ownBarDefault(st, eq) !== null)
   const name = eq => { const n = t(eq); return n.charAt(0).toLocaleUpperCase() + n.slice(1) }
   return <>
     <h3>{t('Your bars')}</h3>
+    {switcher}
     <div className="muted small" style={{ marginBottom: 14 }}>
       {t('What the bars at your gym weigh. Every exercise with that bar counts plates from it, unless you gave the exercise its own. Logged weights stay totals.')}
     </div>
@@ -1092,7 +1106,7 @@ function BarDefaultsSheet({ close }) {
     <div className="small dim" style={{ margin: '4px 0 14px' }}>
       {t('Most lifts in the library use “{0}”, a few use “{1}”. A short bar for all of them means setting both.', name('barbell'), name('olympic barbell'))}
     </div>
-    {any && <Button onClick={() => update(s => { s.barDefaults = withStandardBars(s); if (!Object.keys(s.barDefaults).length) delete s.barDefaults })} style={{ marginBottom: 8 }}>{t('Back to the standard bars')}</Button>}
+    {any && <Button onClick={() => update(s => { s.barDefaults = withStandardBars({ unit, barDefaults: s.barDefaults }); if (!Object.keys(s.barDefaults).length) delete s.barDefaults })} style={{ marginBottom: 8 }}>{t('Back to the standard bars')}</Button>}
     <Button variant="primary" onClick={close}>{t('Done')}</Button>
   </>
 }

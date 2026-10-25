@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRoot } from 'react-dom/client'
 import { useStore, DEF } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
-import { exConfigSheet, barWeightSheet } from './sheets.jsx'
+import { exConfigSheet, barWeightSheet, dumbbellInventorySheet } from './sheets.jsx'
 import { withExUnit } from './lib/ex-unit.js'
 import { bindUI } from './components/ui.jsx'
 import { EXIDX } from './lib/exercises.js'
@@ -99,5 +99,19 @@ describe('the exercise’s weight unit', () => {
     act(() => button(host, '35 lb').click())
     expect(S().barWeights[BENCH]).toBe(15.8757)
     expect(valueOf(host, 'Bar (lb)')).toBe('35')
+  })
+
+  it('the dumbbell list offers the other unit only while an exercise uses it, and edits that list', () => {
+    act(() => dumbbellInventorySheet())
+    let host = mountTopSheet()
+    expect(host.querySelector('.seg-inline')).toBeNull()
+    act(() => { mounted.splice(0).forEach(root => root.unmount()) })
+    useStore.setState({ S: { ...S(), exUnit: withExUnit({}, '0294', 'lb', 1) } })
+    act(() => dumbbellInventorySheet())
+    host = mountTopSheet()
+    act(() => button(host, 'lb').click())
+    act(() => button(host, 'Fill in 5 to 100 lb, every 5').click())
+    expect(S().dumbbells.lb.weights[0]).toBe(5)
+    expect(S().dumbbells.kg).toBeUndefined()
   })
 })
