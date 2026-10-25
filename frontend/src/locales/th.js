@@ -2573,4 +2573,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'ท่าที่ใช้ดัมเบลจะไม่อยู่ในคลัง ตัวเลือก และแผนของโค้ช',
   'Everything but dumbbells': 'ทุกอย่างยกเว้นดัมเบล',
   'None, so dumbbell lifts stay hidden.': 'ไม่มี ท่าที่ใช้ดัมเบลจึงถูกซ่อนไว้',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym อ่านเฉพาะตอนที่เปิดอยู่: อัตราการเต้นของหัวใจของการฝึกในวันล่าสุด และน้ำหนักในหนึ่งปีล่าสุด การฝึกที่เก่ากว่านั้นจะเหมือนเดิม',
 }

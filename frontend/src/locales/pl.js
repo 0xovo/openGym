@@ -2562,4 +2562,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Ćwiczenia z hantlami znikają z biblioteki, wyboru i planów Trenera.',
   'Everything but dumbbells': 'Wszystko oprócz hantli',
   'None, so dumbbell lifts stay hidden.': 'Brak, więc ćwiczenia z hantlami są ukryte.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym czyta tylko, gdy jest otwarty: tętno z treningów z ostatniej doby, pomiary wagi z ostatniego roku. Starsze treningi zostają bez zmian.',
 }

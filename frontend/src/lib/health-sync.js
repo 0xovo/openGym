@@ -26,7 +26,7 @@ import { EXIDX } from './exercises.js'
 import { speedUnitOf } from './speed.js'
 
 export const HEALTH_FILE = 'opengym-health.json'
-const OFF = { on: false, written: {}, at: 0, error: null, readHr: false, readWeight: false, wCursor: 0, seen: {}, hrTried: {}, readError: null }
+const OFF = { on: false, written: {}, at: 0, error: null, readHr: false, readWeight: false, wHistory: false, wCursor: 0, seen: {}, hrTried: {}, readError: null }
 
 // Wrapped in an object, as in rest-alert.js: a Capacitor plugin proxy answers `then`, so a
 // promise resolved with the bare proxy never settles.
@@ -227,6 +227,10 @@ const RESUME_EVERY_MS = 2 * 60e3
 // The first read of weigh-ins goes this far back (what Health Connect gives without the history
 // permission); later ones from the newest seen, minus a margin for a scale that syncs late.
 export const WEIGHT_FIRST_MS = 30 * 24 * 3600e3
+// With Health Connect's history permission (Android, idea from #801) the first read goes back a
+// year instead, so a scale's weigh-ins from before openGym arrive too. Asked for with the weight;
+// refused, the read simply stays at 30 days.
+export const WEIGHT_HISTORY_MS = 365 * 24 * 3600e3
 const WEIGHT_MARGIN_MS = 2 * 24 * 3600e3
 const SEEN_KEEP_MS = 60 * 24 * 3600e3
 
@@ -248,13 +252,16 @@ export async function enableRead(kind, getState, { apply = null } = {}) {
   const st = await p.HC.status().catch(() => ({ status: 'unsupported' }))
   if (st.status !== 'available') return { ok: false, reason: st.status }
   const perm = kind === 'hr' ? 'heartRate' : 'weight'
-  const res = await p.HC.requestPermissions({ read: [perm], write: [] }).catch(() => null)
+  // The history permission only where Health Connect has it (status says so); Apple Health has none.
+  const history = kind === 'weight' && p.platform !== 'ios' && st.history === true
+  const res = await p.HC.requestPermissions({ read: history ? [perm, 'history'] : [perm], write: [] }).catch(() => null)
   // Apple Health never says whether reading was allowed (that it was refused is itself private):
   // `read` is then missing, and a refusal just reads nothing.
   const ok = res && (res.read ? res.read[perm] !== false : true)
   if (!ok) return { ok: false, reason: 'denied' }
   const h = await loadHealth()
   const out = { ...h, [kind === 'hr' ? 'readHr' : 'readWeight']: true, readError: null }
+  if (kind === 'weight') out.wHistory = history && res.read?.history === true
   await saveHealth(out)
   told(out)
   if (getState) await readHealth(getState, { force: true, apply }).catch(() => {})
@@ -321,9 +328,17 @@ async function readOnce(getState, force, now, applyFn) {
   }
 
   if (h.readWeight && (force ? now - lastWeightRead >= RESUME_EVERY_MS : now - lastWeightRead >= READ_EVERY_MS)) {
-    const since = h.wCursor > 0 ? Math.max(h.wCursor - WEIGHT_MARGIN_MS, now - WEIGHT_FIRST_MS) : now - WEIGHT_FIRST_MS
+    const sinceFor = back => (h.wCursor > 0 ? Math.max(h.wCursor - WEIGHT_MARGIN_MS, now - back) : now - back)
     try {
-      const res = await p.HC.readWeights({ since })
+      let res
+      try {
+        res = await p.HC.readWeights({ since: sinceFor(h.wHistory ? WEIGHT_HISTORY_MS : WEIGHT_FIRST_MS) })
+      } catch (e) {
+        // The history permission taken back in Health Connect's settings: the 30 days still read.
+        if (!(h.wHistory && e?.code === 'permission')) throw e
+        h.wHistory = false
+        res = await p.HC.readWeights({ since: sinceFor(WEIGHT_FIRST_MS) })
+      }
       lastWeightRead = now
       const records = Array.isArray(res?.records) ? res.records : []
       // The memo is filled in on the copy that decides; the store's update replays the same merge.

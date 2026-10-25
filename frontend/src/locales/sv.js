@@ -2609,4 +2609,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Hantelövningar hålls borta från biblioteket, väljaren och Coachens planer.',
   'Everything but dumbbells': 'Allt utom hantlar',
   'None, so dumbbell lifts stay hidden.': 'Inga, så hantelövningar förblir dolda.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym läser bara medan appen är öppen: puls för pass från det senaste dygnet, vägningar från det senaste året. Äldre pass förblir som de är.',
 }

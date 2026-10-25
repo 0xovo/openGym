@@ -2559,4 +2559,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Вправи з гантелями не потраплять у бібліотеку, вибір і плани Тренера.',
   'Everything but dumbbells': 'Усе, крім гантелей',
   'None, so dumbbell lifts stay hidden.': 'Немає, тож вправи з гантелями приховані.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym читає дані, лише поки відкритий: пульс тренувань за останню добу, зважування за останній рік. Старіші тренування лишаються як є.',
 }

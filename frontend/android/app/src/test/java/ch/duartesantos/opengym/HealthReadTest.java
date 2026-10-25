@@ -68,6 +68,7 @@ public class HealthReadTest {
     public void permissionNamesMatchTheManifest() {
         assertEquals("android.permission.health.READ_HEART_RATE", HealthRead.readPermission("heartRate"));
         assertEquals("android.permission.health.READ_WEIGHT", HealthRead.readPermission("weight"));
+        assertEquals("android.permission.health.READ_HEALTH_DATA_HISTORY", HealthRead.readPermission("history"));
         assertEquals("android.permission.health.WRITE_EXERCISE", HealthRead.writePermission("exercise"));
         assertNull(HealthRead.readPermission("steps"));
     }

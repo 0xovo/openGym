@@ -2562,4 +2562,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': '哑铃动作不会出现在动作库、选择器和教练的计划里。',
   'Everything but dumbbells': '除哑铃外的全部',
   'None, so dumbbell lifts stay hidden.': '没有，所以哑铃动作会隐藏。',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym 只在打开时读取：最近一天训练的心率，最近一年的称重。更早的训练保持不变。',
 }

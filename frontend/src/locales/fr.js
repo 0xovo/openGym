@@ -2562,4 +2562,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Les exercices aux haltères restent hors de la bibliothèque, du sélecteur et des plans du Coach.',
   'Everything but dumbbells': 'Tout sauf les haltères',
   'None, so dumbbell lifts stay hidden.': 'Aucun, donc les exercices aux haltères restent cachés.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym ne lit que lorsqu’il est ouvert : fréquence cardiaque des séances du dernier jour, pesées de la dernière année. Les séances plus anciennes restent telles quelles.',
 }

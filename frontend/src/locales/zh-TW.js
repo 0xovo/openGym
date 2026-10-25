@@ -2555,4 +2555,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': '啞鈴動作不會出現在動作庫、選擇器和教練的計畫裡。',
   'Everything but dumbbells': '除啞鈴外的全部',
   'None, so dumbbell lifts stay hidden.': '沒有，所以啞鈴動作會隱藏。',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym 只在開啟時讀取：最近一天訓練的心率，最近一年的體重紀錄。更早的訓練維持不變。',
 }

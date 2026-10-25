@@ -179,3 +179,66 @@ describe('weigh-ins', () => {
     expect(S.bodyweight[0].src).toBe('ah')
   })
 })
+
+// Idea from #801 (antoni-heredia): Health Connect's history permission lets the first read of
+// weigh-ins go further back than the 30 days before the grant.
+describe('weigh-ins with the history permission', () => {
+  const rec = (dAgo, kg) => ({ t: NOW - dAgo * 24 * 3600e3, kg, id: 'd' + dAgo, origin: 'com.withings.wiscale2', clientId: null })
+  const withHistory = async (granted, platform = 'android') => {
+    vi.resetModules()
+    h.platform = platform
+    h.granted = { heartRate: true, weight: true, history: granted }
+    const core = await import('@capacitor/core')
+    const hc = core.registerPlugin()
+    vi.spyOn(core, 'registerPlugin').mockReturnValue({ ...hc, status: async () => ({ status: 'available', granted: false, read: { ...h.granted }, history: true }) })
+    hs = await import('./health-sync.js')
+  }
+
+  it('asks for it with the weight and then reads a year back', async () => {
+    await withHistory(true)
+    h.weights = [rec(200, 84), rec(1, 80)]
+    await hs.enableRead('weight', getState, { apply })
+    expect(h.calls[0]).toEqual(['request', { read: ['weight', 'history'], write: [] }])
+    expect(reads('readWeights')[0][1].since).toBe(NOW - 365 * 24 * 3600e3)
+    expect(S.bodyweight.map(b => b.w)).toEqual([84, 80])
+    expect(file().wHistory).toBe(true)
+  })
+
+  it('refused, it still reads the 30 days', async () => {
+    await withHistory(false)
+    h.weights = [rec(200, 84), rec(1, 80)]
+    expect((await hs.enableRead('weight', getState, { apply })).ok).toBe(true)
+    expect(reads('readWeights')[0][1].since).toBe(NOW - 30 * 24 * 3600e3)
+    expect(S.bodyweight.map(b => b.w)).toEqual([80])
+    expect(file().wHistory).toBe(false)
+  })
+
+  it('taken back later, the read falls back to 30 days instead of failing', async () => {
+    await withHistory(true)
+    await hs.enableRead('weight', getState, { apply })
+    h.calls = []
+    const core = await import('@capacitor/core')
+    const plugin = core.registerPlugin()
+    let first = true
+    const readWeights = plugin.readWeights
+    plugin.readWeights = async arg => {
+      if (first) { first = false; h.calls.push(['readWeights', arg]); throw Object.assign(new Error('no'), { code: 'permission' }) }
+      return readWeights(arg)
+    }
+    h.weights = [rec(1, 79.5)]
+    await hs.readHealth(getState, { force: true, now: NOW + 3 * 60e3, apply })
+    expect(reads('readWeights').map(c => c[1].since)).toEqual([NOW + 3 * 60e3 - 365 * 24 * 3600e3, NOW + 3 * 60e3 - 30 * 24 * 3600e3])
+    expect(file().wHistory).toBe(false)
+    expect(file().readError).toBe(null)
+  })
+
+  it('heart rate and the iPhone never ask for it', async () => {
+    await withHistory(true)
+    await hs.enableRead('hr', getState, { apply })
+    expect(h.calls[0]).toEqual(['request', { read: ['heartRate'], write: [] }])
+    await withHistory(true, 'ios')
+    h.calls = []
+    await hs.enableRead('weight', getState, { apply })
+    expect(h.calls[0]).toEqual(['request', { read: ['weight'], write: [] }])
+  })
+})

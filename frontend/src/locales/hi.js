@@ -2562,4 +2562,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'डंबल वाली एक्सरसाइज़ लाइब्रेरी, पिकर और कोच के प्लान से बाहर रहेंगी।',
   'Everything but dumbbells': 'डंबल के अलावा सब कुछ',
   'None, so dumbbell lifts stay hidden.': 'कोई नहीं, इसलिए डंबल वाली एक्सरसाइज़ छिपी रहेंगी।',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym सिर्फ़ तब पढ़ता है जब वह खुला हो: पिछले एक दिन के वर्कआउट की धड़कन, पिछले एक साल का वज़न। पुराने वर्कआउट जैसे हैं वैसे ही रहते हैं।',
 }

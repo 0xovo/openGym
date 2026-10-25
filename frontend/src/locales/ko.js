@@ -2562,4 +2562,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': '덤벨 운동은 라이브러리, 선택 목록, 코치의 계획에서 빠져요.',
   'Everything but dumbbells': '덤벨 빼고 전부',
   'None, so dumbbell lifts stay hidden.': '없음, 그래서 덤벨 운동은 숨겨져요.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym은 열려 있을 때만 읽어요: 최근 하루 동안의 운동 심박수와 최근 1년의 체중 기록. 그보다 오래된 운동은 그대로 둬요.',
 }

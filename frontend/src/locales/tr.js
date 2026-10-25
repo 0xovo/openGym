@@ -2562,4 +2562,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Dambıl hareketleri kütüphanede, seçicide ve Koçun planlarında yer almaz.',
   'Everything but dumbbells': 'Dambıl hariç her şey',
   'None, so dumbbell lifts stay hidden.': 'Yok, bu yüzden dambıl hareketleri gizli kalır.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym yalnızca açıkken okur: son bir günün antrenmanları için nabız, son bir yılın tartılmaları. Daha eski antrenmanlar olduğu gibi kalır.',
 }

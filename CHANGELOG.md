@@ -70,6 +70,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   other apps brings in your scale's or another app's weigh-ins from the last 30 days. Both are
   off until you turn them on, read only while openGym is open, and never overwrite a heart rate
   the Apple Watch already logged or a weigh-in you typed.
+- **A year of weigh-ins from Health Connect** (Android, idea from #801, thanks @antoni-heredia).
+  Turning on Weigh-ins from other apps now also asks for Health Connect's history permission,
+  where your phone has it, so your scale's weigh-ins from the last year come in, not just the
+  last 30 days. Say no and it reads the 30 days as before.
 - **Imported weigh-ins stay put.** Weigh-ins you import (an Apple Health export, a Google Health
   or Health Connect CSV, Strong, Hevy) are no longer written back to Apple Health or Health
   Connect, where they landed a second time. Only weigh-ins you enter in openGym go out.

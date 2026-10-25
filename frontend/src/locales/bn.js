@@ -2641,4 +2641,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'ডাম্বেলের ব্যায়াম লাইব্রেরি, পিকার আর কোচের প্ল্যানের বাইরে থাকবে।',
   'Everything but dumbbells': 'ডাম্বেল ছাড়া সবকিছু',
   'None, so dumbbell lifts stay hidden.': 'একটাও নেই, তাই ডাম্বেলের ব্যায়াম লুকানো থাকবে।',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym শুধু খোলা থাকলেই পড়ে: শেষ এক দিনের ওয়ার্কআউটের হার্ট রেট, শেষ এক বছরের ওজন। পুরোনো ওয়ার্কআউট যেমন আছে তেমনই থাকে।',
 }

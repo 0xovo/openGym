@@ -2582,4 +2582,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Kurzhantelübungen bleiben aus der Bibliothek, der Auswahl und den Plänen des Coachs draußen.',
   'Everything but dumbbells': 'Alles außer Kurzhanteln',
   'None, so dumbbell lifts stay hidden.': 'Keine, also bleiben Kurzhantelübungen ausgeblendet.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym liest nur, solange es offen ist: Puls für Trainings vom letzten Tag, Wiegungen des letzten Jahres. Ältere Trainings bleiben, wie sie sind.',
 }

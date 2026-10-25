@@ -2565,4 +2565,5 @@ export default {
   'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'A kézisúlyzós gyakorlatok kimaradnak a könyvtárból, a választóból és az Edző terveiből.',
   'Everything but dumbbells': 'Minden, kivéve a kézisúlyzót',
   'None, so dumbbell lifts stay hidden.': 'Nincs, így a kézisúlyzós gyakorlatok rejtve maradnak.',
+  'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'Az openGym csak nyitott állapotban olvas: az utolsó nap edzéseinek pulzusát és az utolsó egy év mérlegeléseit. A régebbi edzések maradnak, ahogy vannak.',
 }

@@ -6,6 +6,7 @@ import android.os.Build;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.health.connect.client.HealthConnectClient;
+import androidx.health.connect.client.HealthConnectFeatures;
 import androidx.health.connect.client.PermissionController;
 import androidx.health.connect.client.records.ExerciseSessionRecord;
 import androidx.health.connect.client.records.HeartRateRecord;
@@ -68,8 +69,10 @@ import org.json.JSONObject;
  *   await HC.requestPermissions({ read: ['heartRate'], write: [] });  // { granted, read: { heartRate, weight } }
  *   await HC.readHeartRate({ from, to });   // { samples: [[ms, bpm]], origins: [package] }
  *   await HC.readWeights({ since });        // { records: [{ t, kg, id, origin, clientId }] }
- * Foreground only: no READ_HEALTH_DATA_IN_BACKGROUND, no READ_HEALTH_DATA_HISTORY (Health Connect
- * then gives 30 days back from the first grant, plenty for the workout just done).
+ * Foreground only: no READ_HEALTH_DATA_IN_BACKGROUND. Without READ_HEALTH_DATA_HISTORY Health
+ * Connect gives 30 days back from the first grant, plenty for the workout just done; weigh-ins
+ * ask for it too (read: ['weight', 'history']) where Health Connect has the feature, which
+ * status() says as `history`, so a scale's older weigh-ins come along (idea from #801).
  */
 @CapacitorPlugin(name = "HealthConnect")
 public class HealthConnectPlugin extends Plugin {
@@ -80,6 +83,7 @@ public class HealthConnectPlugin extends Plugin {
     private static final String WRITE_WEIGHT = "android.permission.health.WRITE_WEIGHT";
     private static final String READ_HEART_RATE = "android.permission.health.READ_HEART_RATE";
     private static final String READ_WEIGHT = "android.permission.health.READ_WEIGHT";
+    private static final String READ_HISTORY = "android.permission.health.READ_HEALTH_DATA_HISTORY";
     // Records per page when reading, and pages at most: a few hours of heart rate fit easily.
     private static final int PAGE = 1000;
     private static final int MAX_PAGES = 50;
@@ -114,6 +118,17 @@ public class HealthConnectPlugin extends Plugin {
         return HealthConnectClient.Companion.getOrCreate(getContext(), PROVIDER);
     }
 
+    // Whether this Health Connect knows the history permission at all (newer provider versions
+    // only). Asked before it is requested: an unknown permission is not offered in the dialog.
+    private boolean historyAvailable() {
+        try {
+            return client().getFeatures().getFeatureStatus(HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_HISTORY)
+                    == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private Set<String> granted() throws InterruptedException {
         PermissionController pc = client().getPermissionController();
@@ -137,6 +152,7 @@ public class HealthConnectPlugin extends Plugin {
                 Set<String> got = granted();
                 r.put("granted", got.containsAll(permissions()));
                 r.put("read", readState(got));
+                r.put("history", historyAvailable());
                 call.resolve(r);
             } catch (Exception e) {
                 call.reject(e.getMessage(), "failed");
@@ -157,6 +173,7 @@ public class HealthConnectPlugin extends Plugin {
             call.reject(e.getMessage(), "failed");
             return;
         }
+        if (!historyAvailable()) asked.remove(READ_HISTORY);
         ActivityResultContract<Set<String>, Set<String>> contract = PermissionController.createRequestPermissionResultContract(PROVIDER);
         Intent intent = contract.createIntent(getContext(), asked);
         startActivityForResult(call, intent, "permissionsResult");
@@ -341,6 +358,7 @@ public class HealthConnectPlugin extends Plugin {
         JSObject r = new JSObject();
         r.put("heartRate", granted.contains(READ_HEART_RATE));
         r.put("weight", granted.contains(READ_WEIGHT));
+        r.put("history", granted.contains(READ_HISTORY));
         return r;
     }
 
