@@ -248,6 +248,10 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   file for syntax older iPhones can't handle. Should a browser still choke, openGym now says so
   on screen with the error and a Reload button instead of lifting the logo forever. Thanks
   h097327 for the excellent report.
+- **Colours on iOS 15.5 to 16.1.** Once openGym started there, a few tints were still missing:
+  the Coach's header and error bubbles, the admin pills, the focus card's badges, the tinted
+  buttons and the body map's shades. Those older Safaris now get plain stand-ins (close enough
+  that you'd need a colour picker to tell), and a test makes sure every new tint brings one.
 - Deadlift variants that forgot your lower back remember it now: the kettlebell suitcase
   deadlift and the plate deadlift lunge press (#693, #700, thanks @JeromeTDev and @choksi2212).
 - Equipment profiles know more about what an exercise needs. An inverted row needs a bar (unless

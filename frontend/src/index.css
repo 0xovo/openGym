@@ -233,21 +233,21 @@ body.no-tabbar.resting #app{padding-bottom:calc(96px + var(--sab))}
 .conn-bar{
   position:fixed;inset-inline-start:0;inset-inline-end:0;top:0;z-index:45;
   padding:var(--sat) var(--pad) 0;
-  background:color-mix(in srgb,var(--bg) 94%,transparent);
+  background:var(--bg);background:color-mix(in srgb,var(--bg) 94%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(10px);backdrop-filter:saturate(180%) blur(10px);
 }
 .conn-row{max-width:560px;margin:0 auto;padding:6px 0}
 .conn{
   display:flex;align-items:center;gap:9px;width:100%;text-align:start;min-height:34px;
   padding-block:6px;padding-inline:12px 8px;border-radius:var(--r);
-  background:color-mix(in srgb,var(--yellow) 16%,var(--surface));color:var(--label);font-size:13px;line-height:1.3;
+  background:linear-gradient(rgba(255,214,10,0.16),rgba(255,214,10,0.16)),var(--surface);background:color-mix(in srgb,var(--yellow) 16%,var(--surface));color:var(--label);font-size:13px;line-height:1.3;
 }
 .conn .icn{flex:none;font-size:16px;color:var(--label-2)}
 .conn-t{flex:1;min-width:0;overflow-wrap:break-word}
 .conn-a{flex:none;padding:4px 10px;border-radius:99px;background:var(--surface-3);font-weight:600;white-space:nowrap}
 button.conn:active{filter:brightness(1.12)}
-.conn-bar.off .conn{background:color-mix(in srgb,var(--label-3) 18%,var(--surface))}
-.conn-bar.bad .conn{background:color-mix(in srgb,var(--red) 16%,var(--surface))}
+.conn-bar.off .conn{background:var(--surface);background:color-mix(in srgb,var(--label-3) 18%,var(--surface))}
+.conn-bar.bad .conn{background:linear-gradient(rgba(255,69,58,0.16),rgba(255,69,58,0.16)),var(--surface);background:color-mix(in srgb,var(--red) 16%,var(--surface))}
 .conn-bar.bad .conn .icn{color:var(--red)}
 /* a deliberate local setup: said, not flagged — one small line, no fill */
 .conn-bar.quiet .conn-row{padding:2px 0 4px}
@@ -419,7 +419,7 @@ h4.sec{
 .btn.primary{background:var(--acc);color:var(--on-acc)}
 .btn.primary:active{background:var(--acc-2)}
 .btn.tinted{background:var(--acc-soft);color:var(--acc)}
-.btn.danger{background:color-mix(in srgb,var(--red) 15%,transparent);color:var(--red)}
+.btn.danger{background:rgba(255,69,58,0.15);background:color-mix(in srgb,var(--red) 15%,transparent);color:var(--red)}
 .btn.ghost,.btn.plain{background:none;color:var(--acc);font-weight:400}
 .btn.ghost:active,.btn.plain:active{background:var(--surface-2)}
 .btn.sm{padding:8px 14px;width:auto;font-size:15px;border-radius:var(--r-sm);gap:5px}
@@ -441,7 +441,7 @@ h4.sec{
   position:fixed;inset-inline-start:0;inset-inline-end:0;bottom:0;z-index:50;
   display:flex;justify-content:space-around;align-items:flex-end;
   padding:7px 6px calc(6px + var(--sab));
-  background:color-mix(in srgb,var(--bg-el) 94%,transparent);
+  background:var(--bg-el);background:color-mix(in srgb,var(--bg-el) 94%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(10px);backdrop-filter:saturate(180%) blur(10px);
   border-top:var(--hair) solid var(--sep-op);
 }
@@ -471,7 +471,7 @@ h4.sec{
 #tabbar button.start .cir{
   width:52px;height:52px;border-radius:50%;background:var(--acc);color:var(--on-acc);
   display:flex;align-items:center;justify-content:center;position:relative;
-  box-shadow:0 6px 18px -4px color-mix(in srgb,var(--acc) 55%,transparent);
+  box-shadow:0 6px 18px -4px var(--acc);box-shadow:0 6px 18px -4px color-mix(in srgb,var(--acc) 55%,transparent);
   transition:transform var(--fast) var(--ease);
 }
 #tabbar button.start:active .cir{transform:scale(.93)}
@@ -483,7 +483,7 @@ h4.sec{
    orange play glyph onto an orange disc. Both states restate their own colour.
    The disc is orange in either theme, so its glyph is black, not `--on-acc`. */
 #tabbar button.start .cir{color:var(--on-acc)}
-#tabbar button.start.rec .cir{background:var(--orange);color:#000;box-shadow:0 6px 18px -4px color-mix(in srgb,var(--orange) 55%,transparent)}
+#tabbar button.start.rec .cir{background:var(--orange);color:#000;box-shadow:0 6px 18px -4px var(--orange);box-shadow:0 6px 18px -4px color-mix(in srgb,var(--orange) 55%,transparent)}
 #tabbar button.start.rec span{color:var(--orange)}
 #tabbar button.start.rec .cir::after{
   content:'';position:absolute;inset:0;border-radius:50%;
@@ -670,6 +670,7 @@ h4.sec{
 .chip:active{background:var(--surface-2)}
 .chip.on{background:var(--acc);color:var(--on-acc);font-weight:500}
 .chip.on .dim{color:color-mix(in srgb,var(--on-acc) 62%,transparent)}
+@supports not (color: color-mix(in srgb, red 50%, blue)){.chip.on .dim{color:var(--on-acc)}}
 /* A chip with an icon in front (the day note's Sick / Travelling / …): the icon is a block, so
    without this the label wrapped under it and every chip became a two-line button. One line
    each; a row wider than the sheet scrolls sideways like every .chips strip. */
@@ -912,7 +913,7 @@ body.chips-dragging *{cursor:inherit}
   position:sticky;top:0;z-index:20;
   margin:calc(-1 * (var(--sat) + var(--conn) + 8px)) calc(-1 * var(--pad)) 6px;
   padding:calc(var(--sat) + var(--conn) + 8px) var(--pad) 0;
-  background:color-mix(in srgb,var(--bg) 94%,transparent);
+  background:var(--bg);background:color-mix(in srgb,var(--bg) 94%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(10px);backdrop-filter:saturate(180%) blur(10px);
 }
 .whdr.stick .hdr{margin-bottom:12px}
@@ -1203,7 +1204,7 @@ body.chips-dragging *{cursor:inherit}
   background:var(--bc);color:#fff;font-size:13px;font-weight:700;letter-spacing:-.02em;
   font-variant-numeric:tabular-nums;
 }
-.effpick .menu-item.on{background:color-mix(in srgb,var(--bc) 14%,var(--surface))}
+.effpick .menu-item.on{background:var(--surface);background:color-mix(in srgb,var(--bc) 14%,var(--surface))}
 .effpick .menu-on.is-on{color:var(--bc)}
 .effpick .effpick-free{padding-inline-end:8px}
 .effpick .effpick-free .stp{flex:none;width:148px}
@@ -1223,7 +1224,7 @@ body.chips-dragging *{cursor:inherit}
 /* Its own layer only while it moves: on every row it was a layer per set (#431). */
 .swrow.dragging .swfront,.swrow.go-del .swfront,.swrow.go-cp .swfront{will-change:transform}
 .swpane{position:absolute;top:0;bottom:0;width:0;overflow:hidden;z-index:0}
-.swpane.del{inset-inline-end:0;background:color-mix(in srgb,var(--red) 22%,var(--surface))}
+.swpane.del{inset-inline-end:0;background:linear-gradient(rgba(255,69,58,0.22),rgba(255,69,58,0.22)),var(--surface);background:color-mix(in srgb,var(--red) 22%,var(--surface))}
 .swpane.cp{inset-inline-start:0;background:var(--acc-soft)}
 .swpane button{position:absolute;top:0;bottom:0;width:76px;padding:0;color:#fff;transition:width .16s var(--ease)}
 .swpane.del button{inset-inline-end:0;background:var(--red)}
@@ -1241,9 +1242,9 @@ body.chips-dragging *{cursor:inherit}
 .swpane.del.dis button{background:var(--surface-3);color:var(--label-3)}
 .swpane.del.dis.armed button{width:76px}
 .swrow.flash .swfront{animation:swflash .4s ease}
-@keyframes swflash{0%,35%{background:color-mix(in srgb,var(--acc) 28%,var(--surface))}100%{background:var(--surface)}}
+@keyframes swflash{0%,35%{background:linear-gradient(var(--acc-line),var(--acc-line)),var(--surface);background:color-mix(in srgb,var(--acc) 28%,var(--surface))}100%{background:var(--surface)}}
 .swrow.flash-red .swfront{animation:swflashr .5s ease}
-@keyframes swflashr{0%,35%{background:color-mix(in srgb,var(--red) 22%,var(--surface))}100%{background:var(--surface)}}
+@keyframes swflashr{0%,35%{background:linear-gradient(rgba(255,69,58,0.22),rgba(255,69,58,0.22)),var(--surface);background:color-mix(in srgb,var(--red) 22%,var(--surface))}100%{background:var(--surface)}}
 /* The first-use hint under the row it nudged. */
 .swhint{display:flex;justify-content:center;padding:4px 0 6px}
 .swhint button{display:inline-flex;align-items:center;gap:8px;background:var(--acc-soft);color:var(--acc);border-radius:99px;padding:7px 12px;font-size:13px;font-weight:600;animation:swhintin .3s var(--ease);text-align:start}
@@ -1438,7 +1439,7 @@ body.chips-dragging *{cursor:inherit}
 /* an exercise kept out of progression for this session, with its undo */
 .noprog{display:flex;align-items:center;gap:7px;margin:0 0 6px;font-size:13px;line-height:1.38;color:var(--orange)}
 .noprog svg{flex:none}
-.noprog .chip{margin-inline-start:auto;padding:3px 11px;font-size:13px;color:var(--orange);background:color-mix(in srgb,var(--orange) 14%,transparent)}
+.noprog .chip{margin-inline-start:auto;padding:3px 11px;font-size:13px;color:var(--orange);background:rgba(255,159,10,0.14);background:color-mix(in srgb,var(--orange) 14%,transparent)}
 
 /* start a timed set (issue #16) — sits where you'd otherwise reach for the checkbox */
 .setrow .setgo{
@@ -1473,7 +1474,7 @@ body.chips-dragging *{cursor:inherit}
   position:fixed;inset-inline-start:12px;inset-inline-end:12px;bottom:calc(88px + var(--sab));z-index:60;
   /* nearly opaque: the set rows underneath were reading through the old 82% and made the
      clock hard to pick out mid-set. The blur stays, so it still sits above the page. */
-  background:color-mix(in srgb,var(--surface) 97%,transparent);
+  background:var(--surface);background:color-mix(in srgb,var(--surface) 97%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(10px);backdrop-filter:saturate(180%) blur(10px);
   border-radius:var(--r-lg);padding:12px 12px 10px;overflow:hidden;
   display:flex;align-items:center;gap:10px;
@@ -1694,9 +1695,9 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .hm-grid{display:flex;gap:3px}
 .hm-col{display:flex;flex-direction:column;gap:3px}
 .hm-c{width:11px;height:11px;border-radius:3px;background:var(--surface-2);flex:none}
-.hm-c.l1{background:color-mix(in srgb,var(--acc) 30%,var(--surface-2))}
-.hm-c.l2{background:color-mix(in srgb,var(--acc) 55%,var(--surface-2))}
-.hm-c.l3{background:color-mix(in srgb,var(--acc) 78%,var(--surface-2))}
+.hm-c.l1{background:linear-gradient(var(--acc-line),var(--acc-line)),var(--surface-2);background:color-mix(in srgb,var(--acc) 30%,var(--surface-2))}
+.hm-c.l2{background:var(--acc);background:color-mix(in srgb,var(--acc) 55%,var(--surface-2))}
+.hm-c.l3{background:var(--acc);background:color-mix(in srgb,var(--acc) 78%,var(--surface-2))}
 .hm-c.l4{background:var(--acc)}
 .hm-c.today{box-shadow:0 0 0 1.5px var(--acc)}
 .hm-c.future{opacity:.3}
@@ -1740,7 +1741,7 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .whdr-map .bodymap.bm-mini .bm-ph{height:30px;width:29px}
 /* Still to come is a whisper of the accent, so the worked muscles (l3, l4) stand out from it. */
 .bm-session .bm-m.l1{fill:color-mix(in srgb,var(--acc) 20%,var(--bm-base))}
-.sm-legend .hm-c.l1{background:color-mix(in srgb,var(--acc) 20%,var(--surface-2))}
+.sm-legend .hm-c.l1{background:linear-gradient(var(--acc-soft),var(--acc-soft)),var(--surface-2);background:color-mix(in srgb,var(--acc) 20%,var(--surface-2))}
 .mrow .v.sess{min-width:64px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .sm-legend{justify-content:center;gap:6px;margin:10px 0 6px}
 .sm-legend .hm-c:not(:first-child){margin-inline-start:8px}
@@ -1755,6 +1756,23 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .hm-fatigue .bm-m.l3{fill:var(--orange)}
 .hm-fatigue .bm-m.l2{fill:var(--yellow)}
 .hm-fatigue .bm-m.l1{fill:color-mix(in srgb,var(--yellow) 32%,var(--bm-base))}
+/* Safari before 16.2 (the iOS app goes back to 15.5) has no color-mix(). Most declarations that
+   mix have a plain one in front of them for it (color-mix-fallback.test.js keeps it that way), but
+   two kinds cannot: a custom property (the mixed one parses, then fails where it is used) and a
+   fill or a color, whose plain twin the CSS minifier drops as a duplicate. Those get their
+   stand-ins here, after the rules they stand in for; lib/accent.js sets the accent's tints exactly. */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  :root{--acc-soft:var(--label-4);--acc-line:var(--label-3)}
+  .bodymap{--bm-base:var(--surface-2)}
+  .bodymap.bm-mini{--bm-base:var(--surface-3)}
+  .bodymap.bm-mini .bm-sil{fill:var(--surface-3)}
+  .bm-session .bm-m.l1{fill:var(--acc-soft)}
+  .bm-sil{fill:var(--surface-3)}
+  .bm-m.l1{fill:var(--acc-line)}
+  .bm-m.l2{fill:var(--acc)}
+  .bm-m.l3{fill:var(--acc)}
+  .hm-fatigue .bm-m.l1{fill:rgba(255,214,10,0.32)}
+}
 .hm-fatigue .hm-c.l4{background:var(--red)}
 .hm-fatigue .hm-c.l3{background:var(--orange)}
 .hm-fatigue .hm-c.l2{background:var(--yellow)}
@@ -1786,7 +1804,7 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .fbarwrap{position:relative;height:8px;margin-top:20px}
 .fbar{position:relative;display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--surface-2)}
 .fbar .zone{height:100%}
-.fbar .zone.ready{width:25%;background:color-mix(in srgb,var(--label) 14%,var(--surface-2))}
+.fbar .zone.ready{width:25%;background:var(--surface-3);background:color-mix(in srgb,var(--label) 14%,var(--surface-2))}
 .fbar .zone.recovering{width:25%;background:var(--yellow)}
 .fbar .zone.fatigued{width:50%;background:var(--red)}
 .fbarwrap .knob{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;background:var(--label);box-shadow:0 0 0 1.5px var(--surface);pointer-events:none}
@@ -1807,7 +1825,7 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .stat-v{font-size:26px;font-weight:600;letter-spacing:-.026em;line-height:1.1}
 .mchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .mchip{font-size:12px;padding:4px 9px;border-radius:99px;background:var(--surface-2);color:var(--label-2)}
-.mchip.miss{background:color-mix(in srgb,var(--orange) 16%,transparent);color:var(--orange)}
+.mchip.miss{background:rgba(255,159,10,0.16);background:color-mix(in srgb,var(--orange) 16%,transparent);color:var(--orange)}
 button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
 /* "Exercises ›" on an untrained muscle picked on the map (#553), at the end of its row. On a
    narrow phone the row has no room for it (the name shrank to nothing at 320 and 360px, and the
@@ -1840,7 +1858,7 @@ button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
 /* --- PR badge --- */
 .pr{
   display:inline-flex;align-items:center;gap:4px;
-  background:color-mix(in srgb,var(--yellow) 18%,transparent);color:var(--yellow);
+  background:rgba(255,214,10,0.18);background:color-mix(in srgb,var(--yellow) 18%,transparent);color:var(--yellow);
   border-radius:6px;padding:3px 8px;font-size:12px;font-weight:500;
 }
 .pr .icn{font-size:13px}
@@ -1849,7 +1867,7 @@ button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
 #toast{
   position:fixed;left:50%;transform:translateX(-50%) translateY(6px);
   bottom:calc(96px + var(--sab));z-index:200;
-  background:color-mix(in srgb,var(--surface-2) 88%,transparent);
+  background:var(--surface-2);background:color-mix(in srgb,var(--surface-2) 88%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
   /* 22px, not a pill radius: one line (about 41px high) still reads as a pill, and a toast that
      wraps to four lines is a rounded box instead of a circle over the page. */
@@ -1865,10 +1883,10 @@ button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
 #toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:4px 6px 4px 6px;text-align:start}
 #toast.has-action .toast-msg{flex:1;min-width:0;padding:7px 0}
 #toast .toast-act{flex:none;display:inline-flex;align-items:center;gap:5px;color:var(--acc);font-weight:700;padding:8px 12px;border-radius:14px;min-height:36px}
-#toast .toast-act:active{background:color-mix(in srgb,var(--label) 10%,transparent)}
+#toast .toast-act:active{background:var(--label-4);background:color-mix(in srgb,var(--label) 10%,transparent)}
 #toast .toast-act .icn{font-size:16px}
 #toast .toast-x{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--label-2)}
-#toast .toast-x:active{background:color-mix(in srgb,var(--label) 10%,transparent)}
+#toast .toast-x:active{background:var(--label-4);background:color-mix(in srgb,var(--label) 10%,transparent)}
 #toast .toast-x .icn{font-size:15px}
 body.no-tabbar #toast{bottom:calc(24px + var(--sab))}
 body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
@@ -2017,8 +2035,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--sep);
 }
 .wchip .icn{width:12px;height:12px}
-.wchip.partial{background:linear-gradient(to top,color-mix(in srgb,var(--orange) 45%,var(--surface)) 50%,var(--surface) 50%);box-shadow:inset 0 0 0 1.5px var(--orange);color:var(--label)}
-.wchip.done{background:color-mix(in srgb,var(--green) 70%,var(--surface));box-shadow:none;color:var(--label)}
+.wchip.partial{background:linear-gradient(to top,rgba(255,159,10,0.45) 50%,var(--surface) 50%);background:linear-gradient(to top,color-mix(in srgb,var(--orange) 45%,var(--surface)) 50%,var(--surface) 50%);box-shadow:inset 0 0 0 1.5px var(--orange);color:var(--label)}
+.wchip.done{background:var(--green);background:color-mix(in srgb,var(--green) 70%,var(--surface));box-shadow:none;color:var(--label)}
 .wchip.cur{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--acc);color:var(--label)}
 .wchip.partial.cur{box-shadow:inset 0 0 0 1.5px var(--orange),0 0 0 2px var(--bg),0 0 0 3.5px var(--acc)}
 /* part of the give-back above — one edge for all three insets of a row in the list view */
@@ -2050,8 +2068,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* Only where a pointer really hovers — on a phone :hover sticks to the row after the tap.
    Lighter than :active, which goes all the way to --surface-3, so the two stay distinct. */
 @media (hover:hover){
-  .today-row:hover{background:color-mix(in srgb,var(--surface-2),var(--surface-3) 60%)}
-  :root[data-theme="light"] .today-row:hover{background:color-mix(in srgb,var(--surface-2),var(--surface-3) 85%)}
+  .today-row:hover{background:var(--surface-3);background:color-mix(in srgb,var(--surface-2),var(--surface-3) 60%)}
+  :root[data-theme="light"] .today-row:hover{background:var(--surface-3);background:color-mix(in srgb,var(--surface-2),var(--surface-3) 85%)}
 }
 
 /* --------------------------------------------------- desktop (≥1000px) --- */
@@ -2198,7 +2216,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .dw{--dw-item:40px;position:relative;display:flex;justify-content:center;height:calc(var(--dw-item) * 5);
   margin:4px auto 16px;max-width:320px;user-select:none;-webkit-user-select:none;touch-action:pan-y}
 .dw-band{position:absolute;inset-inline:6px;top:calc(var(--dw-item) * 2);height:var(--dw-item);border-radius:10px;
-  background:color-mix(in srgb,var(--label) 10%,transparent);pointer-events:none}
+  background:var(--label-4);background:color-mix(in srgb,var(--label) 10%,transparent);pointer-events:none}
 .dw-col{position:relative;flex:1;min-width:0;outline:none;border-radius:10px}
 .dw-col:focus-visible::after{content:'';position:absolute;inset-inline:8px;top:calc(var(--dw-item) * 2);height:var(--dw-item);
   border-radius:10px;box-shadow:0 0 0 2px var(--acc);pointer-events:none}

@@ -28,11 +28,13 @@
 .focus-badge .icn{font-size:13px;flex:none}
 .focus-progress{padding-inline:12px;background:var(--acc);color:var(--on-acc);font-weight:600}
 .focus-badge.plan{background:var(--acc-soft);color:var(--acc);white-space:normal}
-.focus-badge.warning{background:color-mix(in srgb,var(--orange) 14%,transparent);color:var(--orange);white-space:normal}
+.focus-badge.warning{background:rgba(255,159,10,0.14);background:color-mix(in srgb,var(--orange) 14%,transparent);color:var(--orange);white-space:normal}
 .focus-badge .short{color:var(--orange)}
 .focus-badge-action{margin-inline-start:2px;color:inherit;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:2px}
 .focus-set>.stp-w,.focus-side>.stp-w{margin-top:12px}
 .focus-set.complete .stp .num:disabled,.focus-set.locked .stp .num:disabled,.focus-set.complete .focus-timed strong,.focus-set.locked .focus-timed strong{color:color-mix(in srgb,var(--label) 48%,var(--surface))!important;-webkit-text-fill-color:color-mix(in srgb,var(--label) 48%,var(--surface))!important;opacity:1}
+/* No color-mix() before Safari 16.2; see index.css for why a color falls back this way. */
+@supports not (color: color-mix(in srgb, red 50%, blue)){.focus-set.complete .stp .num:disabled,.focus-set.locked .stp .num:disabled,.focus-set.complete .focus-timed strong,.focus-set.locked .focus-timed strong{color:var(--surface-3)!important;-webkit-text-fill-color:var(--surface-3)!important}}
 .focus-lock-note{margin:-4px 2px 2px;color:var(--label-2);font-size:12px;line-height:1.35}
 .focus-effort{width:100%;margin-top:16px}
 .focus-card>.btn.primary{margin-top:18px;min-height:48px}
