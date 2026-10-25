@@ -59,6 +59,12 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   plan from the Coach used to land in the weekly schedule, which a rotation ignores, so Home kept
   showing your old sessions. Now the rotation switches to the Coach's routines and starts over
   with the first one, and Undo puts your old rotation back.
+- **Your watch's heart rate and other apps' weigh-ins come in** (#544, #127). Two new switches
+  next to Write to Apple Health / Health Connect: Heart rate from your watch fills in the heart
+  rate of every set from workouts of the last day, whatever watch recorded it, and Weigh-ins from
+  other apps brings in your scale's or another app's weigh-ins from the last 30 days. Both are
+  off until you turn them on, read only while openGym is open, and never overwrite a heart rate
+  the Apple Watch already logged or a weigh-in you typed.
 - **Imported weigh-ins stay put.** Weigh-ins you import (an Apple Health export, a Google Health
   or Health Connect CSV, Strong, Hevy) are no longer written back to Apple Health or Health
   Connect, where they landed a second time. Only weigh-ins you enter in openGym go out.
@@ -144,6 +150,11 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Hej, Sverige!** openGym speaks Swedish now, picked in Settings → Units & language or straight
   from a Swedish phone (#721, thanks @Grizzly163). Exercise names and instructions stay in English
   for now.
+- **Spanish that sounds like Spain** (#786, thanks @cubetes). Over 60 strings reworded: Objetivo
+  instead of Meta, Entrenador instead of Coach, and holds that no longer say "sostén".
+- **Arabic exercise names wrap the right way round** (#780, thanks @kurktchiev). When a long
+  name breaks onto a second line, the English part in brackets keeps its brackets the right way
+  round.
 - **The Android update actually installs.** Switch to another app while the new APK comes down
   and Android quietly refused to open the installer, so the download finished and nothing
   happened. Now the installer waits until you're back in openGym. Tap the update again after a
@@ -299,6 +310,8 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
   two-service compose to paste, absolute paths, ports, permissions and HTTPS. The FAQ explains
   password sign-in (`PASSWORD_LOGIN`) and guest mode (`ALLOW_GUEST`), including why a stack
   without its api quietly turns you into a guest.
+- Self-hosting on a Mac at home has its own guide: Colima instead of Docker Desktop and Tailscale
+  Serve for HTTPS (#787, thanks @cubetes).
 
 ## v1.4.2 (2026-10-23)
 
