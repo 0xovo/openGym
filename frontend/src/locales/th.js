@@ -2575,6 +2575,8 @@ export default {
   'None, so dumbbell lifts stay hidden.': 'ไม่มี ท่าที่ใช้ดัมเบลจึงถูกซ่อนไว้',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym อ่านเฉพาะตอนที่เปิดอยู่: อัตราการเต้นของหัวใจของการฝึกในวันล่าสุด และน้ำหนักในหนึ่งปีล่าสุด การฝึกที่เก่ากว่านั้นจะเหมือนเดิม',
   // --- seasonal themes (lib/seasonal.js) ---
+  'Also during workouts': 'ระหว่างออกกำลังกายด้วย',
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'ใยแมงมุมที่ส่วนหัว ค้างคาวหลังตัวจับเวลาพัก ฟักทองตอนจบ ไม่บังเซ็ตของคุณเด็ดขาด',
   'Seasonal themes': 'ธีมตามฤดูกาล',
   'Little extras for the time of year.': 'ของตกแต่งเล็กๆ ตามช่วงเวลาของปี',
   'Halloween': 'ฮาโลวีน',

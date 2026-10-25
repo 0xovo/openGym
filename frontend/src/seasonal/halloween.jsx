@@ -107,26 +107,77 @@ const Witch = () => (
   </svg>
 )
 
+// A skeleton hanging by its hands from an edge, for the Stats page.
+const Skeleton = () => (
+  <svg className="hw-skelsvg" viewBox="0 0 24 42" aria-hidden="true" focusable="false">
+    <path className="hw-bones" d="M7.6 1.4 8.8 13M16.4 1.4 15.2 13M8.8 13h6.4M12 13v13M9 16.4c2 .8 4 .8 6 0M9.2 19.2c1.9.7 3.7.7 5.6 0M9.6 22c1.6.6 3.2.6 4.8 0M9.4 26.4h5.2M10.4 26.6l-.8 11.6-2 1.4M13.6 26.6l.8 11.6 2 1.4" />
+    <path className="hw-skull" d="M12 3.6c2.4 0 4 1.7 4 3.9 0 1.4-.7 2.4-1.6 2.9v1.4h-4.8v-1.4C8.7 9.9 8 8.9 8 7.5c0-2.2 1.6-3.9 4-3.9Z" />
+    <circle className="hw-socket" cx="10.5" cy="7.6" r="1" /><circle className="hw-socket" cx="13.5" cy="7.6" r="1" />
+    <path className="hw-socket" d="M11.4 9.6h1.2l-.6-1Z" />
+  </svg>
+)
+
+// A crescent moon with a very small witch crossing it, for a header's quiet corner.
+const MoonWitch = () => (
+  <span className="hw-moon" aria-hidden="true">
+    <svg className="hw-moonsvg" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M20.6 3.2A13 13 0 1 0 28.8 22 10.4 10.4 0 0 1 20.6 3.2Z" /></svg>
+    <span className="hw-moonwitch"><Witch /></span>
+  </span>
+)
+
+// A spider hanging still from a thread of `len` px, bobbing a little now and then.
+const HangingSpider = ({ len = 28, className = '' }) => (
+  <span className={'hw-hang ' + className} style={{ '--len': len + 'px' }} aria-hidden="true">
+    <span className="hw-hangthread" /><Spider />
+  </span>
+)
+
 /* -------------------------------------------------------- the layer -- */
 
 // Once per session at most, decided once: the witch is rare on purpose.
 let witchPlan = null
 let witchFlown = false
-let spiderTried = false
 
-/** The spider at the day's first start, and now and then the witch. Nothing while `hidden`. */
+/* The spider drops at every start of the app, and again whenever it comes back to the front after
+   AWAY_MS or more in the background (closed and opened again, as far as anyone can tell). Time away
+   is counted here, at module level, so it is right however long the layer itself was mounted. */
+export const AWAY_MS = 30 * 60 * 1000
+let startTried = false
+let hiddenAt = null
+const onReturn = new Set()
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { hiddenAt = Date.now(); return }
+    const away = hiddenAt !== null && Date.now() - hiddenAt >= AWAY_MS
+    hiddenAt = null
+    if (away) onReturn.forEach(fn => fn())
+  })
+}
+
+/** The spider at every start, and now and then the witch. Nothing while `hidden` (the workout). */
 export function Layer({ hidden, fresh }) {
   const [spider, setSpider] = useState(null)   // null | 'drop' | 'still'
   const [witch, setWitch] = useState(false)
+  const hiddenNow = useRef(hidden)
+  hiddenNow.current = hidden
   useEffect(() => {
-    if (spiderTried || hidden) return
-    spiderTried = true
-    // A start straight into a workout, or a day it already dropped on this device: no spider.
-    if (!fresh || !onceToday('spider')) return
-    const still = reducedMotion()
-    setSpider(still ? 'still' : 'drop')
+    if (!spider || spider === 'drop') return
     // Reduced motion: a tiny spider sits in the corner for a few seconds, and that is all.
-    if (still) { const tm = setTimeout(() => setSpider(null), 4000); return () => clearTimeout(tm) }
+    const tm = setTimeout(() => setSpider(null), 4000)
+    return () => clearTimeout(tm)
+  }, [spider])
+  useEffect(() => {
+    if (hidden) setSpider(null)
+    const drop = () => setSpider(cur => cur || (reducedMotion() ? 'still' : 'drop'))
+    // The start: once per session, and not over a start straight into a running workout.
+    if (!startTried && !hidden) {
+      startTried = true
+      if (fresh) drop()
+    }
+    // Back after a while away: again, unless it came back to the workout screen.
+    const back = () => { if (!hiddenNow.current) drop() }
+    onReturn.add(back)
+    return () => { onReturn.delete(back) }
   }, [hidden, fresh])
   useEffect(() => {
     if (hidden || witchFlown || reducedMotion()) return
@@ -160,11 +211,35 @@ function SpiderDrop({ still, onGone }) {
 
 /** Decoration for one place in a view. Unknown spots draw nothing. */
 export function Deco({ spot }) {
-  if (spot === 'header-bats') return <HeaderBats />
-  if (spot === 'home-hero') return <Web className="hw-web-br" />
-  if (spot === 'plan-card') return <Web className="hw-web-tr" />
-  if (spot === 'home-streak') return <PeekPumpkin />
-  return null
+  switch (spot) {
+    case 'header-bats': return <HeaderBats />
+    case 'home-hero': return <Web className="hw-web-br" />
+    case 'plan-card': return <Web className="hw-web-tr" />
+    case 'home-streak': return <PeekPumpkin />
+    // Stats: bats and the moon in the header, two spiders in the empty end of the lifetime tile,
+    // a skeleton hanging off the activity card, cobwebs in two bottom corners, pumpkins peeking.
+    case 'stats-hdr': return <><HeaderBats /><MoonWitch /></>
+    case 'stats-tile': return <span className="hw-tilespiders" aria-hidden="true"><HangingSpider len={30} /><HangingSpider len={14} className="hw-hang-b" /></span>
+    case 'stats-heatmap': return <span className="hw-skel" aria-hidden="true"><Skeleton /></span>
+    case 'stats-web': return <Web className="hw-web-bl" />
+    case 'stats-peek': return <span className="hw-peek hw-peek-two" aria-hidden="true"><span className="hw-pk"><Pumpkin /></span><span className="hw-pk hw-pk-s"><Pumpkin /></span></span>
+    // The workout screen: nothing there can be tapped, and nothing sits on a set, a button,
+    // a timer, the chip row or an exercise picture. The header's corner web and its spider sit
+    // in the page's side gutter, the bats fly along the rest bar's top edge, and the pumpkins
+    // flank the finish screen's trophy.
+    case 'workout-hdr': return <span className="hw-wcorner" aria-hidden="true"><Web className="hw-web-tl" /><HangingSpider len={22} className="hw-hang-w" /></span>
+    case 'rest-timer': return <RestBats />
+    case 'finish': return <span className="hw-finish" aria-hidden="true"><span className="hw-pk"><Pumpkin /></span><span className="hw-pk hw-pk-r"><Pumpkin /></span></span>
+    default: return null
+  }
+}
+
+// Two small bats along the rest bar's top edge, once each time the bar appears.
+function RestBats() {
+  if (reducedMotion()) return null
+  return <span className="hw-restbats" aria-hidden="true">
+    {[0, 1].map(i => <span key={i} className={'hw-restlane hw-rl' + i}><span className="hw-flap"><Bat /></span></span>)}
+  </span>
 }
 
 // Three bats cross behind the title a few times, then the sky stays quiet until the next visit.

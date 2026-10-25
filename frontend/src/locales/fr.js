@@ -2564,6 +2564,8 @@ export default {
   'None, so dumbbell lifts stay hidden.': 'Aucun, donc les exercices aux haltères restent cachés.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym ne lit que lorsqu’il est ouvert : fréquence cardiaque des séances du dernier jour, pesées de la dernière année. Les séances plus anciennes restent telles quelles.',
   // --- seasonal themes (lib/seasonal.js) ---
+  'Also during workouts': 'Aussi pendant les séances',
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Une toile d\'araignée dans l\'en-tête, des chauves-souris derrière le minuteur de repos, des citrouilles à la fin. Jamais sur tes séries.',
   'Seasonal themes': 'Thèmes de saison',
   'Little extras for the time of year.': 'Petits bonus selon la saison.',
   'Halloween': 'Halloween',

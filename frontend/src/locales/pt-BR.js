@@ -1657,6 +1657,7 @@ export const PT_BR_OVERRIDES = {
   'None, so dumbbell lifts stay hidden.': 'Nenhum, então os exercícios com halteres ficam escondidos.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'O openGym só lê enquanto está aberto: frequência cardíaca dos treinos do último dia, pesagens do último ano. Os treinos mais antigos ficam como estão.',
   // --- seasonal themes (lib/seasonal.js) ---
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Uma teia de aranha no cabeçalho, morcegos atrás do cronômetro de descanso, abóboras no fim. Nunca em cima das suas séries.',
   'A pumpkin orange accent while Halloween shows. Your own color comes back after.': 'Um destaque laranja abóbora enquanto durar o Halloween. Depois sua cor volta.',
   'Spiders, bats and one shy pumpkin until the end of October. Never during a workout.': 'Aranhas, morcegos e uma abóbora tímida até o fim de outubro. Nunca durante um treino.',
   'Little extras for the time of year.': 'Pequenos extras de acordo com a época do ano.',

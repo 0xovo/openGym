@@ -2557,6 +2557,8 @@ export default {
   'None, so dumbbell lifts stay hidden.': '沒有，所以啞鈴動作會隱藏。',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym 只在開啟時讀取：最近一天訓練的心率，最近一年的體重紀錄。更早的訓練維持不變。',
   // --- seasonal themes (lib/seasonal.js) ---
+  'Also during workouts': '訓練時也顯示',
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': '頁首一張蜘蛛網，休息計時器後面幾隻蝙蝠，完成畫面上幾顆南瓜。絕不擋住你的組。',
   'Seasonal themes': '季節主題',
   'Little extras for the time of year.': '應景的小彩蛋。',
   'Halloween': '萬聖節',

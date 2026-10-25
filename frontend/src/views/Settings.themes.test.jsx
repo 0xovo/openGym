@@ -125,4 +125,12 @@ describe('Seasonal themes', () => {
     act(() => sw.click())
     expect(mocks.S.seasonal).toEqual({ halloweenColors: true })
   })
+
+  it('Also during workouts is on until switched off, and then stored', () => {
+    mount()
+    const sw = rowOf('Also during workouts').querySelector('[role="switch"]')
+    expect(sw.getAttribute('aria-checked')).toBe('true')
+    act(() => sw.click())
+    expect(mocks.S.seasonal).toEqual({ halloweenWorkout: false })
+  })
 })

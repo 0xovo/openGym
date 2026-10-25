@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // Seasonal themes (lib/seasonal.js): the date window, the choice, the opt-in colours, once a day.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { THEMES, inSeason, seasonChoice, themeOn, activeSeason, seasonAccent, onceToday, doneToday } from './seasonal.js'
+import { THEMES, inSeason, seasonChoice, themeOn, activeSeason, seasonAccent, seasonInWorkout, onceToday, doneToday } from './seasonal.js'
 
 const local = (y, m, d, h = 12, min = 0) => new Date(y, m - 1, d, h, min)
 
@@ -63,6 +63,16 @@ describe('the choice', () => {
     expect(seasonAccent({ seasonal: { halloweenColors: true } }, oct)).toBe('orange')
     expect(seasonAccent({ seasonal: { halloweenColors: true } }, may)).toBe(null)
     expect(seasonAccent({ seasonal: { halloween: 'off', halloweenColors: true } }, oct)).toBe(null)
+  })
+})
+
+describe('during workouts', () => {
+  const oct = local(2026, 10, 25), may = local(2026, 5, 3)
+  it('on by default while the theme shows, off when switched off, never out of season', () => {
+    expect(seasonInWorkout({}, oct)).toBe(true)
+    expect(seasonInWorkout({ seasonal: { halloweenWorkout: false } }, oct)).toBe(false)
+    expect(seasonInWorkout({}, may)).toBe(false)
+    expect(seasonInWorkout({ seasonal: { halloween: 'off' } }, oct)).toBe(false)
   })
 })
 

@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react'
 import { useStore } from '../store/useStore.js'
-import { activeSeason } from '../lib/seasonal.js'
+import { activeSeason, seasonInWorkout } from '../lib/seasonal.js'
 
 /* The main bundle's side of the seasonal themes (lib/seasonal.js): two tiny components that render
    nothing at all unless a theme is showing, and only then fetch its module (seasonal/<id>.jsx,
@@ -38,9 +38,13 @@ export function SeasonalLayer({ hidden = false }) {
   return <Suspense fallback={null}><Layer hidden={hidden} fresh={firstVisible} /></Suspense>
 }
 
-/** One piece of decoration in a view: `spot` names where ('home-hero', 'home-streak', ...). */
-export function SeasonDeco({ spot }) {
-  const id = useSeason()
+/** One piece of decoration in a view: `spot` names where ('home-hero', 'home-streak', ...).
+    `workout` marks a spot on the workout screen or its sheets: those follow the theme's own
+    "Also during workouts" switch as well. */
+export function SeasonDeco({ spot, workout = false }) {
+  const season = useSeason()
+  const inWorkout = useStore(s => seasonInWorkout(s.S))
+  const id = workout && !inWorkout ? null : season
   if (!id || !LOADERS[id]) return null
   const { Deco } = modOf(id)
   return <Suspense fallback={null}><Deco spot={spot} /></Suspense>

@@ -2568,6 +2568,8 @@ export default {
   'None, so dumbbell lifts stay hidden.': 'Нет, поэтому упражнения с гантелями скрыты.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym читает данные, только пока открыт: пульс тренировок за последние сутки, взвешивания за последний год. Старые тренировки остаются как есть.',
   // --- seasonal themes (lib/seasonal.js) ---
+  'Also during workouts': 'И во время тренировки',
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Паутина в шапке, летучие мыши за таймером отдыха, тыквы на итогах. Никогда поверх твоих подходов.',
   'Seasonal themes': 'Сезонные темы',
   'Little extras for the time of year.': 'Маленькие сюрпризы по сезону.',
   'Halloween': 'Хеллоуин',

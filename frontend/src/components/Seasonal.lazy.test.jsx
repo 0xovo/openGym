@@ -57,6 +57,14 @@ describe('fetched only while a theme shows', () => {
     expect(document.documentElement.dataset.season).toBeUndefined()
   })
 
+  it('a workout spot stays empty with Also during workouts switched off, and nothing is fetched for it', async () => {
+    st.S = { seasonal: { halloweenWorkout: false } }
+    const { SeasonDeco } = await import('./Seasonal.jsx')
+    await act(async () => root.render(<SeasonDeco spot="workout-hdr" workout />))
+    expect(host.innerHTML).toBe('')
+    expect(st.loaded).toBe(0)
+  })
+
   it('out of season on Auto: the same', async () => {
     vi.setSystemTime(new Date(2026, 11, 3, 12))
     st.S = {}

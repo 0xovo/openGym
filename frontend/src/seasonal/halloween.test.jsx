@@ -26,22 +26,65 @@ afterEach(() => { act(() => root.unmount()); host.remove(); vi.useRealTimers() }
 const render = el => act(() => root.render(el))
 
 describe('the spider', () => {
-  it('drops at the first start of the day, and not at the next one', async () => {
+  it('drops at every start, today\'s second one too', async () => {
     let { Layer } = await load()
     render(<Layer hidden={false} fresh />)
     expect(host.querySelector('.hw-spider .hw-drop')).not.toBeNull()
     expect(host.querySelector('.hw-spider').getAttribute('aria-hidden')).toBe('true')
     act(() => root.unmount()); root = createRoot(host)
-    ;({ Layer } = await load())                       // a second start, same day
+    ;({ Layer } = await load())                       // closed and started again, same day
+    render(<Layer hidden={false} fresh />)
+    expect(host.querySelector('.hw-spider .hw-drop')).not.toBeNull()
+  })
+
+  it('once per start: the layer mounting again (a theme switch) does not drop it twice', async () => {
+    const { Layer } = await load()
+    render(<Layer hidden={false} fresh />)
+    act(() => {
+      const e = new Event('animationend', { bubbles: true })
+      host.querySelector('.hw-drop').dispatchEvent(e)
+    })
+    expect(host.querySelector('.hw-spider')).toBeNull()
+    act(() => root.unmount()); root = createRoot(host)
     render(<Layer hidden={false} fresh />)
     expect(host.querySelector('.hw-spider')).toBeNull()
   })
 
-  it('does not drop over a start straight into a workout, and keeps the day for later', async () => {
+  it('drops again when the app comes back after half an hour or more, not after a quick look away', async () => {
+    let now = Date.parse('2026-10-25T10:00:00')
+    const clock = vi.spyOn(Date, 'now').mockImplementation(() => now)
+    let hiddenDoc = false
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => hiddenDoc })
+    const away = ms => act(() => {
+      hiddenDoc = true; document.dispatchEvent(new Event('visibilitychange'))
+      now += ms
+      hiddenDoc = false; document.dispatchEvent(new Event('visibilitychange'))
+    })
+    try {
+      const { Layer, AWAY_MS } = await load()
+      render(<Layer hidden={false} fresh={false} />)   // a start into the workout, then out of it
+      expect(host.querySelector('.hw-spider')).toBeNull()
+      away(5 * 60 * 1000)
+      expect(host.querySelector('.hw-spider')).toBeNull()
+      away(AWAY_MS)
+      expect(host.querySelector('.hw-spider .hw-drop')).not.toBeNull()
+      // Back on the workout screen after a long while: no spider there.
+      render(<Layer hidden fresh={false} />)
+      away(AWAY_MS + 1)
+      render(<Layer hidden fresh={false} />)
+      expect(host.querySelector('.hw-spider')).toBeNull()
+    } finally {
+      clock.mockRestore()
+      delete document.hidden
+    }
+  })
+
+  it('does not drop over a start straight into a workout', async () => {
     const { Layer } = await load()
     render(<Layer hidden fresh={false} />)
     expect(host.innerHTML).toBe('')
-    expect(localStorage.getItem('og_season_spider')).toBeNull()
+    render(<Layer hidden={false} fresh={false} />)
+    expect(host.querySelector('.hw-spider')).toBeNull()
   })
 
   it('one tap and it scurries off, and is gone when it is out of sight', async () => {
@@ -117,6 +160,35 @@ describe('the pumpkin', () => {
 })
 
 describe('the spots', () => {
+  it('Stats: bats, the moon, hanging spiders, a skeleton, a cobweb and peeking pumpkins, none of them in the way', async () => {
+    const { Deco } = await load()
+    render(<>{['stats-hdr', 'stats-tile', 'stats-heatmap', 'stats-web', 'stats-peek'].map(s => <Deco key={s} spot={s} />)}</>)
+    expect(host.querySelector('.hw-moon .hw-witchsvg')).not.toBeNull()
+    expect(host.querySelectorAll('.hw-tilespiders .hw-hang')).toHaveLength(2)
+    expect(host.querySelector('.hw-skel .hw-skelsvg')).not.toBeNull()
+    expect(host.querySelectorAll('.hw-peek-two .hw-pumpkinsvg')).toHaveLength(2)
+    for (const el of host.children) expect(el.getAttribute('aria-hidden'), el.className).toBe('true')
+    expect(host.querySelectorAll('button')).toHaveLength(0)
+  })
+
+  it('the workout screen gets nothing that can be tapped or focused', async () => {
+    const { Deco } = await load()
+    render(<>{['workout-hdr', 'rest-timer', 'finish'].map(s => <Deco key={s} spot={s} />)}</>)
+    expect(host.querySelector('.hw-wcorner .hw-web')).not.toBeNull()
+    expect(host.querySelector('.hw-wcorner .hw-hang')).not.toBeNull()
+    expect(host.querySelectorAll('.hw-restbats .hw-batsvg')).toHaveLength(2)
+    expect(host.querySelectorAll('.hw-finish .hw-pumpkinsvg')).toHaveLength(2)
+    for (const el of host.children) expect(el.getAttribute('aria-hidden'), el.className).toBe('true')
+    expect(host.querySelectorAll('button, a, input, [tabindex]')).toHaveLength(0)
+  })
+
+  it('with reduced motion the rest bar has no bats at all', async () => {
+    reduce = true
+    const { Deco } = await load()
+    render(<Deco spot="rest-timer" />)
+    expect(host.innerHTML).toBe('')
+  })
+
   it('cobwebs and bats are decoration: hidden from assistive tech, never in a tap\'s way', async () => {
     const { Deco } = await load()
     render(<><Deco spot="home-hero" /><Deco spot="plan-card" /><Deco spot="header-bats" /><Deco spot="workout" /></>)

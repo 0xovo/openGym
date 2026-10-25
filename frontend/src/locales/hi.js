@@ -2564,6 +2564,8 @@ export default {
   'None, so dumbbell lifts stay hidden.': 'कोई नहीं, इसलिए डंबल वाली एक्सरसाइज़ छिपी रहेंगी।',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym सिर्फ़ तब पढ़ता है जब वह खुला हो: पिछले एक दिन के वर्कआउट की धड़कन, पिछले एक साल का वज़न। पुराने वर्कआउट जैसे हैं वैसे ही रहते हैं।',
   // --- seasonal themes (lib/seasonal.js) ---
+  'Also during workouts': 'वर्कआउट के दौरान भी',
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'हेडर में मकड़ी का जाला, आराम टाइमर के पीछे चमगादड़, आख़िर में कद्दू। आपके सेट पर कभी नहीं।',
   'Seasonal themes': 'मौसमी थीम',
   'Little extras for the time of year.': 'साल के इस समय के लिए छोटी-छोटी सजावट।',
   'Halloween': 'हैलोवीन',

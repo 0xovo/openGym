@@ -894,6 +894,11 @@ export default function Settings({ page = null, find = null, via = null, entryKe
             <Switch aria-label={t(th.colorsTitle)} checked={S.seasonal?.[th.id + 'Colors'] === true}
               onChange={v => set(th.id + 'Colors', v)} />
           </Row>}
+          {/* On by default while the theme shows; nothing there is ever in the way of a set. */}
+          {th.workoutTitle && <Row icon="play" iconTint="var(--green)" title={t(th.workoutTitle)} subtitle={t(th.workoutNote)}>
+            <Switch aria-label={t(th.workoutTitle)} checked={S.seasonal?.[th.id + 'Workout'] !== false}
+              onChange={v => set(th.id + 'Workout', v)} />
+          </Row>}
         </Section>
       })}
     </>,

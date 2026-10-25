@@ -5,8 +5,9 @@
 // (components/Seasonal.jsx), so a profile with themes off, or a day out of season, pays nothing.
 //
 // The choice is a Look setting like Theme and Accent color, so it syncs with the profile:
-// S.seasonal = { halloween: 'auto' | 'on' | 'off', halloweenColors: true }. Absent reads as Auto.
-// What happens once a day (the spider, the pumpkin) is per device, in localStorage below.
+// S.seasonal = { halloween: 'auto' | 'on' | 'off', halloweenColors: true, halloweenWorkout: false }.
+// Absent reads as Auto, without the colours, and with the workout screen decorated.
+// What happens once a day (the pumpkin's surprise) is per device, in localStorage below.
 
 /* One entry per theme. `from` and `to` are [month, day], 1-based and inclusive, in local time:
    Halloween is on from 1 October to the end of 31 October and gone on 1 November. The strings
@@ -17,6 +18,7 @@ export const THEMES = [
     id: 'halloween', title: 'Halloween', icon: 'pumpkin', tint: 'var(--orange)',
     from: [10, 1], to: [10, 31],
     colors: 'orange', colorsTitle: 'Spooky colors', colorsNote: 'A pumpkin orange accent while Halloween shows. Your own color comes back after.',
+    workoutTitle: 'Also during workouts', workoutNote: 'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.',
     during: 'Spiders, bats and one shy pumpkin until the end of October. Never during a workout.',
     back: 'Back next October. The spiders are on holiday.',
   },
@@ -57,6 +59,12 @@ export function seasonAccent(S, now = new Date()) {
   const id = activeSeason(S, now)
   const th = id && byId(id)
   return th?.colors && S?.seasonal?.[id + 'Colors'] === true ? th.colors : null
+}
+
+/** Whether the showing theme also decorates the workout screen: on unless switched off. */
+export function seasonInWorkout(S, now = new Date()) {
+  const id = activeSeason(S, now)
+  return !!id && S?.seasonal?.[id + 'Workout'] !== false
 }
 
 /* Once a day per device: true the first time it is asked on a local date, false after. Storage

@@ -2611,6 +2611,8 @@ export default {
   'None, so dumbbell lifts stay hidden.': 'Inga, så hantelövningar förblir dolda.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'openGym läser bara medan appen är öppen: puls för pass från det senaste dygnet, vägningar från det senaste året. Äldre pass förblir som de är.',
   // --- seasonal themes (lib/seasonal.js) ---
+  'Also during workouts': 'Även under passen',
+  'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Ett spindelnät i sidhuvudet, fladdermöss bakom vilotimern, pumpor när passet är klart. Aldrig på dina set.',
   'Seasonal themes': 'Säsongsteman',
   'Little extras for the time of year.': 'Små extragrejer efter årstiden.',
   'Halloween': 'Halloween',
