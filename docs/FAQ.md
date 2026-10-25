@@ -113,8 +113,9 @@ Two separate things, both fixable:
   (the browser shows a QR code, scan it, confirm on the phone), a password manager such as
   Bitwarden, 1Password or Proton Pass, a security key, or Windows Hello with a PIN. If the browser
   only ever asks for a fingerprint, look for "use another device" or "use a phone" in that dialog.
-  Already signed in on your phone? **Settings → Account → Add another device** gives the laptop
-  a passkey of its own. More in
+  Phone connected to this server? **Settings → Account → Add another device** gives the laptop
+  a passkey of its own. (A phone app that keeps its data to itself has no code to give until you
+  connect it to the server.) More in
   [which passkey providers work](SELF_HOSTING.md#which-passkey-providers-work).
 
 Rather skip passkeys on that device? Put `PASSWORD_LOGIN=1` in `.env`, then `docker compose up -d`

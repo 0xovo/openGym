@@ -2543,4 +2543,6 @@ export default {
   'How many': '개수',
   'Fill in': '채우기',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': '스택 끝이에요: {0} {1}이(가) 가장 무거우니 무게를 유지해요.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': '휴대폰에 코드가 없나요? 이 서버에 연결되어 있을 때만 코드가 있어요: 설정 → 계정 → 내 서버에 연결.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': '컴퓨터에서도 로그인하려면 내 서버가 필요해요. 이 휴대폰을 서버에 연결하면 다른 기기 추가가 컴퓨터에 쓸 코드를 줘요.',
 }

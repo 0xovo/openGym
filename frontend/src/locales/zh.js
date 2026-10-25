@@ -2543,4 +2543,6 @@ export default {
   'How many': '数量',
   'Fill in': '填入',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': '已经到底了：{0} {1} 是最重的一档，所以重量不变。',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': '手机上没有代码？只有连接到这个服务器时才会有：设置 → 账号 → 连接到我的服务器。',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': '想在电脑上也登录，需要你自己的服务器。把这部手机连接上去，然后“添加其他设备”就会给电脑一个代码。',
 }

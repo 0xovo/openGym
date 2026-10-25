@@ -2554,4 +2554,6 @@ export default {
   'How many': 'กี่ค่า',
   'Fill in': 'เติม',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'สุดสแต็กแล้ว: {0} {1} หนักที่สุด น้ำหนักจึงคงเดิม',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'ไม่มีรหัสในโทรศัพท์? จะมีรหัสก็ต่อเมื่อเชื่อมต่อกับเซิร์ฟเวอร์นี้อยู่: ตั้งค่า → บัญชี → เชื่อมต่อกับเซิร์ฟเวอร์ของฉัน',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'หากจะเข้าสู่ระบบบนคอมพิวเตอร์ด้วย ต้องมีเซิร์ฟเวอร์ของคุณเอง เชื่อมต่อโทรศัพท์นี้กับเซิร์ฟเวอร์ แล้วเพิ่มอุปกรณ์อื่นจะให้รหัสกับคอมพิวเตอร์',
 }

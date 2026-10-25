@@ -2543,4 +2543,6 @@ export default {
   'How many': 'Cuántos',
   'Fill in': 'Rellenar',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Es toda la columna: {0} {1} es lo máximo que da, así que el peso se queda.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': '¿No hay código en tu móvil? Solo tiene uno mientras está conectado a este servidor: Ajustes → Cuenta → Conectar a mi servidor.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Para iniciar sesión también en tu ordenador hace falta tu propio servidor. Conecta este móvil a él y Añadir otro dispositivo le dará un código al ordenador.',
 }

@@ -2590,4 +2590,6 @@ export default {
   'How many': 'Hur många',
   'Fill in': 'Fyll i',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Det är hela stacken: {0} {1} är det tyngsta, så vikten står kvar.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Ingen kod på telefonen? Den finns bara medan telefonen är ansluten till den här servern: Inställningar → Konto → Anslut till min server.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'För att logga in på datorn också behöver du en egen server. Anslut telefonen till den, så ger Lägg till en annan enhet datorn en kod.',
 }

@@ -2547,4 +2547,6 @@ export default {
   'How many': 'Сколько',
   'Fill in': 'Заполнить',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Это весь стек: {0} {1} и есть максимум, так что вес остаётся.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'На телефоне нет кода? Он появляется, только пока телефон подключён к этому серверу: Настройки → Аккаунт → Подключиться к моему серверу.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Чтобы входить и с компьютера, нужен ваш собственный сервер. Подключите к нему этот телефон, и «Добавить другое устройство» выдаст компьютеру код.',
 }

@@ -1636,6 +1636,8 @@ export const PT_BR_OVERRIDES = {
   "Remove range": "Remover faixa",
   'No list yet, so this exercise steps by its increment as usual.': 'Ainda sem lista, então este exercício sobe pelo seu incremento, como sempre.',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'É o bloco todo: {0} {1} é o máximo que dá, então o peso fica.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Não tem código no celular? Ele só aparece enquanto o celular está conectado a este servidor: Configurações → Conta → Conectar ao meu servidor.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Para entrar também no computador, você precisa do seu próprio servidor. Conecte este celular a ele, e Adicionar outro dispositivo dá um código para o computador.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

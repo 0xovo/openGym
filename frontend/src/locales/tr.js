@@ -2543,4 +2543,6 @@ export default {
   'How many': 'Kaç tane',
   'Fill in': 'Doldur',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Bloğun tamamı bu: {0} {1} en ağırı, o yüzden ağırlık sabit kalır.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Telefonunda kod yok mu? Kod yalnızca bu sunucuya bağlıyken olur: Ayarlar → Hesap → Sunucuma bağlan.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Bilgisayarda da giriş yapmak için kendi sunucun gerekir. Bu telefonu ona bağla, ardından Başka bir cihaz ekle bilgisayara bir kod verir.',
 }

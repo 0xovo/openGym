@@ -2540,4 +2540,6 @@ export default {
   'How many': 'Скільки',
   'Fill in': 'Заповнити',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Це весь стек: {0} {1} і є максимум, тож вага лишається.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'На телефоні немає коду? Він є, лише поки телефон підключений до цього сервера: Налаштування → Акаунт → Підключитися до мого сервера.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Щоб входити й на комп’ютері, потрібен твій власний сервер. Підключи до нього цей телефон, і «Додати інший пристрій» дасть комп’ютеру код.',
 }

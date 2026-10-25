@@ -2546,4 +2546,6 @@ export default {
   'How many': 'Hány darab',
   'Fill in': 'Kitöltés',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Ez az egész oszlop: {0} {1} a legtöbb, így a súly marad.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Nincs kód a telefonodon? Csak akkor van, ha ehhez a szerverhez csatlakozik: Beállítások → Fiók → Csatlakozás a szerveremhez.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Ahhoz, hogy a gépeden is bejelentkezz, saját szerver kell. Csatlakoztasd hozzá ezt a telefont, és a Másik eszköz hozzáadása ad egy kódot a gépnek.',
 }

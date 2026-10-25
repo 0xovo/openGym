@@ -155,6 +155,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Arabic exercise names wrap the right way round** (#780, thanks @kurktchiev). When a long
   name breaks onto a second line, the English part in brackets keeps its brackets the right way
   round.
+- **"Where's my code?"** (#551, thanks @Maximrabd). Signing a computer in with a code from your
+  phone only works while the phone is connected to your server. A phone app that keeps everything
+  to itself now says so under Settings → Account, and so does the sign-in screen's code sheet.
 - **The Android update actually installs.** Switch to another app while the new APK comes down
   and Android quietly refused to open the installer, so the download finished and nothing
   happened. Now the installer waits until you're back in openGym. Tap the update again after a

@@ -2543,4 +2543,6 @@ export default {
   'How many': 'कितने',
   'Fill in': 'भरें',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'यही पूरा स्टैक है: {0} {1} सबसे भारी है, इसलिए वज़न वही रहता है।',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'फ़ोन पर कोई कोड नहीं? कोड तभी होता है जब वह इस सर्वर से कनेक्ट हो: सेटिंग्स → खाता → मेरे सर्वर से कनेक्ट करें।',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'कंप्यूटर पर भी साइन इन करने के लिए आपका अपना सर्वर चाहिए। इस फ़ोन को उससे कनेक्ट करें, फिर दूसरा डिवाइस जोड़ें कंप्यूटर को एक कोड देगा।',
 }

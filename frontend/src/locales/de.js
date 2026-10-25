@@ -2563,4 +2563,6 @@ export default {
   'How many': 'Wie viele',
   'Fill in': 'Ausfüllen',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'Das ist der ganze Block: {0} {1} ist das Schwerste, also bleibt das Gewicht.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Kein Code auf deinem Handy? Den gibt es nur, solange es mit diesem Server verbunden ist: Einstellungen → Konto → Mit meinem Server verbinden.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Um dich auch am Computer anzumelden, brauchst du deinen eigenen Server. Verbinde dieses Handy damit, dann gibt Weiteres Gerät hinzufügen dem Computer einen Code.',
 }

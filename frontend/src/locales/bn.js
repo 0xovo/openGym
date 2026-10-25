@@ -2622,4 +2622,6 @@ export default {
   'How many': 'কতগুলো',
   'Fill in': 'পূরণ করুন',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'এটাই পুরো স্ট্যাক: {0} {1} সবচেয়ে ভারী, তাই ওজন একই থাকে।',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'ফোনে কোনো কোড নেই? এই সার্ভারে সংযুক্ত থাকলেই কেবল কোড থাকে: সেটিংস → অ্যাকাউন্ট → আমার সার্ভারে সংযোগ করুন।',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'কম্পিউটারেও সাইন ইন করতে আপনার নিজের সার্ভার লাগবে। এই ফোনটি সেখানে সংযোগ করুন, তারপর আরেকটি ডিভাইস যোগ করুন কম্পিউটারকে একটি কোড দেবে।',
 }

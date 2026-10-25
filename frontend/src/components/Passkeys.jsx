@@ -373,6 +373,8 @@ export function DeviceLinkRedeemSheet({ close }) {
     <div className="muted small" style={{ marginBottom: 14 }}>{joining
       ? t('Create a passkey on this device for the profile “{0}”. It signs you in here from now on.', joining.name)
       : t('Enter the code your other device shows under Settings → Account → Add another device. This device then gets a passkey of its own.')}
+      {/* #551: an app that keeps its data on the phone has no account here, so no such row. */}
+      {!joining && <div style={{ marginTop: 6 }}>{t('No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.')}</div>}
       {!joining && <div style={{ marginTop: 6 }}>{t('A recovery code from your admin goes here too.')}</div>}</div>
     {elsewhere && <div className="card small" style={{ textAlign: 'start', marginBottom: 14 }}>
       {user && <div style={{ marginBottom: 8 }}>{user.name === joining.name

@@ -948,6 +948,10 @@ then creates a passkey of its own and is signed in by it. So a Windows Hello pas
 the phone's own passkey can sign in to the same profile, instead of the phone ending up with a
 second, empty one. (#95)
 
+The device that makes the code has to be signed in to this server. A phone app that keeps
+everything on the phone has no account here and so no such row: connect it first under
+**Settings → Account → Connect to my server**, and the row shows up in its Server & sync block. (#551)
+
 Both ways ask you to confirm first — with a passkey the profile already has, or its password
 while `PASSWORD_LOGIN=1` — because each adds a lasting way in: a session on its own may be a
 copied cookie. Removing a passkey asks for the same, since a copied cookie could otherwise pick

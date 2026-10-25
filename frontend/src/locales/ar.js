@@ -2598,4 +2598,6 @@ export default {
   'How many': 'كم عددها',
   'Fill in': 'املأ',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'هذه المجموعة كلها: {0} {1} هو الأثقل، لذا يبقى الوزن كما هو.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'لا يوجد رمز على هاتفك؟ لا يظهر إلا وهو متصل بهذا الخادم: الإعدادات ← الحساب ← الاتصال بخادمي.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'لتسجيل الدخول على حاسوبك أيضًا تحتاج إلى خادمك الخاص. اربط هذا الهاتف به، وعندها يعطي «إضافة جهاز آخر» الحاسوب رمزًا.',
 }

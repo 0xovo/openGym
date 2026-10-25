@@ -2543,4 +2543,6 @@ export default {
   'How many': 'Quantos',
   'Fill in': 'Preencher',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'É o bloco todo: {0} {1} é o máximo que dá, por isso o peso fica.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Não há código no telemóvel? Só tem um enquanto está ligado a este servidor: Definições → Conta → Ligar ao meu servidor.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Para iniciar sessão também no computador precisas do teu próprio servidor. Liga este telemóvel a ele e Adicionar outro dispositivo dá um código ao computador.',
 }

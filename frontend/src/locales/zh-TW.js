@@ -2536,4 +2536,6 @@ export default {
   'How many': '數量',
   'Fill in': '填入',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': '已經到底了：{0} {1} 是最重的一檔，所以重量不變。',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': '手機上沒有代碼？只有連線至這個伺服器時才會有：設定 → 帳號 → 連線至我的伺服器。',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': '想在電腦上也登入，需要你自己的伺服器。把這支手機連線上去，然後「新增其他裝置」就會給電腦一組代碼。',
 }

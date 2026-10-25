@@ -2543,4 +2543,6 @@ export default {
   'How many': 'Ile',
   'Fill in': 'Wypełnij',
   'That’s the whole stack: {0} {1} is the heaviest it goes, so the weight stays.': 'To cały stos: {0} {1} to najwięcej, więc ciężar zostaje.',
+  'No code on your phone? It only has one while it’s connected to this server: Settings → Account → Connect to my server.': 'Nie ma kodu na telefonie? Pojawia się tylko, gdy telefon jest połączony z tym serwerem: Ustawienia → Konto → Połącz z moim serwerem.',
+  'Signing in on your computer too needs your own server. Connect this phone to it, and Add another device then gives the computer a code.': 'Żeby logować się też na komputerze, potrzebujesz własnego serwera. Połącz z nim ten telefon, a Dodaj kolejne urządzenie da komputerowi kod.',
 }
