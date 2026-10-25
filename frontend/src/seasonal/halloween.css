@@ -1,0 +1,161 @@
+/* Halloween (seasonal/halloween.jsx). Loaded only while the theme shows, and scoped to
+   html[data-season="halloween"] so switching it off mid-session leaves nothing behind.
+   Transforms and opacity only; every animation runs a fixed number of times and stops. */
+
+:root[data-season="halloween"]{
+  --hw-ink:#b49ae6;          /* spider, bats, witch on a dark screen: moonlit lavender */
+  --hw-ink-2:#7b5cc0;
+  --hw-thread:rgba(235,235,245,.42);
+  --hw-web:rgba(235,235,245,.26);
+  --hw-face:#ffd04a;
+}
+:root[data-season="halloween"][data-theme="light"]{
+  --hw-ink:#33244a;
+  --hw-ink-2:#5b3f8c;
+  --hw-thread:rgba(60,60,67,.38);
+  --hw-web:rgba(60,60,67,.24);
+  --hw-face:#5a2100;
+}
+
+/* ------------------------------------------------------------ cobwebs -- */
+/* In a card's corner, under its content and never in a tap's way. */
+[data-season="halloween"] :has(> .hw-web){position:relative}
+[data-season="halloween"] .hw-web{
+  position:absolute;width:52px;height:52px;pointer-events:none;
+  fill:none;stroke:var(--hw-web);stroke-width:.8;stroke-linecap:round;
+}
+[data-season="halloween"] .hw-web-br{right:0;bottom:0;transform:scale(-1,-1);border-end-end-radius:var(--r-card)}
+[data-season="halloween"] .hw-web-tr{right:0;top:0;transform:scaleX(-1)}
+[dir="rtl"][data-season="halloween"] .hw-web-br{right:auto;left:0;transform:scaleY(-1)}
+[dir="rtl"][data-season="halloween"] .hw-web-tr{right:auto;left:0;transform:none}
+
+/* --------------------------------------------------------- header bats -- */
+[data-season="halloween"] .hdr:has(> .hw-bats){position:relative}
+[data-season="halloween"] .hdr:has(> .hw-bats) > :not(.hw-bats){position:relative;z-index:1}
+[data-season="halloween"] .hw-bats{position:absolute;inset:-6px 0 -4px;overflow:hidden;pointer-events:none;z-index:0}
+.hw-batsvg{display:block;width:100%;height:100%;fill:var(--hw-ink)}
+[data-season="halloween"] .hw-batlane{
+  position:absolute;inset:0;opacity:0;
+  animation:hw-cross 15s cubic-bezier(.45,.05,.55,.95) 3 both;
+}
+[data-season="halloween"] .hw-flap{position:absolute;left:0;display:block;width:22px;height:11px;animation:hw-flap .2s ease-in-out 220 alternate}
+[data-season="halloween"] .hw-lane0{animation-delay:1.2s}
+[data-season="halloween"] .hw-lane0 .hw-flap{top:8px}
+[data-season="halloween"] .hw-lane1{animation-delay:6s;animation-duration:17s}
+[data-season="halloween"] .hw-lane1 .hw-flap{top:26px;width:16px;height:8px;animation-duration:.17s}
+[data-season="halloween"] .hw-lane2{animation-delay:9.5s;animation-duration:19s}
+[data-season="halloween"] .hw-lane2 .hw-flap{top:14px;width:12px;height:6px;animation-duration:.15s}
+@keyframes hw-cross{
+  0%{transform:translate3d(-6%,14px,0);opacity:0}
+  3%{opacity:.5}
+  14%{transform:translate3d(45%,-2px,0)}
+  27%{opacity:.5}
+  30%{transform:translate3d(104%,10px,0);opacity:0}
+  100%{transform:translate3d(104%,10px,0);opacity:0}
+}
+@keyframes hw-flap{from{transform:scaleY(1)}to{transform:scaleY(.35)}}
+/* Reduced motion: two bats simply sit in the corner of the sky. */
+[data-season="halloween"] .hw-bats-still .hw-batlane{animation:none;opacity:.4}
+[data-season="halloween"] .hw-bats-still .hw-flap{animation:none}
+[data-season="halloween"] .hw-bats-still .hw-lane0 .hw-flap{left:auto;right:64px}
+[data-season="halloween"] .hw-bats-still .hw-lane1 .hw-flap{left:auto;right:92px}
+[data-season="halloween"] .hw-bats-still .hw-lane2{display:none}
+
+/* ------------------------------------------------------------- pumpkin -- */
+/* Behind the top edge of its card: only the stem and the eyes show above it. */
+[data-season="halloween"] .card:has(> .hw-peek){position:relative}
+[data-season="halloween"] .hw-peek{
+  position:absolute;bottom:100%;inset-inline-end:58px;width:40px;height:17px;overflow:hidden;pointer-events:none;
+}
+[data-season="halloween"] .hw-pumpkin{
+  all:unset;position:absolute;left:0;top:1px;width:40px;height:32px;cursor:pointer;pointer-events:auto;
+  -webkit-tap-highlight-color:transparent;animation:hw-peek .9s cubic-bezier(.3,1.5,.5,1) .6s both;
+}
+[data-season="halloween"] .hw-pumpkin.hw-hop{animation:hw-hop .5s cubic-bezier(.3,1.6,.5,1)}
+.hw-pumpkinsvg{display:block;width:100%;height:auto;overflow:visible}
+.hw-pumpkinsvg .hw-stem{fill:#6c7d2c}
+.hw-pumpkinsvg .hw-vine{fill:none;stroke:#6c7d2c;stroke-width:1.1;stroke-linecap:round}
+.hw-pumpkinsvg .hw-lobes ellipse{stroke:#b9500c;stroke-width:.7}
+.hw-pumpkinsvg .hw-face{fill:var(--hw-face)}
+[data-season="halloween"] .hw-pumpkinsvg .hw-eyes{transform-origin:24px 16px;animation:hw-blink 7s ease-in-out 2.5s 4}
+@keyframes hw-peek{from{transform:translateY(18px)}to{transform:none}}
+@keyframes hw-hop{0%{transform:none}35%{transform:translateY(-7px) rotate(-6deg)}70%{transform:translateY(1px) rotate(3deg)}100%{transform:none}}
+@keyframes hw-blink{0%,94%,100%{transform:none}97%{transform:scaleY(.1)}}
+
+.hw-burst{position:fixed;width:0;height:0;z-index:58;pointer-events:none}
+.hw-burstbat{
+  position:absolute;left:-11px;top:-6px;width:22px;height:11px;opacity:0;
+  animation:hw-burst 1.15s cubic-bezier(.2,.7,.3,1) both;
+}
+@keyframes hw-burst{
+  0%{transform:translate3d(0,0,0) scale(.3) rotate(0);opacity:0}
+  12%{opacity:1}
+  70%{opacity:.9}
+  100%{transform:translate3d(var(--dx),var(--dy),0) scale(1.15) rotate(var(--r));opacity:0}
+}
+
+/* -------------------------------------------------------------- spider -- */
+/* Drops on its thread from the top, swings to a stop, climbs back up. A tap sends it up fast. */
+.hw-spider{
+  position:fixed;top:0;inset-inline-end:76px;z-index:55;width:26px;height:0;pointer-events:none;
+  transform-origin:50% 0;animation:hw-swing 2.6s ease-in-out .55s both;
+}
+.hw-drop{position:absolute;left:0;top:0;width:26px;animation:hw-drop 4.4s cubic-bezier(.4,0,.3,1) both}
+.hw-thread{
+  position:absolute;left:12.5px;bottom:20px;width:1px;height:420px;background:var(--hw-thread);
+}
+.hw-spiderbtn{
+  all:unset;position:absolute;left:-9px;top:-4px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.hw-spidersvg{width:26px;height:26px;overflow:visible}
+.hw-spidersvg .hw-body{fill:var(--hw-ink)}
+.hw-spidersvg .hw-eye{fill:var(--hw-face)}
+.hw-spidersvg .hw-legs{fill:none;stroke:var(--hw-ink);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.hw-legs-l{transform-origin:9px 14px;animation:hw-legs .3s ease-in-out 6 alternate}
+.hw-legs-r{transform-origin:15px 14px;animation:hw-legs .3s ease-in-out .15s 6 alternate-reverse}
+@keyframes hw-legs{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+/* where it hangs: below the status bar, beside the header's title */
+@keyframes hw-drop{
+  0%{transform:translateY(calc(-40px))}
+  17%{transform:translateY(calc(var(--sat) + 108px))}
+  23%{transform:translateY(calc(var(--sat) + 92px))}
+  29%{transform:translateY(calc(var(--sat) + 100px))}
+  34%,66%{transform:translateY(calc(var(--sat) + 97px))}
+  100%{transform:translateY(-48px)}
+}
+@keyframes hw-swing{
+  0%{transform:rotate(0)}
+  14%{transform:rotate(9deg)}
+  34%{transform:rotate(-6deg)}
+  54%{transform:rotate(3.5deg)}
+  72%{transform:rotate(-1.5deg)}
+  100%{transform:rotate(0)}
+}
+.hw-scurry,.hw-scurry .hw-drop{animation-play-state:paused}
+.hw-scurry .hw-spiderbtn{animation:hw-scurry .45s cubic-bezier(.5,0,.8,.4) forwards}
+.hw-scurry .hw-thread{animation:hw-scurry .45s cubic-bezier(.5,0,.8,.4) forwards}
+.hw-scurry .hw-legs{animation-duration:.08s;animation-iteration-count:8}
+@keyframes hw-scurry{to{transform:translateY(-280px)}}
+/* Reduced motion: no drop, no swing. A small spider sits in the corner for a few seconds. */
+.hw-spider.hw-still{animation:none;top:calc(var(--sat) + 6px);inset-inline-end:14px;height:auto}
+.hw-still .hw-spidersvg{width:16px;height:16px}
+.hw-still .hw-legs{animation:none}
+
+/* --------------------------------------------------------------- witch -- */
+.hw-witch{
+  position:fixed;top:calc(var(--sat) + 4px);left:0;z-index:40;width:66px;height:38px;pointer-events:none;
+  animation:hw-fly 7.5s linear both;
+}
+.hw-witchsvg{display:block;width:100%;height:100%;fill:var(--hw-ink);opacity:.8}
+@keyframes hw-fly{
+  0%{transform:translate3d(-90px,22px,0) rotate(-5deg)}
+  25%{transform:translate3d(24vw,8px,0) rotate(-2deg)}
+  50%{transform:translate3d(50vw,16px,0) rotate(-4deg)}
+  75%{transform:translate3d(76vw,4px,0) rotate(-1deg)}
+  100%{transform:translate3d(calc(100vw + 30px),-6px,0) rotate(-6deg)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hw-spider:not(.hw-still),.hw-witch,.hw-burst{display:none}
+}

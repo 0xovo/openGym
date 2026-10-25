@@ -58,6 +58,7 @@ import { reportSheet } from '../components/ReportSheet.jsx'
 import { csvExportSheet } from '../components/CsvExportSheet.jsx'
 import GymReminderPage, { GymEditPage } from './GymReminder.jsx'
 import { readGymConfig } from '../lib/gym-reminder.js'
+import { THEMES, inSeason, seasonChoice, activeSeason } from '../lib/seasonal.js'
 
 /* Settings (v1.3.11). The root is one screen: an account card, eleven rows that each open a page
    (/settings/<page>), and a search over every row. Rare things live one level further down
@@ -848,6 +849,11 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           />
         </Row>
       </Section>
+      {/* Halloween and whatever comes after it (lib/seasonal.js), on a page of their own. */}
+      <Section>
+        <Row icon="pumpkin" iconTint="var(--orange)" title={t('Seasonal themes')} subtitle={t('Little extras for the time of year.')}
+          value={activeSeasonTitle(S)} accessory="chevron" onClick={() => open('themes')} />
+      </Section>
       <Section title={t('On Home')}>
         {/* Membership QR codes on Home (views/CheckIn.jsx); off = no Home card, no route. */}
         <Row icon="qr" iconTint="var(--blue)" title={t('Gym check-in')}
@@ -867,6 +873,29 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           <Switch checked={S.connStatus !== false} onChange={v => update(s => { s.connStatus = v; if (v) s.connLocal = true })} />
         </Row>}
       </Section>
+    </>,
+
+    // One section per seasonal theme (lib/seasonal.js). Auto shows it in its weeks; On keeps it
+    // all year, Off never. Synced like the rest of Look; once-a-day surprises stay per device.
+    themes: () => <>
+      {THEMES.map(th => {
+        const choice = seasonChoice(S, th.id)
+        const set = (k, v) => update(s => { s.seasonal = { ...(s.seasonal || {}), [k]: v } })
+        const note = choice === 'on' ? t('On all year round. Bold choice.')
+          : choice === 'off' ? t('Off, even in season. Fair enough.')
+          : inSeason(th) ? t(th.during) : t(th.back)
+        return <Section key={th.id} footer={note}>
+          <Row icon={th.icon} iconTint={th.tint} title={t(th.title)}>
+            <Segmented className="seg-inline"
+              options={[{ value: 'auto', label: t('Auto') }, { value: 'on', label: t('On') }, { value: 'off', label: t('Off') }]}
+              value={choice} onChange={v => set(th.id, v)} />
+          </Row>
+          {th.colors && <Row icon="palette" iconTint="var(--purple)" title={t(th.colorsTitle)} subtitle={t(th.colorsNote)}>
+            <Switch aria-label={t(th.colorsTitle)} checked={S.seasonal?.[th.id + 'Colors'] === true}
+              onChange={v => set(th.id + 'Colors', v)} />
+          </Row>}
+        </Section>
+      })}
     </>,
 
     data: () => <>
@@ -1336,6 +1365,13 @@ function PushCard({ S, update, toast }) {
 // the Library, exercise picker, and flags routine entries that need something outside it
 // (see lib/equipment.js). Purely local/synced state — no server changes needed.
 // What the chosen accent is called: a preset's colour name, or the user's own.
+// The theme showing right now, by name, for the row that opens them.
+function activeSeasonTitle(S) {
+  const id = activeSeason(S)
+  const th = id && THEMES.find(x => x.id === id)
+  return th ? t(th.title) : null
+}
+
 function accentLabel(S) {
   const k = accentKey(S)
   return k === CUSTOM ? t('Your own color') : t(ACCENT_NAMES[k] || 'Green')

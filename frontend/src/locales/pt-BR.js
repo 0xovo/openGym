@@ -1656,6 +1656,15 @@ export const PT_BR_OVERRIDES = {
   'Everything but dumbbells': 'Tudo menos halteres',
   'None, so dumbbell lifts stay hidden.': 'Nenhum, então os exercícios com halteres ficam escondidos.',
   'openGym reads only while it is open: heart rate for workouts of the last day, weigh-ins of the last year. Older workouts stay as they are.': 'O openGym só lê enquanto está aberto: frequência cardíaca dos treinos do último dia, pesagens do último ano. Os treinos mais antigos ficam como estão.',
+  // --- seasonal themes (lib/seasonal.js) ---
+  'A pumpkin orange accent while Halloween shows. Your own color comes back after.': 'Um destaque laranja abóbora enquanto durar o Halloween. Depois sua cor volta.',
+  'Spiders, bats and one shy pumpkin until the end of October. Never during a workout.': 'Aranhas, morcegos e uma abóbora tímida até o fim de outubro. Nunca durante um treino.',
+  'Little extras for the time of year.': 'Pequenos extras de acordo com a época do ano.',
+  'Boo! You found the pumpkin. It was watching you train.': 'Bu! Você achou a abóbora. Ela estava vendo você treinar.',
+  'Boo! Pumpkin found. Your next PR is now officially haunted.': 'Bu! Abóbora encontrada. Seu próximo recorde agora é oficialmente assombrado.',
+  'Boo! Found it. The spiders owe you a rep.': 'Bu! Achou. As aranhas te devem uma repetição.',
+  'The pumpkin is napping. Come back tomorrow.': 'A abóbora está tirando uma soneca. Volte amanhã.',
+  'Back next October. The spiders are on holiday.': 'Volta em outubro. As aranhas estão de férias.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
