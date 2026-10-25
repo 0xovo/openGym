@@ -359,7 +359,8 @@ export function mergePlan(s, bundle, { schedule } = {}) {
       if (ids.length) s.week[d] = ids
     })
   }
-  return { routines: source.routines.length }
+  // `ids`: the new routines' ids in the plan's order, for a caller that puts them in a rotation.
+  return { routines: source.routines.length, ids: source.routines.map(r => ridMap[r.id]) }
 }
 
 /* ------------------------------- printable PDF ------------------------------- */

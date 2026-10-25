@@ -55,6 +55,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   devices, the one that synced last could wipe the other's chat, log and Undo history. Now they
   merge message by message, and a plan you already applied on your phone no longer gets a
   "nothing I would change" reply on your laptop.
+- **A Coach plan goes into your rotation** (#778). Training on a rotation, a plan from the Coach
+  used to land in the weekly schedule, which a rotation ignores, so Home kept showing your old
+  sessions. Now the rotation switches to the Coach's routines and starts over with the first
+  one, and Undo puts your old rotation back.
 - **Imported weigh-ins stay put.** Weigh-ins you import (an Apple Health export, a Google Health
   or Health Connect CSV, Strong, Hevy) are no longer written back to Apple Health or Health
   Connect, where they landed a second time. Only weigh-ins you enter in openGym go out.
