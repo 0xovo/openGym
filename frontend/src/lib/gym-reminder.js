@@ -47,13 +47,19 @@ export const minuteOf = hhmm => {
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 const round6 = n => Math.round(n * 1e6) / 1e6
 
-/** One gym as kept: a name, a place, a radius in metres and an optional text. Null if unusable. */
+/**
+ * One gym as kept: a name, an address (as the map search found it, for the list), a place, a
+ * radius in metres and an optional text. `off: true` keeps a gym on the list that the phone does
+ * not watch for now (the native sides skip it). Null if unusable.
+ */
 export function normGym(g) {
   if (!g || typeof g !== 'object') return null
   const lat = Number(g.lat), lng = Number(g.lng)
   if (!validLatLng(lat, lng)) return null
   const id = str(g.id, 40) || 'g' + Math.random().toString(36).slice(2, 10)
-  return { id, name: str(g.name, 60), lat: round6(lat), lng: round6(lng), radius: clampRadius(g.radius ?? RADIUS.def), text: str(g.text, 120) }
+  const out = { id, name: str(g.name, 60), address: str(g.address, 160), lat: round6(lat), lng: round6(lng), radius: clampRadius(g.radius ?? RADIUS.def), text: str(g.text, 120) }
+  if (g.off === true) out.off = true
+  return out
 }
 
 /** The time window, or null for "any time". Both ends must be valid; equal ends mean any time. */
