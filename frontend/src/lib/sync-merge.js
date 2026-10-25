@@ -219,6 +219,82 @@ export function stampWorkout(w, now = Date.now()) {
 const stampOf = v => (v && typeof v === 'object' ? Number(v._ts) || 0 : 0)
 const isMap = v => !!v && typeof v === 'object' && !Array.isArray(v)
 
+// ---- The Coach's history (`coach.chat`, `coach.log`, `coach.snapshots`) -----------------------
+//
+// `coach` is one setting to the stamps (`edited.coach`), so the copy that changed it last used to
+// win it whole: a device that had sat on the Coach screen wrote one line into its older copy, and
+// the other device's messages, log entries and Undo snapshots were gone (#779). These three lists
+// only ever grow at the end, so they are joined instead: every entry of either copy once (by `id`,
+// a snapshot by when it was taken and for which proposal), in the order they were written (`at`),
+// and the newest few kept as lib/coach.js keeps them. The rest of `coach` (consent, profile,
+// cadence) still comes from the copy that changed it last.
+//
+// An Undo takes a snapshot off the ring. Its log entry names the snapshot it used (`snap`, or for
+// an older app the proposal it put back), and a snapshot so named never comes back from the copy
+// that still holds it: that would offer the same Undo twice.
+// The bounds of lib/coach.js (SNAPSHOT_MAX, LOG_MAX, CHAT_MAX, NAMESPACE_MAX), copied rather than
+// imported: coach.js pulls in the plan code, the merge must not. sync-merge.test.js checks them.
+export const COACH_CAPS = { chat: 40, log: 50, snapshots: 3 }
+const COACH_NAMESPACE_MAX = 256 * 1024
+export const snapshotKey = x => (isMap(x) ? (x.id != null ? String(x.id) : `${Number(x.at) || 0}|${x.proposalId ?? ''}`) : null)
+const coachKey = { chat: x => (isMap(x) && x.id != null ? String(x.id) : null), log: x => (isMap(x) && x.id != null ? String(x.id) : null), snapshots: snapshotKey }
+
+// `xs` then `ys`, each key once (first wins), in the order written: by `at`, and an entry without
+// one where it stood after its predecessor. Keyless entries stay, from `xs` only.
+function unionInTime(xs, ys, key) {
+  const seen = new Set(), out = []
+  let i = 0
+  for (const [from, l] of [[0, list(xs)], [1, list(ys)]]) {
+    let at = 0
+    for (const x of l) {
+      if (x == null) continue
+      const k = key(x)
+      if (Number(x?.at) > 0) at = Number(x.at)
+      if (k == null) { if (!from) out.push({ x, at, from, i: i++ }); continue }
+      if (seen.has(k)) continue
+      seen.add(k)
+      out.push({ x, at, from, i: i++ })
+    }
+  }
+  out.sort((a, b) => a.at - b.at || a.from - b.from || a.i - b.i)
+  return out.map(e => e.x)
+}
+
+/**
+ * The Coach namespace of two copies: `win`'s (the copy that changed it last), with its chat, log
+ * and Undo snapshots joined with `other`'s (see above). Returns a new object, or `win` as it is
+ * when either side has no namespace to join.
+ */
+export function mergeCoach(win, other) {
+  if (!isMap(win) || !isMap(other)) return win === undefined ? win : clone(win)
+  const out = clone(win)
+  for (const f of ['chat', 'log', 'snapshots']) {
+    if (!Array.isArray(win[f]) && !Array.isArray(other[f])) continue
+    out[f] = clone(unionInTime(win[f], other[f], coachKey[f]))
+  }
+  // Snapshots an Undo on either side already used.
+  const used = new Set(), byProposal = []
+  for (const e of list(out.log)) {
+    if (!isMap(e) || e.kind !== 'revert') continue
+    if (e.snap != null) used.add(String(e.snap))
+    else if (e.proposalId != null) byProposal.push(e)
+  }
+  if (out.snapshots) {
+    out.snapshots = out.snapshots.filter(x => !used.has(snapshotKey(x)) &&
+      !byProposal.some(e => x?.proposalId === e.proposalId && (Number(x?.at) || 0) <= (Number(e.at) || 0)))
+  }
+  for (const [f, max] of Object.entries(COACH_CAPS)) if (Array.isArray(out[f]) && out[f].length > max) out[f] = out[f].slice(-max)
+  // The namespace's own size guard (lib/coach.js trim), the same oldest-first order.
+  let guard = 0
+  while (JSON.stringify(out).length > COACH_NAMESPACE_MAX && guard++ < 60) {
+    if (list(out.chat).length > 8) out.chat.shift()
+    else if (list(out.snapshots).length > 1) out.snapshots.shift()
+    else if (list(out.log).length > 1) out.log.shift()
+    else break
+  }
+  return out
+}
+
 // ---- Entries merged field by field ----------------------------------------------------------
 //
 // A workout, routine, custom exercise, equipment profile or gym card edited on two devices kept
@@ -479,6 +555,13 @@ export function sinceReset(S, at, ids) {
     }
   }
   out.exWeights = ex
+  // The Coach's history is joined, not replaced (mergeCoach), so what this copy said to the Coach
+  // before the reset goes here: only lines, log entries and snapshots from after it stay.
+  if (isMap(out.coach)) {
+    for (const f of ['chat', 'log', 'snapshots']) {
+      if (Array.isArray(out.coach[f])) out.coach[f] = out.coach[f].filter(x => (Number(x?.at) || 0) > at)
+    }
+  }
   // The reset copy's settings, plan and unit win whatever this copy's own stamps say (the file's
   // header): stamps from before the reset would otherwise outrank the fresh profile's defaults,
   // a unit switch made long ago would bring the old unit back over the reset's.
@@ -870,6 +953,12 @@ export function mergeStates(a0, b0, { prefer } = {}) {
       if (m && !(k in bumps)) undone[k] = clone(m)
     }
     if (Object.keys(undone).length) out.undone = undone; else delete out.undone
+    // The Coach's conversation, log and Undo snapshots from both copies (mergeCoach), whichever
+    // changed `coach` last.
+    if (isMap(out.coach)) {
+      const other = sameJSON(out.coach, n.coach) ? o.coach : n.coach
+      if (isMap(other)) out.coach = mergeCoach(out.coach, other)
+    }
   }
   if (deleted) out.deleted = deleted; else delete out.deleted
   out._ts = Math.max(a._ts || 0, b._ts || 0)

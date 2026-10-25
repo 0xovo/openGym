@@ -51,6 +51,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Discard means discard, on the Apple Watch too** (#776). Discarding a workout on the phone
   while the watch follows it used to save it to Apple Health anyway, calories and all. Now the
   watch drops it and Apple Health never hears about it.
+- **The Coach remembers both devices** (#779, thanks for tracing it). With the Coach open on two
+  devices, the one that synced last could wipe the other's chat, log and Undo history. Now they
+  merge message by message, and a plan you already applied on your phone no longer gets a
+  "nothing I would change" reply on your laptop.
 - **Imported weigh-ins stay put.** Weigh-ins you import (an Apple Health export, a Google Health
   or Health Connect CSV, Strong, Hevy) are no longer written back to Apple Health or Health
   Connect, where they landed a second time. Only weigh-ins you enter in openGym go out.

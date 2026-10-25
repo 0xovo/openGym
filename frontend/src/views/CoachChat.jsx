@@ -90,7 +90,10 @@ export default function CoachChat() {
     update(s => {
       // A run that ended unseen has no duration worth learning from.
       if (was) recordTiming(s, ms)
-      if (!pending) {
+      // A proposal already applied or discarded was settled on another device (#779): its reply is
+      // in that device's thread, which syncs here. "Nothing I would change" would be wrong.
+      const settled = last?.outcome === 'applied' || last?.outcome === 'dismissed' || last?.outcome === 'ready'
+      if (!pending && !settled) {
         const cls = lastError?.errorClass || (last?.outcome === 'failed' ? (last.errorClass || 'internal') : null)
         appendChat(s, cls
           ? { role: 'coach', kind: 'error', text: jobErrorText(cls, lastError?.detail) }

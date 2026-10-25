@@ -19,6 +19,7 @@ import { mergePlan } from './plan-share.js'
 import { deleteRoutine } from './routines.js'
 import { POLICIES } from './progression.js'
 import { t, tn } from './i18n.js'
+import { snapshotKey } from './sync-merge.js'
 
 // Bumping this re-prompts everyone: it means what we share, or who we share it with, changed.
 // 2: the training line names the session notes, which the payload carries and version 1 never
@@ -279,7 +280,9 @@ export function revertLast(s) {
   s.week = clone(snap.week)
   // Snapshots taken before this field existed have nothing to put back.
   if (snap.dayPlanRestore) Object.assign(s.dayPlan, snap.dayPlanRestore)
-  appendLog(s, { kind: 'revert', at: Date.now(), proposalId: snap.proposalId, summary: t('Reverted the last Coach changes.') })
+  // Which snapshot this used (`snap`): the sync merge keeps it off the ring when another device's
+  // copy still holds it, so the same Undo is not offered twice (lib/sync-merge.js mergeCoach).
+  appendLog(s, { kind: 'revert', at: Date.now(), proposalId: snap.proposalId, snap: snapshotKey(snap), summary: t('Reverted the last Coach changes.') })
   return true
 }
 export const canRevert = S => !!(S?.coach?.snapshots || []).length
