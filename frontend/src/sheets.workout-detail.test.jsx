@@ -194,7 +194,7 @@ describe('export as .fit', () => {
 })
 
 describe('workout detail: time per exercise', () => {
-  const T0 = Date.UTC(2026, 8, 15, 17)
+  const T0 = workout([]).start   // the fixture's own clock, so the ticks fall inside it in any time zone
   const at = min => T0 + min * 60000
   it('shows how long each exercise took, from its ticks', () => {
     workoutDetailSheet(workout([

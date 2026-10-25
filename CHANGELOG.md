@@ -32,6 +32,11 @@ exercise's description, the rest of the row still opens its history.
 **Server dependencies patched** (#806, thanks @lodepav). body-parser, fast-uri, qs and zod move to
 their fixed versions in the API and the MCP server, nothing you'll notice except fewer CVEs.
 
+**How long each exercise takes** (#812, thanks @lodepav). A past workout shows a little timer under
+every exercise, and Stats has a Time per exercise card (1M, 3M, 1Y, All), longest first. It's read from
+when you ticked the sets, rest and setup included, so it's what an exercise really costs you.
+Imported history has no tick times, so it stays quiet there.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a
