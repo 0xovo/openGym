@@ -83,6 +83,19 @@ describe('startWatchSync', () => {
     st.setState({ S: { ...S0, active: live({ start: Date.now(), cur: 1 }) } })
     await new Promise(r => setTimeout(r, 0))
     expect(b.openOnWatch).toHaveBeenCalledTimes(1)
+    expect(b.openOnWatch).toHaveBeenCalledWith({ type: undefined })   // nothing in it yet: strength training
+    stop()
+  })
+
+  it('opens the watch app as a run for a run (#799)', async () => {
+    const b = bridge()
+    _setWatchPluginForTest(b)
+    const st = store({ S: S0 })
+    const stop = await startWatchSync({ useStore: st, useUI: ui })
+    const entries = [{ id: '0685', target: { mode: 'cardio', min: 30 }, sets: [{ min: 30, speed: 10 }] }]
+    st.setState({ S: { ...S0, active: live({ start: Date.now(), entries }) } })
+    await new Promise(r => setTimeout(r, 0))
+    expect(b.openOnWatch).toHaveBeenCalledWith({ type: 'running' })
     stop()
   })
 

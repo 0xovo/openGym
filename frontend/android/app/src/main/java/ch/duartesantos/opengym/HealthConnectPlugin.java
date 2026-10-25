@@ -413,6 +413,12 @@ public class HealthConnectPlugin extends Plugin {
             case "biking_stationary": return ExerciseSessionRecord.EXERCISE_TYPE_BIKING_STATIONARY;
             case "elliptical": return ExerciseSessionRecord.EXERCISE_TYPE_ELLIPTICAL;
             case "stair_climbing_machine": return ExerciseSessionRecord.EXERCISE_TYPE_STAIR_CLIMBING_MACHINE;
+            case "biking": return ExerciseSessionRecord.EXERCISE_TYPE_BIKING;
+            case "rowing": return ExerciseSessionRecord.EXERCISE_TYPE_ROWING_MACHINE;
+            case "hiit": return ExerciseSessionRecord.EXERCISE_TYPE_HIGH_INTENSITY_INTERVAL_TRAINING;
+            case "yoga": return ExerciseSessionRecord.EXERCISE_TYPE_YOGA;
+            case "flexibility": return ExerciseSessionRecord.EXERCISE_TYPE_STRETCHING;
+            // Health Connect has no jump rope and no mixed cardio: those are "other", as before.
             default: return ExerciseSessionRecord.EXERCISE_TYPE_OTHER_WORKOUT;
         }
     }

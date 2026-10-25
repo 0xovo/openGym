@@ -65,6 +65,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Heart rate for sets you tick on the phone.** With the Apple Watch running the session, a set
   ticked on the phone now gets its heart rate from the watch too, not just the ones ticked on
   the wrist.
+- **A run is a run in Apple Health** (#799, thanks @svillar). A workout that was only running
+  used to land in Apple Health as strength training, from the watch every time. Now runs, walks,
+  rows, rides, jump rope, HIIT, yoga and stretching each get their own type, on the iPhone, the
+  Apple Watch and in Health Connect. Lift anything at all and it's strength training, as before.
 - **Back means back.** A page's own back button now brings you back where you were scrolled,
   just like the edge swipe, and Body measurements goes back to Stats instead of Home. The titles
   beside those back buttons all sit the same distance from them now (#704, #763, #764, thanks

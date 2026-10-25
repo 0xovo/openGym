@@ -90,6 +90,17 @@ final class SessionCoreTests: XCTestCase {
         XCTAssertTrue(s.workout?.entries[0].sets[0].done ?? false, "with the tick made before it heard")
     }
 
+    /// #799: a run planned on the phone is a run in Apple Health, also when the watch starts it.
+    func testTheWorkoutTypeComesWithTheSessionAndAnOlderPhoneSendsNone() throws {
+        var ready = ReadySession(routineIds: ["r1"], name: "Run", entries: [])
+        ready.healthType = "running"
+        XCTAssertEqual(SessionCore.start(SessionState(), ready, wid: "watch-1", at: 100, id: "s1").0.workout?.healthType, "running")
+        let old = try JSONDecoder().decode(Snapshot.self, from: Data(#"{"v":1,"active":{"id":"p1","name":"Push","unit":"kg","cur":0,"restSec":90,"entries":[]}}"#.utf8))
+        XCTAssertNil(old.active?.healthType)
+        let run = try JSONDecoder().decode(Snapshot.self, from: Data(#"{"v":1,"active":{"id":"p1","name":"Run","unit":"kg","cur":0,"restSec":90,"entries":[],"healthType":"running"}}"#.utf8))
+        XCTAssertEqual(SessionCore.applySnapshot(SessionState(), run).workout?.healthType, "running")
+    }
+
     func testAnotherWorkoutOnThePhoneStartsClean() {
         var s = SessionCore.applySnapshot(SessionState(), snap(workout("p1", sets: [row(60, 8)])))
         s = SessionCore.tick(s, entry: 0, set: 0, w: 60, r: 8, at: 1, id: "e1").0

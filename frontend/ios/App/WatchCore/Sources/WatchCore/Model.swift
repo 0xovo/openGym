@@ -31,6 +31,8 @@ struct ReadySession: Codable, Equatable {
     var routineIds: [String]
     var name: String
     var entries: [Entry]
+    /// Apple Health's workout type for it (lib/health-connect.js plannedType, #799); none from an older phone.
+    var healthType: String?
 }
 
 struct ActiveWorkout: Codable, Equatable {
@@ -43,6 +45,8 @@ struct ActiveWorkout: Codable, Equatable {
     var entries: [Entry]
     /// When it started (ms since 1970), for the summary's duration.
     var start: Double?
+    /// Apple Health's workout type for it (#799); none: strength training, as before.
+    var healthType: String?
 }
 
 struct RestInfo: Codable, Equatable {

@@ -44,7 +44,7 @@ final class WatchAppDelegate: NSObject, WKApplicationDelegate {
     let store = SessionStore()
 
     func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
-        store.openedForWorkout()
+        store.openedForWorkout(workoutConfiguration.activityType)
     }
 
     /// Relaunched after being killed mid-workout: the Apple Health session watchOS kept running.

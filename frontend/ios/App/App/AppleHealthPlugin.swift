@@ -176,10 +176,12 @@ public class AppleHealthPlugin: CAPPlugin, CAPBridgedPlugin {
         [HKMetadataKeySyncIdentifier: id, HKMetadataKeySyncVersion: NSNumber(value: Int64(Date().timeIntervalSince1970 * 1000))]
     }
 
-    private static let activityTypes: [String: HKWorkoutActivityType] = [
+    /// lib/health-connect.js SESSION_TYPES; also the watch's workout type (WatchBridgePlugin).
+    static let activityTypes: [String: HKWorkoutActivityType] = [
         "strength_training": .traditionalStrengthTraining, "walking": .walking, "running": .running,
-        "biking_stationary": .cycling, "elliptical": .elliptical, "stair_climbing_machine": .stairClimbing,
-        "other_workout": .other,
+        "biking_stationary": .cycling, "biking": .cycling, "elliptical": .elliptical, "stair_climbing_machine": .stairClimbing,
+        "rowing": .rowing, "jump_rope": .jumpRope, "hiit": .highIntensityIntervalTraining, "mixed_cardio": .mixedCardio,
+        "yoga": .yoga, "flexibility": .flexibility, "other_workout": .other,
     ]
 
     private func saveSession(_ s: [String: Any]) async throws {

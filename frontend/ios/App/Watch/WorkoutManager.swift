@@ -3,10 +3,11 @@ import HealthKit
 
 /*
  * Apple Health on the watch, behind the phone's Apple Health switch (Settings → Data on the iPhone,
- * sent with every snapshot as settings.health): a strength-training workout session as soon
- * as a workout starts here or is picked up from the phone, showing the live heart rate and keeping
- * the watch app running with the wrist down (so the rest still taps the wrist on time), and the
- * workout saved to Apple Health when it ends. Off, nothing of this runs and nothing is asked.
+ * sent with every snapshot as settings.health): a workout session (of the type the phone planned,
+ * strength training unless it says otherwise: a run is a run, #799) as soon as a workout starts
+ * here or is picked up from the phone, showing the live heart rate and keeping the watch app
+ * running with the wrist down (so the rest still taps the wrist on time), and the workout saved to
+ * Apple Health when it ends. Off, nothing of this runs and nothing is asked.
  *
  * The heart rate arrives two ways at once, whichever is first: the workout builder's statistics
  * and an anchored query on heart-rate samples, which carry their own time (the sets' and rests'
@@ -95,15 +96,25 @@ final class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate
         b.addMetadata([HKMetadataKeySyncIdentifier: "opengym-w-\(wid)", HKMetadataKeySyncVersion: 1]) { _, _ in }
     }
 
-    /// A workout started here or picked up from the phone: the session starts now.
-    func start(workoutId wid: String? = nil) {
+    /// The phone's names for a workout's type (lib/health-connect.js SESSION_TYPES, #799).
+    static let activityTypes: [String: HKWorkoutActivityType] = [
+        "strength_training": .traditionalStrengthTraining, "walking": .walking, "running": .running,
+        "biking_stationary": .cycling, "biking": .cycling, "elliptical": .elliptical, "stair_climbing_machine": .stairClimbing,
+        "rowing": .rowing, "jump_rope": .jumpRope, "hiit": .highIntensityIntervalTraining, "mixed_cardio": .mixedCardio,
+        "yoga": .yoga, "flexibility": .flexibility, "other_workout": .other,
+    ]
+
+    /// A workout started here or picked up from the phone: the session starts now, as the type the
+    /// phone planned (a run is a run in Apple Health), else as the type HealthKit opened the app
+    /// with, else strength training. A session already running keeps its type.
+    func start(workoutId wid: String? = nil, type: String? = nil, opened: HKWorkoutActivityType? = nil) {
         wanted = true
         if let wid = wid { workoutId = wid }
         // Already running (opened by the phone before its workout arrived): only the id to add.
         if session != nil { tag(); return }
         guard enabled, HKHealthStore.isHealthDataAvailable() else { return }
         let config = HKWorkoutConfiguration()
-        config.activityType = .traditionalStrengthTraining
+        config.activityType = type.flatMap { WorkoutManager.activityTypes[$0] } ?? opened ?? .traditionalStrengthTraining
         config.locationType = .indoor
         do {
             let s = try HKWorkoutSession(healthStore: store, configuration: config)

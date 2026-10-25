@@ -1,4 +1,5 @@
 import Foundation
+import HealthKit
 import UIKit
 import UserNotifications
 import WatchConnectivity
@@ -141,7 +142,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                     guard let self = self, self.state.workout?.id == w.id else { return }
                     if !SensorPlan.idle(w, seen: nil, now: Date().timeIntervalSince1970 * 1000, busy: false) {
-                        self.health.start(workoutId: w.id)
+                        self.health.start(workoutId: w.id, type: w.healthType)
                     }
                     self.armIdleCheck()
                 }
@@ -168,7 +169,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     private func noteActivity() {
         guard !isDemo, let w = workout else { return }
         activityAt = Date()
-        if health.paused { health.resume() } else { health.start(workoutId: w.id) }
+        if health.paused { health.resume() } else { health.start(workoutId: w.id, type: w.healthType) }
         armIdleCheck()
     }
 
@@ -281,13 +282,13 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
 
     /// HealthKit opened the app for a workout started on the iPhone: the workout session starts
     /// now (Apple expects one right away), for the workout the phone sent or is about to send.
-    func openedForWorkout() {
+    func openedForWorkout(_ opened: HKWorkoutActivityType? = nil) {
         DispatchQueue.main.async {
             self.log("opened by the phone for a workout")
             if WCSession.isSupported(), let json = WCSession.default.receivedApplicationContext["snapshot"] as? String {
                 self.apply(json: json)
             }
-            self.health.start(workoutId: self.state.workout?.id)
+            self.health.start(workoutId: self.state.workout?.id, type: self.state.workout?.healthType, opened: opened)
             // Nothing came after all (the phone's workout was discarded at once): no session left running.
             DispatchQueue.main.asyncAfter(deadline: .now() + 60) {
                 if self.state.workout == nil { self.health.end(save: false) }
@@ -335,7 +336,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 self.workoutSeenAt = Date()
                 self.picked = [:]
                 self.summary = nil
-                self.health.start(workoutId: next.workout?.id)
+                self.health.start(workoutId: next.workout?.id, type: next.workout?.healthType)
             }
             if next.workout != nil && next.workout != before.workout { self.noteActivity() }
             // Sets ticked on the phone: their heart rate from this watch's readings (Discord fuckdv).
@@ -574,7 +575,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         workoutSeenAt = now
         restAfter = nil
         loadTargets()
-        health.start(workoutId: next.workout?.id)
+        health.start(workoutId: next.workout?.id, type: next.workout?.healthType)
         activityAt = now
         armIdleCheck()
         summary = nil

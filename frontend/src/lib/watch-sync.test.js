@@ -151,6 +151,17 @@ describe('starting and finishing on the watch', () => {
     expect(snap.ready.today.name).toBe('Push')
   })
 
+  // #799: the watch's Apple Health workout used to be strength training whatever was planned.
+  it('tells the watch which Apple Health type each session is', () => {
+    const run = { id: 'r-run', name: 'Run', ex: [{ id: '0685', mode: 'cardio', min: 30, speed: 10 }] }
+    const S = { unit: 'kg', workouts: [], routines: [...routines, run], week: { 2: 'r-run' }, dayPlan: {} }
+    const ready = buildReady(S, '2026-10-13')
+    expect(ready.today.healthType).toBe('running')
+    expect(ready.others.map(o => o.healthType)).toEqual(['strength_training', 'strength_training'])
+    const active = { id: 'w1', name: 'Run', entries: [{ id: '0685', target: { mode: 'cardio', min: 30 }, sets: [{ min: 30, speed: 10 }] }] }
+    expect(buildSnapshot({ ...S, active }).active.healthType).toBe('running')
+  })
+
   // The watch reads a snapshot whole or not at all: one odd routine must not cost it the others,
   // and an id that came in as a number must still reach it as text.
   it('one routine that cannot be built is left out, and every id goes as text', () => {
