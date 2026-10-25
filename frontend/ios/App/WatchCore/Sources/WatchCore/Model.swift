@@ -138,6 +138,8 @@ struct WatchSettings: Codable, Equatable {
     var lastBw: Double?
     /// What the watch shows during a workout (Settings → Apple Watch); nil is the default.
     var show: WatchShow?
+    /// The effort the profile logs per set, "rpe" or "rir"; nil: none (no effort tile).
+    var effort: String?
 }
 
 /// What a workout screen shows. Each nil means its default.

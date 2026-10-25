@@ -82,6 +82,12 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     @Published var reps: Double = 0 { didSet { if reps != oldValue { ackRestOver() } } }
     /// A hold's seconds, for the set up next (the crown turns it).
     @Published var seconds: Double = 0 { didSet { if seconds != oldValue { ackRestOver() } } }
+    /// The effort rated for the set up next (RPE or RIR, the profile's scale), nil until rated.
+    /// It belongs to that one set: another set coming up starts empty again (loadTargets).
+    @Published private(set) var effort: Double?
+    private var effortFor: String?
+    /// The scale the phone's profile logs, when it logs one ("rpe" / "rir"): the set page offers it.
+    var effortKind: String? { Effort.notches(state.settings.effort) != nil ? state.settings.effort : nil }
     /// A hold running: when it ends, and when it started.
     @Published private(set) var holdEndsAt: Date?
     @Published private(set) var holdStartedAt: Date?
@@ -364,8 +370,23 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         }
     }
 
+    /// The set up next, as the effort remembers it (exercise, set, side).
+    private var setKey: String? {
+        guard let e = entry, let si = setIndex else { return nil }
+        return SessionCore.key(e.id, si, e.sets[si].sideUp)
+    }
+
+    /// The effort for the set up next, from its editor; nil clears it.
+    func rate(_ v: Double?) {
+        ackRestOver()
+        effort = v
+        effortFor = v == nil ? nil : setKey
+    }
+
     /// The weight and reps the crown starts from: the set's own target.
     func loadTargets() {
+        // A rating stays with its set through snapshots; another set starts unrated.
+        if effortFor != setKey { effort = nil; effortFor = nil }
         guard let e = entry else { return }
         let s = setIndex.map { e.sets[$0] } ?? e.sets.last
         if let row = s, let side = row.sideUp, let one = row.sides?[side] {
@@ -404,8 +425,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             tw = weight
             tr = reps
         }
+        let rated = effortKind.flatMap { k in effort.map { Effort.Rating(kind: k, value: $0) } }
         let (next, event) = SessionCore.tick(state, entry: ei, set: si, side: side, w: tw, r: tr, sec: tsec,
-                                             at: now.timeIntervalSince1970 * 1000, id: UUID().uuidString, hr: hr)
+                                             at: now.timeIntervalSince1970 * 1000, id: UUID().uuidString, hr: hr, effort: rated)
         // Sent first, saved second: killed in between, the phone still has the tick (and the next
         // snapshot brings it back here); the other way round the tick would be lost on the phone.
         if let event = event { send(event: event) }

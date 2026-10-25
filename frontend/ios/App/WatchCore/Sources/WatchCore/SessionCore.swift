@@ -153,7 +153,7 @@ enum SessionCore {
     /// A set ticked here: the state with it done, and the event for the phone. `side` ticks one
     /// side of a per-side set; `sec` is a hold's seconds; a cardio tick carries no numbers.
     static func tick(_ s0: SessionState, entry ei: Int, set si: Int, side: String? = nil, w: Double?, r: Double?, sec: Double? = nil,
-                     at: Double, id: String, hr: [String: Double]? = nil) -> (SessionState, Event?) {
+                     at: Double, id: String, hr: [String: Double]? = nil, effort: Effort.Rating? = nil) -> (SessionState, Event?) {
         guard var workout = s0.workout, workout.entries.indices.contains(ei), workout.entries[ei].sets.indices.contains(si) else { return (s0, nil) }
         var s = s0
         let e = workout.entries[ei]
@@ -178,6 +178,8 @@ enum SessionCore {
         if let sec = sec { event["sec"] = sec }
         if let side = oneSide { event["side"] = side }
         if let hr = hr { event["hr"] = hr }
+        // "rpe": 8.5 or "rir": 2, never both; the phone puts it on the set (watch-sync.js effortFrom)
+        if let e = effort, Effort.notches(e.kind) != nil { event[e.kind] = e.value }
         return (s, event)
     }
 
@@ -436,5 +438,55 @@ enum Idle: Equatable {
     static func state(since: Double, now: Double) -> Idle {
         let idle = now - since
         return idle >= endAfter ? .end : idle >= askAfter ? .ask : .active
+    }
+}
+
+/*
+ * RPE or RIR on a set, in the scale the phone's profile logs (lib/history.js EFFORT). Empty by
+ * default: a set nobody rated sends no effort. The crown walks notches from "not rated" through
+ * the scale from easy to hard, so turning up always means harder, whichever the scale:
+ *   RPE   –, 6, 6.5, … 10      (half points, as on the phone)
+ *   RIR   –, 5, 4, 3, 2, 1, 0  (whole reps left; 0 = failure, the far end of the crown)
+ */
+enum Effort {
+    struct Rating: Equatable {
+        var kind: String
+        var value: Double
+    }
+
+    /// The scale's values from easy to hard, nil for a scale the watch does not know.
+    static func notches(_ kind: String?) -> [Double]? {
+        switch kind {
+        case "rpe": return stride(from: 6.0, through: 10.0, by: 0.5).map { $0 }
+        case "rir": return [5, 4, 3, 2, 1, 0]
+        default: return nil
+        }
+    }
+
+    /// "RPE" / "RIR": the phone's own column heading, the same word in every language.
+    static func name(_ kind: String) -> String { kind == "rpe" ? "RPE" : "RIR" }
+
+    /// The value at a crown position: 0 is not rated, 1… the scale; past either end it stops there.
+    static func value(_ kind: String, at position: Int) -> Double? {
+        guard let n = notches(kind), position > 0 else { return nil }
+        return n[min(position, n.count) - 1]
+    }
+
+    /// Where a value sits on the crown (the nearest notch); 0 for not rated.
+    static func position(_ kind: String, of value: Double?) -> Int {
+        guard let n = notches(kind), let v = value else { return 0 }
+        var best = 0
+        for i in n.indices where abs(n[i] - v) < abs(n[best] - v) { best = i }
+        return best + 1
+    }
+
+    /// Where the editor opens on a set not rated yet: a hard working set, RPE 8 / RIR 2.
+    static func start(_ kind: String) -> Double { kind == "rpe" ? 8 : 2 }
+
+    /// The phone's colour band (lib/effort.js EFFORT_BANDS), by RIR: 0 nothing left … 5 easy.
+    static func band(_ kind: String, _ value: Double) -> Int {
+        let rir = kind == "rpe" ? 10 - value : value
+        let tops: [Double] = [0.25, 0.75, 1.5, 2.5, 3.5]
+        return tops.firstIndex { rir <= $0 } ?? tops.count
     }
 }

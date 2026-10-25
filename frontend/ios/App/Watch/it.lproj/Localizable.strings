@@ -30,6 +30,8 @@
 "Body weight" = "Peso corporeo";
 "Less" = "Meno";
 "More" = "Più";
+"Effort" = "Sforzo";
+"None" = "Nessuno";
 "Last time: %@" = "L'ultima volta: %@";
 "No workout running" = "Nessun allenamento in corso";
 "Not synced yet" = "Non ancora sincronizzato";

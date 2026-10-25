@@ -1909,15 +1909,19 @@ function ActiveWorkout() {
   // The time is the watch's: the phone may hear of the set much later (lib/finish-workout.js
   // sessionEnd reads the sets' times). The watch's Finish runs the phone's Finish and save.
   useEffect(() => bindWatchActions({
-    setDone: (idx, i, { w, r, sec, side, at, hr }) => {
+    setDone: (idx, i, { w, r, sec, side, at, hr, rpe, rir }) => {
       if (useStore.getState().S.active?.editingWorkoutId) return   // a saved workout being edited is not the session
       const now = useStore.getState().S.active?.entries?.[idx]?.sets?.[i]
       // One side of a per-side set (a unilateral exercise): that side's numbers and its own tick.
       const oneSide = side && isSideSet(now) ? side : null
       const wasDone = oneSide ? now.sides[oneSide].done : now?.done
       // The same set ticked here after the watch did: the later tick wins, the heart rate still lands.
+      // The effort the watch logged (lib/watch-sync.js effortFrom): RPE or RIR, never both.
+      const eff = rpe != null ? ['rpe', rpe] : rir != null ? ['rir', rir] : null
       if (wasDone && at && Number(now.at) > at) {
         if (hr) mutEntry(idx, en => { if (en.sets[i]) en.sets[i].hr = hr })
+        // the phone's rating wins, the watch's only fills a set that has none
+        if (eff && !oneSide && now.rpe == null && now.rir == null) mutEntry(idx, en => { if (en.sets[i]) en.sets[i][eff[0]] = eff[1] })
         return
       }
       mutEntry(idx, en => {
@@ -1926,11 +1930,13 @@ function ActiveWorkout() {
         if (oneSide) {
           if (w != null) en.sets[i] = setSideField(en.sets[i], oneSide, 'w', w)
           if (r != null) en.sets[i] = setSideField(en.sets[i], oneSide, 'r', r)
+          if (eff) en.sets[i] = setSideField(en.sets[i], oneSide, eff[0], eff[1])
           return
         }
         if (w != null) set.w = w
         if (r != null) set.r = r
         if (sec != null) set.sec = sec   // a hold: the seconds it lasted on the watch
+        if (eff) { delete set.rpe; delete set.rir; set[eff[0]] = eff[1] }
       })
       if (!wasDone) toggleRef.current(idx, i, oneSide || undefined)
       if (at || hr) mutEntry(idx, en => { const set = en.sets[i]; if (!(oneSide ? set?.sides?.[oneSide]?.done : set?.done)) return; if (at) set.at = at; if (hr) set.hr = hr })

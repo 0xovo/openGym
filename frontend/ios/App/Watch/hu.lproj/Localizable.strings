@@ -30,6 +30,8 @@
 "Body weight" = "Testsúly";
 "Less" = "Kevesebb";
 "More" = "Több";
+"Effort" = "Megerőltetés";
+"None" = "Nincs";
 "Last time: %@" = "Legutóbb: %@";
 "No workout running" = "Nincs folyamatban edzés";
 "Not synced yet" = "Még nincs szinkronizálva";

@@ -12,6 +12,7 @@ import WidgetKit
  *   3-2-1   with Apple Health on, a countdown before it starts (the heart-rate sensor warms up)
  *   set     weight × reps in big rounded numerals, the round Done, the set dots; the crown turns
  *           the reps (or the weight, after a tap on it), marked by the crown symbol under it
+ *           and, when the profile rates effort, RPE or RIR in a small disc beside Done
  *   rest    a full-screen ring around a huge countdown, +15 s and Skip as small round buttons
  *   hold    a timed set: the seconds on the crown, Start, then a ring counting down, Stop
  *   finish  after the last exercise, one round button
@@ -328,7 +329,7 @@ struct ExercisePager: View {
 
 /// What a tap on a number opens for editing.
 enum EditField: String, Identifiable {
-    case weight, reps, seconds
+    case weight, reps, seconds, effort
     var id: String { rawValue }
 }
 
@@ -485,7 +486,22 @@ struct ExercisePage: View {
         }
     }
 
+    /// Done in the middle; with a profile that rates effort, the RPE / RIR button at its left (the
+    /// same room again on the right keeps Done centred under the numbers).
     @ViewBuilder private func primaryButton(_ entry: Entry, current: Bool) -> some View {
+        if let kind = store.effortKind, !entry.isCardio, let si = store.setIndex(in: index), !entry.sets[si].warmup {
+            HStack(spacing: 6) {
+                EffortButton(kind: kind, value: current ? store.effort : nil) { if current { editing = .effort } }
+                    .disabled(!current)
+                doneButton(entry, current: current)
+                Color.clear.frame(width: Theme.tap, height: Theme.tap).accessibilityHidden(true)
+            }
+        } else {
+            doneButton(entry, current: current)
+        }
+    }
+
+    @ViewBuilder private func doneButton(_ entry: Entry, current: Bool) -> some View {
         Group {
             if entry.isTimed {
                 RoundButton(systemImage: "play.fill", label: Text("Start hold"), size: doneSize,
@@ -522,6 +538,43 @@ struct WorkoutExtras: View {
             .foregroundStyle(Theme.warmup)
             .lineLimit(1)
         }
+    }
+}
+
+/// The set's effort as a small disc beside Done: the scale's name over the number, in the phone's
+/// colour for it (lib/effort.js), or a dash while it is not rated. A tap opens it on the crown.
+struct EffortButton: View {
+    let kind: String
+    let value: Double?
+    let tap: () -> Void
+
+    var body: some View {
+        let color = value.map { Effort.color(kind, $0) } ?? Color.white
+        Button(action: tap) {
+            VStack(spacing: -1) {
+                Text(verbatim: Effort.name(kind)).font(.system(size: 9, weight: .bold, design: .rounded)).foregroundStyle(.secondary)
+                Text(verbatim: value.map(formatNumber) ?? "–")
+                    .font(.system(size: 16, weight: .semibold, design: .rounded).monospacedDigit())
+                    .foregroundStyle(color)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
+            .frame(width: Theme.tap, height: Theme.tap)
+            .background(Circle().fill(value == nil ? Theme.dim : color.opacity(0.22)))
+            .overlay(Circle().stroke(color.opacity(value == nil ? 0 : 0.9), lineWidth: 1.5))
+        }
+        .buttonStyle(.plain)
+        .dynamicTypeSize(...DynamicTypeSize.large)
+        .accessibilityLabel(Text("Effort"))
+        .accessibilityValue(value.map { Text(verbatim: "\(Effort.name(kind)) \(formatNumber($0))") } ?? Text("None"))
+        .accessibilityHint(Text("Tap to change it."))
+    }
+}
+
+extension Effort {
+    /// The phone's band colours (index.css --purple … --green, then the accent's soft tone).
+    static func color(_ kind: String, _ value: Double) -> Color {
+        [Color.purple, .red, .orange, .yellow, Theme.accent, .teal][band(kind, value)]
     }
 }
 
@@ -588,13 +641,17 @@ struct ValueEditor: View {
     let entry: Entry
     let unit: String
     @State private var value: Double = 0
+    /// Effort: where the crown was when the editor opened (left untouched, nothing is rated).
+    @State private var opened: Double = 0
     @FocusState private var focused: Bool
     @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 54
 
+    /// The profile's effort scale; the effort editor turns a crown position (Effort.value).
+    private var kind: String { store.effortKind ?? "rpe" }
     private var step: Double {
         switch field {
         case .weight: return entry.step.flatMap { $0 > 0 ? $0 : nil } ?? store.weightStep
-        case .reps: return 1
+        case .reps, .effort: return 1
         case .seconds: return 5
         }
     }
@@ -603,6 +660,7 @@ struct ValueEditor: View {
         case .weight: return 0...(unit == "lb" ? 1500 : 700)
         case .reps: return 0...200
         case .seconds: return 5...3600
+        case .effort: return 0...Double(Effort.notches(kind)?.count ?? 0)
         }
     }
     private var title: Text {
@@ -610,14 +668,24 @@ struct ValueEditor: View {
         case .weight: return entry.isBodyweight ? Text("Added weight") : Text("Weight")
         case .reps: return Text("Reps")
         case .seconds: return Text("Hold")
+        case .effort: return Text(verbatim: Effort.name(kind))
         }
     }
     private var suffix: String? {
         switch field {
         case .weight: return unit
-        case .reps: return nil
+        case .reps, .effort: return nil
         case .seconds: return "s"
         }
+    }
+    /// What the big number says: the value, or for effort the rating at the crown (a dash: none).
+    private var shown: String {
+        guard field == .effort else { return formatNumber(value) }
+        return Effort.value(kind, at: Int(value.rounded())).map(formatNumber) ?? "–"
+    }
+    private var shownColor: Color {
+        guard field == .effort else { return Theme.accent }
+        return Effort.value(kind, at: Int(value.rounded())).map { Effort.color(kind, $0) } ?? .secondary
     }
 
     var body: some View {
@@ -627,9 +695,9 @@ struct ValueEditor: View {
                 stepButton("minus", Text("Less")) { nudge(-step) }
                 VStack(spacing: 0) {
                     HStack(alignment: .firstTextBaseline, spacing: 2) {
-                        Text(verbatim: formatNumber(value))
+                        Text(verbatim: shown)
                             .font(.system(size: size, weight: .semibold, design: .rounded).monospacedDigit())
-                            .foregroundStyle(Theme.accent)
+                            .foregroundStyle(shownColor)
                             .contentTransition(.numericText())
                         if let s = suffix { Text(verbatim: s).font(.system(size: 13, weight: .medium, design: .rounded)).foregroundStyle(.secondary) }
                     }
@@ -645,7 +713,7 @@ struct ValueEditor: View {
                                       sensitivity: field == .weight ? DigitalCrownRotationalSensitivity.medium : DigitalCrownRotationalSensitivity.low, isContinuous: false, isHapticFeedbackEnabled: true)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(title)
-                .accessibilityValue(Text(verbatim: suffix.map { "\(formatNumber(value)) \($0)" } ?? formatNumber(value)))
+                .accessibilityValue(field == .effort && shown == "–" ? Text("None") : Text(verbatim: suffix.map { "\(shown) \($0)" } ?? shown))
                 .accessibilityAdjustableAction { d in
                     switch d {
                     case .increment: nudge(step)
@@ -671,10 +739,14 @@ struct ValueEditor: View {
             case .weight: value = store.weight
             case .reps: value = store.reps
             case .seconds: value = store.seconds
+            // a set not rated yet opens on a hard working set; turned down to the dash it is none again
+            case .effort: value = Double(Effort.position(kind, of: store.effort ?? Effort.start(kind)))
             }
+            opened = value
             focused = true
         }
-        .onDisappear { save() }
+        // Effort: swiped away untouched, the set stays unrated (Done rates it as shown).
+        .onDisappear { if field != .effort || value != opened || store.effort != nil { save() } }
     }
 
     private func nudge(_ d: Double) {
@@ -689,6 +761,7 @@ struct ValueEditor: View {
         case .weight: store.weight = max(0, value)
         case .reps: store.reps = max(0, value.rounded())
         case .seconds: store.seconds = max(5, value)
+        case .effort: store.rate(Effort.value(kind, at: Int(value.rounded())))
         }
     }
 

@@ -30,6 +30,8 @@
 "Body weight" = "وزن الجسم";
 "Less" = "أقل";
 "More" = "أكثر";
+"Effort" = "الجهد";
+"None" = "بدون";
 "Last time: %@" = "المرة السابقة: %@";
 "No workout running" = "لا يوجد تمرين جارٍ";
 "Not synced yet" = "لم تتم المزامنة بعد";

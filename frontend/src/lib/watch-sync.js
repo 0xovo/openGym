@@ -19,7 +19,7 @@ import { EXIDX, gifSrc, figureOf, isAssisted } from './exercises.js'
 import { packId, packDrawingId } from './anim-quality.js'
 import { getState as animPacks } from './anim-packs.js'
 import { getLang, baseLang, onLangChange } from './i18n.js'
-import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds, isBw, isPerSide } from './history.js'
+import { modeOf, setLabel, lastEntryFor, effectiveRoutineIds, isBw, isPerSide, EFFORT, effortOf } from './history.js'
 import { isWarmupRow, isSideSet, syncSideAggregate } from './workout-model.js'
 import { bestSetFor } from './exercise-history.js'
 import { weightIncrement } from './progression.js'
@@ -43,7 +43,19 @@ const okBw = v => { const n = num(v); return n != null && n > 0 && n < 700 }
 // One side of a per-side set, from the watch: 'L', 'R', or none (the whole set).
 const sideOf = v => (v === 'L' || v === 'R' ? v : null)
 // What a tick of a hold (`sec`) or of one side carries besides the numbers; nothing for a plain set.
-const extraOf = ev => ({ ...(num(ev.sec) != null ? { sec: num(ev.sec) } : {}), ...(sideOf(ev.side) ? { side: sideOf(ev.side) } : {}) })
+const extraOf = ev => ({ ...(num(ev.sec) != null ? { sec: num(ev.sec) } : {}), ...(sideOf(ev.side) ? { side: sideOf(ev.side) } : {}), ...effortFrom(ev) })
+// The effort the watch logged on a set: { rpe } or { rir } on the half-point grid, inside the
+// phone's own scale (lib/history.js EFFORT); nothing for none, or for a number that does not hold up.
+export function effortFrom (ev) {
+  for (const k of ['rpe', 'rir']) {
+    const v = num(ev?.[k])
+    if (v == null) continue
+    const e = EFFORT[k]
+    const snapped = Math.round(v * 2) / 2
+    return snapped >= (k === 'rpe' ? 1 : e.min) && snapped <= e.max ? { [k]: snapped } : {}
+  }
+  return {}
+}
 
 /* ---------- the snapshot ---------- */
 
@@ -222,7 +234,7 @@ function entryIndexOf (A, ev) {
  * stay queued, in order, for the next drain.
  *
  *   start   { routineIds, wid, at }  the app starts that session with the watch's id and start
- *   setDone { wid, exId, entryIdx, setIdx, w, r, at }   the workout screen's own tick
+ *   setDone { wid, exId, entryIdx, setIdx, w, r, at, rpe?|rir? }   the workout screen's own tick
  *   finish  { wid, at }              the workout screen's own Finish and save
  *   discard { wid, at }              the workout screen's own Discard (confirmed on the watch)
  *   setHr   { wid, exId, entryIdx, setIdx, hr?, restHr? }   heart rate on a set (lib/heart-rate.js)
@@ -254,7 +266,7 @@ export function applyEvents (events, getState) {
       // A workout already running on the phone is kept; one with the watch's id is this one.
     } else if (ev.type === 'setDone' && saved) {
       if (!appHandlers) break
-      const fields = { done: true, ...(num(ev.w) != null ? { w: num(ev.w) } : {}), ...(num(ev.r) != null ? { r: num(ev.r) } : {}), ...(num(ev.sec) != null ? { sec: num(ev.sec) } : {}), ...(num(ev.at) ? { at: num(ev.at) } : {}) }
+      const fields = { done: true, ...(num(ev.w) != null ? { w: num(ev.w) } : {}), ...(num(ev.r) != null ? { r: num(ev.r) } : {}), ...(num(ev.sec) != null ? { sec: num(ev.sec) } : {}), ...(num(ev.at) ? { at: num(ev.at) } : {}), ...effortFrom(ev) }
       const hr = sanitizeHr(ev.hr)
       if (hr) fields.hr = hr
       appHandlers.patchSet({ wid: ev.wid, exId: ev.exId, entryIdx: ev.entryIdx, setIdx: ev.setIdx, ...(sideOf(ev.side) ? { side: sideOf(ev.side) } : {}) }, fields, { ifNewer: num(ev.at) })
@@ -468,6 +480,8 @@ export function watchExtras (S) {
     lang,
     weighIn: S?.weighIn !== false,
     ...(bw && num(bw.w) ? { lastBw: num(bw.w) } : {}),
+    // the effort scale the profile logs ('rpe' or 'rir'): the watch's set page offers it then
+    ...(EFFORT[effortOf(S)] ? { effort: effortOf(S) } : {}),
   }
 }
 
@@ -588,11 +602,14 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx, side = null }, fie
   // follow from both sides (lib/workout-model.js syncSideAggregate).
   const write = (set, f) => {
     if (side && isSideSet(set)) {
-      const { w, r, done, ...rest } = f
+      const { w, r, done, rpe, rir, ...rest } = f
       const one = { ...set.sides[side] }
       if (w != null) one.w = w
       if (r != null) one.r = r
       if (done) one.done = true
+      // a side's effort is that side's (the row's follows from both, as on the phone)
+      if (rpe != null) one.rpe = rpe
+      if (rir != null) one.rir = rir
       set.sides = { ...set.sides, [side]: one }
       const agg = syncSideAggregate(set)
       for (const k of Object.keys(set)) if (!(k in agg)) delete set[k]
@@ -619,6 +636,8 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx, side = null }, fie
     f = {}
     if (fields.hr) f.hr = fields.hr
     if (fields.restHr) f.restHr = fields.restHr
+    // the watch's effort still lands on a set that has none
+    if (set.rpe == null && set.rir == null) Object.assign(f, effortFrom(fields))
     if (!Object.keys(f).length) return false
   }
   write(set, f)
