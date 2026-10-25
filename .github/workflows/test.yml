@@ -82,6 +82,7 @@ jobs:
               - 'api/**'
               - 'website/api.html'
               - 'scripts/build-api-docs.mjs'
+              - 'website/*.html'
               - 'scripts/build-coach-*.mjs'
               - 'catalogue/**'
               - 'frontend/src/lib/**'
