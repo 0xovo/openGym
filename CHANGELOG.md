@@ -97,8 +97,9 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
 - **Exercises start the way you do them.** Add a plank, a wall sit or a dead hang and it starts
   as a timed hold (#694, thanks @lodepav). A one-arm row or a single-leg press starts per side
   (#736, thanks @lodepav). Jumping jacks, burpees, star jumps and tuck jumps start as sets × reps
-  instead of minutes and speed (#717, thanks @zykll18). Only fresh picks: what's already in your
-  routines and history stays exactly as you set it up.
+  instead of minutes and speed (#717, thanks @zykll18), and so does jump rope, double unders
+  included (#796, thanks @sc962). Only fresh picks: what's already in your routines and history
+  stays exactly as you set it up.
 - **"No timer" for a single exercise.** Rest for this exercise now has the same three choices as
   the warm-ups: your default, No timer, or a time of its own. Stretches and carries can finally
   skip the countdown while your squats keep theirs. Saved in routines, shared plans and backups.
@@ -253,6 +254,10 @@ you leave it alone. Handy for deciding whether those legs are really ready (than
 - Hevy import: 55 of Hevy's built-in exercises (Seated Leg Curl, Plank, Air Bike, Triceps Dip and
   friends) land on the right openGym exercise instead of a cousin or a custom one, and the import
   summary counts an exercise once even when it's in your workouts and your routines (thanks @lodepav).
+  A seated leg curl from any app stays a seated leg curl, Side Plank, Squat (Machine) and the cable
+  rear delt fly no longer land on a different lift when you import with your Hevy API key, and 12
+  more Hevy titles find their exercise, from Lu Raises to the Bayesian curl (#784, #785, #793,
+  thanks @cubetes and @theatosam).
 - Imports that convert pounds and kilos keep the weight to the hundredth: 45 lb comes in as
   20.41 kg and reads back as 45, not 44.97. Hevy notes keep their line breaks instead of a
   literal `\n` (thanks @lodepav).
