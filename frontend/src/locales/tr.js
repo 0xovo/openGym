@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': 'Dambıllar',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Sahip olduğun ağırlıklar, her biri tek dambıl. Dambıl hareketlerinde progresyon, deload, ısınma ve + ile − düğmeleri yalnızca bunlara düşer.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Henüz liste yok, bu yüzden dambıl hareketleri her zamanki artışla ilerler.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Hiç dambılın yok mu? Onları bir ekipman profilinin dışında bırak ve Ekipmana göre filtrele seçeneğini aç. Böylece dambıl hareketleri kütüphanede ve seçicide görünmez, koçun kendi ekipman cevabında yoksa koçun planlarında da.',
   'Fill in {0} to {1} {2}, every {3}': '{0} ile {1} {2} arasını doldur, {3} arayla',
   'Clear the list': 'Listeyi temizle',
   'Any weight. Tap to list the ones you own.': 'Her ağırlık. Sahip olduklarını listelemek için dokun.',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': 'Zor, sadece kısa cümleler',
   'Working, but steady': 'Zorlayıcı ama dengeli',
   'Easy, you could chat the whole way': 'Kolay, yol boyunca sohbet edebilirdin',
+  'I own no dumbbells': 'Hiç dambılım yok',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Dambıl hareketleri kütüphanede, seçicide ve Koçun planlarında yer almaz.',
+  'Everything but dumbbells': 'Dambıl hariç her şey',
+  'None, so dumbbell lifts stay hidden.': 'Yok, bu yüzden dambıl hareketleri gizli kalır.',
 }

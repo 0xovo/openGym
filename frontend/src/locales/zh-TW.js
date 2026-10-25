@@ -2112,7 +2112,6 @@ export default {
   'Dumbbells': '啞鈴',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': '你擁有的重量，每個一支。啞鈴動作的加重、減量、熱身以及 + 和 − 按鈕都只會落在這些重量上。',
   'No list yet, so dumbbell lifts step by their increment as usual.': '還沒有清單，所以啞鈴動作照常按增量遞增。',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': '完全沒有啞鈴？在器材設定檔裡不要勾啞鈴，再開啟「依器材篩選」。這樣啞鈴動作就不會出現在動作庫和選擇器裡，也不會進教練的計畫，除非教練自己的器材回答裡列了啞鈴。',
   'Fill in {0} to {1} {2}, every {3}': '填入 {0} 到 {1} {2}，每隔 {3}',
   'Clear the list': '清空清單',
   'Any weight. Tap to list the ones you own.': '任意重量。點一下列出你有的啞鈴。',
@@ -2552,4 +2551,8 @@ export default {
   'Hard, short sentences only': '累，只能說短句',
   'Working, but steady': '有點吃力，但很穩',
   'Easy, you could chat the whole way': '輕鬆，一路都能聊天',
+  'I own no dumbbells': '我沒有啞鈴',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': '啞鈴動作不會出現在動作庫、選擇器和教練的計畫裡。',
+  'Everything but dumbbells': '除啞鈴外的全部',
+  'None, so dumbbell lifts stay hidden.': '沒有，所以啞鈴動作會隱藏。',
 }

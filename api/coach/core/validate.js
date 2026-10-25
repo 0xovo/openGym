@@ -14,14 +14,15 @@
  * model verbatim for the one repair round (FR-48) — and a list of six problems produces a
  * better second attempt than the first of them does.
  */
-import { libraryHas, libraryName, equipmentAllows } from './library.js';
+import { libraryHas, libraryName, equipmentAllows, isDumbbellLift } from './library.js';
 
 // A catalogue exercise the person's equipment does not reach, and that was not in the library
 // slice they were offered (which already pins what they train). The prompt says "their
 // equipment"; a model that names a leverage machine anyway is told so on the repair round
 // instead of the plan arriving with a machine they do not own.
-const offEquipment = (ctx, id) => !!ctx.equipment?.length && libraryHas(id)
-  && !(ctx.offered && ctx.offered.has(id)) && !equipmentAllows(ctx.equipment, id);
+// Someone who owns no dumbbells (ctx.noDumbbells) is held to it even with no equipment stated.
+const offEquipment = (ctx, id) => libraryHas(id) && !(ctx.offered && ctx.offered.has(id))
+  && ((!!ctx.equipment?.length && !equipmentAllows(ctx.equipment, id)) || (ctx.noDumbbells === true && isDumbbellLift(id)));
 const OFF_EQUIPMENT = (where, id) => `${where} "${id}" needs equipment the user does not have — use an exercise from the library provided in the payload`;
 import { glyphStr } from './glyphs.js';
 

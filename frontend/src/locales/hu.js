@@ -2122,7 +2122,6 @@ export default {
   'Dumbbells': 'Kézisúlyzók',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'A súlyok, amelyek megvannak, darabonként. A kézisúlyzós gyakorlatoknál a progresszió, a deload, a bemelegítés és a + és − gomb csak ezekre esik.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Még nincs lista, így a kézisúlyzós gyakorlatok a szokásos lépésükkel haladnak.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Egyáltalán nincs kézisúlyzód? Hagyd ki egy eszközprofilból, és kapcsold be a Szűrés eszköz szerint opciót. Így a kézisúlyzós gyakorlatok kimaradnak a könyvtárból és a választóból, és a Coach terveiből is, hacsak a saját eszköz-válaszában nem szerepelnek.',
   'Fill in {0} to {1} {2}, every {3}': 'Kitöltés {0} és {1} {2} között, {3} lépésközzel',
   'Clear the list': 'Lista törlése',
   'Any weight. Tap to list the ones you own.': 'Bármilyen súly. Koppints, és sorold fel a sajátjaidat.',
@@ -2562,4 +2561,8 @@ export default {
   'Hard, short sentences only': 'Nehéz, csak rövid mondatok',
   'Working, but steady': 'Dolgozol, de egyenletesen',
   'Easy, you could chat the whole way': 'Könnyű, végig tudnál beszélgetni',
+  'I own no dumbbells': 'Nincs kézisúlyzóm',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'A kézisúlyzós gyakorlatok kimaradnak a könyvtárból, a választóból és az Edző terveiből.',
+  'Everything but dumbbells': 'Minden, kivéve a kézisúlyzót',
+  'None, so dumbbell lifts stay hidden.': 'Nincs, így a kézisúlyzós gyakorlatok rejtve maradnak.',
 }

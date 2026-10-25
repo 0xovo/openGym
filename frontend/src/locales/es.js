@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': 'Mancuernas',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Los pesos que tienes, uno por mancuerna. La progresión, las descargas, el calentamiento y los botones + y − de los ejercicios con mancuernas solo usan estos.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Aún no hay lista, así que los ejercicios con mancuernas suben con su incremento de siempre.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': '¿Nada de mancuernas? Déjalas fuera de un perfil de equipo y activa Filtrar por equipo. Así los ejercicios con mancuernas no salen en la biblioteca ni en el selector, ni en los planes del Entrenador, salvo que su propia respuesta de equipo las incluya.',
   'Fill in {0} to {1} {2}, every {3}': 'Rellenar de {0} a {1} {2}, cada {3}',
   'Clear the list': 'Vaciar la lista',
   'Any weight. Tap to list the ones you own.': 'Cualquier peso. Toca para apuntar los que tienes.',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': 'Duro, solo frases cortas',
   'Working, but steady': 'Exigente, pero estable',
   'Easy, you could chat the whole way': 'Fácil, podrías charlar todo el rato',
+  'I own no dumbbells': 'No tengo mancuernas',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Los ejercicios con mancuernas no aparecen en la biblioteca, el selector ni los planes del Coach.',
+  'Everything but dumbbells': 'Todo menos mancuernas',
+  'None, so dumbbell lifts stay hidden.': 'Ninguna, así que los ejercicios con mancuernas quedan ocultos.',
 }

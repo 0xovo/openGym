@@ -2123,7 +2123,6 @@ export default {
   'Dumbbells': 'Гантели',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Веса, которые у вас есть, по одной гантели. Прогрессия, разгрузки, разминка и кнопки + и − в упражнениях с гантелями попадают только на них.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Списка пока нет, так что упражнения с гантелями растут на свой обычный шаг.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Гантелей нет совсем? Не отмечай их в профиле инвентаря и включи «Фильтровать по инвентарю». Тогда упражнения с гантелями пропадут из библиотеки и из выбора, а также из планов Коуча, если только его собственный ответ про инвентарь их не называет.',
   'Fill in {0} to {1} {2}, every {3}': 'Заполнить от {0} до {1} {2}, шаг {3}',
   'Clear the list': 'Очистить список',
   'Any weight. Tap to list the ones you own.': 'Любой вес. Нажмите, чтобы перечислить свои.',
@@ -2563,4 +2562,8 @@ export default {
   'Hard, short sentences only': 'Тяжело, только короткие фразы',
   'Working, but steady': 'Работаю, но ровно',
   'Easy, you could chat the whole way': 'Легко, можно болтать всю дорогу',
+  'I own no dumbbells': 'У меня нет гантелей',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Упражнения с гантелями не попадут в библиотеку, выбор и планы Тренера.',
+  'Everything but dumbbells': 'Всё, кроме гантелей',
+  'None, so dumbbell lifts stay hidden.': 'Нет, поэтому упражнения с гантелями скрыты.',
 }

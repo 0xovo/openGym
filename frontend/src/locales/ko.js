@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': '덤벨',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': '가지고 있는 무게를 하나씩 적어요. 덤벨 운동의 증량, 디로드, 워밍업, + 와 − 버튼은 이 무게에만 맞춰져요.',
   'No list yet, so dumbbell lifts step by their increment as usual.': '아직 목록이 없어서 덤벨 운동은 평소 증량 단위대로 올라가요.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': '덤벨이 아예 없나요? 장비 프로필에서 빼 두고 장비로 필터를 켜세요. 그러면 덤벨 운동이 라이브러리와 선택 목록에서 빠지고, 코치의 장비 답변에 덤벨이 없으면 코치 플랜에서도 빠집니다.',
   'Fill in {0} to {1} {2}, every {3}': '{0}부터 {1} {2}까지 {3} 간격으로 채우기',
   'Clear the list': '목록 비우기',
   'Any weight. Tap to list the ones you own.': '아무 무게나 가능해요. 눌러서 가진 덤벨을 적어 보세요.',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': '힘듦, 짧은 문장만',
   'Working, but steady': '힘쓰지만 안정적',
   'Easy, you could chat the whole way': '쉬움, 내내 수다 떨 수 있음',
+  'I own no dumbbells': '덤벨이 없어요',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': '덤벨 운동은 라이브러리, 선택 목록, 코치의 계획에서 빠져요.',
+  'Everything but dumbbells': '덤벨 빼고 전부',
+  'None, so dumbbell lifts stay hidden.': '없음, 그래서 덤벨 운동은 숨겨져요.',
 }

@@ -2130,7 +2130,6 @@ export default {
   'Dumbbells': 'ดัมเบล',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'น้ำหนักที่คุณมี อันละหนึ่งค่า การเพิ่มน้ำหนัก การดีโหลด วอร์มอัพ และปุ่ม + กับ − ของท่าดัมเบลจะใช้แค่ค่าเหล่านี้',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'ยังไม่มีรายการ ท่าดัมเบลจึงเพิ่มตามขั้นปกติ',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'ไม่มีดัมเบลเลยใช่ไหม? เว้นดัมเบลไว้ในโปรไฟล์อุปกรณ์แล้วเปิด «กรองตามอุปกรณ์» ท่าดัมเบลจะไม่โผล่ในคลังและตัวเลือก และไม่อยู่ในแผนของโค้ช เว้นแต่คำตอบเรื่องอุปกรณ์ของโค้ชจะมีดัมเบลอยู่',
   'Fill in {0} to {1} {2}, every {3}': 'เติม {0} ถึง {1} {2} ทุก {3}',
   'Clear the list': 'ล้างรายการ',
   'Any weight. Tap to list the ones you own.': 'น้ำหนักใดก็ได้ แตะเพื่อใส่น้ำหนักที่คุณมี',
@@ -2570,4 +2569,8 @@ export default {
   'Hard, short sentences only': 'หนัก พูดได้แค่ประโยคสั้นๆ',
   'Working, but steady': 'เหนื่อย แต่คงที่',
   'Easy, you could chat the whole way': 'สบายๆ คุยได้ตลอดทาง',
+  'I own no dumbbells': 'ฉันไม่มีดัมเบล',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'ท่าที่ใช้ดัมเบลจะไม่อยู่ในคลัง ตัวเลือก และแผนของโค้ช',
+  'Everything but dumbbells': 'ทุกอย่างยกเว้นดัมเบล',
+  'None, so dumbbell lifts stay hidden.': 'ไม่มี ท่าที่ใช้ดัมเบลจึงถูกซ่อนไว้',
 }

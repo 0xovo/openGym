@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': 'Hantle',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Ciężary, które masz, po jednej hantli. Progresja, deloady, rozgrzewka i przyciski + i − w ćwiczeniach z hantlami trafiają tylko na nie.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Brak listy, więc ćwiczenia z hantlami rosną jak zwykle o swój krok.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Nie masz hantli? Pomiń je w profilu sprzętu i włącz Filtruj według sprzętu. Wtedy ćwiczenia z hantlami znikną z biblioteki i z wyboru, a także z planów Coacha, chyba że jego własna odpowiedź o sprzęcie je wymienia.',
   'Fill in {0} to {1} {2}, every {3}': 'Wpisz od {0} do {1} {2}, co {3}',
   'Clear the list': 'Wyczyść listę',
   'Any weight. Tap to list the ones you own.': 'Dowolny ciężar. Dotknij, aby wpisać posiadane.',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': 'Ciężko, tylko krótkie zdania',
   'Working, but steady': 'Wysiłek, ale równo',
   'Easy, you could chat the whole way': 'Lekko, dałoby się gadać całą drogę',
+  'I own no dumbbells': 'Nie mam hantli',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Ćwiczenia z hantlami znikają z biblioteki, wyboru i planów Trenera.',
+  'Everything but dumbbells': 'Wszystko oprócz hantli',
+  'None, so dumbbell lifts stay hidden.': 'Brak, więc ćwiczenia z hantlami są ukryte.',
 }

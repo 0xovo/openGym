@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': 'Halteres',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Os pesos que tens, um haltere cada. A progressão, as descargas, o aquecimento e os botões + e − dos exercícios com halteres só caem nestes.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Ainda sem lista, por isso os exercícios com halteres sobem pelo incremento de sempre.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Não tens halteres? Deixa-os fora de um perfil de equipamento e liga Filtrar por equipamento. Assim os exercícios com halteres ficam fora da biblioteca e do seletor, e dos planos do Coach, a não ser que a resposta dele sobre equipamento os inclua.',
   'Fill in {0} to {1} {2}, every {3}': 'Preencher de {0} a {1} {2}, a cada {3}',
   'Clear the list': 'Limpar a lista',
   'Any weight. Tap to list the ones you own.': 'Qualquer peso. Toca para listar os teus.',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': 'Duro, só frases curtas',
   'Working, but steady': 'Exigente, mas estável',
   'Easy, you could chat the whole way': 'Fácil, dava para conversar o tempo todo',
+  'I own no dumbbells': 'Não tenho halteres',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Os exercícios com halteres ficam fora da biblioteca, do seletor e dos planos do Coach.',
+  'Everything but dumbbells': 'Tudo menos halteres',
+  'None, so dumbbell lifts stay hidden.': 'Nenhum, por isso os exercícios com halteres ficam escondidos.',
 }

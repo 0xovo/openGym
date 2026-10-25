@@ -2174,7 +2174,6 @@ export default {
   'Dumbbells': 'الدمبلز',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'الأوزان التي تملكها، دمبل واحد لكل وزن. التدرج والتخفيف والإحماء وزرّا + و − في تمارين الدمبل تقع على هذه فقط.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'لا قائمة بعد، لذا تتقدم تمارين الدمبل بزيادتها المعتادة.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'لا تملك دمبل أصلًا؟ اتركه خارج ملف المعدات وشغّل «التصفية حسب المعدات». عندها تختفي تمارين الدمبل من المكتبة ومن أداة الاختيار، ومن خطط المدرب ما لم تذكرها إجابته عن المعدات.',
   'Fill in {0} to {1} {2}, every {3}': 'املأ من {0} إلى {1} {2}، كل {3}',
   'Clear the list': 'امسح القائمة',
   'Any weight. Tap to list the ones you own.': 'أي وزن. اضغط لإدراج ما تملكه.',
@@ -2614,4 +2613,8 @@ export default {
   'Hard, short sentences only': 'صعب، جمل قصيرة فقط',
   'Working, but steady': 'مجهود، لكن بثبات',
   'Easy, you could chat the whole way': 'سهل، يمكنك الدردشة طوال الوقت',
+  'I own no dumbbells': 'لا أملك دمبلز',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'تبقى تمارين الدمبل خارج المكتبة والمنتقي وخطط المدرب.',
+  'Everything but dumbbells': 'كل شيء ما عدا الدمبلز',
+  'None, so dumbbell lifts stay hidden.': 'لا شيء، لذا تبقى تمارين الدمبل مخفية.',
 }

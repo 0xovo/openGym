@@ -35,17 +35,33 @@ describe('dumbbell inventory sheet', () => {
     act(() => dumbbellInventorySheet())
     const host = mountTopSheet()
     expect(host.textContent).toContain('No list yet')
-    // Owning none is said in an equipment profile, and the sheet says where (Discord, deamondo).
-    expect(host.textContent).toContain('No dumbbells at all? Leave them out of an equipment profile')
     act(() => button(host, 'Fill in 2 to 50 kg, every 2').click())
     expect(S().dumbbells.kg.weights).toHaveLength(25)
-    expect(host.textContent).not.toContain('No dumbbells at all?')
     expect(S().dumbbells.kg._ts).toEqual(expect.any(Number))
     expect(chips(host)[0]).toBe('2')
     act(() => host.querySelector('[aria-label="Remove 2 kg"]').click())
     expect(S().dumbbells.kg.weights[0]).toBe(4)
     act(() => button(host, 'Clear the list').click())
     expect(S().dumbbells.kg.weights).toEqual([])
+  })
+
+  // Discord (deamondo): an empty list means any weight, so owning none is a switch of its own.
+  it('says "I own no dumbbells" with a switch, stamped, and keeps the list for later', () => {
+    useStore.setState(s => ({ S: { ...s.S, dumbbells: { kg: { weights: [10, 12], _ts: 1 } } } }))
+    act(() => dumbbellInventorySheet())
+    const host = mountTopSheet()
+    const sw = () => host.querySelector('[role="switch"], input[type="checkbox"]')
+    expect(host.textContent).toContain('I own no dumbbells')
+    expect(chips(host)).toHaveLength(2)
+    act(() => sw().click())
+    expect(S().dumbbells.none).toEqual({ on: true, _ts: expect.any(Number) })
+    // Nothing to list while you own none; the list itself stays.
+    expect(chips(host)).toHaveLength(0)
+    expect(button(host, 'Fill in')).toBeUndefined()
+    expect(S().dumbbells.kg.weights).toEqual([10, 12])
+    act(() => sw().click())
+    expect(S().dumbbells.none.on).toBe(false)
+    expect(chips(host)).toHaveLength(2)
   })
 
   it('adds a typed weight in order and keeps the other unit alone', () => {

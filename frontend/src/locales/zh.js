@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': '哑铃',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': '你拥有的重量，每个一只。哑铃动作的加重、减载、热身以及 + 和 − 按钮都只会落在这些重量上。',
   'No list yet, so dumbbell lifts step by their increment as usual.': '还没有列表，所以哑铃动作照常按增量递增。',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': '完全没有哑铃？在器械配置里别勾哑铃，再打开“按器械筛选”。这样哑铃动作就不会出现在动作库和选择器里，也不会进教练的计划，除非教练自己的器械回答里列了哑铃。',
   'Fill in {0} to {1} {2}, every {3}': '填入 {0} 到 {1} {2}，每隔 {3}',
   'Clear the list': '清空列表',
   'Any weight. Tap to list the ones you own.': '任意重量。点一下列出你有的哑铃。',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': '累，只能说短句',
   'Working, but steady': '有点吃力，但很稳',
   'Easy, you could chat the whole way': '轻松，一路都能聊天',
+  'I own no dumbbells': '我没有哑铃',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': '哑铃动作不会出现在动作库、选择器和教练的计划里。',
+  'Everything but dumbbells': '除哑铃外的全部',
+  'None, so dumbbell lifts stay hidden.': '没有，所以哑铃动作会隐藏。',
 }

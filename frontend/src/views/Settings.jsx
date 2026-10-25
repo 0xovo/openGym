@@ -10,7 +10,7 @@ import { useUI } from '../store/useUI.js'
 import { ACCENTS, ACCENT_NAMES, todayISO, localTZ, weekStartOf, MONDAY, SUNDAY, fmtPlate } from '../lib/format.js'
 import { inventoryFor, ownsPlates } from '../lib/plates.js'
 import { BAR_TYPES, ownBarDefault } from '../lib/bar.js'
-import { dumbbellsOf } from '../lib/dumbbells.js'
+import { dumbbellsOf, ownsNoDumbbells } from '../lib/dumbbells.js'
 import { effortOf } from '../lib/history.js'
 import { figureOf } from '../lib/exercises.js'
 import { unlock, chime, playOnSilentSupported, vibrateSupported, appleTouchDevice } from '../lib/sound.js'
@@ -445,7 +445,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     reminders: () => (S.reminder?.on ? (S.reminder.time || DEF.reminder?.time || '') : t('Off')),
     plan: () => (mode === 'rotation' ? t('Rotation') : t('Fixed Week')) + ' · ' + shortWeekday(weekStartOf(S) === SUNDAY ? 0 : 1),
     units: () => (S.unit || 'kg') + ' · ' + (LANGS[lang] || lang),
-    equipment: () => (S.equipFilterOn && activeProfile ? activeProfile.name : t('Everything')),
+    equipment: () => (S.equipFilterOn && activeProfile ? activeProfile.name : ownsNoDumbbells(S) ? t('Everything but dumbbells') : t('Everything')),
     look: () => themeLabel + ' · ' + accentLabel(S),
     coach: () => (coachLocal?.mode === 'server' ? t('Your server') : coachLocal?.mode === 'byok' ? t('Your API key') : t('Off')),
     data: () => '',
@@ -1442,9 +1442,9 @@ function EquipmentCard({ S, update }) {
     : t('Standard set. Tap to count the pairs you own.')
   // The dumbbells you own, per unit (lib/dumbbells.js): what dumbbell lifts step and progress over.
   const bells = dumbbellsOf(S)
-  const dumbbellSummary = bells.length
-    ? bells.map(fmtPlate).join(' · ')
-    : t('Any weight. Tap to list the ones you own.')
+  const dumbbellSummary = ownsNoDumbbells(S) ? t('None, so dumbbell lifts stay hidden.')
+    : bells.length ? bells.map(fmtPlate).join(' · ')
+      : t('Any weight. Tap to list the ones you own.')
   // Your bars (lib/bar.js ownBarDefault): the types you set a weight for, in the profile unit.
   const unit = S.unit === 'lb' ? 'lb' : 'kg'
   const ownBars = BAR_TYPES.filter(eq => ownBarDefault(S, eq) !== null)

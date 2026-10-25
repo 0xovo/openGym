@@ -1,5 +1,5 @@
 import { describe, expect, test, it } from 'vitest'
-import { exAvailable, eqAvailable, profileEquipment, newProfile, ACC_V, ALL_EQUIPMENT, ACCESSORIES, accessoriesOf } from './equipment.js'
+import { activeProfile, exAvailable, eqAvailable, profileEquipment, newProfile, ACC_V, ALL_EQUIPMENT, ACCESSORIES, accessoriesOf } from './equipment.js'
 import { EXIDX } from './exercises.js'
 
 // QA 1.3.11: an imported custom exercise is stored with eq "custom", which no profile can tick, so
@@ -24,6 +24,33 @@ describe('exAvailable', () => {
 
   test('no profile, nothing hidden', () => {
     expect(exAvailable({ ...S, equipFilterOn: false }, { eq: 'barbell' })).toBe(true)
+  })
+})
+
+// "I own no dumbbells" (Discord, deamondo): the switch in the Dumbbells sheet, S.dumbbells.none.
+describe('owning no dumbbells', () => {
+  const NONE = { dumbbells: { none: { on: true, _ts: 1 } } }
+  const bench = { id: '0289', n: 'dumbbell bench press', eq: 'dumbbell' }
+
+  test('filters dumbbell lifts with no profile at all, and nothing else', () => {
+    expect(exAvailable({}, bench)).toBe(true)
+    const p = activeProfile(NONE)
+    expect(p).toMatchObject({ id: '', name: 'Everything but dumbbells' })
+    expect(exAvailable(NONE, { n: 'dumbbell curl', eq: 'dumbbell' })).toBe(false)
+    expect(exAvailable(NONE, { n: 'barbell curl', eq: 'barbell' })).toBe(true)
+    expect(exAvailable(NONE, { n: 'chin-up', eq: 'body weight' })).toBe(true)
+    // A dumbbell lift on a bench: the bench is not the problem, the bells are.
+    expect(exAvailable(NONE, bench)).toBe(false)
+  })
+
+  test('holds under a profile that has dumbbells ticked, and goes when switched off', () => {
+    const S = { ...NONE, equipFilterOn: true, activeEquipId: 'home', equipProfiles: [{ id: 'home', name: 'Home', equipment: ['dumbbell', 'barbell'], accV: ACC_V }] }
+    expect(activeProfile(S).name).toBe('Home')
+    expect(exAvailable(S, { n: 'dumbbell curl', eq: 'dumbbell' })).toBe(false)
+    expect(exAvailable(S, { n: 'barbell curl', eq: 'barbell' })).toBe(true)
+    const off = { ...S, dumbbells: { none: { on: false, _ts: 2 } } }
+    expect(exAvailable(off, { n: 'dumbbell curl', eq: 'dumbbell' })).toBe(true)
+    expect(activeProfile({ dumbbells: { none: { on: false, _ts: 2 } } })).toBe(null)
   })
 })
 

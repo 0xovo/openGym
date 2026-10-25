@@ -2116,7 +2116,6 @@ export default {
   'Dumbbells': 'Гантелі',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Ваги, які в тебе є, по одній гантелі. Прогресія, розвантаження, розминка і кнопки + та − у вправах з гантелями потрапляють тільки на них.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Списку ще немає, тож вправи з гантелями ростуть на свій звичний крок.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Гантелей зовсім немає? Не познач їх у профілі інвентарю й увімкни «Фільтрувати за інвентарем». Тоді вправи з гантелями зникнуть із бібліотеки та з вибору, а також із планів Коуча, якщо тільки його власна відповідь про інвентар їх не називає.',
   'Fill in {0} to {1} {2}, every {3}': 'Заповнити від {0} до {1} {2}, крок {3}',
   'Clear the list': 'Очистити список',
   'Any weight. Tap to list the ones you own.': 'Будь-яка вага. Торкнися, щоб перелічити свої.',
@@ -2556,4 +2555,8 @@ export default {
   'Hard, short sentences only': 'Важко, лише короткі речення',
   'Working, but steady': 'Працюю, але рівно',
   'Easy, you could chat the whole way': 'Легко, можна балакати всю дорогу',
+  'I own no dumbbells': 'У мене немає гантелей',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Вправи з гантелями не потраплять у бібліотеку, вибір і плани Тренера.',
+  'Everything but dumbbells': 'Усе, крім гантелей',
+  'None, so dumbbell lifts stay hidden.': 'Немає, тож вправи з гантелями приховані.',
 }

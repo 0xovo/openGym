@@ -2140,7 +2140,6 @@ export default {
   'Dumbbells': 'Hantlar',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Vikterna du har, en hantel var. Progression, avlastning, uppvärmning och knapparna + och − för hantelövningar landar bara på dessa.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Ingen lista än, så hantelövningar ökar med sitt vanliga steg.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Inga hantlar alls? Lämna bort dem ur en utrustningsprofil och slå på Filtrera efter utrustning. Hantelövningar håller sig då borta från biblioteket och väljaren, och från coachens planer om inte ditt utrustningssvar till coachen tar upp dem.',
   'Fill in {0} to {1} {2}, every {3}': 'Fyll i {0} till {1} {2}, var {3}',
   'Clear the list': 'Rensa listan',
   'Any weight. Tap to list the ones you own.': 'Valfri vikt. Tryck för att lista de du har.',
@@ -2606,4 +2605,8 @@ export default {
   'Hard, short sentences only': 'Tungt, bara korta meningar',
   'Working, but steady': 'Jobbigt, men jämnt',
   'Easy, you could chat the whole way': 'Lätt, du kunde prata hela vägen',
+  'I own no dumbbells': 'Jag har inga hantlar',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Hantelövningar hålls borta från biblioteket, väljaren och Coachens planer.',
+  'Everything but dumbbells': 'Allt utom hantlar',
+  'None, so dumbbell lifts stay hidden.': 'Inga, så hantelövningar förblir dolda.',
 }

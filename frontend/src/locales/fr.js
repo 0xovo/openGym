@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': 'Haltères',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Les poids que tu possèdes, un haltère chacun. La progression, les décharges, l’échauffement et les boutons + et − des exercices aux haltères ne tombent que sur ceux-ci.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Pas encore de liste, donc les exercices aux haltères avancent par leur incrément habituel.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Pas d’haltères du tout ? Laisse-les hors d’un profil d’équipement et active Filtrer par équipement. Les exercices aux haltères disparaissent alors de la bibliothèque et du sélecteur, et des plans du Coach, sauf si sa propre réponse sur l’équipement les cite.',
   'Fill in {0} to {1} {2}, every {3}': 'Remplir de {0} à {1} {2}, tous les {3}',
   'Clear the list': 'Vider la liste',
   'Any weight. Tap to list the ones you own.': 'N’importe quel poids. Touche pour lister les tiens.',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': 'Dur, phrases courtes seulement',
   'Working, but steady': 'Ça travaille, mais régulier',
   'Easy, you could chat the whole way': 'Facile, tu pourrais papoter tout du long',
+  'I own no dumbbells': 'Je n’ai pas d’haltères',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Les exercices aux haltères restent hors de la bibliothèque, du sélecteur et des plans du Coach.',
+  'Everything but dumbbells': 'Tout sauf les haltères',
+  'None, so dumbbell lifts stay hidden.': 'Aucun, donc les exercices aux haltères restent cachés.',
 }

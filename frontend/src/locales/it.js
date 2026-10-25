@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': 'Manubri',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'I pesi che hai, un manubrio ciascuno. Progressione, scarichi, riscaldamento e i tasti + e − degli esercizi con manubri cadono solo su questi.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Ancora nessuna lista, quindi gli esercizi con manubri salgono col loro incremento solito.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Niente manubri? Lasciali fuori da un profilo attrezzi e attiva Filtra per attrezzi. Così gli esercizi con manubri restano fuori dalla libreria e dal selettore, e dai piani del Coach, a meno che la sua risposta sugli attrezzi non li includa.',
   'Fill in {0} to {1} {2}, every {3}': 'Compila da {0} a {1} {2}, ogni {3}',
   'Clear the list': 'Svuota la lista',
   'Any weight. Tap to list the ones you own.': 'Qualsiasi peso. Tocca per elencare i tuoi.',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': 'Duro, solo frasi brevi',
   'Working, but steady': 'Impegnativo, ma costante',
   'Easy, you could chat the whole way': 'Facile, potresti chiacchierare per tutto il tempo',
+  'I own no dumbbells': 'Non ho manubri',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Gli esercizi con manubri restano fuori da libreria, selettore e piani del Coach.',
+  'Everything but dumbbells': 'Tutto tranne i manubri',
+  'None, so dumbbell lifts stay hidden.': 'Nessuno, quindi gli esercizi con manubri restano nascosti.',
 }

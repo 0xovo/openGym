@@ -145,6 +145,10 @@ per muscle. Settings → Workout → Fine-tuning turns it off.
   felt, in RPE whatever your sets use, worded for a run instead of reps left. An easy walk then
   loads your fatigue map less than a hard run; unrated cardio counts as it always did. The incline
   keeps its column.
+- **"I own no dumbbells"** (Discord). Settings → Equipment → Dumbbells has a switch for it now,
+  since an empty list only ever meant "any weight". On, dumbbell lifts leave the library, the
+  picker and the Coach's plans, with or without an equipment profile, and even if the Coach was
+  once told you have some. Your list of bells waits for the day you buy a pair.
 - **Count warm-ups in volume**, if you like (#719). A new switch in Settings → Units & language
   adds your done warm-ups to every volume the app shows: the workout, the summary, history,
   Stats, the report and the coach. Off by default, and records ignore warm-ups either way. The

@@ -2119,7 +2119,6 @@ export default {
   'Dumbbells': 'डम्बल',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'आपके पास जो वज़न हैं, हर एक डम्बल। डम्बल एक्सरसाइज़ में प्रोग्रेशन, डीलोड, वॉर्म-अप और + और − बटन सिर्फ़ इन्हीं पर आते हैं।',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'अभी कोई सूची नहीं, इसलिए डम्बल एक्सरसाइज़ हमेशा की तरह अपने स्टेप से बढ़ती हैं।',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'डम्बल बिल्कुल नहीं हैं? उन्हें किसी उपकरण प्रोफ़ाइल से बाहर रखें और «उपकरण से फ़िल्टर करें» चालू करें। तब डम्बल वाले व्यायाम लाइब्रेरी और पिकर में नहीं दिखेंगे, और कोच की योजनाओं में भी नहीं, जब तक कोच के अपने उपकरण वाले जवाब में वे न हों।',
   'Fill in {0} to {1} {2}, every {3}': '{0} से {1} {2} तक भरें, हर {3}',
   'Clear the list': 'सूची खाली करें',
   'Any weight. Tap to list the ones you own.': 'कोई भी वज़न। अपने वाले लिखने के लिए टैप करें।',
@@ -2559,4 +2558,8 @@ export default {
   'Hard, short sentences only': 'कठिन, बस छोटे वाक्य',
   'Working, but steady': 'मेहनत है, पर स्थिर',
   'Easy, you could chat the whole way': 'आसान, पूरे रास्ते बातें कर सकते हो',
+  'I own no dumbbells': 'मेरे पास डंबल नहीं हैं',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'डंबल वाली एक्सरसाइज़ लाइब्रेरी, पिकर और कोच के प्लान से बाहर रहेंगी।',
+  'Everything but dumbbells': 'डंबल के अलावा सब कुछ',
+  'None, so dumbbell lifts stay hidden.': 'कोई नहीं, इसलिए डंबल वाली एक्सरसाइज़ छिपी रहेंगी।',
 }

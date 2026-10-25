@@ -1,5 +1,6 @@
 import { t } from './i18n-core.js'
 import { EXDB } from './exercises-data.js'
+import { ownsNoDumbbells } from './dumbbells.js'
 
 // Pieces of kit the catalogue never names as an exercise's equipment — "dumbbell bench press" is
 // tagged `dumbbell`, yet it needs a bench; "chin-up" is tagged `body weight`, yet it needs a bar.
@@ -39,18 +40,27 @@ export const ALL_EQUIPMENT = (() => {
 // Only the accessory an exercise needs (a bar, a bench) can still gate it.
 const ALWAYS_AVAILABLE = 'body weight'
 
+// "I own no dumbbells" (Settings → Equipment → Dumbbells) filters without a profile of its own:
+// everything but the dumbbell. It stands in as the active profile, so the library, the picker and
+// a routine's missing-equipment flags all filter by it, and their Show all still shows all. No id,
+// so nothing that picks a saved profile (the starter plan's fitting) mistakes it for one.
+const noDumbbellsProfile = () => ({
+  id: '', name: t('Everything but dumbbells'), equipment: ALL_EQUIPMENT.filter(e => e !== 'dumbbell'), accV: ACC_V, noDumbbells: true,
+})
+
 export function activeProfile(S) {
-  if (!S.equipFilterOn) return null
-  const profiles = S.equipProfiles || []
-  return profiles.find(p => p.id === S.activeEquipId) || null
+  const profiles = S.equipFilterOn ? S.equipProfiles || [] : []
+  return profiles.find(p => p.id === S.activeEquipId) || (ownsNoDumbbells(S) ? noDumbbellsProfile() : null)
 }
 
 // Whether an exercise is usable under the active profile. With filtering off, or no profile
 // selected, everything is available — this is purely additive, never a trap that hides your
-// whole library because you haven't set anything up yet.
+// whole library because you haven't set anything up yet. Owning no dumbbells holds under any
+// profile, even one that has them ticked: the switch is the more direct thing to have said.
 export function exAvailable(S, ex) {
   const p = activeProfile(S)
   if (!p) return true
+  if (ownsNoDumbbells(S) && ex.eq === 'dumbbell') return false
   return eqAvailable(profileEquipment(p), ex)
 }
 

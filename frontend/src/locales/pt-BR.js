@@ -1319,7 +1319,6 @@ export const PT_BR_OVERRIDES = {
   'Dumbbells': 'Halteres',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Os pesos que você tem, um halter cada. A progressão, as descargas, o aquecimento e os botões + e − dos exercícios com halteres só caem nestes.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Ainda sem lista, então os exercícios com halteres sobem pelo incremento de sempre.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Não tem halteres? Deixe-os fora de um perfil de equipamento e ative Filtrar por equipamento. Assim os exercícios com halteres ficam fora da biblioteca e do seletor, e dos planos do Coach, a não ser que a resposta dele sobre equipamento os inclua.',
   'Any weight. Tap to list the ones you own.': 'Qualquer peso. Toque para listar os seus.',
   // --- sets to failure (v1.4.0) ---
   'Taken to failure': 'Até a falha',
@@ -1652,6 +1651,10 @@ export const PT_BR_OVERRIDES = {
   'Hard, short sentences only': 'Puxado, só frases curtas',
   'Working, but steady': 'Exigente, mas estável',
   'Easy, you could chat the whole way': 'Fácil, dava para bater papo o tempo todo',
+  'I own no dumbbells': 'Não tenho halteres',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Os exercícios com halteres ficam fora da biblioteca, do seletor e dos planos do Coach.',
+  'Everything but dumbbells': 'Tudo menos halteres',
+  'None, so dumbbell lifts stay hidden.': 'Nenhum, então os exercícios com halteres ficam escondidos.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

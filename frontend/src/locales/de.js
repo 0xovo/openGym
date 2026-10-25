@@ -2139,7 +2139,6 @@ export default {
   'Dumbbells': 'Kurzhanteln',
   'The weights you own, one bell each. Progression, deloads, warm-ups and the + and − buttons of dumbbell lifts land only on these.': 'Die Gewichte, die du hast, je eine Hantel. Progression, Deloads, Aufwärmsätze und die Tasten + und − bei Kurzhantelübungen landen nur auf diesen.',
   'No list yet, so dumbbell lifts step by their increment as usual.': 'Noch keine Liste, also steigen Kurzhantelübungen wie gewohnt in ihrem Schritt.',
-  'No dumbbells at all? Leave them out of an equipment profile and turn on Filter by equipment. Dumbbell lifts then stay out of the library and the picker, and out of the Coach’s plans unless its own equipment answer lists them.': 'Gar keine Kurzhanteln? Lass sie in einem Geräteprofil weg und schalte „Nach Geräten filtern“ ein. Dann bleiben Kurzhantelübungen aus der Bibliothek und der Auswahl draußen, und aus den Plänen des Coachs, solange seine eigene Geräte-Antwort sie nicht nennt.',
   'Fill in {0} to {1} {2}, every {3}': '{0} bis {1} {2} eintragen, alle {3}',
   'Clear the list': 'Liste leeren',
   'Any weight. Tap to list the ones you own.': 'Jedes Gewicht. Tippe, um deine aufzulisten.',
@@ -2579,4 +2578,8 @@ export default {
   'Hard, short sentences only': 'Hart, nur kurze Sätze',
   'Working, but steady': 'Fordernd, aber gleichmäßig',
   'Easy, you could chat the whole way': 'Locker, du könntest die ganze Zeit plaudern',
+  'I own no dumbbells': 'Ich habe keine Kurzhanteln',
+  'Dumbbell lifts stay out of the library, the picker and the Coach’s plans.': 'Kurzhantelübungen bleiben aus der Bibliothek, der Auswahl und den Plänen des Coachs draußen.',
+  'Everything but dumbbells': 'Alles außer Kurzhanteln',
+  'None, so dumbbell lifts stay hidden.': 'Keine, also bleiben Kurzhantelübungen ausgeblendet.',
 }
