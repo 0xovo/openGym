@@ -141,27 +141,27 @@ const iosContents = `{
 }
 `
 
-/** Every file this script owns, as [path relative to frontend/, contents]. */
+/** Every file this script owns, as [path relative to frontend/, () => contents]: drawn on demand. */
 export function files(rects = glyph()) {
   const out = []
   const colors = []
   for (const v of APP_ICON_VARIANTS) {
-    out.push([`public/app-icons/${v.id}.png`, draw(v, PREVIEW, { rects })])
+    out.push([`public/app-icons/${v.id}.png`, () => draw(v, PREVIEW, { rects })])
     if (v.id === 'default') continue
-    out.push([`resources/icons/${v.id}.svg`, svgOf(v, rects)])
+    out.push([`resources/icons/${v.id}.svg`, () => svgOf(v, rects)])
     const set = `ios/App/App/Assets.xcassets/${v.ios}.appiconset`
-    out.push([`${set}/Contents.json`, iosContents])
-    out.push([`${set}/icon-1024.png`, draw(v, IOS_SIZE, { rects })])
+    out.push([`${set}/Contents.json`, () => iosContents])
+    out.push([`${set}/icon-1024.png`, () => draw(v, IOS_SIZE, { rects })])
     for (const [dpi, f] of Object.entries(DENSITIES)) {
-      out.push([`${RES}/mipmap-${dpi}/ic_launcher_${v.id}.png`, draw(v, Math.round(48 * f), { rects })])
-      out.push([`${RES}/mipmap-${dpi}/ic_launcher_${v.id}_round.png`, draw(v, Math.round(48 * f), { rects, round: true })])
-      out.push([`${RES}/mipmap-${dpi}/ic_launcher_${v.id}_foreground.png`, draw(v, Math.round(108 * f), { rects })])
+      out.push([`${RES}/mipmap-${dpi}/ic_launcher_${v.id}.png`, () => draw(v, Math.round(48 * f), { rects })])
+      out.push([`${RES}/mipmap-${dpi}/ic_launcher_${v.id}_round.png`, () => draw(v, Math.round(48 * f), { rects, round: true })])
+      out.push([`${RES}/mipmap-${dpi}/ic_launcher_${v.id}_foreground.png`, () => draw(v, Math.round(108 * f), { rects })])
     }
-    out.push([`${RES}/mipmap-anydpi-v26/ic_launcher_${v.id}.xml`, adaptive(v.id)])
-    out.push([`${RES}/mipmap-anydpi-v26/ic_launcher_${v.id}_round.xml`, adaptive(v.id)])
+    out.push([`${RES}/mipmap-anydpi-v26/ic_launcher_${v.id}.xml`, () => adaptive(v.id)])
+    out.push([`${RES}/mipmap-anydpi-v26/ic_launcher_${v.id}_round.xml`, () => adaptive(v.id)])
     colors.push(`    <color name="ic_launcher_${v.id}_background">${v.bg}</color>`)
   }
-  out.push([`${RES}/values/app_icons.xml`, `<?xml version="1.0" encoding="utf-8"?>
+  out.push([`${RES}/values/app_icons.xml`, () => `<?xml version="1.0" encoding="utf-8"?>
 <!-- Written by scripts/app-icons.mjs: behind each alternate launcher icon. -->
 <resources>
 ${colors.join('\n')}
@@ -173,8 +173,9 @@ ${colors.join('\n')}
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const check = process.argv.includes('--check')
   const bad = []
-  for (const [rel, body] of files()) {
+  for (const [rel, make] of files()) {
     const p = join(ROOT, rel)
+    const body = make()
     const buf = Buffer.isBuffer(body) ? body : Buffer.from(body)
     if (check) {
       if (!existsSync(p) || !readFileSync(p).equals(buf)) bad.push(rel)
