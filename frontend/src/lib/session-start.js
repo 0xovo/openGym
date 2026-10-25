@@ -13,6 +13,7 @@ import { isAssisted } from './exercises.js'
 import { sessionHistory } from './backfill.js'
 import { programmeSlot, pctWeight } from './programmes.js'
 import { todayISO } from './format.js'
+import { exConverted, exView, viewTarget, storedTarget, storedRow } from './ex-unit.js'
 
 /**
  * Where a planned session's reps come from (Settings → During a workout). 'plan', the default:
@@ -36,7 +37,11 @@ export const startsFromLast = st => st?.startFrom === 'last'
  * the exercise is planned in: its own history comes first (#216) and its policy applies.
  * `noProg` builds the routine's own numbers with no prescription, as an excluded routine does.
  */
-export function buildPlannedEntry(stored, cfg, routine, { noProg = false } = {}) {
+export function buildPlannedEntry(stored, cfg, routine, opts) {
+  return inExUnit(stored, cfg, (st, c) => planEntry(st, c, routine, opts))
+}
+
+function planEntry(stored, cfg, routine, { noProg = false } = {}) {
   // What a dumbbell weight means for this exercise today (lib/dumbbells.js): the history it
   // progresses from is read in that meaning, so a switch from "40 total" to per bell opens at
   // 20, not at 40 a hand. Only a switch between the two explicit meanings converts anything.
@@ -89,6 +94,22 @@ export function buildPlannedEntry(stored, cfg, routine, { noProg = false } = {})
   // `planned` is what the routine asked for, kept apart from the target the prescription moved,
   // so the next session can tell an edited plan from a progressed one (nextPrescription).
   return { target, plan, sets, planned: plannedOf(cfg), ...(carried ? { carried: true } : {}), ...(slot?.deload ? { deload: true } : {}) }
+}
+
+// An exercise with a weight unit of its own (#657, lib/ex-unit.js) is built in that unit: on the
+// state as it sees it, so the progression's step, the warm-up ramp, the plates and a programme's
+// %1RM land on that unit's grid. What comes out is stored back in the profile's unit, the
+// numbers of the config it was built from kept as they were.
+function inExUnit(stored, cfg, build) {
+  const id = cfg?.id
+  if (!exConverted(stored, id)) return build(stored, cfg)
+  const out = build(exView(stored, id), viewTarget(stored, id, cfg))
+  return {
+    ...out,
+    target: storedTarget(stored, id, out.target, cfg),
+    ...(out.planned ? { planned: storedTarget(stored, id, out.planned, plannedOf(cfg)) } : {}),
+    sets: (out.sets || []).map(s => storedRow(stored, id, s)),
+  }
 }
 
 /**
@@ -161,6 +182,12 @@ export function buildSessionEntry(st, id, cfg, routine, slot) {
   const full = { ...cfg, id }
   const past = sessionHistory(st)
   if (routine) return buildPlannedEntry(past, full, routine, { noProg: builtOutOfProgression(slot, routine) })
+  return inExUnit(st, full, v => freestyleEntry(v, id, viewTarget(st, id, cfg)))
+}
+
+function freestyleEntry(st, id, cfg) {
+  const full = { ...cfg, id }
+  const past = sessionHistory(st)
   // Freestyle stamps the meaning of a dumbbell weight and reads last time in it, the way
   // buildPlannedEntry does for a planned exercise (lib/dumbbells.js).
   const step = modeOf(full) === 'reps' ? (ownedWeightsFor(st, full) || weightIncrement(full, st.unit)) : defaultIncrement(id, st.unit)

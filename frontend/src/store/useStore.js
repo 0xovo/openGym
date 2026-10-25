@@ -194,6 +194,10 @@ export const DEF = {
   // A machine's own weight stack, keyed by exercise id: { unit, weights: [5, 11.3, 18.1, …], _ts }
   // (lib/dumbbells.js, issue #688). Absent or empty = the increment decides, as before.
   stackWeights: {},
+  // An exercise's own weight unit, keyed by exercise id: { unit: 'kg' | 'lb' | null, _ts }
+  // (lib/ex-unit.js, issue #657). Shown and typed in that unit, still stored in the profile's.
+  // Absent or null = the profile's unit. Stamped like dbLoad.
+  exUnit: {},
   // Gym check-in cards (see views/CheckIn.jsx). Each is a membership
   // code shown as a QR/barcode at the gym's turnstile — added by typing it, importing a photo
   // of the card, or scanning it. We only ever keep the code's VALUE, never a photo: the image
