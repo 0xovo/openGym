@@ -6,6 +6,14 @@ tag. Write it for the people using the app: what changed for them, short, no em 
 
 ## Unreleased
 
+**A 1-minute tour.** Right after the first setup, openGym asks if you want a quick look around. Say yes
+and it points at the real thing, screen by screen: today's session and Start, week or rotation, the
+Library, a practice workout (tick a set, meet the rest timer, swipe, the ⋯ menu, Finish), Stats and
+Settings. The practice session is pretend: never saved, never synced, gone when the tour moves on.
+Back, Next and Skip whenever you like; close the app halfway and it offers to pick up once. It works
+with a screen reader and reduced motion, and the Halloween guests take a break while it runs.
+Settings → About & updates → Show the tour again runs it any time.
+
 **Programmes** (#159, thanks Giulio Leuci; #679, thanks @peteh and @Gthbacc). Plan → Programmes runs
 your routines as a block of 1 to 16 weeks, and each week can say how hard: a %1RM per lift, an RPE for
 the week, or a deload. Start one and its schedule takes over your plan (Home says "Week 2 of 6"), end it
