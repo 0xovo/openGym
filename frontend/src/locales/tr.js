@@ -2757,4 +2757,9 @@ export default {
   "Your progress": "İlerlemen",
   "Your routines": "Rutinlerin",
   "You’re set": "Hazırsın",
+  // --- date picker (#809) ---
+  'Previous year': 'Önceki yıl',
+  'Next year': 'Sonraki yıl',
+  'Pick a month': 'Ay seç',
+  'Pick a day': 'Gün seç',
 }

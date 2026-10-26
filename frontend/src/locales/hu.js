@@ -2760,4 +2760,9 @@ export default {
   "Your progress": "A fejlődésed",
   "Your routines": "A rutinjaid",
   "You’re set": "Kész vagy",
+  // --- date picker (#809) ---
+  'Previous year': 'Előző év',
+  'Next year': 'Következő év',
+  'Pick a month': 'Válassz hónapot',
+  'Pick a day': 'Válassz napot',
 }

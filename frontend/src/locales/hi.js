@@ -2757,4 +2757,9 @@ export default {
   "Your progress": "आपकी प्रगति",
   "Your routines": "आपके रूटीन",
   "You’re set": "आप तैयार हैं",
+  // --- date picker (#809) ---
+  'Previous year': 'पिछला साल',
+  'Next year': 'अगला साल',
+  'Pick a month': 'महीना चुनें',
+  'Pick a day': 'दिन चुनें',
 }

@@ -64,6 +64,14 @@ best is 30 and openGym asks first, because whatever you tick becomes last time, 
 maybe a shiny fake PR. Fix it leaves the set open, Log as typed means you really did. Only on a tick
 by hand: never an untick, a hold's timer, the watch, a first time or an assisted lift's weight.
 
+**Dates pick like the rest of openGym** (#809, thanks @lajawi). On iOS 27 the date in Log body weight
+stuck out past the edge and the whole sheet scrolled sideways. Every date field (body weight,
+measurements, progress photos, a workout's date, a past workout, the PDF report and CSV export) is
+now openGym's own: it shows the date the way the app writes it and opens a month grid like the
+calendar's, with Today one tap away, days after today greyed out, and a tap on the month to jump
+years. Same look on every phone, light or dark, in your accent colour. And no sheet scrolls sideways
+any more, whatever ends up in it.
+
 **The installed iPhone web app fills the screen** (#810, thanks @kurktchiev). On iOS 26 a Home
 Screen app could leave the tab bar floating a status bar's height above the bottom edge until you
 dragged the page. WebKit's bug, our workaround. The App Store app and Safari tabs were never affected.

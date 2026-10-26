@@ -20,6 +20,7 @@ import { mediaOf, normalizeMediaRef, cleanUrl, workoutMediaOf } from './lib/medi
 import { syncMedia } from './lib/media-sync.js'
 import LineChart from './components/LineChart.jsx'
 import Stepper from './components/Stepper.jsx'
+import DateField from './components/DateField.jsx'
 import { durationSheet } from './components/DurationWheel.jsx'
 import { cleanBackups, withBackups, MAX_BACKUPS, backupSlotConfig } from './lib/routine-backups.js'
 import { normalizeAliases } from './lib/exercise-aliases.js'
@@ -344,7 +345,7 @@ function BwSheet({ required, onDone, close }) {
       ? <div className="muted small">{t('Slide or tap to set your weight. We ask before every workout so your curve stays honest.')}</div>
       : <label className="measure-date">
           <span>{t('Date')}</span>
-          <input className="field" type="date" value={date} max={todayISO()} onChange={e => setDate(e.target.value)} />
+          <DateField value={date} max={todayISO()} onChange={setDate} label={t('Date')} />
         </label>}
     <WeightInput value={v} setValue={setV} unit={unit} />
     <div style={{ height: 14 }} />
@@ -2824,7 +2825,7 @@ function WorkoutDateEdit({ w, onDone, close }) {
     <h3>{t('Change date & time')}</h3>
     <div className="muted small" style={{ marginBottom: 12 }}>{t('The session keeps its length. Personal records are worked out again from the new order.')}</div>
     <Row icon="calendar" title={t('Date')}>
-      <input type="date" className="timef" value={date} max={today} onChange={e => setDate(e.target.value)} /></Row>
+      <DateField compact value={date} max={today} onChange={setDate} label={t('Date')} /></Row>
     <Row icon="clock" title={t('Start time')}>
       <input type="time" className="timef" value={time} onChange={e => setTime(e.target.value)} /></Row>
     <div style={{ height: 18 }} />
@@ -3321,7 +3322,7 @@ function LogPastWorkout({ initial, close }) {
     <h3>{t('Log a past workout')}</h3>
     <div className="muted small" style={{ marginBottom: 12 }}>{t('Logged on the usual workout screen, without timers.')}</div>
     <Row icon="calendar" title={t('Date')}>
-      <input type="date" className="timef" value={date} max={today} onChange={e => setDate(e.target.value)} /></Row>
+      <DateField compact value={date} max={today} onChange={setDate} label={t('Date')} /></Row>
     <Row icon="clock" title={t('Start time')}>
       <input type="time" className="timef" value={time} onChange={e => setTime(e.target.value)} /></Row>
     <Stepper label={t('Duration')} unit={t('min')} value={dur} step={5} min={0} decimal={false} invalid={!(dur >= 1) || dur > MAX_DURATION_MIN} onChange={v => setDur(Math.round(v))} />

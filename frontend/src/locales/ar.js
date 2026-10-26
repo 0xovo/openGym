@@ -2812,4 +2812,9 @@ export default {
   "Your progress": "تقدّمك",
   "Your routines": "روتيناتك",
   "You’re set": "أنت جاهز",
+  // --- date picker (#809) ---
+  'Previous year': 'السنة السابقة',
+  'Next year': 'السنة التالية',
+  'Pick a month': 'اختر شهرًا',
+  'Pick a day': 'اختر يومًا',
 }
