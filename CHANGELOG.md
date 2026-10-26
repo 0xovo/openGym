@@ -14,6 +14,12 @@ Back, Next and Skip whenever you like; close the app halfway and it offers to pi
 with a screen reader and reduced motion, and the Halloween guests take a break while it runs.
 Settings → About & updates → Show the tour again runs it any time.
 
+**Pictures on the printed plan** (#817, thanks @Teo230). Print / Save as PDF asks one thing first:
+With pictures. On, every exercise gets a small picture next to its sets, rest and note, two to a
+row, like the paper plan your gym hands out. It's on by default and this device remembers your
+choice; off gives you the plain list. Your own exercises print their own photo, and one without a
+picture simply prints as text.
+
 **Programmes** (#159, thanks Giulio Leuci; #679, thanks @peteh and @Gthbacc). Plan → Programmes runs
 your routines as a block of 1 to 16 weeks, and each week can say how hard: a %1RM per lift, an RPE for
 the week, or a deload. Start one and its schedule takes over your plan (Home says "Week 2 of 6"), end it
@@ -133,17 +139,11 @@ Apple Health once, with its heart rate. Take the buds out and the readings simpl
 back in and they carry on. Wearing the watch? It keeps the job, so there's never a second workout.
 No new switch: the Apple Health one covers it.
 
-## v1.4.3 (DATE)
+## v1.4.3 (2026-10-26)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a
 pull request, the Apple Watch learned a whole bag of tricks, and openGym starts again on iPhones
 that 1.4.2 left staring at the logo. Sorry about that one.
-
-**Pictures on the printed plan** (#817, thanks @Teo230). Print / Save as PDF asks one thing first:
-With pictures. On, every exercise gets a small picture next to its sets, rest and note, two to a
-row, like the paper plan your gym hands out. It's on by default and this device remembers your
-choice; off gives you the plain list. Your own exercises print their own photo, and one without a
-picture simply prints as text.
 
 **openGym starts again on iOS 15.5 to 16.3** (P1). 1.4.2 and the web demo sat on the splash
 forever there, because one tiny link check used regex syntax Safari only learned in 16.4.

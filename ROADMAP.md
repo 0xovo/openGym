@@ -12,7 +12,7 @@ published one plus one patch (1.4.2 → 1.4.3), and a minor bump is saved for a 
 new exercise database (v1.4.0).
 
 - Milestones: https://github.com/DuarteSantos8/openGym/milestones
-- Next, in order: the community release (v1.4.3, in App Review) → programmes and the Coach fix
+- Next, in order: the community release (v1.4.3, released 2026-10-26) → programmes and the Coach fix
   (v1.4.4) → remote MCP and Google Play (v1.4.5) → the list after that
 
 ---
@@ -162,11 +162,13 @@ The animations come back as WebP, and the Android update check reads GitHub.
 - Your bars, rest between warm-ups and between sides, backups for an exercise, the boot screen,
   five reported security holes closed
 
-## v1.4.3: The community release  (in App Review, out around 2026-10-27)
+## v1.4.3: The community release  (released 2026-10-26, a week early)
 
 Most of it was asked for on GitHub and Discord or sent in as a pull request. The full list is in
 the changelog; the headlines:
 
+- A Halloween costume until 1 November (spiders, bats, a witch, a skeleton on Stats), and nine
+  app icons to pick from on iPhone, a Halloween one included
 - openGym starts again on iOS 15.5 to 16.3, where 1.4.2 sat on the splash screen forever
 - Gym reminder: a nudge when you walk into your gym, gyms stay on the phone (#614)
 - A tiny muscle map on every routine and in the workout (#670); volume while you lift (#774)
