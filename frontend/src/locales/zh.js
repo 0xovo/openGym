@@ -1422,7 +1422,7 @@ export default {
   'Planned sessions start from': '计划训练的起点',
   'The routine’s sets and reps. Your history decides the weight.': '按训练日的组数和次数，重量由你的历史记录决定。',
   'Your last session': '你的上次训练',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': '沿用你上次在该训练日记录的次数。关闭进阶时，重量也一并沿用。',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': '沿用你上次在该训练日记录的次数，以及你自己设置的热身组。关闭进阶时，重量也一并沿用。',
   'Last time means': '“上次”指的是',
   'This routine': '这个训练日',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': '同一个训练日里这个动作的上一次。重训日和轻训日互不干扰。',

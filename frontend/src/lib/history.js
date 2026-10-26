@@ -1137,6 +1137,7 @@ export function insertWarmupRow(rows, mode, target, step = 2.5, floor = 0) {
 // warm-up (its weight, reps and tick kept; drops, bursts, sides and effort dropped, since a
 // warm-up has none) and moves to the end of the warm-ups, so it is numbered, rested and left out
 // of progression and records like any other warm-up. A row that is one already is left alone.
+// It is a warm-up you chose, so it is marked `edited` (workout-model.js markWarmupEdited).
 // Only a straight set: a warm-up is one weight times one rep count, so a drop set would lose its
 // drops and a rest-pause row would add its bursts into one inflated rep count. A per-side row
 // (#575) stays per side, the way insertWarmupRow adds a warm-up to a unilateral exercise: each
@@ -1148,11 +1149,11 @@ export function makeWarmupAt(rows, i) {
   if (!canBeWarmup(src)) return rows
   if (isSideSet(src)) {
     const side = v => ({ w: v.w || 0, r: v.r, done: !!v.done })
-    const warm = syncSideAggregate({ phase: 'warmup', warmup: true, sides: { L: side(src.sides.L), R: side(src.sides.R) } })
+    const warm = syncSideAggregate({ phase: 'warmup', warmup: true, edited: true, sides: { L: side(src.sides.L), R: side(src.sides.R) } })
     if (src.at != null) warm.at = src.at
     return placeRow(rows, i, warm)
   }
-  const warm = { w: src.w || 0, r: src.r, done: !!src.done, phase: 'warmup', warmup: true }
+  const warm = { w: src.w || 0, r: src.r, done: !!src.done, phase: 'warmup', warmup: true, edited: true }
   if (src.at != null) warm.at = src.at
   return placeRow(rows, i, warm)
 }
@@ -1160,7 +1161,7 @@ export function makeWarmupAt(rows, i) {
 export function makeWorkAt(rows, i) {
   const src = rows[i]
   if (!src || !isWarmupRow(src)) return rows
-  const { phase, warmup, ...work } = src
+  const { phase, warmup, edited: _edited, ...work } = src
   return placeRow(rows, i, work)
 }
 // Takes row i out and puts `row` where the work sets begin.

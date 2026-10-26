@@ -1422,7 +1422,7 @@ export default {
   'Planned sessions start from': 'Planlı seansların çıkış noktası',
   'The routine’s sets and reps. Your history decides the weight.': 'Rutinin setleri ve tekrarları. Ağırlığı geçmişin belirler.',
   'Your last session': 'Son seansın',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'O rutinde geçen sefer kaydettiğin tekrarlar aktarılır. İlerleme kapalıysa ağırlık da.',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'O rutinde geçen sefer kaydettiğin tekrarlar ve kendin ayarladığın ısınma setleri aktarılır. İlerleme kapalıysa ağırlık da.',
   'Last time means': '"Geçen sefer" demek',
   'This routine': 'Bu rutin',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'Hareketin aynı rutindeki son seansı. Ağır gün ve hafif gün ayrı kalır.',

@@ -602,7 +602,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
             value={S.startFrom === 'last' ? 'last' : 'plan'} onChange={v => update(s => { s.startFrom = v })}
             options={[
               { value: 'plan', label: t('Your plan'), subtitle: t('The routine’s sets and reps. Your history decides the weight.') },
-              { value: 'last', label: t('Your last session'), subtitle: t('The reps you logged last time in that routine, carried over. With progression off, the weight too.') },
+              { value: 'last', label: t('Your last session'), subtitle: t('The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.') },
             ]} />
           {/* Where "last time" is read from (lib/history.js lastAcrossRoutines, #770): the routine's
               own last session by default (#216), so a heavy and a light day keep their numbers.

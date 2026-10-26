@@ -1443,7 +1443,7 @@ export default {
   'Planned sessions start from': 'Planerade pass utgår från',
   'The routine’s sets and reps. Your history decides the weight.': 'Rutinens set och reps. Din historik avgör vikten.',
   'Your last session': 'Ditt senaste pass',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'De reps du loggade senast i den rutinen, överförda. Med progression avstängd även vikten.',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'De reps du loggade senast i den rutinen, överförda, plus uppvärmningsset du själv har ställt in. Med progression avstängd även vikten.',
   'Last time means': 'Senast betyder',
   'This routine': 'Den här rutinen',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'Ditt senaste pass med övningen i samma rutin. Tung dag och lätt dag hålls isär.',

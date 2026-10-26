@@ -17,7 +17,10 @@ const state = (routine, sets = [], startFrom = 'last', extra = {}) => ({
     }],
   }] } : {}),
 })
-const loggedWarmup = (w, r, extra = {}) => ({ w, r, done: true, phase: 'warmup', warmup: true, ...extra })
+// A warm-up the lifter set up (typed, stepped or added by hand), the only kind that is carried.
+const loggedWarmup = (w, r, extra = {}) => ({ w, r, done: true, phase: 'warmup', warmup: true, edited: true, ...extra })
+// A rung the routine's ramp made and nobody touched.
+const autoWarmup = (w, r, extra = {}) => ({ w, r, done: true, phase: 'warmup', warmup: true, ...extra })
 const loggedWork = (w = 60, r = 8) => ({ w, r, done: true })
 const entryFor = st => buildSessionEntries(st, st.routines[0])[0]
 const plannedEntryFor = st => buildPlannedEntry(st, st.routines[0].ex[0], st.routines[0])
@@ -60,7 +63,7 @@ describe('planned warm-ups carried from last session', () => {
     const source = loggedWarmup(30, 8, { rir: 2, rpe: 8, effort: 7, at: 123, drops: [{ w: 20, r: 4 }], clusters: [{ r: 4 }] })
     const entry = entryFor(state(routine, [source, loggedWork(), loggedWork(), loggedWork()]))
 
-    expect(warmups(entry)).toEqual([{ w: 30, r: 8, done: false, phase: 'warmup', warmup: true }])
+    expect(warmups(entry)).toEqual([{ w: 30, r: 8, done: false, phase: 'warmup', warmup: true, edited: true }])
   })
 
   it('case 5: carries a warm-up even when it was not ticked last time', () => {
@@ -87,7 +90,7 @@ describe('planned warm-ups carried from last session', () => {
   it('case 8: carries both per-side loads and reps, resetting sides and aggregate', () => {
     const routine = routineWith(cfg({ side: true, warmupSets: 0 }))
     const sideRow = syncSideAggregate({
-      phase: 'warmup', warmup: true,
+      phase: 'warmup', warmup: true, edited: true,
       sides: { L: { w: 10, r: 6, done: true }, R: { w: 12, r: 6, done: true } },
     })
     const entry = entryFor(state(routine, [sideRow, loggedWork(), loggedWork(), loggedWork()]))
@@ -101,7 +104,7 @@ describe('planned warm-ups carried from last session', () => {
   it('case 9: carries the duration of a timed warm-up', () => {
     const routine = routineWith({ id: 'custom-hold', sets: 2, sec: 45, weight: 0, mode: 'time', warmupSets: 0 })
     const st = state(routine, [
-      { sec: 20, w: 0, done: true, phase: 'warmup', warmup: true },
+      { sec: 20, w: 0, done: true, phase: 'warmup', warmup: true, edited: true },
       { sec: 45, w: 0, done: true }, { sec: 45, w: 0, done: true },
     ])
     expect(warmups(entryFor(st)).map(row => [row.sec, row.w])).toEqual([[20, 0]])
@@ -125,7 +128,7 @@ describe('planned warm-ups carried from last session', () => {
     expect(warmups(entryFor(st))).toEqual(generatedWarmups(st))
 
     const repsRoutine = routineWith(cfg({ warmupSets: 2 }))
-    const noReps = state(repsRoutine, [{ w: 30, done: true, phase: 'warmup', warmup: true }, loggedWork(), loggedWork(), loggedWork()])
+    const noReps = state(repsRoutine, [{ w: 30, done: true, phase: 'warmup', warmup: true, edited: true }, loggedWork(), loggedWork(), loggedWork()])
     expect(warmups(entryFor(noReps))).toEqual(generatedWarmups(noReps))
   })
 
@@ -143,5 +146,45 @@ describe('planned warm-ups carried from last session', () => {
     const restPauseRoutine = routineWith(cfg({ warmupSets: 1, intensifier: { type: 'restpause', totalReps: 12 } }))
     const restPauseState = state(restPauseRoutine, [loggedWarmup(20, 12), loggedWork(), loggedWork(), loggedWork()])
     expect(warmups(entryFor(restPauseState))).toEqual(generatedWarmups(restPauseState))
+  })
+
+  // The auto-ramp freeze: a block nobody set up is the routine's ramp, built again for today's
+  // work weight, not last time's 50/75% copied forever while the work sets climb.
+  it('builds an untouched automatic ramp again for the new work weight', () => {
+    const routine = routineWith(cfg({ warmupSets: 2 }))
+    // a ramp built for a 40 kg day, before the work sets went up to 60
+    const st = state(routine, [autoWarmup(20, 8), autoWarmup(30, 8), loggedWork(), loggedWork(), loggedWork()])
+    const entry = entryFor(st)
+    expect(work(entry).map(row => row.w)).toEqual([62.5, 62.5, 62.5])
+    expect(warmups(entry)).toEqual(generatedWarmups(st))
+    expect(warmups(entry).map(row => row.w)).toEqual([30, 45])
+    expect(warmups(entry).some(row => row.edited)).toBe(false)
+  })
+
+  it('follows the routine warm-up count when last time was all automatic', () => {
+    const routine = routineWith(cfg({ warmupSets: 1 }))
+    const st = state(routine, [autoWarmup(30, 8), autoWarmup(45, 8), loggedWork(), loggedWork(), loggedWork()])
+    expect(warmups(entryFor(st))).toHaveLength(1)
+  })
+
+  it('reads warm-ups saved before the mark as automatic', () => {
+    const routine = routineWith(cfg({ warmupSets: 2 }))
+    const st = state(routine, [autoWarmup(30, 8, { done: false }), autoWarmup(45, 8), loggedWork(), loggedWork(), loggedWork()])
+    expect(warmups(entryFor(st))).toEqual(generatedWarmups(st))
+  })
+
+  it('keeps the rows you set by hand and ramps the automatic ones in between', () => {
+    const routine = routineWith(cfg({ warmupSets: 0 }))
+    // last time: an empty-bar set typed by hand, then an automatic rung
+    const st = state(routine, [loggedWarmup(20, 15), autoWarmup(40, 8), loggedWork(), loggedWork(), loggedWork()])
+    const entry = entryFor(st)
+    const [first, second] = warmups(entry)
+    expect(warmups(entry)).toHaveLength(2)
+    expect([first.w, first.r, first.edited]).toEqual([20, 15, true])
+    // the automatic rung halves the gap from 20 to today's 62.5 again, rounded down to 2.5
+    expect(second.edited).toBeUndefined()
+    expect(second.w).toBe(40)
+    expect(second.r).toBe(work(entry)[0].r)
+    expect(entry.sets.slice(2)).toEqual(work(entry))
   })
 })

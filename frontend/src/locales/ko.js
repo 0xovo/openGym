@@ -1422,7 +1422,7 @@ export default {
   'Planned sessions start from': '계획된 세션의 시작 기준',
   'The routine’s sets and reps. Your history decides the weight.': '루틴의 세트와 횟수. 무게는 기록에 따라 정해집니다.',
   'Your last session': '지난 세션',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': '그 루틴에서 지난번에 기록한 횟수를 그대로 가져옵니다. 진행이 꺼져 있으면 무게도 가져옵니다.',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': '그 루틴에서 지난번에 기록한 횟수와 직접 설정한 워밍업 세트를 그대로 가져옵니다. 진행이 꺼져 있으면 무게도 가져옵니다.',
   'Last time means': '\'지난번\' 기준',
   'This routine': '이 루틴',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': '같은 루틴에서 이 운동을 한 지난 세션이에요. 무거운 날과 가벼운 날이 따로 가요.',

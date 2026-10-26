@@ -1422,7 +1422,7 @@ export default {
   'Planned sessions start from': 'प्लान किए गए सेशन की शुरुआत',
   'The routine’s sets and reps. Your history decides the weight.': 'रूटीन के सेट और रेप्स। वज़न आपका इतिहास तय करता है।',
   'Your last session': 'आपका पिछला सेशन',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'उस रूटीन में पिछली बार दर्ज किए गए रेप्स आगे लाए जाते हैं। प्रगति बंद हो तो वज़न भी।',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'उस रूटीन में पिछली बार दर्ज किए गए रेप्स आगे लाए जाते हैं, साथ ही वे वॉर्म-अप सेट जो आपने खुद सेट किए। प्रगति बंद हो तो वज़न भी।',
   'Last time means': '"पिछली बार" का मतलब',
   'This routine': 'यही रूटीन',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'इसी रूटीन में इस एक्सरसाइज़ का पिछला सेशन। भारी दिन और हल्का दिन अलग रहते हैं।',

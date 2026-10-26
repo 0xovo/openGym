@@ -88,6 +88,12 @@ falls off an exercise's map (the old one stays as a secondary), but the full wei
 **your recovery, fatigue and muscle balance numbers will shift** after the update, with your history
 recounted the new way. Your quads will suddenly look a lot busier on squat day. That's the fix.
 
+**"Your last session" brings your warm-ups too** (#525, #658, thanks @ifrankerem). With Settings →
+During a workout → Planned sessions start from → Your last session, the warm-ups you set up yourself
+(typed, stepped, added by hand, from the phone or the watch) come back next time just as you left
+them. The ramp the routine builds for you stays automatic and follows today's work weight, so a
+50 % rung from your 60 kg days doesn't stay stuck at 30 kg once you bench 100.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a

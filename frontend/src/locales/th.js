@@ -1433,7 +1433,7 @@ export default {
   'Planned sessions start from': 'จุดเริ่มต้นของเซสชันตามแผน',
   'The routine’s sets and reps. Your history decides the weight.': 'จำนวนเซ็ตและครั้งตามรูทีน ส่วนน้ำหนักขึ้นอยู่กับประวัติของคุณ',
   'Your last session': 'เซสชันล่าสุดของคุณ',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'นำจำนวนครั้งที่บันทึกไว้ครั้งก่อนในรูทีนนั้นมาใช้ และถ้าปิดความก้าวหน้าก็รวมน้ำหนักด้วย',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'นำจำนวนครั้งที่บันทึกไว้ครั้งก่อนในรูทีนนั้นมาใช้ รวมถึงเซ็ตวอร์มอัพที่คุณตั้งเอง และถ้าปิดความก้าวหน้าก็รวมน้ำหนักด้วย',
   'Last time means': '"ครั้งที่แล้ว" หมายถึง',
   'This routine': 'รูทีนนี้',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'เซสชันล่าสุดของท่านี้ในรูทีนเดียวกัน วันหนักกับวันเบาแยกกัน',

@@ -1347,7 +1347,7 @@ export default {
   'Planned sessions start from': 'نقطة بدء الجلسات المخطط لها',
   'The routine’s sets and reps. Your history decides the weight.': 'مجموعات الروتين وتكراراته. سجلّك يحدد الوزن.',
   'Your last session': 'جلستك الأخيرة',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'تُنقل التكرارات المسجّلة في آخر مرة في هذا الروتين. وعند إيقاف التدرّج، الوزن أيضًا.',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'تُنقل التكرارات المسجّلة في آخر مرة في هذا الروتين، ومعها مجموعات الإحماء التي ضبطتها بنفسك. وعند إيقاف التدرّج، الوزن أيضًا.',
   'Last time means': '"آخر مرة" تعني',
   'This routine': 'هذا الروتين',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'آخر جلسة للتمرين في الروتين نفسه. يبقى اليوم الثقيل واليوم الخفيف منفصلين.',

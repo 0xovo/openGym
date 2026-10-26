@@ -1425,7 +1425,7 @@ export default {
   'Planned sessions start from': 'A tervezett edzések kiindulópontja',
   'The routine’s sets and reps. Your history decides the weight.': 'A rutin sorozatai és ismétlései. A súlyt az előzményeid döntik el.',
   'Your last session': 'Az utolsó edzésed',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'A rutin legutóbbi ismétlései átkerülnek. Kikapcsolt haladásnál a súly is.',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'A rutin legutóbbi ismétlései átkerülnek, és a saját magad beállított bemelegítő sorozatok is. Kikapcsolt haladásnál a súly is.',
   'Last time means': 'A „legutóbb” jelentése',
   'This routine': 'Ez a rutin',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'A gyakorlat legutóbbi edzése ugyanebben a rutinban. A nehéz és a könnyű nap külön marad.',

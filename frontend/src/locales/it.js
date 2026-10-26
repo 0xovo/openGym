@@ -1422,7 +1422,7 @@ export default {
   'Planned sessions start from': 'Punto di partenza delle sessioni pianificate',
   'The routine’s sets and reps. Your history decides the weight.': 'Serie e ripetizioni della routine. Il peso lo decide il tuo storico.',
   'Your last session': 'La tua ultima sessione',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'Vengono riprese le ripetizioni registrate l’ultima volta in quella routine. Con la progressione disattivata, anche il peso.',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'Vengono riprese le ripetizioni registrate l’ultima volta in quella routine e i riscaldamenti che hai impostato tu. Con la progressione disattivata, anche il peso.',
   'Last time means': '"L’ultima volta" vuol dire',
   'This routine': 'Questa routine',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'La tua ultima sessione dell’esercizio nella stessa routine. Giorno pesante e giorno leggero restano separati.',

@@ -612,6 +612,9 @@ export function patchSetIn (s, { wid, exId, entryIdx, setIdx, side = null }, fie
   const write = (set, given) => {
     // A weight from the watch is in the exercise's own unit (#657), the one it was sent in.
     const f = given.w != null ? { ...given, w: storedWeight(s, exId, given.w, side && isSideSet(set) ? set.sides[side]?.w : set.w) } : given
+    // A warm-up whose numbers the watch changed is set by hand, as on the phone (#525).
+    const cur = side && isSideSet(set) ? set.sides[side] || {} : set
+    if (isWarmupRow(set) && ((f.w != null && f.w !== cur.w) || (f.r != null && f.r !== cur.r))) set.edited = true
     if (side && isSideSet(set)) {
       const { w, r, done, rpe, rir, ...rest } = f
       const one = { ...set.sides[side] }

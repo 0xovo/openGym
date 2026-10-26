@@ -1481,7 +1481,7 @@ export default {
   'Planned sessions start from': 'পরিকল্পিত সেশন শুরু হয়',
   'The routine’s sets and reps. Your history decides the weight.': 'রুটিনের সেট ও রেপ। ওজন ঠিক করে আপনার ইতিহাস।',
   'Your last session': 'আপনার শেষ সেশন',
-  'The reps you logged last time in that routine, carried over. With progression off, the weight too.': 'ওই রুটিনে গতবার লগ করা রেপ আনা হয়। অগ্রগতি বন্ধ থাকলে ওজনও।',
+  'The reps you logged last time in that routine, carried over, and any warm-ups you set up yourself. With progression off, the weight too.': 'ওই রুটিনে গতবার লগ করা রেপ আনা হয়, সঙ্গে তুমি নিজে যে ওয়ার্ম-আপ সেট ঠিক করেছ সেগুলোও। অগ্রগতি বন্ধ থাকলে ওজনও।',
   'Last time means': '"গতবার" মানে',
   'This routine': 'এই রুটিন',
   'Your last session of the exercise in the same routine. Heavy day and light day stay apart.': 'একই রুটিনে এই এক্সারসাইজের শেষ সেশন। ভারী দিন আর হালকা দিন আলাদা থাকে।',
