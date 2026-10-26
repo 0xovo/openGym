@@ -294,7 +294,7 @@ plan is in [ROADMAP.md](ROADMAP.md), and the issues sit in the
 | v1.4.0 | released Oct 2026 | A new exercise database with 5,632 exercises, plus two rounds of community work |
 | v1.4.1 | released Oct 2026 | Bug fixes for v1.4.0 |
 | v1.4.2 | released Oct 2026 | The App Store, the Apple Watch, widgets, three APK sizes |
-| v1.4.3 | in App Review | The community release: gym reminder, health data read back, watch upgrades, CSV export |
+| v1.4.3 | released Oct 2026 | The Halloween and community release: gym reminder, health data read back, watch upgrades, CSV export |
 | v1.4.4 | in progress | Programmes with %1RM and RPE targets, custom app icons, kg or lb per exercise, the Coach fix |
 | v1.4.5 | Nov 2026 | Remote MCP over HTTPS, Google Play, a gym reminder that also notices you leaving |
 | later | dates are guesses | Circuits and EMOM, a trainer role, OIDC, F-Droid, an on-device Coach, Strava and Garmin, database storage |
