@@ -4,7 +4,6 @@ export default {
   "Related muscles and exercise type. The movement may differ.": "Kapcsolódó izmok és azonos gyakorlattípus. A mozgás eltérhet.",
   "Same muscle, different exercise type. Check suitability.": "Azonos izom, más gyakorlattípus. Ellenőrizd a megfelelőségét.",
   "No suitable suggestions with these filters. Browse below or change gym.": "Ezekkel a szűrőkkel nincs megfelelő javaslat. Böngéssz a listában vagy válts edzőtermet.",
-  "Gym": "Edzőterem",
   "All equipment": "Minden eszköz",
   "Search results": "Keresési eredmények",
   "All exercises": "Minden gyakorlat",
@@ -13,6 +12,7 @@ export default {
   "Same movement and muscle": "Azonos mozgás és izom",
   "All other exercises": "Minden más gyakorlat",
   "No matches. Try another search or equipment profile.": "Nincs találat. Próbálj más keresést vagy eszközprofilt.",
+  'Just for this list. Your gym in Settings stays put.': 'Csak ehhez a listához. A beállításokban megadott edzőterem marad.',
   // --- generic ---
   'Confirm': 'Megerősítés',
   'Cancel': 'Mégse',

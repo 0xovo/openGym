@@ -1,5 +1,8 @@
 // @vitest-environment happy-dom
-// Suggestions lead the complete picker; the same-muscle chip remains optional.
+// #473: a swap opens on what trains the same muscle. Mid-workout (Swap exercise) and in the
+// routine editor (Replace exercise) the picker starts on the exercises sharing the swapped one's
+// target muscle, same equipment first, and "All" is one tap back to the whole list.
+// #674: suggested substitutes lead that list, and the gym chosen in a swap filters only the list.
 import React, { act } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRoot } from 'react-dom/client'
@@ -56,8 +59,8 @@ describe('sameMuscleFirst', () => {
   })
 })
 
-describe('swap suggestions and optional muscle filter', () => {
-  it('mid-workout: starts on All and still supports the same-muscle filter', () => {
+describe('swap picker opens on the same muscle', () => {
+  it('mid-workout: Swap exercise starts on the target muscle, same equipment first, All goes back', () => {
     expect(CABLE_TRI).toBeTruthy()
     const S = structuredClone(DEF)
     S.active = {
@@ -70,9 +73,8 @@ describe('swap suggestions and optional muscle filter', () => {
 
     const chip = sameChip(host)
     expect(chip.textContent).toContain('Triceps')
-    expect(isOn(chip)).toBe(false)
-    expect(isOn(chipByText(host, 'All'))).toBe(true)
-    act(() => chip.click())
+    expect(isOn(chip)).toBe(true)
+    expect(isOn(chipByText(host, 'All'))).toBe(false)
 
     const listed = rows(host)
     expect(listed.length).toBeGreaterThan(1)
@@ -93,13 +95,11 @@ describe('swap suggestions and optional muscle filter', () => {
   })
 
   // The routine editor hands its slot's exercise in (views/RoutineEdit.replace.test.jsx).
-  it('routine editor: starts on All with the same-muscle filter available', () => {
+  it('routine editor: a picker told what it replaces opens on that muscle', () => {
     const pick = vi.fn()
     exercisePicker(pick, { title: 'Replace exercise', like: CABLE_TRI.id })
     const host = renderTop()
-    expect(isOn(sameChip(host))).toBe(false)
-    expect(isOn(chipByText(host, 'All'))).toBe(true)
-    act(() => sameChip(host).click())
+    expect(isOn(sameChip(host))).toBe(true)
     expect(rows(host).every(s => s.startsWith('Triceps'))).toBe(true)
   })
 
@@ -136,7 +136,8 @@ it('shows a labelled suggestions section for Dead Hang Stretch with a gym profil
   expect(section.textContent).toContain('Same muscle and exercise type. The movement may differ.')
   expect(section.querySelectorAll('.item')).toHaveLength(3)
   expect(section.textContent).not.toContain('dead hang stretch')
-  expect(host.textContent).toContain('All other exercises')
+  // the list under the suggestions is the same-muscle one the swap opened on (#473)
+  expect([...host.querySelectorAll('h4.sec')].map(h => h.textContent)).toContain('Same muscle: lats')
 })
 
 describe('gym selection in a swap', () => {
@@ -164,22 +165,25 @@ describe('gym selection in a swap', () => {
     expect(suggestedNames(host)).toContain('push-up')
     const names = [...host.querySelectorAll('.list .tt')].map(e => e.textContent)
     expect(names.filter(n => n === 'dumbbell bench press')).toHaveLength(1)
-    expect(host.textContent).toContain('All other exercises')
     expect(names).not.toContain('barbell bench press')
+    expect(host.textContent).toContain('Just for this list. Your gym in Settings stays put.')
     chooseGym(host, 'Travel')
     expect(suggestedNames(host)).toEqual(['push-up'])
     expect(rows(host).every(s => s.endsWith('body weight'))).toBe(true)
-    const changed = structuredClone(useStore.getState().S)
-    expect(changed.activeEquipId).toBe('travel')
-    expect(changed.equipFilterOn).toBe(true)
-    changed.activeEquipId = baseline.activeEquipId
-    expect(Object.keys(changed.edited)).toEqual(['activeEquipId'])
-    delete changed.edited
-    delete changed._ts
-    expect(changed).toEqual(baseline)
+    // The list follows the gym picked here, the profile does not: Settings' gym, the filter
+    // switch and everything else are exactly as they were.
+    expect(useStore.getState().S).toEqual(baseline)
     chooseGym(host, 'All equipment')
-    expect(useStore.getState().S.equipFilterOn).toBe(false)
     expect(suggestedNames(host)).toContain('band bench press')
+    expect(useStore.getState().S).toEqual(baseline)
+  })
+  it('opens the next swap on the gym from Settings again', () => {
+    const host = openSwap()
+    chooseGym(host, 'Travel')
+    act(() => useUI.setState({ sheets: [] }))
+    exercisePicker(vi.fn(), { like: '0025', title: 'Swap exercise' })
+    const again = renderTop()
+    expect([...again.querySelectorAll('.lrow')].find(e => e.textContent.includes('Gym')).textContent).toContain('Home gym')
   })
   it('searches the entire available library, not just suggested movements', () => {
     const host = openSwap()

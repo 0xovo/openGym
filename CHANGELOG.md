@@ -101,6 +101,13 @@ Close and Open link underneath. On the iPhone the tap opens YouTube instead, bec
 and YouTube's player don't get along there yet. Self-hosting with your own `CONTENT_SECURITY_POLICY`?
 Add `frame-src https://www.youtube-nocookie.com` to it, or the card can only open the link.
 
+**Swap suggestions** (#674, thanks @Space-Hermes). Swapping an exercise now leads with up to three
+suggested substitutes that fit your equipment, right under your planned backups: the same movement
+when there's a close match, else the same muscle and type, and it tells you when a pick is a
+different kind of exercise. The list still opens on the same muscle. Got more than one gym set up?
+A Gym row at the top filters the list for another one, just for this swap: your gym in Settings
+stays put. A dead hang now needs a pull-up bar, as it always did in real life.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a

@@ -1521,15 +1521,26 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
     : t('Add “{0}”', exerciseNameText(e))
   const usage = usageMap(st)
   const [q, setQ] = useState('')
-  // Suggestions lead the full library; the same-muscle chip remains an optional filter.
   const backupList = (Array.isArray(backups) ? backups : []).map(id => EXIDX[id]).filter(Boolean)
+  // What a swap is away from: the picker opens on what trains the same muscle, if anything you
+  // can use does, and "All" is one tap back to everything. Suggested substitutes (#674) lead
+  // whichever list that is.
   const likeEx = like ? (EXIDX[like] || allExercises(st).find(e => e.id === like) || null) : null
   // A muscle nothing else trains gets no chip at all rather than one that lists nothing.
   const likeTg = swapMuscleOf(likeEx) && sameMuscleFirst(allExercises(st), likeEx).length ? swapMuscleOf(likeEx) : ''
-  const [bp, setBp] = useState('')                                        // '' = all, '★' = chosen, '☆' = favourites, '≈' = same muscle, else a body part
+  const [bp, setBp] = useState(() => {
+    if (!likeTg) return ''
+    const prof = activeProfile(st)
+    return sameMuscleFirst(allExercises(st), likeEx).some(e => !prof || exAvailable(st, e)) ? SAME : ''
+  })                                        // '' = all, '★' = chosen, '☆' = favourites, '≈' = same muscle, else a body part
   const [eq, setEq] = useState('')          // '' = any equipment
   const [cat, setCat] = useState('')        // '' = any type
   const [showAll, setShowAll] = useState(false)
+  // The gym a swap's list is filtered for (#674): null follows the active gym from Settings, ''
+  // is all equipment, else a profile's id. Picking one here only filters this list. Switching
+  // the gym for real stays in Settings, so a swap at a friend's gym never changes what your
+  // own sessions, Home and the gym reminder think you have.
+  const [gym, setGym] = useState(null)
   const [shown, setShown] = useState(50)
   const [byMuscle, setByMuscle] = useState(false)
   const searchRef = useRef(null)
@@ -1537,14 +1548,16 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
   const onSearchFocus = useSheetKeyboard(searchRef)
   const moreRef = useAutoMore(() => setShown(s => s + 50))
   const all = allExercises(st).filter(e => e.id !== like)
-  const profile = activeProfile(st)
+  const gymS = gym == null ? st : { ...st, equipFilterOn: !!gym, activeEquipId: gym || st.activeEquipId }
+  const profile = activeProfile(gymS)
+  const profiles = st.equipProfiles || []
   const inScope = e => bp === '★' ? usage[e.id] : bp === '☆' ? isFav(st, e.id) : (!bp || e.bp === bp)
   let inPart = searchExercises(bp === SAME ? sameMuscleFirst(all, likeEx) : all.filter(inScope), q)
   if (bp === '★') inPart = [...inPart].sort((a, b) => (usage[b.id] - usage[a.id]) || exerciseNameFor(a).localeCompare(exerciseNameFor(b)))
   // The Library's Type row (issue #521), with its fallback: a type the search or muscle group
   // narrowed away is ignored for this view, not forgotten.
   const { opts: catOpts, on: catOn, list: base } = byCategory(inPart, cat)
-  const eqFiltered = (profile && !showAll) ? base.filter(e => exAvailable(st, e)) : base
+  const eqFiltered = (profile && !showAll) ? base.filter(e => exAvailable(gymS, e)) : base
   const eqOpts = equipmentOf(eqFiltered)
   // Drop the equipment filter if the search narrowed it away, so you never hit a dead end.
   const eqOn = eqOpts.includes(eq) ? eq : ''
@@ -1556,8 +1569,10 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
   const ranked = q.trim() ? sortYoursFirst(narrowedList, st, usage) : sortFavouritesFirst(narrowedList, st)
   const f = bp === SAME ? sameMuscleFirst(ranked, likeEx) : ranked
   const showSuggestions = !!like && !q.trim() && bp !== '★' && bp !== '☆'
-  const closeMatches = showSuggestions ? suggestedSubstitutes(f, likeEx) : []
-  const suggested = closeMatches.length ? closeMatches : showSuggestions ? relatedSubstitutes(f, likeEx) : []
+  // A planned backup is already listed first, so it is not suggested a second time.
+  const pool = backupList.length && !q.trim() ? f.filter(e => !backupList.includes(e)) : f
+  const closeMatches = showSuggestions ? suggestedSubstitutes(pool, likeEx) : []
+  const suggested = closeMatches.length ? closeMatches : showSuggestions ? relatedSubstitutes(pool, likeEx) : []
   const remaining = f.filter(e => !suggested.includes(e))
   const chosenCount = Object.keys(usage).length
   const favCount = (st.favEx || []).length
@@ -1572,7 +1587,7 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
   // Worked out a beat behind the typing (useDeferredValue): the list itself never waits for it.
   const qLate = useDeferredValue(q)
   const similar = q.trim() && qLate === q && !special && f.length <= shown
-    ? similarExercises((profile && !showAll ? all.filter(e => exAvailable(st, e)) : all).filter(e => bp === SAME || !bp || e.bp === bp), q, f, f.length ? 12 : 30)
+    ? similarExercises((profile && !showAll ? all.filter(e => exAvailable(gymS, e)) : all).filter(e => bp === SAME || !bp || e.bp === bp), q, f, f.length ? 12 : 30)
     : []
   const pickRow = e => <div key={e.id} className="item" {...tappable(() => onPick(e))}>
         <Thumb ex={e} /><div className="grow"><div className={`tt ${exerciseNameClass(e)}`}>{isFav(st, e.id) && <Icon name="starFill" className="fav-star" />}{exerciseNameFor(e)}</div><div className="ss capitalize">{t(MUSCLE_NAME[e.tg] || e.tg || e.bp)} · {t(e.eq)}</div></div>
@@ -1599,15 +1614,11 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
       <Button size="sm" variant="tinted" icon="figureStrength" onClick={() => setByMuscle(true)}>{t('By muscle')}</Button>
     </div>
     {likeEx && <p className="small dim" style={{ margin: '0 0 12px' }}>{t('Replacing {0}', exerciseNameFor(likeEx))}</p>}
-    {like && <div className="sect-b" style={{ marginBottom: 12 }}>
-      {(st.equipProfiles || []).length > 0
-        ? <SelectRow icon="house" title={t('Gym')} value={profile?.id || ''}
-            options={[{ value: '', label: t('All equipment') }, ...st.equipProfiles.map(p => ({ value: p.id, label: p.name }))]}
-            onChange={id => {
-              update(s => { s.equipFilterOn = !!id; if (id) s.activeEquipId = id })
-              setShowAll(false); setEq(''); setCat(''); setBp(''); setShown(50)
-            }} />
-        : <Row icon="house" title={t('Add equipment profile')} accessory="chevron" onClick={() => equipmentProfileSheet(null)} />}
+    {like && profiles.length > 0 && <div className="sect-b" style={{ marginBottom: 12 }}>
+      <SelectRow icon="house" title={t('Gym')} value={profiles.some(p => p.id === profile?.id) ? profile.id : ''}
+        options={[{ value: '', label: t('All equipment') }, ...profiles.map(p => ({ value: p.id, label: p.name }))]}
+        onChange={id => { setGym(id); setShowAll(false); setEq(''); setCat(''); setShown(50) }} />
+      <p className="small dim" style={{ margin: '6px 4px 0' }}>{t('Just for this list. Your gym in Settings stays put.')}</p>
     </div>}
     {/* .picker-search is what index.css keys the keyboard-aware sheet layout on: the sheet
         lifts above the keys and the search stays put while the list scrolls under it. */}
@@ -1616,7 +1627,7 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
       {narrowed && <span className="search-count" role="status" aria-label={exCount(f.length)}>{fmtNum(f.length)}</span>}
       {q && <button className="clear" onClick={() => { setQ(''); setShown(50) }} aria-label={t('Clear')}><Icon name="xmark" /></button>}</div>
       <ExerciseViewToggle /></div></div>
-    {profile && !like && <div className="small dim row" style={{ margin: '8px 0 2px', gap: 6, alignItems: 'center' }}>
+    {profile && !(like && profiles.length) && <div className="small dim row" style={{ margin: '8px 0 2px', gap: 6, alignItems: 'center' }}>
       <Icon name="kettlebell" style={{ fontSize: 13 }} />
       {showAll ? t('Showing all equipment') : t('Showing what you have in "{0}"', profile.name)}
       <button className="chip nocap" style={{ marginInlineStart: 'auto', padding: '3px 10px', fontSize: 12 }} onClick={() => setShowAll(v => !v)}>
@@ -1642,10 +1653,11 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
       <button className={'chip nocap' + (!eqOn ? ' on' : '')} onClick={() => { setEq(''); setShown(50) }}>{t('Any equipment')}</button>
       {eqOpts.map(x => <button key={x} className={'chip' + (eqOn === x ? ' on' : '')} onClick={() => { setEq(x); setShown(50) }}>{t(x)}</button>)}
     </div>}
+    {/* The slot's planned substitutes, first, while nothing is typed: the plan already knows. */}
     {backupList.length > 0 && !q.trim() && <>
       <h4 className="sec">{t('Your backups')}</h4>
       <div className={'list' + (st.exerciseView === 'cards' ? ' ex-grid' : '')}>{backupList.map(pickRow)}</div>
-      <h4 className="sec">{t('Everything else')}</h4>
+      {!like && <h4 className="sec">{t('Everything else')}</h4>}
     </>}
     {showSuggestions && <section aria-label={t('Suggested substitutes')}>
       <h4 className="sec">{t('Suggested substitutes')}</h4>
@@ -1656,7 +1668,8 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
         : t('No suitable suggestions with these filters. Browse below or change gym.')}</p>
       <div className={'list' + (st.exerciseView === 'cards' ? ' ex-grid' : '')}>{suggested.map(pickRow)}</div>
     </section>}
-    {like && <h4 className="sec">{q.trim() ? t('Search results') : suggested.length ? t('All other exercises') : t('All exercises')}</h4>}
+    {like && <h4 className="sec">{q.trim() ? t('Search results') : bp === SAME ? t('Same muscle: {0}', t(MUSCLE_NAME[likeTg] || likeTg))
+      : suggested.length || backupList.length ? t('All other exercises') : t('All exercises')}</h4>}
     <div className={'list' + (st.exerciseView === 'cards' ? ' ex-grid' : '')}>
       {!special && <div className="item ex-new" {...tappable(() => customExSheet(null, ex => onPick(ex), q.trim()))}>
         <div className="thumb thumb-x"><Icon name="plusCircle" /></div>
@@ -1673,7 +1686,9 @@ function ExercisePicker({ onPick, title, close, like, actionIcon, backups }) {
   </>
 }
 // `title` names what the pick is for when it is not an add — the routine editor's Replace (#110).
-// `like` identifies the replaced exercise for suggestions and the inline gym selector.
+// `like` is the exercise a swap or a replace is away from: the picker then opens on the ones that
+// train the same muscle, same equipment first (#473), with suggested substitutes on top and a gym
+// choice that filters only this list (#674).
 // `backups`: the slot's planned substitutes (lib/routine-backups.js), listed first in a swap.
 export const exercisePicker = (onPick, { title, like, actionIcon, backups } = {}) => ui().openSheet(close => <ExercisePicker onPick={onPick} title={title} like={like} actionIcon={actionIcon} backups={backups} close={close} />)
 

@@ -4,7 +4,6 @@ export default {
   "Related muscles and exercise type. The movement may differ.": "กล้ามเนื้อที่เกี่ยวข้องและประเภทการออกกำลังกายเดียวกัน การเคลื่อนไหวอาจต่างกัน",
   "Same muscle, different exercise type. Check suitability.": "กล้ามเนื้อเดียวกัน แต่ประเภทการออกกำลังกายต่างกัน โปรดตรวจสอบความเหมาะสม",
   "No suitable suggestions with these filters. Browse below or change gym.": "ไม่มีท่าที่เหมาะสมตามตัวกรองนี้ ดูรายการด้านล่างหรือเปลี่ยนยิม",
-  "Gym": "ยิม",
   "All equipment": "อุปกรณ์ทั้งหมด",
   "Search results": "ผลการค้นหา",
   "All exercises": "ท่าออกกำลังกายทั้งหมด",
@@ -13,6 +12,7 @@ export default {
   "Same movement and muscle": "รูปแบบการเคลื่อนไหวและกล้ามเนื้อเดียวกัน",
   "All other exercises": "ท่าออกกำลังกายอื่นทั้งหมด",
   "No matches. Try another search or equipment profile.": "ไม่พบผลลัพธ์ ลองค้นหาใหม่หรือเลือกโปรไฟล์อุปกรณ์อื่น",
+  'Just for this list. Your gym in Settings stays put.': 'ใช้กับรายการนี้เท่านั้น ยิมของคุณในการตั้งค่ายังเหมือนเดิม',
   // --- generic ---
   'Confirm': 'ยืนยัน',
   'Cancel': 'ยกเลิก',
