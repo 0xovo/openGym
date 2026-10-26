@@ -28,6 +28,7 @@ import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
 import { syncPushSubscription } from './lib/push.js'
 import { MOBILE, nativePlatform } from './lib/mobile.js'
+import { useTour, tourState, openTour, readTour, shouldOffer, resumeAt } from './lib/tour.js'
 import { exitWorkoutEdit, startFlow, beginWorkout } from './sheets.jsx'
 import Icon from './components/Icon.jsx'
 import TabBar from './components/TabBar.jsx'
@@ -81,6 +82,8 @@ const History = lazyView(() => import('./views/History.jsx'))
 const Library = lazyView(() => import('./views/Library.jsx'))
 const Muscles = lazyView(() => import('./views/Muscles.jsx'))
 const SettingsRoute = lazyView(() => import('./views/Settings.jsx').then(m => ({ default: m.SettingsRoute })))
+// The app tour's overlay (components/Tour.jsx): fetched when it opens, never before.
+const Tour = lazy(() => import('./components/Tour.jsx'))
 let viewsPrefetched = false
 const prefetchViews = () => {
   if (viewsPrefetched) return
@@ -281,6 +284,28 @@ function Shell() {
   const noTabs = inWorkout || loc.pathname === '/coach' || needsMobileOnboarding || permSteps
 
   const authed = user || isGuest
+  // The first setup is through (sign-in or "Use on this device", and the phone's permission
+  // steps): "Want a 1-minute tour?" once, on a profile with nothing logged yet, or "Finish the
+  // tour?" once after one was closed halfway (lib/tour.js). A moment after the screen settles,
+  // never over a sheet or a workout, and only once the copy is the account's own.
+  const tour = useTour()
+  const tourAsked = useRef(false)
+  const setupDone = authed && ready && !needsMobileOnboarding && !permSteps
+  useEffect(() => {
+    if (!setupDone || tourAsked.current) return
+    const tm = setTimeout(() => {
+      const st = useStore.getState()
+      if (tourAsked.current || tourState() || st.S.active || useUI.getState().sheets.length || /^#\/workout/.test(window.location.hash || '')) return
+      const rec = readTour()
+      const at = resumeAt(rec)
+      const synced = !st.user || (st.sync?.status === 'ok' && st.sync.lastSynced > 0)
+      if (at) openTour({ kind: 'resume', at })
+      else if (shouldOffer(rec, st.S, { synced })) openTour({ kind: 'offer' })
+      else return
+      tourAsked.current = true
+    }, 1200)
+    return () => clearTimeout(tm)
+  }, [setupDone, S])
   // The boot screen in index.html covers the start; it goes once there is something to show.
   useEffect(() => { if (ready || authed) hideBoot() }, [ready, authed])
   if (!ready && !authed) return (
@@ -345,6 +370,7 @@ function Shell() {
       <Modals />
       <Toast />
       <TimerFlash />
+      {tour && authed && <Suspense fallback={null}><Tour /></Suspense>}
       {/* Seasonal decoration (lib/seasonal.js): nothing, and nothing loaded, out of season. Never
           over a running workout or the first-launch screens. */}
       {authed && !needsMobileOnboarding && !permSteps && <SeasonalLayer hidden={inWorkout || loc.pathname === '/workout'} />}

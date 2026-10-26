@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react'
 import { useStore } from '../store/useStore.js'
 import { activeSeason, seasonInWorkout } from '../lib/seasonal.js'
+import { useTourRunning } from '../lib/tour.js'
 
 /* The main bundle's side of the seasonal themes (lib/seasonal.js): two tiny components that render
    nothing at all unless a theme is showing, and only then fetch its module (seasonal/<id>.jsx,
@@ -16,7 +17,11 @@ const modOf = id => (mods[id] ||= {
   Deco: lazy(() => LOADERS[id]().then(m => ({ default: m.Deco }))),
 })
 
-const useSeason = () => useStore(s => activeSeason(s.S))
+// The app tour pauses the theme while it runs: nothing crawls across a spotlight.
+const useSeason = () => {
+  const id = useStore(s => activeSeason(s.S))
+  return useTourRunning() ? null : id
+}
 
 // Whether the first screen this session drew was one the theme may decorate. The spider's
 // "first open of the day" is an app start, so a start straight into a running workout skips it.
