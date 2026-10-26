@@ -4,7 +4,8 @@ import { describe, it, expect, vi, beforeAll, afterAll, afterEach } from 'vitest
 import {
   normalizeProgramme, programmesOf, newProgramme, saveProgramme, deleteProgramme, resizeWeeks, stepWeek,
   programmeStatus, startProgramme, pauseProgramme, resumeProgramme, endProgramme, repeatProgramme,
-  programmeSlot, pctWeight, importedProgramme, bundleProgramme, programmeRoutineIds, MAX_WEEKS, rpeAs,
+  programmeSlot, pctWeight, importedProgramme, bundleProgramme, programmeRoutineIds, MAX_WEEKS, rpeAs, cleanWeek,
+  IMPORT_MAX_SEQUENCE, IMPORT_MAX_TARGETS, IMPORT_MAX_PROGRAMMES,
 } from './programmes.js'
 import { buildSessionEntries } from './session-start.js'
 import { buildCompletedWorkout } from './finish-workout.js'
@@ -361,6 +362,21 @@ describe('sharing a programme', () => {
     expect(loop.sequence).toEqual(['a1', 'rest'])
   })
 
+  it('a file brings only what a programme is, at a size a programme has', () => {
+    const file = JSON.parse(`{"name":"Block","days":{"1":["A"]},"weeks":[{"t":{"__proto__":{"pct":80},"constructor":{"pct":75},"A:toString":{"pct":70}}}],
+      "src":"strength-4","run":{"startedOn":"2026-01-01"},"blob":"${'x'.repeat(1000)}"}`)
+    const got = importedProgramme(file, { A: 'a1' })
+    expect(Object.keys(got).sort()).toEqual(['at', 'days', 'id', 'name', 'weeks'])
+    // Inherited names are plain exercise ids, never Object's own functions.
+    expect(got.weeks[0].t).toEqual({ constructor: { pct: 75 }, 'a1:toString': { pct: 70 } })
+    expect(Object.getPrototypeOf(got.weeks[0].t)).toBe(Object.prototype)
+    expect(Object.getPrototypeOf(cleanWeek(file.weeks[0]).t)).toBe(Object.prototype)
+    expect(importedProgramme({ ...file, days: { 1: ['constructor'] } }, { A: 'a1' })).toBeNull()
+    const long = importedProgramme({ name: 'Loop', sequence: Array(500).fill('A'), weeks: [{ t: Object.fromEntries(Array.from({ length: 900 }, (_, i) => ['e' + i, { pct: 70 }])) }] }, { A: 'a1' })
+    expect(long.sequence).toHaveLength(IMPORT_MAX_SEQUENCE)
+    expect(Object.keys(long.weeks[0].t)).toHaveLength(IMPORT_MAX_TARGETS)
+  })
+
   it('survives a JSON round trip unchanged', () => {
     const p = normalizeProgramme(block())
     expect(normalizeProgramme(clone(p))).toEqual(p)
@@ -407,5 +423,12 @@ describe('a programme in a plan file (plan-share.js)', () => {
     const newer = parsePlan({ ...file, programme_fmt: 2 })
     expect(newer.programmes).toEqual([])
     expect(newer.routineCount).toBe(2)
+  })
+
+  it('a file with more programmes than anyone makes brings the first ones', () => {
+    const s = state()
+    saveProgramme(s, block())
+    const file = buildProgrammeBundle(s, 'P')
+    expect(parsePlan({ ...file, programmes: Array(100).fill(file.programmes[0]) }).programmes).toHaveLength(IMPORT_MAX_PROGRAMMES)
   })
 })

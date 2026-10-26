@@ -27,7 +27,7 @@ import { MUSCLES, inMuscleOrder } from './muscles.js'
 import { SG_NAME_MAX } from './superset-meta.js'
 import { esc, printShell, printDocument, probeMarks } from './print-doc.js'
 import { normalizeAliases } from './exercise-aliases.js'
-import { bundleProgramme, importedProgramme, programmeById, programmeRoutineIds, programmesOf } from './programmes.js'
+import { bundleProgramme, importedProgramme, programmeById, programmeRoutineIds, programmesOf, IMPORT_MAX_PROGRAMMES } from './programmes.js'
 
 const PLAN_FMT = 1
 // Programmes (#159) ride in a plan file as `programmes`, versioned on their own (`programme_fmt`)
@@ -336,7 +336,7 @@ export function parsePlan(raw, destinationUnit = 'kg') {
     scheduledDays: WEEK_DAYS.filter(d => data.week?.[d]?.length).length,
     // A newer programme format than this app reads is left out rather than half understood.
     programmes: Array.isArray(data.programmes) && !(Number(data.programme_fmt) > PROGRAMME_FMT)
-      ? data.programmes.filter(p => p && typeof p === 'object' && !Array.isArray(p)) : [],
+      ? data.programmes.filter(p => p && typeof p === 'object' && !Array.isArray(p)).slice(0, IMPORT_MAX_PROGRAMMES) : [],
     // `unit` is the unit of the returned prescriptions. `sourceUnit` is null for a legacy file;
     // that absence means its numbers were intentionally treated as already in `destination`.
     unit: destination,

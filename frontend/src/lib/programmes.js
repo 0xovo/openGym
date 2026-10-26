@@ -41,6 +41,11 @@ export const PCT_MAX = 110
 export const RPE_MIN = 6
 export const RPE_MAX = 10
 export const REPEAT_BUMP = 2.5
+// What a plan file may bring (importedProgramme, plan-share.js parsePlan): far past any real
+// programme, and a bound on what a stranger's file can put into the synced profile.
+export const IMPORT_MAX_PROGRAMMES = 32
+export const IMPORT_MAX_SEQUENCE = 64
+export const IMPORT_MAX_TARGETS = 200
 
 const isMap = v => !!v && typeof v === 'object' && !Array.isArray(v)
 const clone = v => (v == null ? v : JSON.parse(JSON.stringify(v)))
@@ -76,7 +81,8 @@ export function cleanWeek(w) {
     const t = {}
     for (const [k, v] of Object.entries(w.t)) {
       const c = cleanTarget(v)
-      if (c && k) t[k] = c
+      // "__proto__" from a parsed file is an own key there, but here it would set t's prototype.
+      if (c && k && k !== '__proto__') t[k] = c
     }
     if (Object.keys(t).length) out.t = t
   }
@@ -367,19 +373,27 @@ export function bundleProgramme(p) {
  * dropped. A new id of its own, never running.
  */
 export function importedProgramme(p, ridMap, exMap = {}, now = Date.now()) {
-  const n = normalizeProgramme({ ...p, id: 'x' })
+  // A file is someone else's: only the fields this app reads come in (no blob riding along into
+  // the synced profile), and a loop or a week of targets only as long as anyone writes one.
+  if (!isMap(p)) return null
+  const n = normalizeProgramme({
+    id: 'x', name: p.name, weeks: p.weeks, days: p.days,
+    ...(Array.isArray(p.sequence) ? { sequence: p.sequence.slice(0, IMPORT_MAX_SEQUENCE) } : {}),
+  })
   if (!n) return null
-  const rid = id => (id === REST ? REST : ridMap[id] || null)
+  // Own keys only: an id like "constructor" must not find Object's.
+  const own = (m, k) => (isMap(m) && Object.hasOwn(m, k) && typeof m[k] === 'string' ? m[k] : null)
+  const rid = id => (id === REST ? REST : own(ridMap, id))
   const key = k => {
     const i = k.indexOf(':')
-    if (i < 0) return exMap[k] || k
-    const r = ridMap[k.slice(0, i)]
-    return r ? `${r}:${exMap[k.slice(i + 1)] || k.slice(i + 1)}` : null
+    if (i < 0) return own(exMap, k) || k
+    const r = own(ridMap, k.slice(0, i))
+    return r ? `${r}:${own(exMap, k.slice(i + 1)) || k.slice(i + 1)}` : null
   }
   const weeks = n.weeks.map(w => {
     if (!w.t) return w
     const t = {}
-    for (const [k, v] of Object.entries(w.t)) { const nk = key(k); if (nk) t[nk] = v }
+    for (const [k, v] of Object.entries(w.t).slice(0, IMPORT_MAX_TARGETS)) { const nk = key(k); if (nk) t[nk] = v }
     return { ...w, t }
   })
   const out = { ...n, id: uid(), at: now, weeks }
