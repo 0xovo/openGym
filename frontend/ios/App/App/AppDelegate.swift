@@ -1,5 +1,7 @@
 import UIKit
 import Capacitor
+// UIScene.ConnectionOptions.shouldHandleActiveWorkoutRecovery (iOS 26) lives here.
+import HealthKitUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
