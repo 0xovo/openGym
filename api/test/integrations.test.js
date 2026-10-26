@@ -319,7 +319,7 @@ test('connect, deliver signed, fail, retry and disconnect, end to end', async ()
   // The receiver goes down: logged, retried, and the card says so once it gives up.
   r.setAnswer(() => ({ status: 503, headers: {} }));
   r.hub.onStateWrite('u1', {}, { bodyweight: [{ d: '2026-10-20', w: 80.2, t: NOW + 50000 }] });
-  for (let i = 0; i < 6; i++) { await r.hub._outbox().run(); r.tick(7 * 3600_000); }
+  for (let i = 0; i < 8; i++) { await r.hub._outbox().run(); r.tick(7 * 3600_000); }
   let v = r.hub.describe('u1').connections[0];
   assert.equal(v.status, 'attention');
   assert.match(v.lastError.msg, /503/);

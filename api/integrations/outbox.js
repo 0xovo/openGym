@@ -8,7 +8,8 @@
  *                restored over the profile, all end in one delivery.
  *   retries      A failure the far side may get over (a timeout, a 5xx, a 429) is tried again after
  *                backoffDelay(attempt): 30 s doubling to at most 6 h, give or take a quarter
- *                (jitter, so a receiver that was down is not hit by every job at the same second).
+ *                (jitter, so a receiver that was down is not hit by every job at the same second),
+ *                eight tries over about an hour.
  *                A Retry-After the receiver sent wins when it is longer. After MAX_ATTEMPTS, or at
  *                once for a refusal that will never change (a 4xx), the job moves to `failed`,
  *                where the app's Retry button can bring it back.
@@ -21,7 +22,7 @@
 import fs from 'node:fs';
 import { atomicWrite } from '../durable.js';
 
-export const MAX_ATTEMPTS = 6;
+export const MAX_ATTEMPTS = 8;
 export const BASE_MS = 30_000;
 export const CAP_MS = 6 * 3600_000;
 export const RETRY_AFTER_CAP_MS = 6 * 3600_000;

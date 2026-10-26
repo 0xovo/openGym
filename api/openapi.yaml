@@ -2456,7 +2456,7 @@ paths:
       operationId: retryIntegration
       summary: Send the failed deliveries again
       description: >-
-        Deliveries the server gave up on (after six attempts over about four hours, or at once
+        Deliveries the server gave up on (after eight attempts over about an hour, or at once
         for a refusal like a 404) go back into the queue from attempt one and are sent now.
       requestBody:
         required: true
