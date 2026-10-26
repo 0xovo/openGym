@@ -2757,4 +2757,6 @@ export default {
   'Next year': '下一年',
   'Pick a month': '選擇月份',
   'Pick a day': '選擇日期',
+  'With pictures': '附圖片',
+  'A small picture next to each exercise, like a plan from the gym.': '每個動作旁邊附一張小圖，就像健身房給的訓練計畫。',
 }

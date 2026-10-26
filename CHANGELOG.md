@@ -139,6 +139,12 @@ The community release. Most of what's below was asked for on GitHub and Discord 
 pull request, the Apple Watch learned a whole bag of tricks, and openGym starts again on iPhones
 that 1.4.2 left staring at the logo. Sorry about that one.
 
+**Pictures on the printed plan** (#817, thanks @Teo230). Print / Save as PDF asks one thing first:
+With pictures. On, every exercise gets a small picture next to its sets, rest and note, two to a
+row, like the paper plan your gym hands out. It's on by default and this device remembers your
+choice; off gives you the plain list. Your own exercises print their own photo, and one without a
+picture simply prints as text.
+
 **openGym starts again on iOS 15.5 to 16.3** (P1). 1.4.2 and the web demo sat on the splash
 forever there, because one tiny link check used regex syntax Safari only learned in 16.4.
 Rewritten, the build now targets Safari 15 like the app does, and a test reads every built file

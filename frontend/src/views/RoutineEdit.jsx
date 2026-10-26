@@ -8,7 +8,7 @@ import { uid, exerciseNameText } from '../lib/format.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { supersetUnits, moveRoutineEntry, cleanupSg, exLine, pickedExerciseConfig } from '../lib/history.js'
 import { Thumb } from '../components/Media.jsx'
-import { glyphPicker, exercisePicker, exConfigSheet, confirmSheet, supersetSheet } from '../sheets.jsx'
+import { glyphPicker, exercisePicker, exConfigSheet, confirmSheet, supersetSheet, printPlanSheet } from '../sheets.jsx'
 import { supersetMeta, setSupersetMeta } from '../lib/superset-meta.js'
 import { fmtRest } from '../lib/duration.js'
 import Icon from '../components/Icon.jsx'
@@ -17,10 +17,7 @@ import { Button, Row, SelectRow, Switch } from '../components/ui.jsx'
 import SwipeRow from '../components/SwipeRow.jsx'
 import { workoutControls } from '../lib/workout-controls.js'
 import { copyRoutine, deleteRoutine, replaceSlotExercise } from '../lib/routines.js'
-import { planPrintHTML, printPlan } from '../lib/plan-share.js'
-import { printOptions } from '../lib/print-doc.js'
 import { markEntryUndone } from '../lib/sync-merge.js'
-import { MOBILE, printHtml } from '../lib/mobile.js'
 import { speedUnitOf } from '../lib/speed.js'
 import { POLICIES_FOR, POLICY_NAME, POLICY_DESC, profileRule } from '../lib/progression.js'
 import BodyMap from '../components/BodyMap.jsx'
@@ -420,16 +417,12 @@ export default function RoutineEdit() {
       exConfigSheet(ex, next, cfg => commit(ex, current => ({ id: ex.id, sg: current.sg, ...cfg })), null, r, null, null, t('Replace'), { backups: true })
     }, { title: t('Replace exercise'), like: openedOn, backups: r.ex[i]?.subs })
   }
-  // This routine on paper (#282): the weekly printout's page for one session, through the same
-  // two print paths — the browser's print dialog (→ Save as PDF) on the web, the native Print
-  // plugin in the app, where the WebView has no window.print().
-  const printRoutine = () => {
-    const owner = useStore.getState().user?.name || ''
-    // Android's print manager refuses a job without a name. The editor never leaves a name blank,
-    // but a routine that arrived from an import or another client may have none.
-    if (MOBILE) printHtml(planPrintHTML(S, owner, { routineId: id }), r.name || t('Routine'), printOptions()).catch(() => { /* dismissed */ })
-    else printPlan(S, owner, { routineId: id })
-  }
+  // This routine on paper (#282): the print step (sheets.jsx printPlanSheet, "With pictures"
+  // #817), then the weekly printout's page for one session through the same two print paths: the
+  // browser's print dialog (→ Save as PDF) on the web, the native Print plugin in the app.
+  // Android's print manager refuses a job without a name. The editor never leaves a name blank,
+  // but a routine that arrived from an import or another client may have none.
+  const printRoutine = () => printPlanSheet({ routineId: id, name: r.name || t('Routine') })
   const toggleLink = i => edit(ex => {
     if (i < 1) return
     const cur = ex[i], prev = ex[i - 1]

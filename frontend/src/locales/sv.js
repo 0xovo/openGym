@@ -2811,4 +2811,6 @@ export default {
   'Next year': 'Nästa år',
   'Pick a month': 'Välj månad',
   'Pick a day': 'Välj dag',
+  'With pictures': 'Med bilder',
+  'A small picture next to each exercise, like a plan from the gym.': 'En liten bild bredvid varje övning, som ett program från gymmet.',
 }

@@ -2764,4 +2764,6 @@ export default {
   'Next year': '다음 연도',
   'Pick a month': '월 선택',
   'Pick a day': '날짜 선택',
+  'With pictures': '그림 포함',
+  'A small picture next to each exercise, like a plan from the gym.': '각 운동 옆에 작은 그림이 들어가요. 헬스장에서 받는 계획표처럼요.',
 }

@@ -2767,4 +2767,6 @@ export default {
   'Next year': 'Következő év',
   'Pick a month': 'Válassz hónapot',
   'Pick a day': 'Válassz napot',
+  'With pictures': 'Képekkel',
+  'A small picture next to each exercise, like a plan from the gym.': 'Egy kis kép minden gyakorlat mellett, mint egy edzőtermi edzésterv.',
 }

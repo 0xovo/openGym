@@ -2764,4 +2764,6 @@ export default {
   'Next year': '下一年',
   'Pick a month': '选择月份',
   'Pick a day': '选择日期',
+  'With pictures': '带图片',
+  'A small picture next to each exercise, like a plan from the gym.': '每个动作旁边配一张小图，就像健身房给的训练计划。',
 }

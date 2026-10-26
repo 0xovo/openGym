@@ -2775,4 +2775,6 @@ export default {
   'Next year': 'ปีถัดไป',
   'Pick a month': 'เลือกเดือน',
   'Pick a day': 'เลือกวัน',
+  'With pictures': 'พร้อมรูปภาพ',
+  'A small picture next to each exercise, like a plan from the gym.': 'รูปเล็กๆ ข้างแต่ละท่า เหมือนแผนจากยิม',
 }

@@ -2764,4 +2764,6 @@ export default {
   'Next year': 'Année suivante',
   'Pick a month': 'Choisis un mois',
   'Pick a day': 'Choisis un jour',
+  'With pictures': 'Avec images',
+  'A small picture next to each exercise, like a plan from the gym.': 'Une petite image à côté de chaque exercice, comme un programme de la salle.',
 }

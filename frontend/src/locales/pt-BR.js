@@ -1801,6 +1801,7 @@ export const PT_BR_OVERRIDES = {
   'Next year': 'Próximo ano',
   'Pick a month': 'Escolha um mês',
   'Pick a day': 'Escolha um dia',
+  'A small picture next to each exercise, like a plan from the gym.': 'Uma pequena imagem ao lado de cada exercício, como uma ficha da academia.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

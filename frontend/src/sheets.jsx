@@ -39,8 +39,8 @@ import { suggestedSubstitutes, relatedSubstitutes } from './lib/exercise-substit
 import { exerciseMuscleSnapshot, loadOfWorkouts, MUSCLES, MUSCLE_NAME, muscleWeightsOf, muscleGroupsOf, hasExplicitMuscleMetadata, inMuscleOrder } from './lib/muscles.js'
 import { parseImport, mergeImport } from './lib/import-csv.js'
 import { importHevyData, HevyApiError, HEVY_DEV_SETTINGS, mergeHevyRoutines, hevySummaryCounts } from './lib/import-hevy.js'
-import { buildPlanBundle, buildProgrammeBundle, parsePlan, mergePlan, printPlan, planPrintHTML } from './lib/plan-share.js'
-import { printOptions } from './lib/print-doc.js'
+import { buildPlanBundle, buildProgrammeBundle, parsePlan, mergePlan } from './lib/plan-share.js'
+import PrintPlanSheet from './components/PrintPlanSheet.jsx'
 import { printWorkout } from './lib/report-print.js'
 import { estimate1RM, best1RM, is1RMRecord, REP_CAP, formulaOf, FORMULA_NAMES } from './lib/onerm.js'
 import { exerciseHistory } from './lib/exercise-history.js'
@@ -50,7 +50,7 @@ import { policyFor, profileRule, defaultIncrement, POLICIES_FOR, POLICY_NAME, PO
 import { normalizeRepRange } from './lib/rep-range.js'
 import { isBackoff, backoffWeights } from './lib/backoff.js'
 import { isPyramid, normalizePyramid, normalizePyramidRest, normalizePyramidWeight, pyramidFromFlat, flatFromPyramid, pyramidLabel, PYRAMID_MAX, MAX_PYRAMID_SETS, PYRAMID_PRESETS } from './lib/pyramid.js'
-import { MOBILE, shareExport, shareExportBlob, printHtml } from './lib/mobile.js'
+import { MOBILE, shareExport, shareExportBlob } from './lib/mobile.js'
 import { speedUnitOf, toSpeed, fromSpeed } from './lib/speed.js'
 import { clampIncline, inclineFits, INCLINE_MAX, INCLINE_STEP } from './lib/incline.js'
 import { buildCompletedWorkout, sessionEnd } from './lib/finish-workout.js'
@@ -2600,13 +2600,13 @@ export async function exportProgrammeFile(id) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); URL.revokeObjectURL(a.href)
   toast(t('Programme file saved. Send it to a friend!'))
 }
-// Web: the browser's print dialog (→ Save as PDF). Mobile: the OS print flow via the native
-// Print plugin — Android WebView has no window.print(). Same printable HTML both ways.
-export function printWholePlan() {
-  const st = S(), owner = useStore.getState().user?.name || ''
-  if (MOBILE) printHtml(planPrintHTML(st, owner), t('Weekly Training Plan'), printOptions()).catch(() => { /* dismissed */ })
-  else printPlan(st, owner)
-}
+// The print step (components/PrintPlanSheet.jsx): "With pictures", then the browser's print
+// dialog (→ Save as PDF) on the web or the OS print flow via the native Print plugin in the app
+// (Android's WebView has no window.print()). Same printable HTML both ways. Without `routineId`
+// it is the whole week; with it, that one routine (#282), and `name` names its print job.
+export const printPlanSheet = ({ routineId, name } = {}) =>
+  ui().openSheet(close => <PrintPlanSheet routineId={routineId} name={name} close={close} />)
+export const printWholePlan = () => printPlanSheet()
 // A picked plan file → the import sheet, or a toast saying why not.
 export function importPlanFile(f, onRead) {
   if (!f) return

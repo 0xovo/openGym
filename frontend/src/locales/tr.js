@@ -2764,4 +2764,6 @@ export default {
   'Next year': 'Sonraki yıl',
   'Pick a month': 'Ay seç',
   'Pick a day': 'Gün seç',
+  'With pictures': 'Resimli',
+  'A small picture next to each exercise, like a plan from the gym.': 'Her egzersizin yanında küçük bir resim, spor salonundan alınan bir program gibi.',
 }

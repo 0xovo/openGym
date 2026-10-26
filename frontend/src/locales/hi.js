@@ -2764,4 +2764,6 @@ export default {
   'Next year': 'अगला साल',
   'Pick a month': 'महीना चुनें',
   'Pick a day': 'दिन चुनें',
+  'With pictures': 'तस्वीरों के साथ',
+  'A small picture next to each exercise, like a plan from the gym.': 'हर एक्सरसाइज़ के पास एक छोटी तस्वीर, जिम से मिले प्लान की तरह।',
 }

@@ -2843,4 +2843,6 @@ export default {
   'Next year': 'পরের বছর',
   'Pick a month': 'একটি মাস বেছে নিন',
   'Pick a day': 'একটি দিন বেছে নিন',
+  'With pictures': 'ছবিসহ',
+  'A small picture next to each exercise, like a plan from the gym.': 'প্রতিটি ব্যায়ামের পাশে একটি ছোট ছবি, জিমের দেওয়া প্ল্যানের মতো।',
 }

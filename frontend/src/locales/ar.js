@@ -2819,4 +2819,6 @@ export default {
   'Next year': 'السنة التالية',
   'Pick a month': 'اختر شهرًا',
   'Pick a day': 'اختر يومًا',
+  'With pictures': 'مع الصور',
+  'A small picture next to each exercise, like a plan from the gym.': 'صورة صغيرة بجانب كل تمرين، مثل خطة من النادي الرياضي.',
 }

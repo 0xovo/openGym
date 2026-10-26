@@ -2761,4 +2761,6 @@ export default {
   'Next year': 'Наступний рік',
   'Pick a month': 'Вибери місяць',
   'Pick a day': 'Вибери день',
+  'With pictures': 'З малюнками',
+  'A small picture next to each exercise, like a plan from the gym.': 'Маленький малюнок біля кожної вправи, як план зі спортзалу.',
 }
