@@ -157,6 +157,8 @@ export default {
   'Volume': '总量',
   'Count warm-ups in volume': '热身组计入总量',
   'Handy when you compare with another app. Records ignore warm-ups either way.': '和其他应用对比时很方便。纪录无论如何都不算热身组。',
+  'Count body weight in bodyweight lifts': '自重动作计入体重',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': '引体向上、双杠臂屈伸和俯卧撑会把最接近的一次体重加进训练量。纪录保持你记录的样子。',
   'Lifted in total': '累计举起',
   'PRs': '纪录',
   'New PR:': '新纪录：',

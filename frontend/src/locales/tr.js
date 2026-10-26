@@ -157,6 +157,8 @@ export default {
   'Volume': 'Hacim',
   'Count warm-ups in volume': 'Isınma setlerini hacme kat',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Başka bir uygulamayla karşılaştırırken işe yarar. Rekorlar ısınmayı her durumda saymaz.',
+  'Count body weight in bodyweight lifts': 'Vücut ağırlığı hareketlerinde vücut ağırlığını say',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'Barfiks, dips ve şınav hacmine en yakın tartımın eklenir. Rekorlar girdiğin gibi kalır.',
   'Lifted in total': 'Toplam kaldırılan',
   'PRs': 'Rekorlar',
   'New PR:': 'Yeni rekor:',

@@ -155,6 +155,8 @@ export default {
   'Volume': 'Volumen',
   'Count warm-ups in volume': 'Bemelegítés beszámítása a volumenbe',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Jól jön, ha egy másik appal hasonlítasz össze. A rekordok így is, úgy is figyelmen kívül hagyják a bemelegítést.',
+  'Count body weight in bodyweight lifts': 'Testsúly beszámítása a saját testsúlyos gyakorlatokba',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'A húzódzkodás, tolódzkodás és fekvőtámasz volumenébe bekerül a legközelebbi mérésed. A rekordok maradnak, ahogy rögzítetted.',
   'Lifted in total': 'Összesen megmozgatva',
   'PRs': 'Rekordok',
   'New PR:': 'Új rekord:',

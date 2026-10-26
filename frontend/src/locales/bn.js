@@ -188,6 +188,8 @@ export default {
   'Volume': 'ভলিউম',
   'Count warm-ups in volume': 'ভলিউমে ওয়ার্ম-আপ গুনুন',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'অন্য অ্যাপের সাথে তুলনা করতে কাজে লাগে। রেকর্ড সব সময়ই ওয়ার্ম-আপ বাদ দেয়।',
+  'Count body weight in bodyweight lifts': 'বডিওয়েট ব্যায়ামে শরীরের ওজন গুনুন',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'পুল-আপ, ডিপ আর পুশ-আপের ভলিউমে আপনার সবচেয়ে কাছের ওজন যোগ হয়। রেকর্ড যেমন লগ করা তেমনই থাকে।',
   'Lifted in total': 'মোট তোলা',
   'PRs': 'রেকর্ড',
   'New PR:': 'নতুন রেকর্ড:',

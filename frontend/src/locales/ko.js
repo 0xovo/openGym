@@ -157,6 +157,8 @@ export default {
   'Volume': '볼륨',
   'Count warm-ups in volume': '워밍업을 볼륨에 포함',
   'Handy when you compare with another app. Records ignore warm-ups either way.': '다른 앱과 비교할 때 유용해요. 기록에는 어느 쪽이든 워밍업이 반영되지 않아요.',
+  'Count body weight in bodyweight lifts': '맨몸 운동에 체중 포함',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': '턱걸이, 딥스, 푸시업 볼륨에 가장 가까운 체중 기록이 더해져요. 기록은 입력한 그대로예요.',
   'Lifted in total': '지금까지 든 총량',
   'PRs': '신기록',
   'New PR:': '신기록:',

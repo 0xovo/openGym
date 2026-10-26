@@ -164,6 +164,8 @@ export default {
   'Volume': 'Volym',
   'Count warm-ups in volume': 'Räkna uppvärmning i volymen',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Praktiskt när du jämför med en annan app. Rekord bryr sig inte om uppvärmning i alla fall.',
+  'Count body weight in bodyweight lifts': 'Räkna kroppsvikten i kroppsviktsövningar',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'Chins, dips och armhävningar lägger till din närmaste vägning i volymen. Rekord står kvar som du loggade dem.',
   'Lifted in total': 'Lyft totalt',
   'PRs': 'Personbästan',
   'New PR:': 'Nytt personbästa:',

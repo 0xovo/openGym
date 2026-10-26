@@ -161,6 +161,8 @@ export default {
   'Volume': 'حجم التدريب',
   'Count warm-ups in volume': 'احتساب الإحماء في حجم التدريب',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'مفيد عند المقارنة مع تطبيق آخر. الأرقام القياسية تتجاهل الإحماء في كل الأحوال.',
+  'Count body weight in bodyweight lifts': 'احتساب وزن الجسم في تمارين وزن الجسم',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'العقلة والمتوازي والضغط تضيف أقرب وزن سجلته إلى حجم التدريب. الأرقام القياسية تبقى كما سُجلت.',
   'Lifted in total': 'المرفوع إجمالًا',
   'PRs': 'الأرقام القياسية',
   'New PR:': 'رقم قياسي جديد:',

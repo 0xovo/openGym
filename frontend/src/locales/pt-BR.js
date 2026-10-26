@@ -7,6 +7,8 @@ export const PT_BR_OVERRIDES = {
   'The search finds it by these too. Separate them with commas.': 'A busca também encontra o exercício por estes. Separe com vírgulas.',
   'Save names': 'Salvar nomes',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Ajuda quando você compara com outro app. Os recordes ignoram o aquecimento de qualquer jeito.',
+  'Count body weight in bodyweight lifts': 'Contar o peso corporal nos exercícios com o corpo',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'Barras, paralelas e flexões somam ao volume a pesagem mais próxima. Os recordes ficam como foram registrados.',
   // --- workout: a likely typo asked about at the tick ---
   'Is that right?': 'Está certo?',
   'Weight: {0} is more than twice your heaviest, {1}.': 'Peso: {0} é mais que o dobro do seu máximo, {1}.',

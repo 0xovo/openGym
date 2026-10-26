@@ -157,6 +157,8 @@ export default {
   'Volume': 'Volume',
   'Count warm-ups in volume': 'Contar aquecimentos no volume',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Dá jeito quando comparas com outra app. Os recordes ignoram os aquecimentos de qualquer forma.',
+  'Count body weight in bodyweight lifts': 'Contar o peso corporal nos exercícios com o corpo',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'Elevações, fundos e flexões somam ao volume a pesagem mais próxima. Os recordes ficam como foram registados.',
   'Lifted in total': 'Levantado no total',
   'PRs': 'Recordes',
   'New PR:': 'Novo recorde:',

@@ -70,6 +70,14 @@ every exercise, and Stats has a Time per exercise card (1M, 3M, 1Y, All), longes
 when you ticked the sets, rest and setup included, so it's what an exercise really costs you.
 Imported history has no tick times, so it stays quiet there.
 
+**Pull-ups count your body weight, if you want** (#794, thanks @theatosam). A session of pull-ups
+read 0 kg of volume, however many you did. Settings → Units & language → "Count body weight in
+bodyweight lifts" adds your nearest weigh-in to every rep: all of it for pull-ups, chin-ups and dips
+(a belt goes on top), about two thirds for a push-up (less on your knees or hands raised, more with
+feet up), and your weight minus the help on an assisted machine. It's off by default and only moves
+volume and Lifted in total. Records, e1RM and progression stay as you logged them, so a weigh-in never
+hands you a PR.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a

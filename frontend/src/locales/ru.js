@@ -153,6 +153,8 @@ export default {
   'Volume': 'Объём',
   'Count warm-ups in volume': 'Учитывать разминку в объёме',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Удобно, если сравниваешь с другим приложением. Рекорды в любом случае не учитывают разминку.',
+  'Count body weight in bodyweight lifts': 'Учитывать вес тела в упражнениях с собственным весом',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'Подтягивания, отжимания на брусьях и от пола добавляют к объёму ближайшее взвешивание. Рекорды остаются как записаны.',
   'Lifted in total': 'Поднято всего',
   'PRs': 'Рекорды',
   'New PR:': 'Новый рекорд:',

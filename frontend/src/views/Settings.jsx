@@ -803,6 +803,13 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           <Switch aria-label={t('Count warm-ups in volume')} checked={S.volumeWarmups === true}
             onChange={v => update(s => { s.volumeWarmups = v })} />
         </Row>
+        {/* #794: a pull-up session otherwise reads 0 kg. On, volume adds the nearest weigh-in times
+            the lift's share (lib/bw-load.js); records and progression keep the logged load. */}
+        <Row icon="scale" iconTint="var(--teal)" title={t('Count body weight in bodyweight lifts')}
+          subtitle={t('Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.')}>
+          <Switch aria-label={t('Count body weight in bodyweight lifts')} checked={S.volumeBodyweight === true}
+            onChange={v => update(s => { s.volumeBodyweight = v })} />
+        </Row>
       </Section>
     </>,
 

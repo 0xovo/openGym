@@ -157,6 +157,8 @@ export default {
   'Volume': 'Objętość',
   'Count warm-ups in volume': 'Wliczaj rozgrzewkę do objętości',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'Przydaje się przy porównaniu z inną aplikacją. Rekordy i tak pomijają rozgrzewkę.',
+  'Count body weight in bodyweight lifts': 'Wliczaj masę ciała w ćwiczeniach z masą ciała',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'Podciąganie, dipy i pompki doliczają najbliższe ważenie do objętości. Rekordy zostają tak, jak je zapisano.',
   'Lifted in total': 'Podniesione łącznie',
   'PRs': 'Rekordy',
   'New PR:': 'Nowy rekord:',

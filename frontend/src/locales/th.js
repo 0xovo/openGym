@@ -155,6 +155,8 @@ export default {
   'Volume': 'ปริมาณงาน',
   'Count warm-ups in volume': 'นับเซ็ตวอร์มอัพในปริมาณงาน',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'สะดวกเวลาเทียบกับแอปอื่น สถิติสูงสุดไม่นับวอร์มอัพอยู่แล้วไม่ว่าแบบไหน',
+  'Count body weight in bodyweight lifts': 'นับน้ำหนักตัวในท่าบอดี้เวท',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'พูลอัพ ดิป และวิดพื้นจะบวกน้ำหนักตัวที่ชั่งใกล้วันนั้นที่สุดเข้าไปในปริมาณงาน สถิติสูงสุดยังเป็นตามที่บันทึก',
   'Lifted in total': 'ยกไปทั้งหมด',
   'PRs': 'สถิติใหม่',
   'New PR:': 'สถิติใหม่:',

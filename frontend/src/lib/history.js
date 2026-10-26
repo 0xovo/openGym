@@ -8,6 +8,7 @@ import { barWeightFor } from './bar.js'
 import { phaseForSet, modeForSet, modeForEntry, isWarmupRow, isFailureSet, isDropSet, isRestPauseSet, normalizeMode, completedVolumeOf, hasCompletedWork, nextDropWeight, splitBurstReps, makeSideSet, isSideSet, syncSideAggregate, WEIGHT_ORIGIN_MANUAL, dropsOf, clustersOf } from './workout-model.js'
 import { backoffAt, backoffStepOf, backoffWeights } from './backoff.js'
 import { dbLoadOf, bellsIn, volumeFactor, historyAs, ownedFloor } from './dumbbells.js'
+import { bodyLoadOf, bodyweightFor, countsBodyweight } from './bw-load.js'
 const objectOf = value => value && typeof value === 'object' && !Array.isArray(value) ? value : {}
 // Completed-state-independent work rows whose authoritative mode matches the requested mode.
 const workRowsForMode = (entry = {}, mode = 'reps') => {
@@ -751,7 +752,7 @@ function shapeRows(sets, cfg, grid) {
   }
   return [warmup, work]
 }
-export function workoutVolume(w, { warmups = false } = {}) {
+export function workoutVolume(w, { warmups = false, bodyweight = 0 } = {}) {
   let v = 0
   // Count each completed limb at its own load, including drops. A rest-pause side's r already
   // includes its bursts. Unchecked limbs and warm-ups contribute no volume.
@@ -765,22 +766,47 @@ export function workoutVolume(w, { warmups = false } = {}) {
   // Each side is its own weight × reps, with its own drops and bursts.
   // A dumbbell entry logged per bell counts both bells (volumeFactor, lib/dumbbells.js); every
   // other entry, and every one saved before the setting existed, counts its weight once.
+  // `bodyweight` (#794, lib/bw-load.js) is the session's body weight when the profile counts it:
+  // a pull-up rep then moves that times the exercise's share plus the belt, an assisted one the
+  // share less the machine's help (never below 0). Reps sets only; a hold has no tonnage.
   ;(Array.isArray(w?.entries) ? w.entries : []).forEach(e => {
     const f = volumeFactor(e)
+    const body = bodyweight > 0 ? bodyLoadOf(e?.id) : null
+    const own = body ? bodyweight * body.share : 0
     ;(Array.isArray(e?.sets) ? e.sets : []).forEach(s => {
-      if (warmups || !isWarmupRow(s)) v += completedVolumeOf(s) * f
+      if (!warmups && isWarmupRow(s)) return
+      if (body && modeForSet(s, e.target) === 'reps') {
+        v += body.assisted
+          ? completedVolumeOf(withLoad(s, x => Math.max(0, own - x)))
+          : completedVolumeOf(s) * f + completedVolumeOf(withLoad(s, () => own))
+      } else v += completedVolumeOf(s) * f
     })
   })
   return v
 }
+// The same set with every load in it (the row, each side, each drop) mapped through `fn`.
+const loadOf = (row, fn) => {
+  if (!row || typeof row !== 'object') return row
+  const out = { ...row, w: fn(Number(row.w) || 0) }
+  if (Array.isArray(row.drops)) out.drops = row.drops.map(d => ({ ...d, w: fn(Number(d?.w) || 0) }))
+  return out
+}
+const withLoad = (s, fn) => (isSideSet(s)
+  ? { ...s, sides: { L: loadOf(s.sides.L, fn), R: loadOf(s.sides.R, fn) } }
+  : loadOf(s, fn))
+export { countsBodyweight }
 // Settings → Units → "Count warm-ups in volume" (#719), off by default. The saved `vol` stays
 // work sets only whatever it says, so the switch only changes what screens show and can be
 // flipped back without rewriting a single workout.
 export const countsWarmups = S => S?.volumeWarmups === true
 // The volume a screen shows for one session: counted from its sets, so units and the warm-up
 // switch always apply. A legacy record without entries only has its cached number.
+// With "Count body weight in bodyweight lifts" on (#794) the session's body weight goes in too.
 export function sessionVolume(w, S) {
-  if (Array.isArray(w?.entries)) return Math.max(0, Number(workoutVolume(w, { warmups: countsWarmups(S) })) || 0)
+  if (Array.isArray(w?.entries)) {
+    const bodyweight = countsBodyweight(S) ? bodyweightFor(w, S) : 0
+    return Math.max(0, Number(workoutVolume(w, { warmups: countsWarmups(S), bodyweight })) || 0)
+  }
   const v = Number(w?.vol)
   return Number.isFinite(v) ? Math.max(0, v) : 0
 }

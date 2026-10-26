@@ -157,6 +157,8 @@ export default {
   'Volume': 'वॉल्यूम',
   'Count warm-ups in volume': 'वॉल्यूम में वार्म-अप गिनें',
   'Handy when you compare with another app. Records ignore warm-ups either way.': 'किसी दूसरे ऐप से तुलना करते समय काम आता है। रिकॉर्ड वार्म-अप को हर हाल में नज़रअंदाज़ करते हैं।',
+  'Count body weight in bodyweight lifts': 'बॉडीवेट एक्सरसाइज़ में शरीर का वज़न गिनें',
+  'Pull-ups, dips and push-ups add your nearest weigh-in to their volume. Records stay as logged.': 'पुल-अप, डिप और पुश-अप के वॉल्यूम में आपका सबसे नज़दीकी वज़न जुड़ता है। रिकॉर्ड वैसे ही रहते हैं जैसे लॉग किए।',
   'Lifted in total': 'कुल उठाया गया',
   'PRs': 'रिकॉर्ड',
   'New PR:': 'नया रिकॉर्ड:',
