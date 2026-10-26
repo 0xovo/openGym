@@ -2338,6 +2338,7 @@ export default {
   'openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.': 'openGym हर वर्कआउट और वज़न Apple Health में सहेज सकता है, और आपकी Apple Watch लिफ्ट करते समय आपकी धड़कन दिखा सकती है।',
   'Workouts and weigh-ins saved to Apple Health': 'वर्कआउट और वज़न Apple Health में',
   'Heart rate per set on your Apple Watch': 'Apple Watch पर हर सेट की धड़कन',
+  'AirPods Pro 3 or Powerbeats Pro 2 in? Your iPhone measures the heart rate for every set, unless your Apple Watch is already on it.': 'कानों में AirPods Pro 3 या Powerbeats Pro 2? आपका iPhone हर सेट की धड़कन मापेगा, जब तक आपकी Apple Watch पहले से यह काम न कर रही हो।',
   'Switch it off anytime in Settings': 'सेटिंग्स में कभी भी बंद करें',
   'You can change it anytime in Settings.': 'आप इसे कभी भी सेटिंग्स में बदल सकते हैं।',
   'Last PR': 'पिछला PR',

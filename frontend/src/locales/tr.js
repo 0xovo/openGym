@@ -2338,6 +2338,7 @@ export default {
   'openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.': 'openGym her antrenmanı ve tartıyı Apple Sağlık’a kaydedebilir, Apple Watch’un da sen kaldırırken nabzını gösterebilir.',
   'Workouts and weigh-ins saved to Apple Health': 'Antrenmanlar ve tartılar Apple Sağlık’ta',
   'Heart rate per set on your Apple Watch': 'Apple Watch’ta set başına nabız',
+  'AirPods Pro 3 or Powerbeats Pro 2 in? Your iPhone measures the heart rate for every set, unless your Apple Watch is already on it.': 'Kulağında AirPods Pro 3 ya da Powerbeats Pro 2 mi var? Apple Watch zaten ölçmüyorsa iPhone her setin nabzını ölçer.',
   'Switch it off anytime in Settings': 'Ayarlar’dan istediğin zaman kapatabilirsin',
   'You can change it anytime in Settings.': 'Bunu istediğin zaman Ayarlar’dan değiştirebilirsin.',
   'Last PR': 'Son rekor',

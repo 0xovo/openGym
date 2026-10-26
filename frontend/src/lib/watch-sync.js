@@ -27,7 +27,7 @@ import { sessionHistory } from './backfill.js'
 import { buildCombinedEntries, deriveSessionName } from './session-merge.js'
 import { todayISO, exerciseNameText } from './format.js'
 import { sanitizeHr } from './heart-rate.js'
-import { readWatchPrefs, settingsForWatch, writeWatchStatus, onWatchPrefs } from './watch-settings.js'
+import { readWatchPrefs, settingsForWatch, writeWatchStatus, readWatchStatus, onWatchPrefs } from './watch-settings.js'
 import { plannedType } from './health-connect.js'
 import { exView, exConverted, exUnitOf, viewEntry, viewRow, shownWeight, storedWeight } from './ex-unit.js'
 
@@ -236,6 +236,25 @@ function entryIndexOf (A, ev) {
   return A.entries.findIndex(e => e.id === ev.exId)
 }
 
+/* ---------- which workouts the watch has (lib/phone-workout.js) ---------- */
+
+// Workouts the watch said it runs: it sent a heart rate for them, or anything at all about them
+// while its Apple Health is on (its workout session then runs). The iPhone's own session (#818)
+// leaves those to the watch, so Apple Health gets one workout, not two.
+const claimedByWatch = new Set()
+const claimListeners = new Set()
+/** Whether the watch runs this workout's session (as far as its events tell). */
+export const watchClaimed = wid => !!wid && (claimedByWatch.has(wid) || (startedOnWatch.has(wid) && readWatchStatus()?.health === 'on'))
+export function onWatchClaim (fn) { claimListeners.add(fn); return () => claimListeners.delete(fn) }
+function claim (ev) {
+  const wid = typeof ev.wid === 'string' && ev.wid ? ev.wid : null
+  if (!wid || claimedByWatch.has(wid)) return
+  const measured = !!(sanitizeHr(ev.hr) || sanitizeHr(ev.restHr))
+  if (!measured && readWatchStatus()?.health !== 'on') return
+  claimedByWatch.add(wid)
+  for (const fn of claimListeners) { try { fn(wid) } catch { /* a listener's problem */ } }
+}
+
 /**
  * Applies the events not applied yet, in order. Returns the ids that are done with: applied now,
  * applied before, or about a workout that is not running any more. An event whose actions are not
@@ -260,6 +279,7 @@ export function applyEvents (events, getState) {
   for (const ev of events) {
     if (!ev || typeof ev.id !== 'string') continue
     if (applied.includes(ev.id)) { done.push(ev.id); continue }
+    if (['start', 'setDone', 'setHr', 'finish', 'discard'].includes(ev.type)) claim(ev)
     const S = getState()?.S
     const A = S?.active
     const ours = A && Array.isArray(A.entries) && (!ev.wid || ev.wid === A.id)
@@ -600,7 +620,7 @@ export async function startWatchSync ({ useStore, useUI }) {
 
 // Test seams.
 export function _setWatchPluginForTest (plugin, getState) { pluginP = Promise.resolve(plugin ? { WatchBridge: plugin } : null); getStateRef = getState || null }
-export function _resetWatchSync () { startedOnWatch.clear(); handlers = null; appHandlers = null; pluginP = null; getStateRef = null; draining = null }
+export function _resetWatchSync () { startedOnWatch.clear(); claimedByWatch.clear(); handlers = null; appHandlers = null; pluginP = null; getStateRef = null; draining = null }
 
 /**
  * Writes `fields` (heart rate) onto one set: in the running session when it is that workout, else in
@@ -669,6 +689,7 @@ export async function watchStatus () {
   try {
     const st = await p.WatchBridge.status()
     // `activated` false: the link is still starting (right after launch), paired/installed not known yet.
-    return { paired: !!st?.paired, installed: !!st?.installed, activated: st?.activated !== false }
+    // `reachable`: the watch app is there right now (open, or running its workout session).
+    return { paired: !!st?.paired, installed: !!st?.installed, activated: st?.activated !== false, reachable: !!st?.reachable }
   } catch { return { paired: false, installed: false } }
 }

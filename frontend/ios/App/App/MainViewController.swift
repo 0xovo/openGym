@@ -28,6 +28,7 @@ class MainViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(GymMapPickerPlugin())
         bridge?.registerPluginInstance(WatchBridgePlugin())
         bridge?.registerPluginInstance(AppleHealthPlugin())
+        bridge?.registerPluginInstance(PhoneWorkoutPlugin())
         bridge?.registerPluginInstance(WidgetBridgePlugin())
         bridge?.registerPluginInstance(LiveActivityPlugin())
         bridge?.registerPluginInstance(AppIconPlugin())

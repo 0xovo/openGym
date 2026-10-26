@@ -88,16 +88,20 @@
 	<array>
 		<string>ch.opengym.app.nudge-check</string>
 	</array>
+	<!-- processing: as in Apple's iPhone workout sample ("Building a workout app for iPhone and
+	     iPad", WWDC25 322) for the iPhone's own workout session (#818, AirPods heart rate, iOS 26).
+	     Not watchOS's workout-processing, which Apple lists for the watch only. -->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
+		<string>processing</string>
 	</array>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Used to show your heart rate on your Apple Watch while you train, and, when you switch it on, to add the heart rate your watch saved and weigh-ins from other apps to your log.</string>
+	<string>Used to show your heart rate while you train, measured by your Apple Watch or by AirPods that track it, and, when you switch it on, to add the heart rate your watch saved and weigh-ins from other apps to your log.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Used to save your finished workouts and weigh-ins to Apple Health, when you switch it on.</string>
+	<string>Used to save your finished workouts (with the heart rate measured during them) and weigh-ins to Apple Health, when you switch it on.</string>
 	<!-- Gym reminder (#614): off until switched on in Settings. Region monitoring needs Always,
 	     but no background location mode (UIBackgroundModes stays without "location"). -->
 	<key>NSLocationWhenInUseUsageDescription</key>

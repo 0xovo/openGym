@@ -18,7 +18,9 @@ import { setSystemBarsLight } from './lib/system-bars.js'
 import { initBackButton } from './lib/back.js'
 import { installEdgeSwipeBack, BACK_PREVIEW_EVENT } from './lib/edge-swipe-back.js'
 import { pageMotion } from './lib/page-motion.js'
-import { startWatchSync, bindWatchAppActions, patchSetIn } from './lib/watch-sync.js'
+import { startWatchSync, bindWatchAppActions, patchSetIn, watchStatus, watchClaimed, onWatchClaim } from './lib/watch-sync.js'
+import { readWatchPrefs, readWatchStatus } from './lib/watch-settings.js'
+import { startPhoneWorkout } from './lib/phone-workout.js'
 import { stampWorkout } from './lib/sync-merge.js'
 import { logWeighIn } from './lib/bodyweight.js'
 import { startWidgetSync } from './lib/widgets.js'
@@ -440,6 +442,21 @@ export default function App() {
       openWorkout: () => { if (!String(window.location.hash || '').startsWith('#/workout')) navToWorkout() },
     })
     return () => { gone = true; stop?.(); unbind() }
+  }, [])
+  // iPhone app on iOS 26+: the phone's own workout session when no Apple Watch app takes the
+  // workout, so AirPods that measure the heart rate fill each set's, as the watch does (#818,
+  // lib/phone-workout.js). Nothing on the web, on Android or on an older iOS.
+  useEffect(() => {
+    if (!MOBILE) return
+    let stop = null, gone = false
+    startPhoneWorkout({
+      useStore, useUI,
+      apply: patches => useStore.getState().update(s => {
+        for (const { where, fields } of patches) patchSetIn(s, where, fields, stampWorkout, { recount: w => { w.vol = workoutVolume(w) } })
+      }),
+      watch: { status: watchStatus, claimed: watchClaimed, onClaim: onWatchClaim, prefs: readWatchPrefs, reported: readWatchStatus },
+    }).then(fn => { if (gone) fn(); else stop = fn }).catch(() => {})
+    return () => { gone = true; stop?.() }
   }, [])
   // iPhone app: the Home Screen widgets and the workout's Live Activity (lib/widgets.js,
   // lib/live-activity.js). Nothing at all on the web or on Android.

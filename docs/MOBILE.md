@@ -273,6 +273,48 @@ default, each independent of writing and of the other:
 - **Emulator check:** Google's Health Connect Toolbox can insert heart-rate and weight records on an
   API 34+ emulator; see the v1.4.3 notes for the run.
 
+#### Heart rate from AirPods on the iPhone (iOS 26, #818)
+
+AirPods Pro 3 and Powerbeats Pro 2 measure the heart rate, but iOS turns their sensor on only while
+an app on the iPhone runs a workout session, which third-party apps may do since iOS 26. So the
+iPhone runs one, the same `HKWorkoutSession` + `HKLiveWorkoutBuilder` the Apple Watch app runs:
+
+- **When:** the iPhone app on iOS 26 or later, the Apple Health switch on (no switch of its own), a
+  live workout (not one logged afterwards, not the tour's practice), and no Apple Watch app taking
+  it. "Taking it" means the watch sent a heart rate or any event for that workout while its Apple
+  Health is on, or the watch app is reachable right now with Apple Health on. A watch that could
+  take it gets 15 s after the start to show up (the phone opens the watch app then); if it takes
+  the workout later anyway, the phone's session is dropped unsaved. One workout in Apple Health,
+  never two. `lib/phone-workout.js` `phoneSessionPlan` decides, its tests pin it.
+- **Per set:** the native side (`ios/App/App/PhoneWorkoutPlugin.swift`) keeps every reading with its
+  own time (builder statistics, an anchored query, and a fresh `HKSampleQuery` whenever the page
+  asks, for readings saved while the phone was locked). The page works out `set.hr` / `set.restHr`
+  as the watch does: a set from the end of the rest before it (or the tick before it, when that rest
+  was cut short) to its own tick, a rest from the tick until the rest timer ran out or the next set
+  was ticked (`liveHrPatches`). They go through the same `patchSetIn` as the watch's `setHr`, and
+  only into sets without a reading, so merge and display are unchanged. The page may sleep in
+  between; the sets are worked out when it wakes.
+- **Live readout:** a small "♥ 128" in the workout header while a reading is under a minute old.
+- **Apple Health:** finishing saves the live workout (`finishWorkout`, sync id `opengym-w-<id>`,
+  version 1, the workout's name as `OpenGymTitle`). `AppleHealthPlugin.saveSession` asks
+  `PhoneWorkoutLedger` and skips its post-hoc write for it, as it does for the watch's copy (it waits
+  up to 20 s for a save still in flight). Discarding drops it (`discardWorkout`).
+- **AirPods out:** readings stop, the session keeps going, they resume when the buds go back in.
+- **Crash or kill:** iOS keeps the session and hands it back on the next launch
+  (`UIScene.ConnectionOptions.shouldHandleActiveWorkoutRecovery` in `AppDelegate`,
+  `recoverActiveWorkoutSession`); the page adopts it for its workout by the sync id it was started
+  with, rest windows included (kept in `localStorage`).
+- **Background mode:** `processing` in `UIBackgroundModes`, as in Apple's iPhone sample ("Building
+  a workout app for iPhone and iPad", WWDC25 session 322). Not watchOS's `workout-processing`, which
+  Apple lists for the watch only.
+- **Permissions:** nothing new. The Apple Health switch already asks to save workouts and read the
+  heart rate; the usage strings say AirPods too.
+- **Below iOS 26** the plugin answers `{ supported: false }` and nothing runs.
+
+Worth checking on a real iPhone on iOS 26 with AirPods Pro 3: buds in from the start; put in
+mid-workout; taken out and put back; the screen locked across rests; with the watch app in use (one
+workout in Apple Health, the watch's).
+
 ### Animation quality and the animation packs (store apps)
 
 Settings → Workout → **Animation quality**, in the store apps only (the web and a self-hosted

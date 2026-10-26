@@ -164,6 +164,9 @@ packages are put together and signed on the release machine (`scripts/android/bu
   the phone sends a snapshot of the running workout (`lib/watch-sync.js` →
   `WatchBridgePlugin.swift`), the watch runs the session on its own, and sends back small events
   ("set done") that the phone applies through the workout screen's own actions.
+- **AirPods heart rate** (iOS 26, `PhoneWorkoutPlugin.swift`, `lib/phone-workout.js`): without an
+  Apple Watch taking the workout, the iPhone runs the workout session itself so AirPods Pro 3 measure
+  the heart rate, which fills the same per-set fields the watch does.
 - **Widgets and the Live Activity** (`ios/App/OpenGymWidgets`): the page writes a small snapshot to
   the App Group (`lib/widgets.js` → `WidgetBridgePlugin.swift`), the widgets read it.
 - **Animation packs** (`ios/App/AnimationPacksDownloader`, `AnimationPacksPlugin.swift`): the
