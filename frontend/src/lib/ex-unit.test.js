@@ -161,6 +161,23 @@ describe('the exercise as it sees the state', () => {
     expect(exView(V, BENCH)).toBe(V)
   })
 
+  it('a new state over the same history reuses its converted history, a changed one does not', () => {
+    // During a workout only S.active changes: each tap is a new state, the history the same array.
+    const S = pin('kg', BENCH, 'lb', { workouts: [session('2026-10-01', BENCH, [[61.25, 5]])] })
+    const V = exView(S, BENCH)
+    const next = { ...S, active: { id: 'a', entries: [] } }
+    const W = exView(next, BENCH)
+    expect(W).not.toBe(V)
+    expect(W.active).toBe(next.active)
+    expect(W.workouts).toBe(V.workouts)
+    // Another pin on the same history, and a history with a session added, get their own.
+    expect(exView({ ...S, exUnit: withExUnit({}, BENCH, 'lb', 2) }, BENCH).workouts).toBe(V.workouts)
+    const more = { ...S, workouts: [...S.workouts, session('2026-10-02', BENCH, [[70, 5]])] }
+    expect(exView(more, BENCH).workouts.map(w => w.entries[0].sets[0].w)).toEqual([135.033, 154.324])
+    const lbProfile = pin('lb', BENCH, 'kg', { workouts: S.workouts })
+    expect(exView(lbProfile, BENCH).workouts[0].entries[0].sets[0].w).toBe(27.783)
+  })
+
   it('a pinned barbell loads lb plates on the 45 lb bar on a kg profile', () => {
     const V = exView(pin('kg', BENCH, 'lb'), BENCH)
     expect(baseWeightFor(V, BENCH)).toBe(45)

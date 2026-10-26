@@ -127,6 +127,8 @@ export function storedEntry(S, entry, prev) {
 // One view per state and exercise: the store hands out a new state on every change, and a render
 // asks for the same view many times over.
 const VIEWS = new WeakMap()
+// The history as each exercise sees it, by the workouts array it was made from (exView).
+const HISTORY_VIEWS = new WeakMap()
 
 /**
  * The state as this exercise sees it (see the top of the file): `unit` is the exercise's, and its
@@ -149,7 +151,16 @@ export function exView(S, exId) {
     return out
   }
   const V = { ...S, unit: to }
-  if (Array.isArray(S.workouts)) V.workouts = S.workouts.map(session)
+  if (Array.isArray(S.workouts)) {
+    // The history is the same array through a whole workout (only S.active changes), so its
+    // converted copy is kept by that array and reused: every tap makes a new state, and each
+    // pinned exercise on screen walked years of sessions again.
+    let seen = HISTORY_VIEWS.get(S.workouts)
+    if (!seen) HISTORY_VIEWS.set(S.workouts, seen = new Map())
+    const key = exId + '|' + from + '|' + to
+    if (!seen.has(key)) seen.set(key, S.workouts.map(session))
+    V.workouts = seen.get(key)
+  }
   if (S.active) V.active = session(S.active)
   if (Array.isArray(S.routines)) {
     V.routines = S.routines.map(r => (Array.isArray(r?.ex) && r.ex.some(x => x?.id === exId)
