@@ -6,6 +6,7 @@ import { t } from '../lib/i18n.js'
 import Icon from './Icon.jsx'
 import Elapsed from './Elapsed.jsx'
 import { useConnectionTrouble } from './SyncBanner.jsx'
+import { retapTab } from '../lib/scroll-top.js'
 
 // Module scope, not TabBar's render body. Declared inside it, `Tab` was a new function on every
 // render, so React saw a different component type each time and threw the button away and built a
@@ -35,9 +36,11 @@ export default function TabBar({ onStart }) {
   const parent = cur === 'muscles' && loc.state?.from === '/stats' ? 'stats' : PARENT[cur]
   const on = k => cur === k || parent === k
 
-  // Root tabs are peers, not another level to unwind with Android Back.
+  // Root tabs are peers, not another level to unwind with Android Back. The tab you are already
+  // on takes you to the top of its page instead (lib/scroll-top.js).
   const switchTab = path => {
     if (loc.pathname !== path || loc.search) nav(path, { replace: true })
+    else retapTab(path)
   }
 
   const running = !!S.active && cur !== 'workout' && !S.active.editingWorkoutId && !S.active.backfill && S.active.start > 0
