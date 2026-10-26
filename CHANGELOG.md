@@ -35,7 +35,8 @@ the MCP server. The Apple Watch shows and edits it in its unit too, and shared p
 **Your own app icon on Android too.** The picker from 1.4.3 leaves the iPhone: Settings → Look &
 Home → App icon has all nine on Android, Halloween included. It's per phone, so your iPhone and
 your Android can disagree. On Android the new icon moves in once you leave the app, and some
-launchers need a second to notice.
+launchers need a second to notice. The Halloween one pulled its cobweb in from the corner, so round
+launchers no longer snip the spider's home in half.
 
 **Back to the top, fast.** Deep in Exercises and want the search again? Tap the tab you're on and
 the page glides back up, and tap Exercises once more at the top to land in the search field. Every

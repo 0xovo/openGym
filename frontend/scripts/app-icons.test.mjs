@@ -78,6 +78,19 @@ describe('the Halloween icon', () => {
     const corner = at(10, 500)
     expect(Math.max(...corner)).toBeLessThan(40)
   })
+
+  it('keeps the web and its spider inside the safe zone Android promises', () => {
+    // The round mask shows up to 256 from the centre but only guarantees 66 of 72 dp (about 234):
+    // in that rim only the two thin moorings may show, not the web itself.
+    const shapes = scene(read(v.art))
+    let lit = 0
+    for (let y = 0; y < 512; y += 2) for (let x = 0; x < 512; x += 2) {
+      const d = Math.hypot(x - 256, y - 256)
+      if (d >= 234 && d <= 256 && Math.max(...shapes.find(s => s.hit(x, y)).color(x, y)) > 120) lit++
+    }
+    expect(lit).toBeLessThan(80)
+    expect(shapes.find(s => s.hit(294, 178)).color(294, 178).map(Math.round)).toEqual([236, 223, 255])   // the spider
+  })
 })
 
 describe('Android launcher aliases', () => {
