@@ -109,6 +109,23 @@ describe('a pinned exercise in a running session', () => {
     expect(sets[0].r).toBe(7)
     expect(sets.map(s => s.w)).toEqual([61.3, 61.3])
   })
+
+  it('a CSV round trip (20.41 kg) shows 45 lb, keeps 20.41 untouched, and + goes to 50', () => {
+    mount([entry(BENCH, [work(20.41)])], LB)
+    expect(weights()).toEqual([['45']])
+    expect(stored()).toBe(20.41)
+    tapIn(0, 'Increase')
+    expect(weights()).toEqual([['50']])
+  })
+
+  it('after unpinning, a lb-typed weight shows 20.41 kg and stays exact', () => {
+    mount([entry(BENCH, [work(20.4117)])], { exUnit: withExUnit({}, BENCH, null, 2) })
+    expect(weights()).toEqual([['20.41']])
+    expect(stored()).toBe(20.4117)
+    // Off the 2.5 grid, a tap adds the step as it always did (#175): 20.41 + 2.5.
+    tapIn(0, 'Increase')
+    expect(weights()).toEqual([['22.9']])
+  })
 })
 
 function storedOf(lb) { return Math.round(lb * 0.45359237 * 1e4) / 1e4 }

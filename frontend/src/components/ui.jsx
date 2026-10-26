@@ -18,6 +18,7 @@ import Icon from './Icon.jsx'
 import { sheetKeyboardInsets } from '../lib/use-sheet-keyboard.js'
 import { NATIVE_KEYBOARD_EVENT } from '../lib/native-keyboard.js'
 import { t } from '../lib/i18n.js'
+import { cleanNum } from '../lib/format.js'
 
 /* ============================ text ============================ */
 
@@ -32,7 +33,7 @@ export const numWidthCh = s => Math.max(1, [...s].reduce((n, c) => n + (c === '.
 // logged 0 is a set taken to failure). Those clear back to null instead of snapping to 0.
 // `fit` sizes the field to the digits on screen instead of filling its cell — for the big
 // weight read-out, where the unit sits right beside the number.
-export function NumberField({ value, onChange, decimal = true, nullable = false, fit = false, className = '', ...rest }) {
+export function NumberField({ value, onChange, decimal = true, nullable = false, fit = false, step, className = '', ...rest }) {
   const [draft, setDraft] = useState(null)
   const committed = useRef(null)
   // Focus selects the number so typing replaces it. In WebKit (Safari, the iOS app) the release
@@ -54,7 +55,8 @@ export function NumberField({ value, onChange, decimal = true, nullable = false,
     setDraft(s)
     onChange(n)
   }
-  const shown = draft ?? (value ?? '')
+  // Shown clean (lib/format.js cleanNum), so a stored 20.4117 never fills the field; typing replaces it.
+  const shown = draft ?? (typeof value === 'number' ? cleanNum(value, step) : (value ?? ''))
   return (
     <input
       type="text"
@@ -149,7 +151,8 @@ export function Stepper({ value, step = 1, min = 0, max = Infinity, onChange, de
   const live = useRef({ value, step, set })
   live.current = { value, step, set }
   const hold = useRef({ delay: null, tick: null, count: 0, repeated: false })
-  const bump = dir => { const { value, step, set } = live.current; set(onStep ? onStep(value, step, dir) : (+value || 0) + dir * step) }
+  // From the number on screen (cleanNum), not a stored 44.996 behind it.
+  const bump = dir => { const { value, step, set } = live.current; const v = cleanNum(+value || 0, step); set(onStep ? onStep(v, step, dir) : v + dir * step) }
   const stopHold = () => {
     const h = hold.current
     window.clearTimeout(h.delay); window.clearInterval(h.tick)
@@ -184,7 +187,7 @@ export function Stepper({ value, step = 1, min = 0, max = Infinity, onChange, de
     <div className={'stp ' + className}>
       <button {...holdProps(-1)} aria-label={ariaLabel ? `Decrease ${ariaLabel}` : t('Decrease')} disabled={disabled}><Icon name="minus" /></button>
       <span className="val" onBlur={() => { const v = +value || 0; if (clamp(v) !== v) onChange(clamp(v)) }}>
-        <NumberField value={value} decimal={decimal} onChange={onChange} disabled={disabled} aria-invalid={invalid ? 'true' : undefined} />
+        <NumberField value={value} decimal={decimal} step={step} onChange={onChange} disabled={disabled} aria-invalid={invalid ? 'true' : undefined} />
         {unit && <i>{unit}</i>}
       </span>
       <button {...holdProps(1)} aria-label={ariaLabel ? `Increase ${ariaLabel}` : t('Increase')} disabled={disabled}><Icon name="plus" /></button>

@@ -77,8 +77,8 @@ describe('the exercise’s weight unit', () => {
     const onSave = vi.fn()
     act(() => exConfigSheet(EXIDX[BENCH], { ...slot, weight: 20.4117 }, onSave))
     const host = mountTopSheet()
-    // Stored to four places, shown as it is in the profile's own unit.
-    expect(valueOf(host, 'Weight (kg)')).toBe('20.4117')
+    // Stored to four places, shown clean in the profile's own unit.
+    expect(valueOf(host, 'Weight (kg)')).toBe('20.41')
     pickUnit(host, 'lb')
     expect(S().exUnit[BENCH]).toEqual({ unit: 'lb', _ts: expect.any(Number) })
     expect(valueOf(host, 'Weight (lb)')).toBe('45')
@@ -113,5 +113,29 @@ describe('the exercise’s weight unit', () => {
     act(() => button(host, 'Fill in 5 to 100 lb, every 5').click())
     expect(S().dumbbells.lb.weights[0]).toBe(5)
     expect(S().dumbbells.kg).toBeUndefined()
+  })
+
+  it('after unpinning, the field shows 20.41 and an untouched save keeps the exact 20.4117', () => {
+    useStore.setState({ S: { ...S(), exUnit: withExUnit({}, BENCH, null, 2) } })
+    const onSave = vi.fn()
+    act(() => exConfigSheet(EXIDX[BENCH], { ...slot, weight: 20.4117 }, onSave))
+    const host = mountTopSheet()
+    expect(valueOf(host, 'Weight (kg)')).toBe('20.41')
+    act(() => button(host, 'Save').click())
+    expect(onSave.mock.calls[0][0].weight).toBe(20.4117)
+  })
+
+  it('after a CSV round trip (20.41 kg), a lb-pinned slot shows 45, keeps 20.41 untouched and steps from 45', () => {
+    useStore.setState({ S: { ...S(), exUnit: withExUnit({}, BENCH, 'lb', 1) } })
+    const onSave = vi.fn()
+    act(() => exConfigSheet(EXIDX[BENCH], { ...slot, weight: 20.41 }, onSave))
+    const host = mountTopSheet()
+    expect(valueOf(host, 'Weight (lb)')).toBe('45')
+    act(() => button(host, 'Save').click())
+    expect(onSave.mock.calls[0][0].weight).toBe(20.41)
+    act(() => exConfigSheet(EXIDX[BENCH], { ...slot, weight: 20.41 }, onSave))
+    const again = mountTopSheet()
+    tap(again, 'Weight (lb)', 1)
+    expect(valueOf(again, 'Weight (lb)')).toBe('47.5')
   })
 })

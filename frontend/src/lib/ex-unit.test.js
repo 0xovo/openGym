@@ -14,6 +14,7 @@ import { mergeStates, STAMPED_MAPS } from './sync-merge.js'
 import { STAMPED_MAPS as API_STAMPED_MAPS } from '../../../api/sync-stamps.js'
 import { EXIDX } from './exercises.js'
 import { workoutText } from './workout-text.js'
+import { cleanNum } from './format.js'
 import { buildPlanBundle, parsePlan, mergePlan } from './plan-share.js'
 import { exUnitTag } from './ex-unit.js'
 
@@ -365,5 +366,19 @@ describe('shared plan files', () => {
     expect(s.exUnit).toBeUndefined()
     const bad = parsePlan(JSON.stringify({ ...b, exUnit: { [BENCH]: 'stone', nope: 'lb' } }), 'kg')
     expect(bad.exUnit).toEqual({})
+  })
+})
+
+describe('input fields show clean numbers', () => {
+  it('two places at most, a hair off the step or a whole or half number snapped', () => {
+    expect(cleanNum(20.4117)).toBe(20.41)
+    expect(cleanNum(44.996)).toBe(45)
+    expect(cleanNum(22.496)).toBe(22.5)
+    expect(cleanNum(61.25)).toBe(61.25)
+    expect(cleanNum(61.246, 1.25)).toBe(61.25)
+    expect(cleanNum(135.143)).toBe(135.14)
+    expect(cleanNum(8)).toBe(8)
+    expect(cleanNum('')).toBe('')
+    expect(cleanNum(null)).toBe(null)
   })
 })
