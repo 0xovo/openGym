@@ -2680,4 +2680,5 @@ export default {
   'Time per exercise': '每个动作的用时',
   'Average time a session, counted from when its sets were ticked.': '每次训练的平均用时，按勾选各组的时间计算。',
   'No timed sets in this period.': '这段时间内没有带时间的组。',
+  'Back to top': '回到顶部',
 }

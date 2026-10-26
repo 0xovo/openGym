@@ -1924,6 +1924,33 @@ button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
 body.no-tabbar #toast{bottom:calc(24px + var(--sab))}
 body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
 
+/* --- back to top (components/ScrollTopButton.jsx) --- */
+/* Above the tab bar, at the end of the 560px column on a computer, and up over the rest bar while
+   it is there. Only transform and opacity move: it pops in with a small overshoot and eases out
+   without one. Visibility goes last on the way out, so a hidden button takes no taps or focus.
+   The Halloween decorations live at the top of the screen and on the cards, never down here. */
+#totop{
+  position:fixed;inset-inline-end:max(16px,calc(50vw - 264px));bottom:calc(80px + var(--sab));z-index:45;
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:var(--surface-2);color:var(--acc);border:var(--hair) solid var(--sep-op);
+  box-shadow:0 8px 22px -8px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(10px) scale(.6);visibility:hidden;pointer-events:none;
+  transition:opacity var(--fast),transform var(--med) var(--ease),visibility 0s linear var(--med);
+}
+#totop.on{
+  opacity:1;transform:none;visibility:visible;pointer-events:auto;
+  transition:opacity var(--fast),transform 380ms cubic-bezier(.3,1.5,.5,1),visibility 0s;
+}
+:root[data-theme="light"] #totop{background:var(--surface)}
+#totop:active{transform:scale(.92)}
+#totop:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#totop .icn{font-size:21px;--icon-stroke:2.1}
+body.resting #totop{bottom:calc(172px + var(--sab))}
+/* While it shows, the page ends a button's height further up, so the last row's controls scroll
+   out from under it rather than sitting beneath it. */
+body.totop-on #app{padding-bottom:calc(144px + var(--sab))}
+body.totop-on.resting #app{padding-bottom:calc(232px + var(--sab))}
+
 /* ---------------------------------------------------------------- misc --- */
 .empty{text-align:center;color:var(--label-2);padding:44px 20px;font-size:15px;line-height:1.45}
 .empty .ico{font-size:34px;color:var(--label-2);margin-bottom:12px;display:flex;justify-content:center}
@@ -2144,6 +2171,11 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   .center{width:340px}
   .center.wide{width:440px}
   #timer{left:50%;right:auto;margin-left:-260px;width:520px;bottom:112px}
+  /* Back to top: at the end of the wide column, level with the floating tab bar and clear of it,
+     so the page's own 128px at the bottom already keeps the last row out from under it. */
+  #totop,body.resting #totop{inset-inline-end:max(16px,calc(50vw - 540px + var(--pad)));bottom:calc(20px + var(--sab))}
+  body.totop-on #app{padding-bottom:calc(128px + var(--sab))}
+  body.totop-on.resting #app{padding-bottom:calc(220px + var(--sab))}
   body.no-tabbar #timer{left:50%;right:auto;bottom:16px;border-radius:var(--r-xl);padding-bottom:10px;box-shadow:0 12px 40px -10px rgba(0,0,0,.5)}
   .exmedia img,.exmedia video{height:380px}
   .hm-wrap{display:flex;flex-direction:column;align-items:center}

@@ -2680,4 +2680,5 @@ export default {
   'Time per exercise': '운동별 시간',
   'Average time a session, counted from when its sets were ticked.': '세트를 체크한 시각으로 계산한 세션당 평균 시간입니다.',
   'No timed sets in this period.': '이 기간에는 시간이 기록된 세트가 없어요.',
+  'Back to top': '맨 위로',
 }

@@ -2700,4 +2700,5 @@ export default {
   'Time per exercise': 'Zeit pro Übung',
   'Average time a session, counted from when its sets were ticked.': 'Durchschnittliche Zeit pro Training, gezählt ab dem Abhaken der Sätze.',
   'No timed sets in this period.': 'Keine Sätze mit Zeit in diesem Zeitraum.',
+  'Back to top': 'Nach oben',
 }

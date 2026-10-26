@@ -2680,4 +2680,5 @@ export default {
   'Time per exercise': 'Temps par exercice',
   'Average time a session, counted from when its sets were ticked.': 'Temps moyen par séance, compté à partir du moment où ses séries ont été cochées.',
   'No timed sets in this period.': 'Aucune série chronométrée sur cette période.',
+  'Back to top': 'Retour en haut',
 }

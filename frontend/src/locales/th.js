@@ -2691,4 +2691,5 @@ export default {
   'Time per exercise': 'เวลาต่อท่า',
   'Average time a session, counted from when its sets were ticked.': 'เวลาเฉลี่ยต่อครั้ง นับจากเวลาที่ติ๊กเซต',
   'No timed sets in this period.': 'ไม่มีเซตที่มีเวลาในช่วงนี้',
+  'Back to top': 'กลับขึ้นด้านบน',
 }

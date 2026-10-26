@@ -20,6 +20,12 @@ Home → App icon has all nine on Android, Halloween included. It's per phone, s
 your Android can disagree. On Android the new icon moves in once you leave the app, and some
 launchers need a second to notice.
 
+**Back to the top, fast.** Deep in Exercises and want the search again? Tap the tab you're on and
+the page glides back up, and tap Exercises once more at the top to land in the search field. Every
+tab does it, like on the iPhone. Long pages (Exercises, History and friends) also grow a small
+arrow button once you're a few screens down: one tap and you're back at the top. It stays out of
+your workout, and with Reduce Motion on it jumps instead of gliding.
+
 **The gym reminder's map, redrawn** (#614). It looked like a map someone bolted on, so now it looks
 like openGym: your gyms are cards with their address, radius and a switch each (swipe or ⋯ to
 rename or remove, with Undo), and adding one opens a big map with a search on top that puts gyms

@@ -2677,4 +2677,5 @@ export default {
   'Time per exercise': 'Час на вправу',
   'Average time a session, counted from when its sets were ticked.': 'Середній час за тренування, за часом позначення підходів.',
   'No timed sets in this period.': 'У цей період немає підходів із часом.',
+  'Back to top': 'Нагору',
 }

@@ -2759,4 +2759,5 @@ export default {
   'Time per exercise': 'প্রতি ব্যায়ামের সময়',
   'Average time a session, counted from when its sets were ticked.': 'প্রতি সেশনে গড় সময়, সেটগুলো যখন টিক দেওয়া হয়েছিল তা থেকে গণনা করা।',
   'No timed sets in this period.': 'এই সময়ে কোনো সময়-চিহ্নিত সেট নেই।',
+  'Back to top': 'উপরে ফিরে যান',
 }

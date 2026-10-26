@@ -2680,4 +2680,5 @@ export default {
   'Time per exercise': 'प्रति व्यायाम समय',
   'Average time a session, counted from when its sets were ticked.': 'प्रति सत्र औसत समय, सेट्स पर टिक लगाने के समय से गिना गया।',
   'No timed sets in this period.': 'इस अवधि में समय वाले कोई सेट नहीं।',
+  'Back to top': 'ऊपर जाएँ',
 }

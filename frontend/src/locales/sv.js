@@ -2727,4 +2727,5 @@ export default {
   'Time per exercise': 'Tid per övning',
   'Average time a session, counted from when its sets were ticked.': 'Snittid per pass, räknat från när seten bockades av.',
   'No timed sets in this period.': 'Inga set med tid under den här perioden.',
+  'Back to top': 'Till toppen',
 }

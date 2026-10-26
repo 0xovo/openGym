@@ -2683,4 +2683,5 @@ export default {
   'Time per exercise': 'Idő gyakorlatonként',
   'Average time a session, counted from when its sets were ticked.': 'Átlagos idő edzésenként, a sorozatok kipipálásától számolva.',
   'No timed sets in this period.': 'Ebben az időszakban nincs időzített sorozat.',
+  'Back to top': 'Vissza a tetejére',
 }

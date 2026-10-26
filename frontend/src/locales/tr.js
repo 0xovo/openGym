@@ -2680,4 +2680,5 @@ export default {
   'Time per exercise': 'Egzersiz başına süre',
   'Average time a session, counted from when its sets were ticked.': 'Setlerin işaretlendiği zamanlardan hesaplanan, antrenman başına ortalama süre.',
   'No timed sets in this period.': 'Bu dönemde süresi olan set yok.',
+  'Back to top': 'Başa dön',
 }

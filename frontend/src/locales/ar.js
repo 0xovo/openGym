@@ -2735,4 +2735,5 @@ export default {
   'Time per exercise': 'الوقت لكل تمرين',
   'Average time a session, counted from when its sets were ticked.': 'متوسط الوقت في الجلسة، محسوبًا من أوقات تسجيل مجموعاته.',
   'No timed sets in this period.': 'لا توجد مجموعات مُوقّتة في هذه الفترة.',
+  'Back to top': 'العودة إلى الأعلى',
 }
