@@ -16,7 +16,7 @@ import { accentValue } from '../lib/accent.js'
 // timer this browser's own: a desktop tab finishing its rest on screen used to cancel the
 // alert the phone in the gym was waiting for, because the server held one timer per account.
 const pushRestTimer = sec => { if (useStore.getState().user) api('/api/push/rest-timer', { method: 'POST', body: JSON.stringify({ seconds: sec, deviceId: deviceId() }) }).catch(() => {}) }
-const cancelPushRestTimer = () => { if (useStore.getState().user) api('/api/push/rest-timer/cancel', { method: 'POST', body: JSON.stringify({ deviceId: deviceId() }) }).catch(() => {}) }
+const cancelPushRestTimer = () => { if (useStore.getState().user && !useStore.getState().tourSandbox) api('/api/push/rest-timer/cancel', { method: 'POST', body: JSON.stringify({ deviceId: deviceId() }) }).catch(() => {}) }
 
 // Books the end of a rest with whatever can announce it while the app is not looking: in the
 // Android app a native alarm and the countdown notification, everywhere else (and wherever that
@@ -24,6 +24,8 @@ const cancelPushRestTimer = () => { if (useStore.getState().user) api('/api/push
 // A switch-sides pause (Workout.jsx SWITCH_SIDES_SEC) books no server push, whose words are "rest over":
 // it is ten seconds between the two sides of a hold, and the app is in your hand.
 const bookRestEnd = (endsAt, totalSec, kind) => {
+  // The tour's practice workout (useStore enterTourSandbox) rests on screen only.
+  if (useStore.getState().tourSandbox) return
   const switching = kind === 'switch'
   if (!MOBILE) { if (!switching) pushRestTimer(Math.max(1, Math.round((endsAt - Date.now()) / 1000))); return }
   const { S } = useStore.getState()
@@ -503,7 +505,8 @@ export function restoreRest(now = Date.now()) {
   runRest(useUI.setState, useUI.getState)
   return true
 }
-useUI.subscribe((s, prev) => { if (s.timer !== prev.timer) saveRest(s.timer) })
+// A practice rest from the tour is never kept for the next start; its end (null) is.
+useUI.subscribe((s, prev) => { if (s.timer !== prev.timer && (!s.timer || !useStore.getState().tourSandbox)) saveRest(s.timer) })
 restoreRest()
 
 // The hold (a timed set) the same way: a reload or the app being killed mid-plank used to drop
@@ -543,7 +546,7 @@ export function restoreWork(now = Date.now()) {
   runWork(useUI.setState, useUI.getState)
   return true
 }
-useUI.subscribe((s, prev) => { if (s.work !== prev.work && (!s.work || !prev.work || s.work.owner !== prev.work.owner || s.work.endsAt !== prev.work.endsAt || s.work.alerted !== prev.work.alerted)) saveWork(s.work) })
+useUI.subscribe((s, prev) => { if (s.work !== prev.work && (!s.work || !useStore.getState().tourSandbox) && (!s.work || !prev.work || s.work.owner !== prev.work.owner || s.work.endsAt !== prev.work.endsAt || s.work.alerted !== prev.work.alerted)) saveWork(s.work) })
 restoreWork()
 
 // Buttons on the rest notification (pause, ±15s, skip) change the countdown in the

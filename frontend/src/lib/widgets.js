@@ -143,6 +143,7 @@ export async function startWidgetSync ({ useStore }) {
   let last = null, tm = null
   const write = async () => {
     tm = null
+    if (useStore.getState().tourSandbox) return
     try {
       const json = JSON.stringify(buildWidgetSnapshot(useStore.getState().S))
       if (json === last) return
@@ -150,7 +151,8 @@ export async function startWidgetSync ({ useStore }) {
       last = json
     } catch { /* not now: the next change writes it */ }
   }
-  const schedule = () => { clearTimeout(tm); tm = setTimeout(write, WRITE_DEBOUNCE_MS) }
+  // The tour's practice workout (useStore enterTourSandbox) is left off the widgets.
+  const schedule = () => { if (useStore.getState().tourSandbox) return; clearTimeout(tm); tm = setTimeout(write, WRITE_DEBOUNCE_MS) }
   const off = useStore.subscribe((s, prev) => { if (s.S !== prev.S) schedule() })
   const onVisible = () => { if (document.visibilityState === 'visible') schedule() }
   document.addEventListener('visibilitychange', onVisible)

@@ -530,6 +530,7 @@ export async function startWatchSync ({ useStore, useUI }) {
   } catch { /* no Apple Health here: the watch measures nothing */ }
   const send = async () => {
     tm = null
+    if (useStore.getState().tourSandbox) return
     // Not before the store has its copy: an empty one would tell the watch its workout is over.
     if (!linked || !storeReady()) return
     try {
@@ -563,7 +564,8 @@ export async function startWatchSync ({ useStore, useUI }) {
       }
     } catch { /* no watch, or not now: the next change tries again */ }
   }
-  const schedule = () => { if (!linked) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
+  // The tour's practice workout (useStore enterTourSandbox) never reaches the watch.
+  const schedule = () => { if (!linked || useStore.getState().tourSandbox) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
   const offStore = useStore.subscribe((s, prev) => {
     // Boot done: what the watch sent meanwhile is applied now, and the watch hears the real state.
     if (s.ready && !prev.ready) { drainWatchEvents(); schedule() }

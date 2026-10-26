@@ -393,6 +393,12 @@ export const useStore = create((set, get) => {
   let mirrorQ = Promise.resolve()   // phone: the file mirror's writes, one after the other (saveMirror)
   // The write of the saved copy this tab last read or made, and whose copy it was (joinSaved).
   let seenWid = (() => { try { return localStorage.getItem(WID_KEY) } catch { return null } })()
+  // The tour's practice workout (components/Tour.jsx): while it runs the store shows a copy with a
+  // sample session in it, and nothing of that copy is written anywhere: not to storage, not to the
+  // phone's file, not to the server. `real` is the copy it stands in for, untouched, and comes back
+  // as it was. Syncing waits meanwhile (a pull landing in the copy would be lost with it).
+  let sandbox = null       // { real, owesPush }
+  const live = () => (sandbox ? sandbox.real : get().S)
   let seenOwner = (() => { try { return localStorage.getItem('gym_owner') } catch { return null } })()
   // Another tab signed in or out under this one (the gym_owner storage event below): what this
   // tab holds is no copy of the new owner's, so it writes nothing until it has taken that owner's
@@ -544,7 +550,7 @@ export const useStore = create((set, get) => {
   // taken. One write at a time, each of the copy in the store when its turn comes: a slow write
   // can never land after a later one.
   const saveMirror = () => (mirrorQ = mirrorQ.then(async () => {
-    const S = get().S
+    const S = live()
     let owner = null
     try { owner = localStorage.getItem('gym_owner') } catch { /* unknown — the file is then nobody's */ }
     await nativeSave(S)
@@ -556,7 +562,7 @@ export const useStore = create((set, get) => {
   const nativePersist = (now = false) => {
     clearTimeout(saveTm)
     saveTm = null
-    const write = () => { saveTm = null; syncReminder(get().S); syncHealth(get().S).catch(() => {}); readHealth(() => get().S).catch(() => {}); return saveMirror() }
+    const write = () => { saveTm = null; syncReminder(live()); syncHealth(live()).catch(() => {}); readHealth(live).catch(() => {}); return saveMirror() }
     if (now) return write()
     saveTm = setTimeout(write, 800)
     return null
@@ -626,6 +632,7 @@ export const useStore = create((set, get) => {
     return true
   }
   const persist = (S, push = true, stamp = true) => {
+    if (sandbox) { set({ S }); return }
     if (refuseStale(S)) return
     const { base, owed } = metaOf()   // the copy being replaced; the new one stands where it stood
     const joined = joinSaved(S, get()?.S)
@@ -702,6 +709,7 @@ export const useStore = create((set, get) => {
   // server is pushed on the same occasion. A phone that sat in a pocket all afternoon and a
   // desktop tab left open all week used to show, and then push, whatever they last had.
   const checkRev = async (force = false) => {
+    if (sandbox) return
     if (!get().user || !get().ready || document.visibilityState === 'hidden') return
     if (!force && Date.now() - lastCheck < CHECK_MIN_MS) return
     lastCheck = Date.now()
@@ -868,6 +876,7 @@ export const useStore = create((set, get) => {
     if (e.key !== 'gym_owner') return
     const owner = readOwner()
     if (owner === seenOwner) return
+    if (sandbox) get().leaveTourSandbox()
     clearTimeout(pushTm)
     pushTm = null
     // A guest's workout running here went along with the sign-in in the other tab (it joined this
@@ -957,6 +966,7 @@ export const useStore = create((set, get) => {
     if (u && readOwner() === u.id && readWidOwner() !== u.id) persist(get().S, false, false)
   }
   const syncFromSaved = () => {
+    if (sandbox) return
     if (handedOver) { takeSaved(); return }
     const wid = readWid()
     if (wid === seenWid || !savedIsMine()) return
@@ -1388,6 +1398,30 @@ export const useStore = create((set, get) => {
     // once-per-device record (lib/onboarding-perms.js).
     permSteps: false,
     finishPermSteps() { set({ permSteps: false }) },
+    // The tour's practice workout (see `sandbox` above). `mut` prepares the stand-in copy; what
+    // the screens then change in it lasts until leaveTourSandbox, and not a moment longer.
+    tourSandbox: false,
+    enterTourSandbox(mut) {
+      if (sandbox) return
+      // A change still waiting in the debounce goes once the tour hands the real copy back.
+      sandbox = { real: get().S, owesPush: !!pushTm }
+      clearTimeout(pushTm)
+      pushTm = null
+      const S = clone(sandbox.real)
+      mut?.(S)
+      set({ S, tourSandbox: true })
+    },
+    leaveTourSandbox() {
+      if (!sandbox) return
+      const { real, owesPush } = sandbox
+      sandbox = null
+      set({ S: real, tourSandbox: false })
+      registerCustom(real.customEx)
+      // What waited meanwhile: another tab's save, the server's news, a push owed from before.
+      syncFromSaved()
+      if (owesPush && get().user && get().ready) { clearTimeout(pushTm); pushTm = setTimeout(() => get().pushState(), 1500) }
+      checkRev(true)
+    },
     // A one-time device-link code this page was opened with (?link=, #95), until it is redeemed.
     // Never persisted: the code is good for minutes and belongs to this one visit.
     linkCode: null,
@@ -1692,6 +1726,7 @@ export const useStore = create((set, get) => {
     // before signing out knows the last change is on the server.
     async pushState() {
       if (!get().user) return
+      if (sandbox) { sandbox.owesPush = true; return }
       clearTimeout(pushTm)
       pushTm = null
       if (adoptHold) return   // the sign-in has not decided what this copy is yet (adoptProfile)
@@ -1707,6 +1742,7 @@ export const useStore = create((set, get) => {
     // and the push itself is what catches a conflict.
     async pullState() {
       if (adoptHold) return   // as pushState: adoptProfile reads the server itself
+      if (sandbox) return
       if (pulling) return pulling
       pulling = (async () => {
         try {

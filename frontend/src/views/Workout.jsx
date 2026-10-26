@@ -2143,7 +2143,8 @@ function ActiveWorkout() {
   // Live-presence heartbeat so the admin dashboard can show who's training now. Signed-in only —
   // guests have no server session. Reads fresh state each tick so progress stays current.
   useEffect(() => {
-    if (!useStore.getState().user || editing) return
+    // The tour's practice workout is nobody's training: the dashboard never hears of it.
+    if (!useStore.getState().user || editing || useStore.getState().tourSandbox) return
     let stopped = false
     const ping = active => {
       const A2 = useStore.getState().S.active

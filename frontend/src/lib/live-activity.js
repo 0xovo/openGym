@@ -288,6 +288,7 @@ export async function startLiveActivitySync ({ useStore, useUI }) {
   let last = null, tm = null
   const send = async () => {
     tm = null
+    if (useStore.getState().tourSandbox) return
     // An empty, not yet restored copy would end the activity of a workout that is still running.
     if (!storeReady()) return
     try {
@@ -299,7 +300,8 @@ export async function startLiveActivitySync ({ useStore, useUI }) {
       last = json
     } catch { /* not now: the next change tries again */ }
   }
-  const schedule = () => { if (!supported) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
+  // Nor to the Lock Screen: the tour's practice workout (useStore enterTourSandbox) is not a session.
+  const schedule = () => { if (!supported || useStore.getState().tourSandbox) return; clearTimeout(tm); tm = setTimeout(send, SEND_DEBOUNCE_MS) }
   const offStore = useStore.subscribe((s, prev) => {
     if (s.ready && !prev.ready) { drainLiveEvents(); schedule() }
     else if (s.S !== prev.S) schedule()
