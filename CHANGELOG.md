@@ -6,6 +6,20 @@ tag. Write it for the people using the app: what changed for them, short, no em 
 
 ## Unreleased
 
+**Integrations, all in one place.** Settings → Integrations is a short list of what openGym can
+talk to, each with whether it's on and the one thing to do next: Apple Health or Health Connect
+(their switches moved here from Data & backup, which still has a way in), the Hevy and file imports,
+the CSV export, the Coach and the MCP server. Nothing new talks to anything until you switch it on,
+and a card only shows where it can do something. Garmin, COROS, Polar, Fitbit, Samsung Health, Oura,
+Withings and Renpho get an honest "works with": they reach openGym through Apple Health or Health
+Connect, no fake Connect button.
+
+**Webhooks** (self-hosted, `INTEGRATIONS=webhook`). Tell Home Assistant, n8n, ntfy or Node-RED when
+you finish a workout, set a record or weigh in, from whichever device you logged it on. Each message
+is signed, retried for about an hour if the other side is down, never sent twice, and a test event
+is one tap away. Home Assistant on your home network needs `INTEGRATIONS_ALLOW_LAN=1` from your
+admin. Payloads and a signature checker are in docs/INTEGRATIONS.md.
+
 **A 1-minute tour.** Right after the first setup, openGym asks if you want a quick look around. Say yes
 and it points at the real thing, screen by screen: today's session and Start, week or rotation, the
 Library, a practice workout (tick a set, meet the rest timer, swipe, the ⋯ menu, Finish), Stats and
