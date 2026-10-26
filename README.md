@@ -125,7 +125,8 @@ if you want to try it before installing anything.
 - A gym reminder, off by default: walk into one of your gyms and the phone nudges you to hit
   Start. Once a day at most, never after you trained, and your gyms stay on the phone.
 - An Apple Watch app: tick off sets with the Digital Crown, a full-screen rest countdown, heart
-  rate per set, and complications. Widgets and a Live Activity on the iPhone.
+  rate per set, and complications. No watch? AirPods Pro 3 do the heart rate on iOS 26. Widgets and
+  a Live Activity on the iPhone.
 
 **Optional extras, off by default**
 

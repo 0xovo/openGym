@@ -1514,6 +1514,7 @@ export const PT_BR_OVERRIDES = {
   'Your workouts in Apple Health': 'Seus treinos no Apple Saúde',
   'openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.': 'O openGym pode salvar cada treino e cada pesagem no Apple Saúde, e seu Apple Watch pode mostrar sua frequência cardíaca enquanto você treina.',
   'Heart rate per set on your Apple Watch': 'Frequência cardíaca por série no seu Apple Watch',
+  'AirPods Pro 3 or Powerbeats Pro 2 in? Your iPhone measures the heart rate for every set, unless your Apple Watch is already on it.': 'AirPods Pro 3 ou Powerbeats Pro 2 no ouvido? Seu iPhone mede a frequência cardíaca de cada série, a não ser que o seu Apple Watch já esteja cuidando disso.',
   'Switch it off anytime in Settings': 'Desligue quando quiser nas Configurações',
   'You can change it anytime in Settings.': 'Você pode mudar isso quando quiser nas Configurações.',
   'Workout running': 'Treino em andamento',

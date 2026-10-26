@@ -125,6 +125,14 @@ different kind of exercise. The list still opens on the same muscle. Got more th
 A Gym row at the top filters the list for another one, just for this swap: your gym in Settings
 stays put. A dead hang now needs a pull-up bar, as it always did in real life.
 
+**AirPods Pro 3 count your heart rate, no Apple Watch needed** (#818, iPhone on iOS 26). With Apple
+Health on and no Apple Watch taking the workout, the iPhone now runs the workout session itself, so
+AirPods Pro 3 and Powerbeats Pro 2 measure along. Every set and rest gets its heart rate just like
+with the watch, a little ♥ in the workout header shows the latest beat, and the workout lands in
+Apple Health once, with its heart rate. Take the buds out and the readings simply pause; pop them
+back in and they carry on. Wearing the watch? It keeps the job, so there's never a second workout.
+No new switch: the Apple Health one covers it.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a

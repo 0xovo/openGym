@@ -2339,6 +2339,7 @@ export default {
   'openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.': 'openGym 可以把每次训练和称重存入 Apple 健康，你的 Apple Watch 还能在训练时显示心率。',
   'Workouts and weigh-ins saved to Apple Health': '训练和体重存入 Apple 健康',
   'Heart rate per set on your Apple Watch': 'Apple Watch 上每组的心率',
+  'AirPods Pro 3 or Powerbeats Pro 2 in? Your iPhone measures the heart rate for every set, unless your Apple Watch is already on it.': '戴着 AirPods Pro 3 或 Powerbeats Pro 2？除非 Apple Watch 已经在测，iPhone 会为每组测量心率。',
   'Switch it off anytime in Settings': '随时可在设置中关闭',
   'You can change it anytime in Settings.': '随时可以在设置中更改。',
   'Last PR': '最近纪录',

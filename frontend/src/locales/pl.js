@@ -2339,6 +2339,7 @@ export default {
   'openGym can save every workout and weigh-in to Apple Health, and your Apple Watch can show your heart rate while you lift.': 'openGym może zapisywać każdy trening i pomiar wagi w Apple Zdrowie, a twój Apple Watch pokaże tętno, gdy dźwigasz.',
   'Workouts and weigh-ins saved to Apple Health': 'Treningi i pomiary wagi w Apple Zdrowie',
   'Heart rate per set on your Apple Watch': 'Tętno w każdej serii na Apple Watch',
+  'AirPods Pro 3 or Powerbeats Pro 2 in? Your iPhone measures the heart rate for every set, unless your Apple Watch is already on it.': 'AirPods Pro 3 albo Powerbeats Pro 2 w uszach? iPhone zmierzy tętno w każdej serii, chyba że Apple Watch już się tym zajmuje.',
   'Switch it off anytime in Settings': 'Wyłączysz to w każdej chwili w Ustawieniach',
   'You can change it anytime in Settings.': 'Możesz to zmienić w każdej chwili w Ustawieniach.',
   'Last PR': 'Ostatni rekord',
