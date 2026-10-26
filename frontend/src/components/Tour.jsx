@@ -46,6 +46,10 @@ const COPY = {
   done: () => [t('You’re set'), t('The Coach, imports and your own server live in Settings. Have a great first workout!')],
 }
 
+// How long a stop waits for its element to appear (a screen still loading its chunk). Tests shorten it.
+let anchorWait = 2000
+export const _setAnchorWait = ms => { anchorWait = ms }
+
 const reducedMotion = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 /** The element a stop points at: the first one on screen, not one in the page an edge swipe back
@@ -201,7 +205,7 @@ function Run({ at }) {
     const look = () => {
       if (gone) return
       const el = findAnchor(step.anchor)
-      if (!el && step.anchor && Date.now() - started < 2000) { tm = setTimeout(look, 60); return }
+      if (!el && step.anchor && Date.now() - started < anchorWait) { tm = setTimeout(look, 60); return }
       // Not there after all: an optional stop is passed over, any other one speaks from the middle.
       if (!el && step.anchor && step.optional) { go(dirRef.current); return }
       anchorRef.current = el
