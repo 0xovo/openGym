@@ -1574,6 +1574,8 @@ export default {
   'That link is not a web address': 'यह लिंक वेब पता नहीं है',
   'Watch video': 'वीडियो देखें',
   'Open link': 'लिंक खोलें',
+  'Plays from YouTube, and only once you tap': 'YouTube से चलता है, और तभी जब आप टैप करें',
+  'Opens in YouTube': 'YouTube में खुलता है',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'यह फ़ाइल प्रकार समर्थित नहीं है। फ़ोटो, GIF या MP4, MOV या WebM वीडियो इस्तेमाल करें।',
   'That file is too big. Max {0} MB.': 'यह फ़ाइल बहुत बड़ी है। अधिकतम {0} MB।',
   'That video is too long. Max {0} seconds.': 'यह वीडियो बहुत लंबा है। अधिकतम {0} सेकंड।',

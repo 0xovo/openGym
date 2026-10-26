@@ -1574,6 +1574,8 @@ export default {
   'That link is not a web address': '웹 주소가 아닌 링크입니다',
   'Watch video': '동영상 보기',
   'Open link': '링크 열기',
+  'Plays from YouTube, and only once you tap': 'YouTube에서 재생되며, 탭할 때만 불러옵니다',
+  'Opens in YouTube': 'YouTube에서 열기',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': '지원하지 않는 파일 형식입니다. 사진, GIF 또는 MP4, MOV, WebM 동영상을 사용하세요.',
   'That file is too big. Max {0} MB.': '파일이 너무 큽니다. 최대 {0} MB.',
   'That video is too long. Max {0} seconds.': '동영상이 너무 깁니다. 최대 {0}초.',

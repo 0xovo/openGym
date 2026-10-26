@@ -102,13 +102,14 @@ ENV BASE_PATH=""
 # is the one that refuses a file — raise both together.
 ENV MEDIA_UPLOAD_MAX=48m
 # Sent on every page and file. Scripts run only from this origin, plus the one inline script in
-# frontend/index.html by its hash (src/lib/csp.test.js keeps the two in step). Frames are limited
-# to this origin and the privacy-enhanced YouTube host used by exercise videos. connect-src stays
-# open to any https: and http: address: the Coach on a device talks to the provider the person
-# chose, an Ollama on their LAN included, and the update check asks GitHub. Behind a proxy that
-# injects a script of its own (analytics), set this to a policy that allows it, or to
-# "frame-ancestors 'none'" for the old header.
-ENV CONTENT_SECURITY_POLICY="default-src 'self'; script-src 'self' 'sha256-xUZtZS1nWJaAyUqA7ZKgkLhjdEisnY0MiRmax16aGFg='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: http:; worker-src 'self'; manifest-src 'self'; frame-src 'self' https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+# frontend/index.html by its hash (src/lib/csp.test.js keeps the two in step). The only frame
+# allowed is the privacy-enhanced YouTube player (youtube-nocookie.com) an exercise's video link
+# plays in, and only after a tap (the print frame, lib/print-doc.js, has no address, so frame-src
+# never applies to it). connect-src stays open to any https: and http: address: the Coach on a
+# device talks to the provider the person chose, an Ollama on their LAN included, and the update
+# check asks GitHub. Behind a proxy that injects a script of its own (analytics), set this to a
+# policy that allows it, or to "frame-ancestors 'none'" for the old header.
+ENV CONTENT_SECURITY_POLICY="default-src 'self'; script-src 'self' 'sha256-xUZtZS1nWJaAyUqA7ZKgkLhjdEisnY0MiRmax16aGFg='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: http:; worker-src 'self'; manifest-src 'self'; frame-src https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 
 # Probe the port nginx was actually told to listen on (NGINX_PORT is configurable, so a
 # hardcoded http://localhost/ breaks on any instance that changed it), and address it as

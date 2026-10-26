@@ -1574,6 +1574,8 @@ export default {
   'That link is not a web address': 'Ten link nie jest adresem strony',
   'Watch video': 'Obejrzyj film',
   'Open link': 'Otwórz link',
+  'Plays from YouTube, and only once you tap': 'Odtwarza z YouTube, i to dopiero po stuknięciu',
+  'Opens in YouTube': 'Otwiera się w YouTube',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'Ten typ pliku nie jest obsługiwany. Użyj zdjęcia, GIF-a albo filmu MP4, MOV lub WebM.',
   'That file is too big. Max {0} MB.': 'Ten plik jest za duży. Maksymalnie {0} MB.',
   'That video is too long. Max {0} seconds.': 'Ten film jest za długi. Maksymalnie {0} sekund.',

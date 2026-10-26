@@ -1585,6 +1585,8 @@ export default {
   'That link is not a web address': 'ลิงก์นี้ไม่ใช่ที่อยู่เว็บ',
   'Watch video': 'ดูวิดีโอ',
   'Open link': 'เปิดลิงก์',
+  'Plays from YouTube, and only once you tap': 'เล่นจาก YouTube และโหลดเมื่อคุณแตะเท่านั้น',
+  'Opens in YouTube': 'เปิดใน YouTube',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'ไม่รองรับไฟล์ประเภทนี้ ใช้รูปภาพ, GIF หรือวิดีโอ MP4, MOV หรือ WebM',
   'That file is too big. Max {0} MB.': 'ไฟล์ใหญ่เกินไป สูงสุด {0} MB',
   'That video is too long. Max {0} seconds.': 'วิดีโอยาวเกินไป สูงสุด {0} วินาที',

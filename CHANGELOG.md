@@ -94,6 +94,13 @@ During a workout → Planned sessions start from → Your last session, the warm
 them. The ramp the routine builds for you stays automatic and follows today's work weight, so a
 50 % rung from your 60 kg days doesn't stay stuck at 30 kg once you bench 100.
 
+**YouTube demos play right in the app** (#613, thanks @Space-Hermes). A YouTube link on an exercise
+you added, or in a routine's notes, becomes a "Watch video" card. Nothing talks to YouTube until you
+tap it; then it plays in place from youtube-nocookie.com, YouTube's privacy-enhanced player, with
+Close and Open link underneath. On the iPhone the tap opens YouTube instead, because Apple's web view
+and YouTube's player don't get along there yet. Self-hosting with your own `CONTENT_SECURITY_POLICY`?
+Add `frame-src https://www.youtube-nocookie.com` to it, or the card can only open the link.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a

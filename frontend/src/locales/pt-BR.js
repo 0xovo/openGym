@@ -965,6 +965,8 @@ export const PT_BR_OVERRIDES = {
   'That link is not a web address': 'Esse link não é um endereço da web',
   'Watch video': 'Assistir ao vídeo',
   'Open link': 'Abrir link',
+  'Plays from YouTube, and only once you tap': 'Reproduz a partir do YouTube, e só quando você toca',
+  'Opens in YouTube': 'Abre no YouTube',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'Esse tipo de arquivo não é compatível. Use uma foto, um GIF, ou um vídeo MP4, MOV ou WebM.',
   'That file is too big. Max {0} MB.': 'Esse arquivo é grande demais. Máximo de {0} MB.',
   'That video is too long. Max {0} seconds.': 'Esse vídeo é longo demais. Máximo de {0} segundos.',

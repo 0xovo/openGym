@@ -58,6 +58,35 @@ describe('inline YouTube', () => {
     expect(host.querySelector('iframe')).toBeNull()
     open.mockRestore()
   })
+  it('says on the card that the video comes from YouTube, and only after the tap', () => {
+    mount({ notes: url })
+    expect(host.querySelector('.youtube-video .exlink-sub').textContent).toBe('Plays from YouTube, and only once you tap')
+  })
+  // The iPhone app's capacitor:// origin can't send the referrer YouTube's embed needs (Error 153),
+  // so there the tap opens the video in YouTube and no player is ever mounted.
+  it('opens the video in YouTube on the iPhone app instead of embedding it', () => {
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null)
+    globalThis.Capacitor = { getPlatform: () => 'ios' }
+    try {
+      mount({ notes: url })
+      expect(host.querySelector('.youtube-video .exlink-sub').textContent).toBe('Opens in YouTube')
+      act(() => host.querySelector('.youtube-video button').click())
+      expect(host.querySelector('iframe')).toBeNull()
+      expect(open).toHaveBeenCalledWith(url, '_blank', 'noopener,noreferrer')
+    } finally {
+      delete globalThis.Capacitor
+      open.mockRestore()
+    }
+  })
+  it('plays inline in the Android app', () => {
+    globalThis.Capacitor = { getPlatform: () => 'android' }
+    try {
+      mount({ notes: url })
+      act(() => host.querySelector('.youtube-video button').click())
+      expect(host.querySelector('iframe').src).toContain('https://www.youtube-nocookie.com/embed/99QhMQoxmOk')
+      expect(host.querySelector('iframe').getAttribute('referrerpolicy')).toBe('strict-origin-when-cross-origin')
+    } finally { delete globalThis.Capacitor }
+  })
   it('does not duplicate a custom exercise link also present in its notes', () => {
     mount({ ex: { id: 'c-demo', custom: true, n: 'Demo', url }, notes: url })
     expect(host.querySelectorAll('.youtube-video')).toHaveLength(1)

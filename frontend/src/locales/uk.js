@@ -1564,6 +1564,8 @@ export default {
   'That link is not a web address': 'Це посилання не є вебадресою',
   'Watch video': 'Дивитися відео',
   'Open link': 'Відкрити посилання',
+  'Plays from YouTube, and only once you tap': 'Грає з YouTube, і лише після натискання',
+  'Opens in YouTube': 'Відкриється в YouTube',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'Цей тип файлу не підтримується. Вибери фото, GIF або відео MP4, MOV чи WebM.',
   'That file is too big. Max {0} MB.': 'Файл завеликий. Максимум {0} МБ.',
   'That video is too long. Max {0} seconds.': 'Відео задовге. Максимум {0} секунд.',

@@ -1558,6 +1558,8 @@ export default {
   'That link is not a web address': '網址格式不正確',
   'Watch video': '觀看示範影片',
   'Open link': '開啟連結',
+  'Plays from YouTube, and only once you tap': '從 YouTube 播放，只在你點按後載入',
+  'Opens in YouTube': '在 YouTube 中開啟',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': '不支援此檔案類型。請使用照片、GIF，或 MP4、MOV、WebM 影片。',
   'That file is too big. Max {0} MB.': '檔案太大了。上限 {0} MB。',
   'That video is too long. Max {0} seconds.': '影片太長了。最長 {0} 秒。',

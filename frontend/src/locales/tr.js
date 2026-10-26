@@ -1574,6 +1574,8 @@ export default {
   'That link is not a web address': 'Bu bağlantı bir web adresi değil',
   'Watch video': 'Videoyu izle',
   'Open link': 'Bağlantıyı aç',
+  'Plays from YouTube, and only once you tap': 'YouTube’dan oynatılır, ama yalnızca dokunduğunda',
+  'Opens in YouTube': 'YouTube’da açılır',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'Bu dosya türü desteklenmiyor. Fotoğraf, GIF ya da MP4, MOV veya WebM video kullan.',
   'That file is too big. Max {0} MB.': 'Bu dosya çok büyük. En fazla {0} MB.',
   'That video is too long. Max {0} seconds.': 'Bu video çok uzun. En fazla {0} saniye.',

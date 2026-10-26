@@ -508,7 +508,9 @@ time, so only a phone left unopened for longer than `SESSION_DAYS` has to be pai
 
 The web container sends a Content-Security-Policy that lets scripts run only from your instance
 (plus the app's one inline script, by its hash), so a script that found its way into a page does
-not run. Requests the app makes itself stay open: the Coach on a device talks to whatever provider
+not run. The only frame it allows is YouTube's privacy-enhanced player (`www.youtube-nocookie.com`),
+for an exercise's video link once someone taps play; leave that in a policy of your own if you want
+those videos to play in the app. Requests the app makes itself stay open: the Coach on a device talks to whatever provider
 you chose, a LAN Ollama included. If your reverse proxy injects a script of its own (analytics,
 say), it gets blocked; give the `web` service a policy that allows it in `environment:`, or
 `CONTENT_SECURITY_POLICY=frame-ancestors 'none'` for the old, minimal header. The default is in

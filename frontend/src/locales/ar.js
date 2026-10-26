@@ -1622,6 +1622,8 @@ export default {
   'That link is not a web address': 'هذا الرابط ليس عنوان ويب',
   'Watch video': 'مشاهدة الفيديو',
   'Open link': 'فتح الرابط',
+  'Plays from YouTube, and only once you tap': 'يُشغَّل من YouTube، وفقط عندما تنقر',
+  'Opens in YouTube': 'يُفتح في YouTube',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'نوع الملف هذا غير مدعوم. استخدم صورة أو GIF أو فيديو بصيغة MP4 أو MOV أو WebM.',
   'That file is too big. Max {0} MB.': 'هذا الملف كبير جدًا. الحد الأقصى {0} م.ب.',
   'That video is too long. Max {0} seconds.': 'هذا الفيديو طويل جدًا. الحد الأقصى {0} ثانية.',

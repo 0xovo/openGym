@@ -1622,6 +1622,8 @@ export default {
   'That link is not a web address': 'এই লিংকটি কোনো ওয়েব ঠিকানা নয়',
   'Watch video': 'ভিডিও দেখুন',
   'Open link': 'লিংক খুলুন',
+  'Plays from YouTube, and only once you tap': 'YouTube থেকে চলে, আর শুধু তুমি ট্যাপ করলে',
+  'Opens in YouTube': 'YouTube-এ খোলে',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'এই ধরনের ফাইল সমর্থিত নয়। একটি ছবি, GIF, অথবা MP4, MOV বা WebM ভিডিও ব্যবহার করুন।',
   'That file is too big. Max {0} MB.': 'ফাইলটি খুব বড়। সর্বোচ্চ {0} MB।',
   'That video is too long. Max {0} seconds.': 'ভিডিওটি খুব লম্বা। সর্বোচ্চ {0} সেকেন্ড।',

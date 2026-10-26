@@ -1595,6 +1595,8 @@ export default {
   'That link is not a web address': 'Länken är inte en webbadress',
   'Watch video': 'Titta på video',
   'Open link': 'Öppna länk',
+  'Plays from YouTube, and only once you tap': 'Spelas från YouTube, och först när du trycker',
+  'Opens in YouTube': 'Öppnas i YouTube',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'Filtypen stöds inte. Använd ett foto, en GIF eller en video i MP4, MOV eller WebM.',
   'That file is too big. Max {0} MB.': 'Filen är för stor. Max {0} MB.',
   'That video is too long. Max {0} seconds.': 'Videon är för lång. Max {0} sekunder.',

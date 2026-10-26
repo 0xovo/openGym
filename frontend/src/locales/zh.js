@@ -1574,6 +1574,8 @@ export default {
   'That link is not a web address': '这不是一个网址',
   'Watch video': '观看视频',
   'Open link': '打开链接',
+  'Plays from YouTube, and only once you tap': '从 YouTube 播放，只在你点按后加载',
+  'Opens in YouTube': '在 YouTube 中打开',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': '不支持该文件类型。请使用照片、GIF，或 MP4、MOV、WebM 视频。',
   'That file is too big. Max {0} MB.': '文件太大了。最大 {0} MB。',
   'That video is too long. Max {0} seconds.': '视频太长了。最长 {0} 秒。',

@@ -1577,6 +1577,8 @@ export default {
   'That link is not a web address': 'Ez a link nem webcím',
   'Watch video': 'Videó megnézése',
   'Open link': 'Link megnyitása',
+  'Plays from YouTube, and only once you tap': 'A YouTube-ról játssza le, és csak ha koppintasz',
+  'Opens in YouTube': 'Megnyílik a YouTube-on',
   'That file type isn’t supported. Use a photo, a GIF, or an MP4, MOV or WebM video.': 'Ez a fájltípus nem támogatott. Használj fotót, GIF-et vagy MP4, MOV vagy WebM videót.',
   'That file is too big. Max {0} MB.': 'Ez a fájl túl nagy. Legfeljebb {0} MB.',
   'That video is too long. Max {0} seconds.': 'Ez a videó túl hosszú. Legfeljebb {0} másodperc.',
