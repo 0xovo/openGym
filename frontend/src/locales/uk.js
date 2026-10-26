@@ -2755,4 +2755,9 @@ export default {
   "Your progress": "Ваш прогрес",
   "Your routines": "Ваші програми",
   "You’re set": "Усе готово",
+  // --- date picker (#809) ---
+  'Previous year': 'Попередній рік',
+  'Next year': 'Наступний рік',
+  'Pick a month': 'Вибери місяць',
+  'Pick a day': 'Вибери день',
 }

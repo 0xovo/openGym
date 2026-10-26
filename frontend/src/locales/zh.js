@@ -2758,4 +2758,9 @@ export default {
   "Your progress": "你的进步",
   "Your routines": "你的训练计划",
   "You’re set": "准备好了",
+  // --- date picker (#809) ---
+  'Previous year': '上一年',
+  'Next year': '下一年',
+  'Pick a month': '选择月份',
+  'Pick a day': '选择日期',
 }

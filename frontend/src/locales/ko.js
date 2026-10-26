@@ -2758,4 +2758,9 @@ export default {
   "Your progress": "내 진행 상황",
   "Your routines": "내 루틴",
   "You’re set": "준비 끝",
+  // --- date picker (#809) ---
+  'Previous year': '이전 연도',
+  'Next year': '다음 연도',
+  'Pick a month': '월 선택',
+  'Pick a day': '날짜 선택',
 }

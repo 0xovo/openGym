@@ -2805,4 +2805,9 @@ export default {
   "Your progress": "Dina framsteg",
   "Your routines": "Dina rutiner",
   "You’re set": "Du är redo",
+  // --- date picker (#809) ---
+  'Previous year': 'Föregående år',
+  'Next year': 'Nästa år',
+  'Pick a month': 'Välj månad',
+  'Pick a day': 'Välj dag',
 }

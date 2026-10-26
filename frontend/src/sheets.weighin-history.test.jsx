@@ -6,6 +6,8 @@ import { createRoot } from 'react-dom/client'
 import { DEF, useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
 import { bwSheet, weighInsSheet } from './sheets.jsx'
+import { pickDate } from './components/DateField.test-util.js'
+import { todayISO } from './lib/format.js'
 
 const clone = v => JSON.parse(JSON.stringify(v))
 const mounted = []
@@ -122,11 +124,7 @@ describe('weigh-ins sheet', () => {
 
 // A weigh-in can be logged for an earlier day, the way measurements can.
 describe('log sheet date', () => {
-  const setDate = (host, value) => act(() => {
-    const el = host.querySelector('input[type="date"]')
-    Object.getOwnPropertyDescriptor(el.constructor.prototype, 'value').set.call(el, value)
-    el.dispatchEvent(new Event('input', { bubbles: true }))
-  })
+  const setDate = (host, value) => pickDate(host.querySelector('[data-datefield]'), value)
 
   it('logs a weigh-in for an earlier day, in date order', () => {
     bwSheet()
@@ -153,14 +151,12 @@ describe('log sheet date', () => {
     const d = new Date(); d.setDate(d.getDate() + 1)
     bwSheet()
     const log = mountTopSheet()
-    setDate(log, d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'))
-    act(() => { button(log, 'Save').click() })
-    expect(useStore.getState().S.bodyweight).toEqual(LOG)
-    expect(useUI.getState().toastMsg).toBe('Choose a valid date')
+    expect(setDate(log, d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'))).toBe(false)
+    expect(log.querySelector('[data-datefield]').value).toBe(todayISO())
   })
 
   it('has no date on the weigh-in before a workout', () => {
     bwSheet({ required: true })
-    expect(mountTopSheet().querySelector('input[type="date"]')).toBeNull()
+    expect(mountTopSheet().querySelector('[data-datefield]')).toBeNull()
   })
 })

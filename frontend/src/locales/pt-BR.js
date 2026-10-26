@@ -1796,6 +1796,10 @@ export const PT_BR_OVERRIDES = {
   "Your progress": "Seu progresso",
   "Your routines": "Suas rotinas",
   "You’re set": "Tudo pronto",
+  // --- date picker (#809) ---
+  'Next year': 'Próximo ano',
+  'Pick a month': 'Escolha um mês',
+  'Pick a day': 'Escolha um dia',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

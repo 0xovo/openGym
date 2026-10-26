@@ -2758,4 +2758,9 @@ export default {
   "Your progress": "Twoje postępy",
   "Your routines": "Twoje plany",
   "You’re set": "Gotowe",
+  // --- date picker (#809) ---
+  'Previous year': 'Poprzedni rok',
+  'Next year': 'Następny rok',
+  'Pick a month': 'Wybierz miesiąc',
+  'Pick a day': 'Wybierz dzień',
 }

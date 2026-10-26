@@ -2769,4 +2769,9 @@ export default {
   "Your progress": "ความก้าวหน้าของคุณ",
   "Your routines": "รูทีนของคุณ",
   "You’re set": "พร้อมแล้ว",
+  // --- date picker (#809) ---
+  'Previous year': 'ปีก่อนหน้า',
+  'Next year': 'ปีถัดไป',
+  'Pick a month': 'เลือกเดือน',
+  'Pick a day': 'เลือกวัน',
 }

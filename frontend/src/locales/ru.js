@@ -2762,4 +2762,9 @@ export default {
   "Your progress": "Ваш прогресс",
   "Your routines": "Ваши программы",
   "You’re set": "Всё готово",
+  // --- date picker (#809) ---
+  'Previous year': 'Предыдущий год',
+  'Next year': 'Следующий год',
+  'Pick a month': 'Выберите месяц',
+  'Pick a day': 'Выберите день',
 }

@@ -839,6 +839,7 @@ body.chips-dragging *{cursor:inherit}
 .timef{
   background:var(--surface-2);border:none;border-radius:8px;padding:6px 10px;
   font-size:16px;color:var(--label);outline:none;font-variant-numeric:tabular-nums;
+  min-width:0;max-width:100%;
 }
 /* A date or time field is as wide as the browser draws it and will not give way, and neither will
    the title beside it once that is down to its longest word: the Polish "Godzina rozpoczęcia" plus
@@ -1599,7 +1600,9 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
   /* A tall sheet stops short of the status bar / Dynamic Island: every cap carries the top
      safe-area inset, which the layout viewport does not (viewport-fit=cover). */
   max-height:90vh;max-height:min(90vh,calc(100dvh - var(--sat) - 8px - var(--native-kb,0px)));
-  overflow-y:auto;scroll-padding-bottom:calc(20px + var(--sab));
+  /* overflow-y:auto alone makes overflow-x auto as well, so one child wider than the sheet (the
+     iOS 27 date input, #809) turned into a sideways scrollbar. A sheet only ever scrolls down. */
+  overflow-y:auto;overflow-x:hidden;scroll-padding-bottom:calc(20px + var(--sab));
   animation:sheetup .34s var(--ease);
   overscroll-behavior:contain;touch-action:pan-y;will-change:transform;
 }
@@ -1978,6 +1981,30 @@ body.totop-on.resting #app{padding-bottom:calc(232px + var(--sab))}
 .cal-d i.noted{background:var(--indigo)}
 .cal-legend{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:12px;color:var(--label-3)}
 .cal-legend i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-inline-end:5px}
+/* --- openGym date field + picker (#809, components/DateField.jsx) ---
+   The field is a button dressed as the field or row value it replaces; the picker reuses the
+   calendar's cells above. Cells are at least 44px tall: at 320px seven columns cannot also be
+   44px wide, so the grid gives up gap before it gives up height. */
+.datef{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:start;cursor:pointer;
+  min-width:0;max-width:100%;color:var(--label)}
+.datef time,.datef .datef-ph{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.datef .datef-ph{color:var(--label-3)}
+.datef>.icn{flex:none;color:var(--label-3);font-size:18px}
+.field.datef:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--acc)}
+.timef.datef{display:inline-flex;min-height:32px;margin-inline-start:auto}
+.datep-label{text-align:center;margin-bottom:2px}
+.datep-head{margin-bottom:2px;gap:6px}
+.datep-title{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 8px;border-radius:10px;min-width:0}
+.datep-title .datep-t{font-size:20px;font-weight:600;letter-spacing:-.021em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.datep-title>.icn{flex:none;font-size:14px;color:var(--label-3)}
+.datep-title:active{background:var(--surface)}
+.datep-grid{gap:4px}
+.datep-grid .cal-d,.datep-m{aspect-ratio:auto;min-height:44px;font-variant-numeric:tabular-nums}
+.datep .cal-d.sel{background:var(--acc);color:var(--on-acc);font-weight:600}
+.datep .cal-d:disabled{opacity:.3;cursor:default}
+.datep-months{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.datep-m{min-height:52px;font-size:16px}
+.datep-today{margin-top:12px;width:100%}
 
 /* --- accent swatches --- */
 .swatches{display:flex;gap:12px;flex-wrap:wrap}
