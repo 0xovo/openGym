@@ -78,6 +78,16 @@ feet up), and your weight minus the help on an assisted machine. It's off by def
 volume and Lifted in total. Records, e1RM and progression stay as you logged them, so a weigh-in never
 hands you a PR.
 
+**Every exercise under the muscle it's known for** (#788, thanks @lodepav). The catalogue filed
+every squat and leg press under glutes, a Romanian deadlift under glutes, a Russian twist under abs
+and a tibialis raise under calves. 668 exercises now have the main muscle you'd expect: squats,
+leg presses and hack squats → quads, lunges, step-ups and hip thrusts → glutes, Romanian and
+stiff-leg deadlifts and leg curls → hamstrings, most rows → upper back, pulldowns and high rows →
+lats, twists and side bends → obliques, knee raises → hip flexors, tibialis work → shins. No muscle
+falls off an exercise's map (the old one stays as a secondary), but the full weight moves, so
+**your recovery, fatigue and muscle balance numbers will shift** after the update, with your history
+recounted the new way. Your quads will suddenly look a lot busier on squat day. That's the fix.
+
 ## v1.4.3 (DATE)
 
 The community release. Most of what's below was asked for on GitHub and Discord or sent in as a
