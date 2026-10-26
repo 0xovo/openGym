@@ -90,7 +90,9 @@ export const SearchField = forwardRef(function SearchField({ value, onChange, on
       <Icon name="magnifier" className="lead" />
       <input ref={ref} className="field" value={value} onChange={onChange} {...rest} />
       {!!value && (
-        <button className="clear" onClick={onClear} aria-label={t('Clear')}>
+        /* type="button": inside a form the first button is what Enter presses, and that must be
+           the form's own Search, not this (the gym map's search cleared itself on Enter). */
+        <button type="button" className="clear" onClick={onClear} aria-label={t('Clear')}>
           <Icon name="xmark" />
         </button>
       )}

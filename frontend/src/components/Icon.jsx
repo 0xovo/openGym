@@ -182,6 +182,9 @@ const P = {
   pin: <path d="M9.2 3.8h5.6M10.2 3.8v5.4l-3.4 3.8h10.4l-3.4-3.8V3.8M12 13v7.2" />,
   // a place on a map (the gym reminder, #614)
   mapPin: <><path d="M12 20.6s-6.4-5.6-6.4-10.6a6.4 6.4 0 0 1 12.8 0c0 5-6.4 10.6-6.4 10.6Z" /><circle cx="12" cy="10" r="2.4" /></>,
+  // The gym map (1.4.4): "I'm here right now" (a location arrow) and "Open in Google Maps".
+  location: <path d="M19.8 4.2 4.6 10.5l6.5 2.4 2.4 6.5 6.3-15.2Z" />,
+  map: <path d="M3.8 6.5 9 4.6l6 2.2 5.2-1.9v12.6L15 19.4l-6-2.2-5.2 1.9V6.5ZM9 4.6v12.6M15 6.8v12.6" />,
   // copy to the clipboard: two overlapping sheets
   copy: <><rect x="8.4" y="8.4" width="11.6" height="11.6" rx="2.4" /><path d="M15.6 8.4v-2A2.4 2.4 0 0 0 13.2 4H6.4A2.4 2.4 0 0 0 4 6.4v6.8a2.4 2.4 0 0 0 2.4 2.4h2" /></>,
   // a passkey (key is the password, lock is "stays on this device")

@@ -337,10 +337,26 @@ cellular with Wi-Fi only on, it waits; Still only shows stills everywhere a work
 ### Gym reminder (#614)
 
 Settings → Reminders → **Gym reminder**, in the phone app only (the web build has no such page:
-a browser cannot watch where you are with the page closed). Off by default. Add gyms with "I'm at
-the gym right now" (the phone's position) or a pin on an OpenStreetMap map (Leaflet; the address
-search asks Nominatim, only on an explicit tap of Search, with a User-Agent naming the app). Each
-gym has a radius (100 m by default, 50 to 500) and an optional text. Up to 20 gyms (iOS watches at
+a browser cannot watch where you are with the page closed). Off by default. The gyms are cards
+(address, radius, an on/off switch each; swipe or ⋯ to rename or remove). A gym is picked on a map
+with "I'm here right now" (the phone's position), a search or a pin you drag:
+
+- **iPhone: Apple Maps.** `ios/App/App/GymMapPickerPlugin.swift` (`GymMapPicker.pick`) presents a
+  full-screen MKMapView in the app's tint and theme, MKLocalSearch on top (fitness centres first,
+  then everything else), a draggable pin, the radius circle and slider; it returns
+  `{ name, address, lat, lng, radius }` and keeps nothing. No API key. A build without the plugin
+  (or `UNIMPLEMENTED`) falls back to the web map (`lib/gym-places.js` `pickOnNativeMap`).
+- **Android (and the iPhone fallback): OpenStreetMap** through Leaflet (`components/GymMap.jsx`):
+  standard OSM tiles with attribution (tile usage policy), darkened by a CSS filter in dark mode
+  (no second provider: CARTO's dark basemaps need an API key now); the radius circle in the accent
+  with a handle on its edge to drag. The search asks Nominatim within its usage policy: only on
+  Enter or the Search button (no search-as-you-type), at most one request a second, answers cached
+  for the session, repeats in flight not sent again, a User-Agent naming the app, biased (not
+  bounded) to the map's area, gyms ranked first. "Open in Google Maps" opens a plain
+  `google.com/maps/search/?api=1` link (the Maps app if it is installed), no key, no SDK.
+
+Each gym has a radius (100 m by default, 50 to 500), an optional text and an `off` flag (kept on
+the list, not watched: both native sides skip it when they arm the regions). Up to 20 gyms (iOS watches at
 most 20 regions per app). Walking into one posts "Gym spotted. Ready for your workout? 💪"; a tap
 opens the Start screen (or the running workout).
 

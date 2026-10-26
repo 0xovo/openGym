@@ -1924,6 +1924,33 @@ button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
 body.no-tabbar #toast{bottom:calc(24px + var(--sab))}
 body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
 
+/* --- back to top (components/ScrollTopButton.jsx) --- */
+/* Above the tab bar, at the end of the 560px column on a computer, and up over the rest bar while
+   it is there. Only transform and opacity move: it pops in with a small overshoot and eases out
+   without one. Visibility goes last on the way out, so a hidden button takes no taps or focus.
+   The Halloween decorations live at the top of the screen and on the cards, never down here. */
+#totop{
+  position:fixed;inset-inline-end:max(16px,calc(50vw - 264px));bottom:calc(80px + var(--sab));z-index:45;
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:var(--surface-2);color:var(--acc);border:var(--hair) solid var(--sep-op);
+  box-shadow:0 8px 22px -8px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(10px) scale(.6);visibility:hidden;pointer-events:none;
+  transition:opacity var(--fast),transform var(--med) var(--ease),visibility 0s linear var(--med);
+}
+#totop.on{
+  opacity:1;transform:none;visibility:visible;pointer-events:auto;
+  transition:opacity var(--fast),transform 380ms cubic-bezier(.3,1.5,.5,1),visibility 0s;
+}
+:root[data-theme="light"] #totop{background:var(--surface)}
+#totop:active{transform:scale(.92)}
+#totop:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#totop .icn{font-size:21px;--icon-stroke:2.1}
+body.resting #totop{bottom:calc(172px + var(--sab))}
+/* While it shows, the page ends a button's height further up, so the last row's controls scroll
+   out from under it rather than sitting beneath it. */
+body.totop-on #app{padding-bottom:calc(144px + var(--sab))}
+body.totop-on.resting #app{padding-bottom:calc(232px + var(--sab))}
+
 /* ---------------------------------------------------------------- misc --- */
 .empty{text-align:center;color:var(--label-2);padding:44px 20px;font-size:15px;line-height:1.45}
 .empty .ico{font-size:34px;color:var(--label-2);margin-bottom:12px;display:flex;justify-content:center}
@@ -2144,6 +2171,11 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   .center{width:340px}
   .center.wide{width:440px}
   #timer{left:50%;right:auto;margin-left:-260px;width:520px;bottom:112px}
+  /* Back to top: at the end of the wide column, level with the floating tab bar and clear of it,
+     so the page's own 128px at the bottom already keeps the last row out from under it. */
+  #totop,body.resting #totop{inset-inline-end:max(16px,calc(50vw - 540px + var(--pad)));bottom:calc(20px + var(--sab))}
+  body.totop-on #app{padding-bottom:calc(128px + var(--sab))}
+  body.totop-on.resting #app{padding-bottom:calc(220px + var(--sab))}
   body.no-tabbar #timer{left:50%;right:auto;bottom:16px;border-radius:var(--r-xl);padding-bottom:10px;box-shadow:0 12px 40px -10px rgba(0,0,0,.5)}
   .exmedia img,.exmedia video{height:380px}
   .hm-wrap{display:flex;flex-direction:column;align-items:center}
@@ -2360,15 +2392,50 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   box-shadow:0 0 28px rgba(0,0,0,.28);
 }
 
-/* Gym reminder (#614, views/GymReminder.jsx): the map with its pin and radius, and the editor rows */
-.gym-map-wrap{margin:0 0 22px}
-.gym-map{height:300px;border-radius:12px;overflow:hidden;background:var(--surface-2);z-index:0;isolation:isolate}
-.gym-map .leaflet-control-attribution{font-size:10px}
-.gym-pin span{display:block;width:30px;height:30px;border-radius:50% 50% 50% 0;background:var(--acc);transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.35);border:2px solid #fff}
-.gym-radius{stroke:var(--acc);fill:var(--acc);stroke-width:2}
-.gym-search{display:flex;gap:8px;align-items:center;padding:8px 12px}
-.gym-search>.field{flex:1;min-width:0;width:auto}
-.gym-search>.btn{flex:none;width:auto;padding-left:16px;padding-right:16px}
+/* Gym reminder (#614, views/GymReminder.jsx; redrawn in 1.4.4). The list: cards like Plan's
+   routines, a switch and a ⋯ each. A switched-off gym fades but stays readable. */
+.gym-list-t{margin-top:4px}
+.gym-list{margin-bottom:12px}
+.gym-item{padding-block:8px}
+.gym-item .item-open{flex:1;min-width:0;padding:4px 0;background:none;border:0;color:inherit;font:inherit;cursor:pointer}
+.gym-item .item-open .ss{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gym-item.off .lrow-i,.gym-item.off .item-open{opacity:.5}
+.gym-more{flex:none;display:grid;place-items:center;width:36px;height:44px;margin-inline-end:-6px;border:0;background:none;color:var(--label-2);font-size:20px;border-radius:10px;cursor:pointer}
+.gym-more:active{background:var(--surface-2)}
+.gym-empty{padding:30px 20px 22px}
+.gym-add{margin:0 0 26px}
+/* The editor: a big map in a card, the search floating on top of it, the radius in the accent. */
+.gmap{position:relative;height:clamp(360px,calc(100dvh - 300px),640px);border-radius:var(--r-lg);overflow:hidden;background:var(--surface-2);isolation:isolate;box-shadow:0 0 0 .5px var(--sep)}
+.gym-map{position:absolute;inset:0;z-index:0;background:var(--surface-2)}
+/* Dark mode: OpenStreetMap's tiles turned to night on the phone, no second tile provider. */
+:root:not([data-theme="light"]) .gym-map .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.7)}
+/* Attribution stays readable in both themes and clear of the card's rounded corner. */
+.gym-map.leaflet-container .leaflet-control-attribution{font-size:10px;line-height:1.5;background:var(--surface);color:var(--label-2);opacity:.92;border-radius:8px;padding:1px 7px;margin:0 10px 8px 0}
+.gym-map.leaflet-container .leaflet-control-attribution a{color:var(--label)}
+.gym-map .leaflet-bar{border:0;box-shadow:0 2px 10px rgba(0,0,0,.25);border-radius:12px;overflow:hidden}
+.gym-map .leaflet-bar a{width:38px;height:38px;line-height:38px;font-size:20px;background:var(--surface);color:var(--label);border-color:var(--sep)}
+.gym-map .leaflet-bar a.leaflet-disabled{color:var(--label-3);background:var(--surface)}
+.gym-pin span{position:relative;display:block;width:34px;height:34px;border-radius:50% 50% 50% 0;background:var(--acc);transform:rotate(-45deg);box-shadow:0 3px 8px rgba(0,0,0,.35);border:3px solid #fff}
+.gym-pin span::after{content:'';position:absolute;inset:9px;border-radius:50%;background:#fff}
+.gym-handle span{display:block;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--acc);box-shadow:0 2px 6px rgba(0,0,0,.35);cursor:ew-resize}
+.gym-radius{stroke:var(--acc);fill:var(--acc);stroke-width:2.5}
+.gmap-top{position:absolute;z-index:1000;inset:10px 10px auto;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.gmap-top>*{pointer-events:auto}
+.gmap-search{display:flex;gap:8px;align-items:center}
+.gmap-search>.searchf{flex:1;min-width:0}
+.gmap-search .field{height:48px;font-size:17px;background:var(--surface);box-shadow:0 3px 14px rgba(0,0,0,.28)}
+:root[data-theme="light"] .gmap-search .field{background:var(--surface)}
+.gmap-search>.btn{flex:none;width:auto;height:48px;padding-inline:16px;box-shadow:0 3px 14px rgba(0,0,0,.28)}
+.gmap-note{align-self:flex-start;margin:0;padding:3px 9px;border-radius:999px;font-size:11.5px;color:var(--label-2);background:var(--surface);opacity:.94}
+.gmap-hits{max-height:min(330px,calc(100% - 90px));overflow-y:auto;overscroll-behavior:contain;gap:6px;padding:2px;border-radius:var(--r-card)}
+.gmap-hit{box-shadow:0 2px 10px rgba(0,0,0,.22);cursor:pointer;min-height:56px}
+.gmap-hit .ss{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gmap-hit.none{cursor:default;min-height:0}
+.gmap-chip{position:absolute;z-index:1000;left:50%;transform:translateX(-50%);bottom:24px;white-space:nowrap;padding:6px 11px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;background:var(--acc);color:var(--on-acc);box-shadow:0 2px 8px rgba(0,0,0,.3);pointer-events:none}
+.gmap-hint{margin:8px 4px 14px}
+.gmap-btns{display:flex;flex-direction:column;gap:8px;margin:0 0 24px}
+.gmap-btns>.btn.primary{min-height:52px;font-size:17px}
+@media (min-width:700px){.gmap-btns{flex-direction:row}.gmap-btns>.btn{flex:1}}
 .gym-field{padding:8px 12px}
 .gym-field input{width:100%}
 .gym-radius-row{display:flex;align-items:center;gap:12px;padding:12px 14px}
