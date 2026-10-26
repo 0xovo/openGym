@@ -276,7 +276,7 @@ function MuscleBalance({ S }) {
     {completionSummary}
   </>
 
-  return <div className="card">
+  return <div className="card" data-tour="stats-body">
     <Segmented className="seg-range" value={view} onChange={setView}
       options={[{ value: 'balance', label: t('Muscle balance') }, { value: 'fatigue', label: t('Fatigue') }, { value: 'strength', label: t('Strength') }]} />
     {view === 'balance' ? <>
@@ -763,7 +763,7 @@ export default function Stats() {
         <button className="iconbtn" onClick={() => nav('/history')} aria-label={t('History')}><Icon name="history" /></button>
       </div></div>
 
-    <div className="tiles">
+    <div className="tiles" data-tour="stats-tiles">
       <div className="tile"><div className="l"><Icon name="dumbbell" />{t('Workouts')}</div><div className="v">{workouts.length}</div></div>
       <div className="tile"><div className="l"><Icon name="calendar" />{t('This month')}</div><div className="v">{monthW}</div></div>
       <div className="tile"><div className="l"><Icon name="flame" />{t('Week streak')}</div><div className="v">{streakWeeks(S)}</div></div>
@@ -828,7 +828,7 @@ export default function Stats() {
         <SeasonDeco spot="stats-web" />
       </div>
 
-      <div className="card">
+      <div className="card" data-tour="stats-records">
         <h2>{t('Exercise progress')}</h2>
         {exHist.length ? <>
           <div className="sect-b" style={{ marginBottom: 10 }}>

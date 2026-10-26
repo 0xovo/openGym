@@ -120,10 +120,11 @@ export function Switch({ checked, onChange, disabled, ...accessibility }) {
 /* ============================ segmented ============================ */
 
 // options: [{ value, label, icon? }]  — the selected pill slides between cells.
-export function Segmented({ options, value, onChange, className = '' }) {
+// `tour`: the app tour's anchor for this control (data-tour, lib/tour.js); likewise below.
+export function Segmented({ options, value, onChange, className = '', tour }) {
   const i = Math.max(0, options.findIndex(o => o.value === value))
   return (
-    <div className={'seg ' + className} style={{ '--n': options.length, '--i': i }}>
+    <div className={'seg ' + className} style={{ '--n': options.length, '--i': i }} data-tour={tour}>
       <span className="seg-sel" aria-hidden="true" />
       {options.map(o => (
         <button
@@ -288,9 +289,10 @@ export function Slider({ value, min = 0, max = 100, step = 1, onChange, classNam
 
 /* ============================ checkbox ============================ */
 
-export function Check({ checked, onChange, className = '', size, label }) {
+export function Check({ checked, onChange, className = '', size, label, tour }) {
   return (
     <button
+      data-tour={tour}
       role="checkbox"
       aria-checked={!!checked}
       aria-label={label}
@@ -308,9 +310,9 @@ export function Check({ checked, onChange, className = '', size, label }) {
 // The inset-grouped list is the app's main structural primitive: a titled
 // section holding rows separated by hairlines that stop short of the leading
 // edge, so the icon column reads as a continuous rail.
-export function Section({ title, footer, children, className = '' }) {
+export function Section({ title, footer, children, className = '', tour }) {
   return (
-    <section className={'sect ' + className}>
+    <section className={'sect ' + className} data-tour={tour}>
       {title && <h2 className="sect-t">{title}</h2>}
       <div className="sect-b">{children}</div>
       {footer && <p className="sect-f">{footer}</p>}
@@ -318,10 +320,10 @@ export function Section({ title, footer, children, className = '' }) {
   )
 }
 
-export function Row({ icon, iconTint, title, subtitle, value, accessory = 'none', onClick, danger, children, className = '' }) {
+export function Row({ icon, iconTint, title, subtitle, value, accessory = 'none', onClick, danger, children, className = '', tour }) {
   const Tag = onClick ? 'button' : 'div'
   return (
-    <Tag className={'lrow' + (onClick ? ' tap' : '') + (danger ? ' danger' : '') + ' ' + className} onClick={onClick}>
+    <Tag className={'lrow' + (onClick ? ' tap' : '') + (danger ? ' danger' : '') + ' ' + className} onClick={onClick} data-tour={tour}>
       {icon && <span className="lrow-i" style={iconTint ? { '--tint': iconTint } : null}><Icon name={icon} /></span>}
       <span className="lrow-m">
         <span className="lrow-t">{title}</span>
