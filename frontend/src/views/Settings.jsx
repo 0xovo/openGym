@@ -58,6 +58,7 @@ import { PAGES, ROOT_GROUPS, pageVisible, searchSettings, pageTrail } from './se
 import { platformNow } from '../lib/platform-now.js'
 import { pathBefore } from '../lib/nav.js'
 import WatchSettingsPage from './WatchSettings.jsx'
+import IntegrationsPage from './Integrations.jsx'
 import { reportSheet } from '../components/ReportSheet.jsx'
 import { csvExportSheet } from '../components/CsvExportSheet.jsx'
 import GymReminderPage, { GymEditPage } from './GymReminder.jsx'
@@ -84,7 +85,7 @@ export function SettingsRoute() {
   // `ios` now, not after an async platform check: the Apple Watch page is iPhone only, and a route
   // that did not know yet sent every visit to it straight back to the root.
   // (Unknown counts as yes inside the phone app: the page itself then says there is no watch.)
-  const ctx = { user: useStore(s => s.user), mobile: MOBILE, ios: MOBILE && platformNow() !== 'android' }
+  const ctx = { user: useStore(s => s.user), mobile: MOBILE, ios: MOBILE && platformNow() !== 'android', android: MOBILE && platformNow() !== 'ios' }
   if (page && (!PAGES[page] || !pageVisible(PAGES[page].parent || page, ctx) || !pageVisible(page, ctx))) return <Navigate to="/settings" replace />
   if (page === 'coach') return <Navigate to="/coach/setup" replace />
   return <Settings key={page || 'root'} page={page || null} find={loc.state?.find || null} via={loc.state?.via || null} entryKey={loc.key} />
@@ -179,7 +180,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
 
   // --- update check state ---
   const [updateInfo, setUpdateInfo] = useState(null) // { hasUpdate, latestVersion, apkUrl, hashUrl } | null
-  const [android, setAndroid] = useState(false)
+  const [android, setAndroid] = useState(() => MOBILE && platformNow() === 'android')
   const [ios, setIos] = useState(() => MOBILE && platformNow() === 'ios')   // the iPhone app: Settings → Apple Watch
   const [selfUpdate, setSelfUpdate] = useState(false)   // the sideloaded APK, which updates itself
   const [checking, setChecking] = useState(false)
@@ -437,6 +438,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     profiles: (S.equipProfiles || []).length > 0, nameLang: EXERCISE_NAME_LANGS.includes(baseLang(lang)),
     pushOK: !MOBILE && pushSupported(), reminderOn: !!S.reminder?.on, nudge: !!S.reminder?.nudge,
     autoBackup: !!S.autoBackup, synced: !!sync, installTip: !MOBILE && !standalone(), androidWeb: IS_ANDROID, desktopWeb: !IS_ANDROID && !APPLE_UA,
+    integrations: config?.integrations?.providers || [],
   }
   const mode = scheduleModeOf(S)
   const layout = ['list', 'compact', 'focus'].includes(S.workoutView) ? S.workoutView : 'cards'
@@ -454,6 +456,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     look: () => themeLabel + ' · ' + accentLabel(S),
     coach: () => (coachLocal?.mode === 'server' ? t('Your server') : coachLocal?.mode === 'byok' ? t('Your API key') : t('Off')),
     data: () => '',
+    integrations: () => '',
     about: () => 'v' + __APP_VERSION__,
     watch: () => '',
   }
@@ -509,6 +512,10 @@ export default function Settings({ page = null, find = null, via = null, entryKe
 
   const pages = {
     watch: () => <WatchSettingsPage />,
+    integrations: () => <IntegrationsPage android={android} ios={ios} />,
+    // The phone's health store (#200, #544): its switches, moved here from Data & backup in 1.4.5.
+    'apple-health': () => <HealthPage key="apple-health" S={S} toast={toast} android={false} />,
+    'health-connect': () => <HealthPage key="health-connect" S={S} toast={toast} android />,
     gym: () => <GymReminderPage />,
     'gym-edit': () => <GymEditPage />,
     workout: () => <>
@@ -943,7 +950,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
         {/* Android only: the system folder picker (#161). iOS shows Documents in Files already. */}
         {MOBILE && android && S.autoBackup && <BackupFolderRow />}
       </Section>
-      {MOBILE && <HealthConnectCard S={S} toast={toast} android={android} />}
+      {/* Apple Health / Health Connect moved to Integrations (1.4.5); the way there stays here. */}
+      {MOBILE && <HealthLinkRow android={android} nav={nav} />}
       <Section title={t('Bring data in')}>
         <Row icon="download" iconTint="var(--teal)" title={t('Import backup')} accessory="chevron" onClick={() => fileRef.current.click()} />
         <Row icon="download" iconTint="var(--teal)" title={t('Import from another app')}
@@ -1651,7 +1659,29 @@ const HEALTH_COPY = {
   }),
 }
 
-function HealthConnectCard({ S, toast, android }) {
+// Settings → Integrations → Apple Health / Health Connect. On a phone without the store, a line
+// that says so instead of an empty page.
+function HealthPage({ S, toast, android }) {
+  if (!MOBILE) return <Section><Row icon="info" iconTint="var(--grey)" title={t('This lives in the openGym phone app.')} /></Section>
+  return <>
+    <HealthConnectCard S={S} toast={toast} android={android} page />
+    <p className="sect-f">{t('Your watch or scale writes here too? Garmin, COROS, Fitbit, Withings, Oura and friends reach openGym this way.')}</p>
+  </>
+}
+
+// Data & backup's way to the health page, shown where the store is.
+function HealthLinkRow({ android, nav }) {
+  const [st, setSt] = useState(null)
+  useEffect(() => { let gone = false; healthStatus().then(s => { if (!gone) setSt(s) }).catch(() => {}); return () => { gone = true } }, [])
+  if (!st || st.status === 'unsupported') return null
+  const ios = st.platform === 'ios' || (!st.platform && !android)
+  return <Section>
+    <Row icon="heart" iconTint="var(--red)" title={ios ? t('Apple Health') : t('Health Connect')} subtitle={t('Now in Integrations')} accessory="chevron"
+      onClick={() => nav('/settings/' + (ios ? 'apple-health' : 'health-connect'))} />
+  </Section>
+}
+
+function HealthConnectCard({ S, toast, android, page = false }) {
   const getState = () => useStore.getState().S
   const [st, setSt] = useState(null)
   const [h, setH] = useState(null)
@@ -1666,7 +1696,10 @@ function HealthConnectCard({ S, toast, android }) {
     return () => { gone = true; off() }
   }, [])
   const ios = st?.platform === 'ios'
-  if (!st || !h || st.status === 'unsupported' || (!android && !ios)) return null
+  if (!st || !h) return null
+  if (st.status === 'unsupported' || (!android && !ios)) {
+    return page ? <Section><Row icon="info" iconTint="var(--grey)" title={t('Not on this phone')} subtitle={t('This phone has no health store openGym can use.')} /></Section> : null
+  }
   const c = HEALTH_COPY[ios ? 'ios' : 'android']()
 
   if (st.status !== 'available') return (

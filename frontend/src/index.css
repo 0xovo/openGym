@@ -2384,6 +2384,36 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 @keyframes spflash{0%,45%{background:var(--acc-soft)}100%{background:transparent}}
 .sp-empty{color:var(--label-2);text-align:center;padding:28px 12px;line-height:1.4}
 
+/* ------------------------------------------------- Integrations (v1.4.5) -- */
+/* A card is a settings row: the icon and words are one button (the detail sheet), the action a
+   second one at the end, so the row holds no button inside a button. Flat like every settings
+   page: no shadow, the section's own surface. */
+.intg-intro{margin:-2px 4px 14px;padding:0}
+.lrow.intg-card{padding:0;gap:0}
+.intg-open{display:flex;align-items:center;gap:12px;flex:1;min-width:0;padding:11px 14px;text-align:start;color:inherit;background:none;border-radius:0}
+.intg-open:active{background:var(--surface-2)}
+.intg-open .lrow-m{min-width:0}
+.intg-act{flex:none;margin-inline-end:12px;min-height:32px}
+.intg-pill{display:inline-flex;align-self:flex-start;margin-top:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;
+  line-height:1.35;background:var(--surface-2);color:var(--label-2)}
+.intg-pill.connected{background:rgba(48,209,88,.16);color:var(--green)}
+.intg-pill.attention{background:rgba(255,159,10,.18);color:var(--orange)}
+.lrow-s .intg-pill{margin-inline-start:6px;margin-top:0;vertical-align:1px}
+.intg-chips{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px}
+.btn.intg-chip{background:var(--surface-2);color:var(--label);font-weight:500}
+.btn.intg-chip .icn{font-size:14px;color:var(--label-2)}
+.intg-h{display:flex;align-items:center;gap:8px}
+.intg-h .icn{flex:none;color:var(--acc)}
+.intg-lead{margin:-4px 0 14px;line-height:1.45}
+.intg-sheet-pill{margin:-8px 0 12px}
+.intg-line{font-size:15px;line-height:1.35}
+.intg-url{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:var(--label-2);overflow-wrap:anywhere}
+.intg-secret{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;padding:12px 14px;margin-bottom:12px;
+  background:var(--surface);border-radius:var(--r-sm);overflow-wrap:anywhere;user-select:all;-webkit-user-select:all}
+.intg-problem{color:var(--red);font-size:13px;line-height:1.35;margin-top:8px}
+.intg-note{text-align:center;line-height:1.4}
+@media (max-width:360px){.intg-open{gap:10px;padding-inline:12px}.intg-act{margin-inline-end:10px;padding-inline:8px}}
+
 /* ----------------------------------------------------------- RTL (Arabic) -- */
 /* Directional icons flip: back chevrons point right, trailing chevrons point left. */
 [dir="rtl"] [data-icon="chevronLeft"],

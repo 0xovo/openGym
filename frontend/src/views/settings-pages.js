@@ -18,6 +18,8 @@ export const PAGES = {
   look: { title: 'Look & Home', icon: 'palette', tint: 'var(--purple)' },
   coach: { title: 'AI Coach', icon: 'sparkles', tint: 'var(--green)' },
   watch: { title: 'Apple Watch', icon: 'watch', tint: 'var(--grey)' },
+  // Settings → Integrations (v1.4.5): the directory of what openGym talks to (views/Integrations.jsx).
+  integrations: { title: 'Integrations', icon: 'plug', tint: 'var(--indigo)', kw: 'integrations connect apps services webhook webhooks home assistant n8n ntfy node-red zapier automation garmin fitbit strava sync api mcp' },
   data: { title: 'Data & backup', icon: 'folder', tint: 'var(--blue)' },
   about: { title: 'About & updates', icon: 'info', tint: 'var(--grey)' },
   account: { title: 'Account', icon: 'personCircle', tint: 'var(--grey)' },
@@ -27,11 +29,14 @@ export const PAGES = {
   'gym-edit': { title: 'Your gym', icon: 'mapPin', tint: 'var(--orange)', parent: 'gym' },
   // Seasonal themes (lib/seasonal.js), one section per theme.
   themes: { title: 'Seasonal themes', icon: 'pumpkin', tint: 'var(--orange)', parent: 'look' },
+  // The phone's health store, one page per platform (until 1.4.5 a section of Data & backup).
+  'apple-health': { title: 'Apple Health', icon: 'heart', tint: 'var(--red)', parent: 'integrations', kw: 'apple health healthkit heart rate weight scale watch sync workouts' },
+  'health-connect': { title: 'Health Connect', icon: 'heart', tint: 'var(--red)', parent: 'integrations', kw: 'health connect google fit samsung fitbit garmin heart rate weight scale watch sync workouts' },
 }
 export const PAGE_IDS = Object.keys(PAGES)
 
 // The root, top to bottom. Whether a row shows is pageVisible's call.
-export const ROOT_GROUPS = [['workout', 'alerts', 'reminders'], ['plan', 'units', 'equipment'], ['look', 'coach', 'watch'], ['data', 'about']]
+export const ROOT_GROUPS = [['workout', 'alerts', 'reminders'], ['plan', 'units', 'equipment'], ['look', 'coach', 'watch'], ['integrations', 'data', 'about']]
 
 /**
  * Whether a page exists for this device and profile. Reminders need a push server (signed in) or
@@ -45,6 +50,9 @@ export function pageVisible(page, ctx) {
   if (page === 'watch') return !!ctx.ios
   // The phone app only: a browser cannot watch where you are with the page closed.
   if (page === 'gym' || page === 'gym-edit') return !!ctx.mobile
+  // The health store of the phone this runs on (unknown counts as yes, as for the watch).
+  if (page === 'apple-health') return !!ctx.ios
+  if (page === 'health-connect') return !!ctx.mobile && !!ctx.android
   return page in PAGES
 }
 
@@ -146,6 +154,22 @@ export const SEARCH = [
   { page: 'data', title: 'Import from Hevy', icon: 'key', tint: 'var(--teal)', kw: 'hevy api import' },
   { page: 'data', title: 'Photos & videos', icon: 'image', tint: 'var(--teal)', kw: 'media storage photos videos upload', when: c => c.hasMedia },
   { page: 'data', title: 'Reset everything', icon: 'trash', tint: 'var(--red)', kw: 'delete wipe reset erase' },
+  // Integrations: the cards (lib/integrations.js cardState says where each shows)
+  { page: 'integrations', title: 'Apple Health', icon: 'heart', tint: 'var(--red)', kw: 'apple health healthkit iphone heart rate watch', when: c => !c.mobile },
+  { page: 'integrations', title: 'Health Connect', icon: 'heart', tint: 'var(--red)', kw: 'health connect android google fit heart rate watch', when: c => !c.mobile },
+  { page: 'integrations', title: 'Webhooks', icon: 'webhook', tint: 'var(--indigo)', kw: 'webhook webhooks home assistant n8n ntfy node-red zapier ifttt automation notify', when: c => c.demo || !c.user || (c.integrations || []).includes('webhook') || !!c.user?.admin },
+  { page: 'integrations', title: 'Hevy', icon: 'key', tint: 'var(--teal)', kw: 'hevy api key import', when: c => !c.demo },
+  { page: 'integrations', title: 'Import a file', icon: 'download', tint: 'var(--teal)', kw: 'import strong fitnotes hevy csv gymmane apple health export file' },
+  { page: 'integrations', title: 'Spreadsheet (CSV)', icon: 'share', tint: 'var(--green)', kw: 'csv spreadsheet excel export' },
+  { page: 'integrations', title: 'MCP server', icon: 'plug', tint: 'var(--purple)', kw: 'mcp claude desktop cursor llm agent ai model context protocol api' },
+  { page: 'integrations', title: 'Garmin', icon: 'watch', tint: 'var(--grey)', kw: 'garmin fenix forerunner venu watch heart rate' },
+  { page: 'integrations', title: 'COROS', icon: 'watch', tint: 'var(--grey)', kw: 'coros watch heart rate' },
+  { page: 'integrations', title: 'Polar', icon: 'watch', tint: 'var(--grey)', kw: 'polar watch heart rate strap' },
+  { page: 'integrations', title: 'Fitbit', icon: 'watch', tint: 'var(--grey)', kw: 'fitbit pixel watch heart rate' },
+  { page: 'integrations', title: 'Samsung Health', icon: 'watch', tint: 'var(--grey)', kw: 'samsung galaxy watch health heart rate weight' },
+  { page: 'integrations', title: 'Oura', icon: 'ring', tint: 'var(--grey)', kw: 'oura ring heart rate' },
+  { page: 'integrations', title: 'Withings', icon: 'scale', tint: 'var(--grey)', kw: 'withings scale weight body' },
+  { page: 'integrations', title: 'Renpho', icon: 'scale', tint: 'var(--grey)', kw: 'renpho scale weight body' },
   // About & updates
   { page: 'about', title: 'Check for updates', icon: 'download', tint: 'var(--green)', kw: 'update apk android version', when: c => c.mobile && c.android },
   { page: 'about', title: 'Get the Android app', icon: 'download', tint: 'var(--green)', kw: 'apk android download app', when: c => !c.mobile },
@@ -218,7 +242,7 @@ export function searchSettings(query, ctx, tr = t) {
     // The page itself too: Gym reminder hangs under Reminders, which the web has, but is the phone's.
     const top = PAGES[id].parent ? PAGES[id].parent : id
     if (!pageVisible(top, ctx) || !pageVisible(id, ctx) || id === 'advanced') continue
-    consider({ page: id, title: PAGES[id].title, icon: PAGES[id].icon, tint: PAGES[id].tint }, true)
+    consider({ page: id, title: PAGES[id].title, icon: PAGES[id].icon, tint: PAGES[id].tint, kw: PAGES[id].kw }, true)
   }
   for (const e of SEARCH) {
     if (!pageVisible(PAGES[e.page].parent || e.page, ctx)) continue
