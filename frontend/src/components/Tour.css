@@ -38,7 +38,7 @@
 /* A stop that hands the screen over (a sheet to use): no dimmer, a ring and a slim bar at the
    top, or at the bottom when the sheet reaches that high. */
 .tour-free{pointer-events:none}
-.tour-ring{position:fixed;border-radius:14px;outline:2px solid var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 30%,transparent);pointer-events:none;
+.tour-ring{position:fixed;border-radius:14px;outline:2px solid var(--acc);box-shadow:0 0 0 4px rgba(0,0,0,.18);pointer-events:none;
   transition:top .25s ease,left .25s ease,width .25s ease,height .25s ease}
 .tour-bar{top:calc(var(--sat,0px) + 10px);left:50%;transform:translateX(-50%);width:min(420px,calc(100vw - 24px));padding:10px 14px 10px;
   box-shadow:0 10px 32px -8px rgba(0,0,0,.6);border:1px solid var(--sep,transparent)}
