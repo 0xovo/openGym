@@ -6,13 +6,21 @@ tag. Write it for the people using the app: what changed for them, short, no em 
 
 ## Unreleased
 
-**A 1-minute tour.** Right after the first setup, openGym asks if you want a quick look around. Say yes
-and it points at the real thing, screen by screen: today's session and Start, week or rotation, the
-Library, a practice workout (tick a set, meet the rest timer, swipe, the ⋯ menu, Finish), Stats and
-Settings. The practice session is pretend: never saved, never synced, gone when the tour moves on.
-Back, Next and Skip whenever you like; close the app halfway and it offers to pick up once. It works
-with a screen reader and reduced motion, and the Halloween guests take a break while it runs.
-Settings → About & updates → Show the tour again runs it any time.
+**A 1-minute tour, and four tutorials.** Right after the first setup, openGym asks if you want a quick
+look around. Say yes and it points at the real thing, screen by screen: today's session, week or
+rotation, the Library, a practice workout (tick a set, meet the rest timer, swipe, the ⋯ menu, Finish),
+Stats and Settings. It never just teleports you: to get to the next screen it points at the real tab,
+the gear or the back button and waits for your tap (or taps it for you with Show me), so you learn the
+way. Scroll, turn the phone or open the keyboard and the spotlight sticks to what it's pointing at. The
+practice session is pretend: never saved, never synced, gone when the tour moves on. At the end it
+offers four short tutorials, each its own little guided run: **Build your first plan** (a real routine:
+name it, add exercises, set sets, reps and weight, give it a day; quit before Save and nothing is left
+behind), **Create your own exercise** (the real form, nothing made until you tap Create), **Edit your
+data** (fixing workouts, weigh-ins and the rest, on a pretend copy so your own data stays untouched)
+and **Export & import** (backups, spreadsheets, imports from other apps and syncing, pointed at, never
+run for you). Back, Next and Skip whenever you like; close the app halfway through the tour and it
+offers to pick up once. It works with a screen reader and reduced motion, and the Halloween guests
+take a break while it runs. Settings → About & updates → Tutorials runs any of them again.
 
 **Pictures on the printed plan** (#817, thanks @Teo230). Print / Save as PDF asks one thing first:
 With pictures. On, every exercise gets a small picture next to its sets, rest and note, two to a
