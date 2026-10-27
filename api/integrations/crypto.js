@@ -40,7 +40,7 @@ export function open(key, sealed, aad = '') {
 }
 
 /** A new signing secret, shown to its owner once. */
-export const newSecret = () => 'whsec_' + crypto.randomBytes(24).toString('base64url');
+export const newSecret = () => 'ogwh_' + crypto.randomBytes(24).toString('base64url');
 
 /** An id that says nothing about its owner. */
 export const newId = (prefix = 'c') => prefix + '_' + crypto.randomBytes(9).toString('base64url');

@@ -39,7 +39,7 @@ test('a sealed value opens with the same key and place only', () => {
 
 test('the signature verifies, and refuses another body, secret or an old timestamp', () => {
   const sec = newSecret();
-  assert.match(sec, /^whsec_[A-Za-z0-9_-]{32}$/);
+  assert.match(sec, /^ogwh_[A-Za-z0-9_-]{32}$/);
   const body = JSON.stringify({ version: 1, type: 'workout.finished' });
   const ts = Math.floor(Date.now() / 1000);
   const h = signature(sec, body, ts);
@@ -285,7 +285,7 @@ test('connect, deliver signed, fail, retry and disconnect, end to end', async ()
   assert.throws(() => r.hub.connect('u1', 'webhook', { url: 'https://hooks.example.com/a', events: ['nope'] }), e => e.code === 'events');
   const made = r.hub.connect('u1', 'webhook', { url: 'https://hooks.example.com/api/webhook/opengym-1234567890', events: ['workout.finished', 'weighin.logged'] });
   const secret = made.reveal.secret;
-  assert.match(secret, /^whsec_/);
+  assert.match(secret, /^ogwh_/);
   const id = made.connection.id;
   assert.equal(made.connection.status, 'connected');
   assert.equal(made.connection.info.url, 'https://hooks.example.com/api/webhook/…7890');

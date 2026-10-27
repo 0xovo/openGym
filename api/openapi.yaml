@@ -2341,7 +2341,7 @@ paths:
                   reveal:
                     type: object
                     properties:
-                      secret: { type: string, example: whsec_Q2hhbmdlIG1lIGJ1dCBub3QgdGhpcyBvbmU }
+                      secret: { type: string, example: ogwh_EXAMPLE-not-a-real-secret-0000000 }
         '400':
           description: 'The URL or the events were refused (`code`: `url`, `events`).'
           content:

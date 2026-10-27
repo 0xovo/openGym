@@ -155,7 +155,7 @@ describe('webhooks', () => {
 
   it('connect: the URL is checked here first, then the server answers with the secret, shown once', async () => {
     mocks.answers['/api/integrations'] = { providers: [{ id: 'webhook', max: 10 }], connections: [] }
-    mocks.answers['/api/integrations/connect'] = { connection: conn(), reveal: { secret: 'whsec_abc123' } }
+    mocks.answers['/api/integrations/connect'] = { connection: conn(), reveal: { secret: 'ogwh_abc123' } }
     await mount()
     expect(pill('webhook')).toBe('Off')
     expect(action('webhook').textContent).toBe('Connect')
@@ -173,7 +173,7 @@ describe('webhooks', () => {
     await act(async () => { sheetBtn('Add webhook').click() })
     const sent = mocks.calls.find(c => c[0] === '/api/integrations/connect')[1]
     expect(sent).toEqual({ provider: 'webhook', url: 'https://ha.example.com/api/webhook/opengym-7f3a', label: 'Home Assistant', events: ['workout.finished', 'workout.pr'] })
-    expect(sheetHost.querySelector('.intg-secret').textContent).toBe('whsec_abc123')
+    expect(sheetHost.querySelector('.intg-secret').textContent).toBe('ogwh_abc123')
     expect(sheetHost.textContent).toContain('You will see it only now')
   })
 
