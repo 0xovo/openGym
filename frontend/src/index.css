@@ -216,16 +216,16 @@ body.no-tabbar.resting #app{padding-bottom:calc(96px + var(--sab))}
 #app > .page.vfade{animation:viewfade var(--med) var(--ease)}
 /* Drilling into a settings page and back (App.jsx pageMotion): the iPhone's own push and pop.
    The page slides, the window never scrolls sideways while it does. */
-/* The sliding page's own background and its edge shadow live in the keyframes, so they go when the
-   slide ends. On the page itself they stayed for as long as it was open: a floating, shadowed box
-   inset by #app's padding and only as tall as its rows, plain to see in the light theme (1.4.3). */
-@keyframes viewpush{from{transform:translateX(100%);background-color:var(--bg);box-shadow:-12px 0 28px rgba(0,0,0,.18)}to{transform:none;background-color:var(--bg);box-shadow:-12px 0 28px rgba(0,0,0,.18)}}
+/* Only the page moves: no background and no edge shadow, not even during the slide. The page sits
+   inside #app's side padding and is only as tall as its rows, so either one drew a floating, inset
+   box: for as long as the page was open in 1.4.3, and for the length of the slide in build 45. */
+@keyframes viewpush{from{transform:translateX(100%)}to{transform:none}}
 @keyframes viewpop{from{transform:translateX(-28%);opacity:.7}to{transform:none;opacity:1}}
 #app > .page.vpush{animation:viewpush .38s cubic-bezier(.32,.72,0,1)}
 #app > .page.vpop{animation:viewpop .34s cubic-bezier(.32,.72,0,1)}
 [dir="rtl"] #app > .page.vpush{animation-name:viewpush-rtl}
 [dir="rtl"] #app > .page.vpop{animation-name:viewpop-rtl}
-@keyframes viewpush-rtl{from{transform:translateX(-100%);background-color:var(--bg);box-shadow:12px 0 28px rgba(0,0,0,.18)}to{transform:none;background-color:var(--bg);box-shadow:12px 0 28px rgba(0,0,0,.18)}}
+@keyframes viewpush-rtl{from{transform:translateX(-100%)}to{transform:none}}
 @keyframes viewpop-rtl{from{transform:translateX(28%);opacity:.7}to{transform:none;opacity:1}}
 #app:has(> .page.vpush),#app:has(> .page.vpop){overflow-x:clip}
 /* The page an edge swipe back returns to (App.jsx Page `under`, lib/edge-swipe-back.js): laid
