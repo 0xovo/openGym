@@ -297,6 +297,7 @@ plan is in [ROADMAP.md](ROADMAP.md), and the issues sit in the
 | v1.4.3 | released Oct 2026 | The Halloween and community release: gym reminder, health data read back, watch upgrades, CSV export |
 | v1.4.4 | in progress | Programmes with %1RM and RPE targets, custom app icons, kg or lb per exercise, the Coach fix |
 | v1.4.5 | Nov 2026 | Remote MCP over HTTPS, Google Play, a gym reminder that also notices you leaving |
+| v1.4.6 | Dec 2026 | The progression engine by @giulioleuci: smarter targets, wave progression, a warm-up generator |
 | later | dates are guesses | Circuits and EMOM, a trainer role, OIDC, F-Droid, an on-device Coach, Strava and Garmin, database storage |
 
 ## Community

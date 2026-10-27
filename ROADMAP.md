@@ -13,7 +13,7 @@ new exercise database (v1.4.0).
 
 - Milestones: https://github.com/DuarteSantos8/openGym/milestones
 - Next, in order: the community release (v1.4.3, released 2026-10-26) → programmes and the Coach fix
-  (v1.4.4) → remote MCP and Google Play (v1.4.5) → the list after that
+  (v1.4.4) → remote MCP and Google Play (v1.4.5) → the progression engine (v1.4.6) → the list after that
 
 ---
 
@@ -207,7 +207,23 @@ the changelog; the headlines:
   14 days first, so that test has to start around 2026-11-05 for a launch at the end of November.
   Until then the signed APK on GitHub is the Android app.
 
-## After v1.4.5  (in rough order, dates are guesses)
+## v1.4.6: The progression engine  (planned for December)
+
+The engine behind every prescription, by @giulioleuci, reviewed in the three pieces it is now
+split into:
+
+- The training engine itself, the v1 → v2 converter and readers for both formats, with nothing
+  switched on yet (#823)
+- Switching the app to v2: the automatic migration at launch and on the server (#824)
+- The routine editor redesign, sets to failure, five new templates and the 1RM blend (#825)
+- On top of it: wave / percentage progression, 5/3/1 style (#70, PR #168), rep or set ranges and
+  AMRAP targets (#154), a warm-up generator that picks the ramp from load and lift (#156), and
+  auto-regulation on RPE (#120)
+
+Programmes in v1.4.4 already cover %1RM or RPE per week and deloads; the engine is what makes the
+targets inside a week smart.
+
+## After v1.4.6  (in rough order, dates are guesses)
 
 None of these has a version number yet. They get one when the work starts, and the order can change
 when the tracker or Discord says so.
@@ -224,7 +240,7 @@ when the tracker or Discord says so.
   back, scales via the hubs (#127)
 - **Strava and Garmin**: workouts out to Strava, Garmin through FIT files rather than a watch app
 - **Still on the list from older plans**: body composition in measurements (#648), session phases
-  (#57), rep ranges and AMRAP targets (#154), a warm-up generator (#156), cardio intervals,
+  (#57), cardio intervals,
   searching your own history and your own photos on built-in exercises (#534), account recovery
   (#584), the Android home-screen widget (#125), a Wear OS app, skins (#129) and social sharing
 - **openNutrition**, the sister app for food, once openGym's stores are settled
