@@ -1673,8 +1673,10 @@ export const PT_BR_OVERRIDES = {
   // --- cloud sync (passkey) ---
   'Account created': 'Conta criada',
   'Add a passkey on this device': 'Adicionar uma chave de acesso neste dispositivo',
+  'Cloud sync': 'Sincronização em nuvem',
   'Cloud sync (passkey)': 'Sincronização em nuvem (chave de acesso)',
   'Create account with passkey': 'Criar conta com chave de acesso',
+  'Sign in with Google': 'Entrar com o Google',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': 'Entre com {0}, sem senha. Se é sua primeira vez aqui, crie a conta com sua primeira chave de acesso.',
   'Signed in as {0}.': 'Conectado como {0}.',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': 'Conectado como {0}. Seu plano, seus treinos e suas pesagens sincronizam em todos os seus dispositivos.',

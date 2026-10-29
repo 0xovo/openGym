@@ -2591,8 +2591,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'Hesap oluşturuldu',
   'Add a passkey on this device': 'Bu cihaza bir geçiş anahtarı ekle',
+  'Cloud sync': 'Bulut senkronizasyonu',
   'Cloud sync (passkey)': 'Bulut senkronizasyonu (geçiş anahtarı)',
   'Create account with passkey': 'Geçiş anahtarıyla hesap oluştur',
+  'Sign in with Google': 'Google ile oturum aç',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': 'Parola olmadan {0} ile giriş yap. Buraya ilk kez geliyorsan hesabını ilk geçiş anahtarınla oluştur.',
   'Signed in as {0}.': '{0} olarak giriş yapıldı.',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': '{0} olarak giriş yapıldı. Planın, antrenmanların ve kilo kayıtların tüm cihazlarında senkronize edilir.',

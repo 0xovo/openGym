@@ -2591,8 +2591,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'खाता बन गया',
   'Add a passkey on this device': 'इस डिवाइस पर एक पासकी जोड़ें',
+  'Cloud sync': 'क्लाउड सिंक',
   'Cloud sync (passkey)': 'क्लाउड सिंक (पासकी)',
   'Create account with passkey': 'पासकी से खाता बनाएँ',
+  'Sign in with Google': 'Google से साइन इन करें',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': '{0} से साइन इन करें, कोई पासवर्ड नहीं। पहली बार आए हैं, तो अपनी पहली पासकी से खाता बनाएँ।',
   'Signed in as {0}.': '{0} के रूप में साइन इन हैं।',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': '{0} के रूप में साइन इन हैं। आपकी योजना, वर्कआउट और वज़न के रिकॉर्ड आपके सभी डिवाइस पर सिंक होते हैं।',
