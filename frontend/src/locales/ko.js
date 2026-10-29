@@ -2591,8 +2591,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': '계정이 만들어졌습니다',
   'Add a passkey on this device': '이 기기에 패스키 추가',
+  'Cloud sync': '클라우드 동기화',
   'Cloud sync (passkey)': '클라우드 동기화 (패스키)',
   'Create account with passkey': '패스키로 계정 만들기',
+  'Sign in with Google': 'Google로 로그인',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': '비밀번호 없이 {0}(으)로 로그인하세요. 처음이라면 첫 패스키로 계정을 만드세요.',
   'Signed in as {0}.': '{0}(으)로 로그인됨.',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': '{0}(으)로 로그인됨. 계획, 운동 기록, 체중 기록이 모든 기기에 동기화됩니다.',

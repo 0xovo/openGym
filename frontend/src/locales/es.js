@@ -2591,8 +2591,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'Cuenta creada',
   'Add a passkey on this device': 'Añadir una passkey en este dispositivo',
+  'Cloud sync': 'Sincronización en la nube',
   'Cloud sync (passkey)': 'Sincronización en la nube (passkey)',
   'Create account with passkey': 'Crear cuenta con passkey',
+  'Sign in with Google': 'Iniciar sesión con Google',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': 'Inicia sesión con {0}, sin contraseña. Si es tu primera vez aquí, crea la cuenta con tu primera passkey.',
   'Signed in as {0}.': 'Sesión iniciada como {0}.',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': 'Sesión iniciada como {0}. Tu plan, tus entrenamientos y tus registros de peso se sincronizan en todos tus dispositivos.',

@@ -2670,8 +2670,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'অ্যাকাউন্ট তৈরি হয়েছে',
   'Add a passkey on this device': 'এই ডিভাইসে একটি পাসকি যোগ করুন',
+  'Cloud sync': 'ক্লাউড সিঙ্ক',
   'Cloud sync (passkey)': 'ক্লাউড সিঙ্ক (পাসকি)',
   'Create account with passkey': 'পাসকি দিয়ে অ্যাকাউন্ট তৈরি করুন',
+  'Sign in with Google': 'Google দিয়ে সাইন ইন করুন',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': '{0} দিয়ে সাইন ইন করুন, কোনো পাসওয়ার্ড নেই। প্রথমবার এখানে এলে, আপনার প্রথম পাসকি দিয়ে অ্যাকাউন্টটি তৈরি করুন।',
   'Signed in as {0}.': '{0} হিসেবে সাইন ইন করেছেন।',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': '{0} হিসেবে সাইন ইন করেছেন। আপনার পরিকল্পনা, ওয়ার্কআউট এবং ওজন মাপা আপনার সব ডিভাইসে সিঙ্ক হয়।',

@@ -2588,8 +2588,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'Обліковий запис створено',
   'Add a passkey on this device': 'Додати ключ доступу на цьому пристрої',
+  'Cloud sync': 'Хмарна синхронізація',
   'Cloud sync (passkey)': 'Хмарна синхронізація (ключ доступу)',
   'Create account with passkey': 'Створити обліковий запис за ключем доступу',
+  'Sign in with Google': 'Увійти через Google',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': 'Увійдіть за допомогою {0}, без пароля. Якщо ви тут уперше, створіть обліковий запис зі своїм першим ключем доступу.',
   'Signed in as {0}.': 'Ви увійшли як {0}.',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': 'Ви увійшли як {0}. Ваш план, тренування та записи ваги синхронізуються на всіх ваших пристроях.',

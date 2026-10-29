@@ -2594,8 +2594,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'Fiók létrehozva',
   'Add a passkey on this device': 'Jelszókulcs hozzáadása ezen az eszközön',
+  'Cloud sync': 'Felhőszinkron',
   'Cloud sync (passkey)': 'Felhőszinkron (jelszókulcs)',
   'Create account with passkey': 'Fiók létrehozása jelszókulccsal',
+  'Sign in with Google': 'Bejelentkezés Google-fiókkal',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': 'Jelentkezz be {0} használatával, jelszó nélkül. Ha először jársz itt, hozd létre a fiókot az első jelszókulcsoddal.',
   'Signed in as {0}.': 'Bejelentkezve mint {0}.',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': 'Bejelentkezve mint {0}. A terved, az edzéseid és a súlyméréseid minden eszközödön szinkronizálódnak.',

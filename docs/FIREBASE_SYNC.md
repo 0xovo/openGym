@@ -117,6 +117,38 @@ tab, paste the contents of `firestore.rules`, Publish.
 5. Later, to add a passkey on another device: sign in there first, then
    Settings, Account, "Add a passkey on this device".
 
+## Google sign-in, with or without passkeys
+
+Firebase Auth has Google sign-in built in, so it needs neither the passkey
+functions nor the service account. `VITE_FB_AUTH_PROVIDERS` picks what the
+sign-in card offers:
+
+```
+VITE_FB_AUTH_PROVIDERS=passkey          the default: passkeys only, as above
+VITE_FB_AUTH_PROVIDERS=passkey,google   both buttons, still deployed through sync-server
+VITE_FB_AUTH_PROVIDERS=google           Google only: no sync-server, no Vercel functions
+```
+
+1. Firebase console, Authentication, **Sign-in method**, add **Google**, pick a
+   support email, Save.
+2. Authentication, **Settings**, **Authorized domains**: add the domain the app
+   is served from (`localhost` is there already).
+3. Add `VITE_FB_AUTH_DOMAIN` to the build variables: it is the `authDomain`
+   value from the `firebaseConfig` block (usually `YOUR_PROJECT_ID.firebaseapp.com`).
+   Google sign-in opens its window on that domain.
+4. With `google` only, the app is plain static files: build `frontend/` with
+   `VITE_FIREBASE=1`, `VITE_FB_AUTH_PROVIDERS=google` and the `VITE_FB_*`
+   values, then put `frontend/dist` on any static host (Firebase Hosting,
+   Netlify, Vercel with `frontend` as the root). `FIREBASE_SERVICE_ACCOUNT` and
+   the two `WEBAUTHN_*` values are not needed. Part 3 still applies: publish the
+   rules.
+
+Sign-in opens a Google popup. If the browser blocks it, the app falls back to a
+full-page redirect. Some browsers block the storage that redirect needs when the
+app is not on Firebase Hosting, so allow popups for the site if the redirect
+comes back signed out. The account is your Google account, so the username
+warning below does not apply to Google sign-in.
+
 ## Check it worked
 
 - The Vercel URL opens the app directly, with no Vercel login screen in front.

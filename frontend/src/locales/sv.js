@@ -2638,8 +2638,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'Konto skapat',
   'Add a passkey on this device': 'Lägg till en passkey på den här enheten',
+  'Cloud sync': 'Molnsynk',
   'Cloud sync (passkey)': 'Molnsynk (passkey)',
   'Create account with passkey': 'Skapa konto med passkey',
+  'Sign in with Google': 'Logga in med Google',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': 'Logga in med {0}, inget lösenord. Första gången här? Skapa kontot med din första passkey.',
   'Signed in as {0}.': 'Inloggad som {0}.',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': 'Inloggad som {0}. Ditt program, dina träningspass och dina invägningar synkroniseras på alla dina enheter.',

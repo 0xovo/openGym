@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
 import { bio } from '../lib/api.js'
+import { authProviders } from '../lib/firebase-config.js'
 import { Button } from './ui.jsx'
+
+const PASSKEY = authProviders.includes('passkey')
+const GOOGLE = authProviders.includes('google')
 
 // Firebase mode (Phase 2): passkey sign-in + Firestore sync controls. The sync engine and
 // the Firebase SDK live in lib/firestore-sync.js and are imported lazily, these components
@@ -28,6 +32,9 @@ export function FirebaseSignIn({ onSignedIn } = {}) {
   const { mod, auth } = useFb()
   const [name, setName] = useState('')
   const [busy, setBusy] = useState(false)
+  // A Google redirect comes back as a fresh page load already signed in: step into the app then too
+  const back = auth.user?.provider === 'google'
+  useEffect(() => { if (back && onSignedIn) onSignedIn() }, [back])
   if (!mod) return null
   const run = async (fn, okMsg) => {
     setBusy(true)
@@ -38,16 +45,27 @@ export function FirebaseSignIn({ onSignedIn } = {}) {
   if (auth.user) return (
     <div className="muted small">{t('Signed in as {0}.', auth.user.username || t('you'))}</div>
   )
+  // A redirect sign-in returns no user: the page reloads signed in, so there is nothing to step into yet
+  const google = async () => {
+    setBusy(true)
+    try { if (await mod.fbGoogleSignIn()) { toast(t('Welcome back')); if (onSignedIn) onSignedIn() } }
+    catch (e) { if (e?.code !== 'auth/popup-closed-by-user' && e?.code !== 'auth/cancelled-popup-request') toast(e?.message || t('Something went wrong')) }
+    finally { setBusy(false) }
+  }
   return <>
-    <div className="muted small" style={{ marginBottom: 12 }}>
-      {t('Sign in with {0}, no password. First time here, create the account with your first passkey.', bio())}
-    </div>
-    <input className="input" placeholder={t('Username')} maxLength={40} value={name}
-      onChange={e => setName(e.target.value)} autoComplete="username" />
-    <div style={{ height: 10 }} />
-    <Button variant="primary" disabled={busy || !name.trim()} onClick={() => run(() => mod.fbLogin(name), t('Welcome back'))}>{t('Sign in with passkey')}</Button>
-    <div style={{ height: 10 }} />
-    <Button disabled={busy || !name.trim()} onClick={() => run(() => mod.fbRegister(name), t('Account created'))}>{t('Create account with passkey')}</Button>
+    {GOOGLE && <Button variant={PASSKEY ? undefined : 'primary'} disabled={busy} onClick={google}>{t('Sign in with Google')}</Button>}
+    {GOOGLE && PASSKEY && <div style={{ height: 18 }} />}
+    {PASSKEY && <>
+      <div className="muted small" style={{ marginBottom: 12 }}>
+        {t('Sign in with {0}, no password. First time here, create the account with your first passkey.', bio())}
+      </div>
+      <input className="input" placeholder={t('Username')} maxLength={40} value={name}
+        onChange={e => setName(e.target.value)} autoComplete="username" />
+      <div style={{ height: 10 }} />
+      <Button variant="primary" disabled={busy || !name.trim()} onClick={() => run(() => mod.fbLogin(name), t('Welcome back'))}>{t('Sign in with passkey')}</Button>
+      <div style={{ height: 10 }} />
+      <Button disabled={busy || !name.trim()} onClick={() => run(() => mod.fbRegister(name), t('Account created'))}>{t('Create account with passkey')}</Button>
+    </>}
   </>
 }
 
@@ -65,13 +83,16 @@ export default function FirebaseAccount() {
   }
   return (
     <div className="card" style={{ padding: 16, marginBottom: 22 }}>
-      <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('Cloud sync (passkey)')}</div>
+      <div style={{ fontWeight: 600, marginBottom: 6 }}>{GOOGLE ? t('Cloud sync') : t('Cloud sync (passkey)')}</div>
       {auth.user ? <>
         <div className="muted small" style={{ marginBottom: 12 }}>
           {t('Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.', auth.user.username || t('you'))}
         </div>
-        <Button disabled={busy} onClick={() => run(() => mod.fbAddPasskey(), t('Passkey added'))}>{t('Add a passkey on this device')}</Button>
-        <div style={{ height: 10 }} />
+        {/* A Google account has no passkey username to attach a new passkey to */}
+        {auth.user.provider !== 'google' && <>
+          <Button disabled={busy} onClick={() => run(() => mod.fbAddPasskey(), t('Passkey added'))}>{t('Add a passkey on this device')}</Button>
+          <div style={{ height: 10 }} />
+        </>}
         <Button variant="ghost" disabled={busy} onClick={() => run(() => mod.fbSignOut(), t('Signed out'))}>{t('Sign out')}</Button>
       </> : <FirebaseSignIn />}
     </div>

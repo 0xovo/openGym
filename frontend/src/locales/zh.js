@@ -2591,8 +2591,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': '账户已创建',
   'Add a passkey on this device': '在此设备上添加通行密钥',
+  'Cloud sync': '云同步',
   'Cloud sync (passkey)': '云同步（通行密钥）',
   'Create account with passkey': '使用通行密钥创建账户',
+  'Sign in with Google': '使用 Google 登录',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': '使用{0}登录，无需密码。如果是第一次使用，请用您的第一把通行密钥创建账户。',
   'Signed in as {0}.': '已以{0}身份登录。',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': '已以{0}身份登录。您的计划、训练和体重记录会在您的所有设备上同步。',

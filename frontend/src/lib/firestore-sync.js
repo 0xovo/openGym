@@ -26,6 +26,11 @@
 // /api/passkey/* Vercel functions (@simplewebauthn/server + firebase-admin): they verify
 // the WebAuthn response and mint a Firebase custom token; this module then signs in with
 // it via signInWithCustomToken. Session persistence is Firebase Auth's own (local).
+//
+// Google sign-in is the alternative that runs entirely in the browser through Firebase
+// Auth's own provider, so a build configured with only Google needs no sync-server at all.
+// Both paths land in the same onAuthStateChanged, which is why the sync engine below does
+// not care which one signed the user in.
 import { firebaseConfig } from './firebase-config.js'
 import { splitState, joinDocs, splitHashes, docIdFor, keyForDocId, entryHash } from './firestore-model.js'
 import { mergeStates } from './sync-merge.js'
@@ -34,7 +39,7 @@ const USERNAME_KEY = 'gym_fb_username'
 const PUSH_DEBOUNCE_MS = 800
 
 // ---- tiny auth-state pub/sub for the UI (components/FirebaseAccount.jsx, views/Login.jsx)
-let fbUser = null // { uid, username } | null
+let fbUser = null // { uid, username, provider } | null
 let fbReady = false
 const authListeners = new Set()
 export function onFbAuthChange(fn) {
@@ -129,6 +134,25 @@ export async function fbAddPasskey() {
   return fbRegister(name) // register-options accepts it: the bearer token proves the account
 }
 
+/** Sign in with Google. Popups are blocked in some browsers and unsupported in some
+ *  environments (installed PWA, embedded webview): there we redirect and return null,
+ *  the page reloads signed in and onAuthStateChanged picks the session up. */
+export async function fbGoogleSignIn() {
+  await ensureFirebase()
+  const { GoogleAuthProvider, signInWithPopup, signInWithRedirect } = await import('firebase/auth')
+  const provider = new GoogleAuthProvider()
+  try {
+    const cred = await signInWithPopup(auth, provider)
+    return cred.user
+  } catch (e) {
+    if (e?.code === 'auth/popup-blocked' || e?.code === 'auth/operation-not-supported-in-environment') {
+      await signInWithRedirect(auth, provider)
+      return null
+    }
+    throw e
+  }
+}
+
 export async function fbSignOut() {
   await ensureFirebase()
   const { signOut } = await import('firebase/auth')
@@ -143,7 +167,14 @@ export function startFirestoreSync(useStore) {
     const { onAuthStateChanged } = authModCache
     onAuthStateChanged(auth, user => {
       if (user) {
-        setFbUser({ uid: user.uid, username: localStorage.getItem(USERNAME_KEY) || '' })
+        // Google accounts have no saved passkey username: fall back to the profile fields.
+        const provider = (user.providerData || []).some(p => p && p.providerId === 'google.com')
+          ? 'google' : 'passkey'
+        setFbUser({
+          uid: user.uid,
+          username: localStorage.getItem(USERNAME_KEY) || user.displayName || user.email || '',
+          provider,
+        })
         attach(useStore, user.uid).catch(e => console.warn('[fb-sync] attach failed', e))
       } else {
         detach()

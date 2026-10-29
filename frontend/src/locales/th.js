@@ -2602,8 +2602,10 @@ export default {
   // --- cloud sync (passkey) ---
   'Account created': 'สร้างบัญชีแล้ว',
   'Add a passkey on this device': 'เพิ่มพาสคีย์บนอุปกรณ์นี้',
+  'Cloud sync': 'ซิงค์บนคลาวด์',
   'Cloud sync (passkey)': 'ซิงค์บนคลาวด์ (พาสคีย์)',
   'Create account with passkey': 'สร้างบัญชีด้วยพาสคีย์',
+  'Sign in with Google': 'ลงชื่อเข้าใช้ด้วย Google',
   'Sign in with {0}, no password. First time here, create the account with your first passkey.': 'เข้าสู่ระบบด้วย {0} ไม่ต้องใช้รหัสผ่าน หากมาครั้งแรก ให้สร้างบัญชีด้วยพาสคีย์แรกของคุณ',
   'Signed in as {0}.': 'เข้าสู่ระบบในชื่อ {0}',
   'Signed in as {0}. Your plan, workouts and weigh-ins sync across your devices.': 'เข้าสู่ระบบในชื่อ {0} แผน การออกกำลังกาย และบันทึกน้ำหนักของคุณจะซิงค์ไปยังอุปกรณ์ทุกเครื่องของคุณ',
